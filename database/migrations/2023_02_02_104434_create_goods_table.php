@@ -15,14 +15,9 @@ class CreateGoodsTable extends Migration
     {
         Schema::create('goods', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->default(0)->comment('用户id');
-            $table->integer('shop_id')->default(0)->comment('店铺id');
-            $table->integer('status')->default(0)->comment('申请状态：0-待审核，1-审核通过，2-审核未通过，3-下架');
-            $table->string('failure_reason')->default('')->comment('审核失败原因');
+            $table->integer('status')->default(0)->comment('商品状态：1-销售中，2-下架');
             $table->integer('category_id')->comment('商品分类id');
-            $table->integer('shop_category_id')->comment('所属店铺分类id');
-            $table->string('cover')->comment('列表图片');
-            $table->string('video')->default('')->comment('主图视频');
+            $table->string('cover')->comment('商品封面');
             $table->longText('image_list')->comment('主图图片列表');
             $table->longText('detail_image_list')->comment('详情图片列表');
             $table->string('default_spec_image')->comment('默认规格图片');
@@ -32,8 +27,8 @@ class CreateGoodsTable extends Migration
             $table->float('price')->comment('商品价格');
             $table->float('market_price')->default(0)->comment('市场价格');
             $table->integer('stock')->comment('商品库存');
-            $table->float('sales_commission_rate')->comment('销售佣金比例%');
-            $table->float('promotion_commission_rate')->comment('推广佣金比例%');
+            $table->float('leader_commission_rate')->comment('团队长佣金比例%');
+            $table->float('share_commission_rate')->comment('分享佣金比例%');
             $table->longText('spec_list')->comment('商品规格列表');
             $table->longText('sku_list')->comment('商品sku');
             $table->integer('sales_volume')->default(0)->comment('商品销量');
