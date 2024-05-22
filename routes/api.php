@@ -20,13 +20,6 @@ Route::prefix('auth')->group(function () {
     });
 
     Route::get('token_refresh', 'AuthController@refreshToken');
-
-    Route::prefix('info')->group(function () {
-        Route::get('detail', 'AuthInfoController@detail');
-        Route::post('add', 'AuthInfoController@add');
-        Route::post('edit', 'AuthInfoController@edit');
-        Route::post('delete', 'AuthInfoController@delete');
-    });
 });
 
 Route::prefix('user')->group(function () {
@@ -88,7 +81,6 @@ Route::prefix('goods')->group(function () {
     Route::get('search', 'GoodsController@search');
     Route::post('media_relative_list', 'GoodsController@mediaRelativeList');
     Route::get('detail', 'GoodsController@detail');
-    Route::get('user_goods_list', 'GoodsController@userGoodsList');
 
     Route::prefix('evaluation')->group(function () {
         Route::get('summary', 'GoodsEvaluationController@summary');

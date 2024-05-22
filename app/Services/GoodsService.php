@@ -7,8 +7,6 @@ use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsListInput;
 use App\Utils\Inputs\GoodsInput;
 use App\Utils\Inputs\GoodsPageInput;
-use App\Utils\Inputs\PageInput;
-use App\Utils\Inputs\StatusPageInput;
 use Illuminate\Support\Facades\DB;
 
 class GoodsService extends BaseService
@@ -19,9 +17,6 @@ class GoodsService extends BaseService
         if (!empty($input->goodsIds)) {
             $query = $query->orderByRaw(DB::raw("FIELD(id, " . implode(',', $input->goodsIds) . ") DESC"));
         }
-        if (!empty($input->shopCategoryId)) {
-            $query = $query->where('shop_category_id', $input->shopCategoryId);
-        }
         if (!empty($input->categoryId)) {
             $query = $query->where('category_id', $input->categoryId);
         }
@@ -30,9 +25,7 @@ class GoodsService extends BaseService
         } else {
             $query = $query
                 ->orderBy('sales_volume', 'desc')
-                ->orderByRaw("CASE WHEN shop_id = 0 THEN 0 ELSE 1 END")
-                ->orderBy('sales_commission_rate', 'desc')
-                ->orderBy('promotion_commission_rate', 'desc')
+                ->orderBy('share_commission_rate', 'desc')
                 ->orderBy('created_at', 'desc');
         }
         return $query->paginate($input->limit, $columns, 'page', $input->page);
@@ -49,8 +42,7 @@ class GoodsService extends BaseService
         } else {
             $query = $query
                 ->orderBy('sales_volume', 'desc')
-                ->orderBy('sales_commission_rate', 'desc')
-                ->orderBy('promotion_commission_rate', 'desc')
+                ->orderBy('share_commission_rate', 'desc')
                 ->orderBy('created_at', 'desc');
         }
         return $query->paginate($input->limit,'page', $input->page);
@@ -69,80 +61,15 @@ class GoodsService extends BaseService
         }
         return $query
                 ->orderBy('sales_volume', 'desc')
-                ->orderByRaw("CASE WHEN shop_id = 0 THEN 0 ELSE 1 END")
-                ->orderBy('sales_commission_rate', 'desc')
-                ->orderBy('promotion_commission_rate', 'desc')
+                ->orderBy('share_commission_rate', 'desc')
                 ->orderBy('created_at', 'desc')
                 ->take($limit)
                 ->get($columns);
     }
 
-    public function getShopTopList($goodsId, $shopId, $limit, $columns=['*'])
-    {
-        return Goods::query()
-            ->where('status', 1)
-            ->where('shop_id', $shopId)
-            ->where('id', '!=', $goodsId)
-            ->orderBy('sales_volume', 'desc')
-            ->orderBy('sales_commission_rate', 'desc')
-            ->orderBy('promotion_commission_rate', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->take($limit)
-            ->get($columns);
-    }
-
-    public function getShopGoodsList($shopId, PageInput $input, $columns=['*'])
-    {
-        return Goods::query()
-            ->where('status', 1)
-            ->where('shop_id', $shopId)
-            ->orderBy('sales_volume', 'desc')
-            ->orderBy('sales_commission_rate', 'desc')
-            ->orderBy('promotion_commission_rate', 'desc')
-            ->orderBy($input->sort, $input->order)
-            ->paginate($input->limit, $columns, 'page', $input->page);
-    }
-
-    public function getUserGoodsList($userId, PageInput $input, $columns=['*'])
-    {
-        return Goods::query()
-            ->where('user_id', $userId)
-            ->where('status', 1)
-            ->orderBy($input->sort, $input->order)
-            ->paginate($input->limit, $columns, 'page', $input->page);
-    }
-
-    public function getLiveUnlistedGoodsList($userId, $goodsIds, $columns=['*'])
-    {
-        return Goods::query()
-            ->where('user_id', $userId)
-            ->where('status', 1)
-            ->whereNotIn('id', $goodsIds)
-            ->get($columns);
-    }
-
-    public function getListTotal($userId, $status)
-    {
-        return Goods::query()->where('user_id', $userId)->where('status', $status)->count();
-    }
-
-    public function getGoodsListByStatus($userId, StatusPageInput $input, $columns=['*'])
-    {
-        return Goods::query()
-            ->where('user_id', $userId)
-            ->where('status', $input->status)
-            ->orderBy($input->sort, $input->order)
-            ->paginate($input->limit, $columns, 'page', $input->page);
-    }
-
     public function getGoodsById($id, $columns=['*'])
     {
         return Goods::query()->find($id, $columns);
-    }
-
-    public function getUserGoods($userId, $id, $columns = ['*'])
-    {
-        return Goods::query()->where('user_id', $userId)->find($id, $columns);
     }
 
     public function getOnSaleGoods($id, $columns=['*'])
@@ -155,29 +82,9 @@ class GoodsService extends BaseService
         return Goods::query()->whereIn('id', $ids)->get($columns);
     }
 
-    public function getMerchantGoodsList(GoodsListInput $input, $columns=['*'])
-    {
-        $query = Goods::query()
-            ->where('shop_id', '!=', 0)
-            ->whereIn('status', [0, 1, 2]);
-        if (!empty($input->name)) {
-            $query = $query->where('name', 'like', "%$input->name%");
-        }
-        if (!empty($input->shopCategoryId)) {
-            $query = $query->where('shop_category_id', $input->shopCategoryId);
-        }
-        if (!empty($input->categoryId)) {
-            $query = $query->where('category_id', $input->categoryId);
-        }
-        if (!is_null($input->status)) {
-            $query = $query->where('status', $input->status);
-        }
-        return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
-    }
-
     public function getOwnerGoodsList(GoodsListInput $input, $columns=['*'])
     {
-        $query = Goods::query()->where('shop_id', 0);
+        $query = Goods::query();
         if (!empty($input->name)) {
             $query = $query->where('name', 'like', "%$input->name%");
         }
@@ -198,25 +105,7 @@ class GoodsService extends BaseService
         $columns=['id', 'shop_id', 'cover', 'name', 'price', 'market_price', 'sales_volume']
     )
     {
-        $goodsList = $this->getTopListByCategoryIds($goodsIds, $categoryIds, $limit, $columns);
-        return $this->addShopInfoToGoodsList($goodsList);
-    }
-
-    public function addShopInfoToGoodsList($goodsList)
-    {
-        $shopIds = $goodsList->pluck('shop_id')->toArray();
-        $shopList = ShopService::getInstance()->getShopListByIds($shopIds, ['id', 'avatar', 'name'])->keyBy('id');
-        return $goodsList->map(function (Goods $goods) use ($shopList) {
-            return [
-                'id' => $goods->id,
-                'cover' => $goods->cover,
-                'name' => $goods->name,
-                'price' => $goods->price,
-                'marketPrice' => $goods->market_price,
-                'salesVolume' => $goods->sales_volume,
-                'shopInfo' => $shopList->get($goods->shop_id) ?: null,
-            ];
-        });
+        return $this->getTopListByCategoryIds($goodsIds, $categoryIds, $limit, $columns);
     }
 
     public function reduceStock($id, $number, $selectedSkuIndex = -1)
@@ -264,22 +153,15 @@ class GoodsService extends BaseService
         return $goods->cas();
     }
 
-    public function createGoods($userId, $shopId, GoodsInput $input)
+    public function createGoods(GoodsInput $input)
     {
         $goods = Goods::new();
-        $goods->user_id = $userId;
-        $goods->shop_id = $shopId;
         return $this->updateGoods($goods, $input);
     }
 
     public function updateGoods(Goods $goods, GoodsInput $input)
     {
-        if ($goods->status == 2) {
-            $goods->status = 0;
-            $goods->failure_reason = '';
-        }
         $goods->cover = $input->cover;
-        $goods->video = $input->video ?: '';
         $goods->image_list = json_encode($input->imageList);
         $goods->detail_image_list = json_encode($input->detailImageList);
         $goods->default_spec_image = $input->defaultSpecImage;
@@ -290,8 +172,8 @@ class GoodsService extends BaseService
         $goods->price = $input->price;
         $goods->market_price = $input->marketPrice ?: 0;
         $goods->stock = $input->stock;
-        $goods->sales_commission_rate = $input->salesCommissionRate;
-        $goods->promotion_commission_rate = $input->promotionCommissionRate;
+        $goods->leader_commission_rate = $input->leaderCommissionRate;
+        $goods->share_commission_rate = $input->shareCommissionRate;
         $goods->spec_list = json_encode($input->specList);
         $goods->sku_list = json_encode($input->skuList);
         $goods->save();

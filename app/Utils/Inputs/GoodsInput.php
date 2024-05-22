@@ -5,7 +5,6 @@ namespace App\Utils\Inputs;
 class GoodsInput extends BaseInput
 {
     public $cover;
-    public $video;
     public $imageList;
     public $detailImageList;
     public $defaultSpecImage;
@@ -16,8 +15,8 @@ class GoodsInput extends BaseInput
     public $price;
     public $marketPrice;
     public $stock;
-    public $salesCommissionRate;
-    public $promotionCommissionRate;
+    public $leaderCommissionRate;
+    public $shareCommissionRate;
     public $specList;
     public $skuList;
 
@@ -25,7 +24,6 @@ class GoodsInput extends BaseInput
     {
         return [
             'cover' => 'required|string',
-            'video' => 'string',
             'imageList' => 'required|array',
             'detailImageList' => 'required|array',
             'defaultSpecImage' => 'required|string',
@@ -36,8 +34,8 @@ class GoodsInput extends BaseInput
             'price' => 'required|numeric',
             'marketPrice' => 'numeric',
             'stock' => 'required|integer',
-            'salesCommissionRate' => 'required|numeric',
-            'promotionCommissionRate' => 'required|numeric',
+            'leaderCommissionRate' => 'required|numeric',
+            'shareCommissionRate' => 'required|numeric',
             'specList' => 'required|array',
             'skuList' => 'required|array',
         ];

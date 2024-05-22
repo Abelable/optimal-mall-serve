@@ -27,7 +27,6 @@ class CartController extends Controller
             'status',
             'status_desc',
             'goods_id',
-            'shop_id',
             'category_id',
             'freight_template_id',
             'cover',
@@ -97,35 +96,10 @@ class CartController extends Controller
             return $cartGoods;
         });
 
-        $shopList = ShopService::getInstance()->getShopListByIds($shopIds, ['id', 'avatar', 'name']);
-        $cartList = $shopList->map(function (Shop $shop) use ($cartGoodsList) {
-            return [
-                'shopInfo' => $shop,
-                'goodsList' => $cartGoodsList->filter(function (CartGoods $cartGoods) use ($shop) {
-                    return $cartGoods->shop_id == $shop->id;
-                })->map(function (CartGoods $cartGoods) {
-                    unset($cartGoods->shop_id);
-                    unset($cartGoods->goods_category_id);
-                    return $cartGoods;
-                })
-            ];
-        });
-        if (in_array(0, $shopIds)) {
-            $cartList->prepend([
-                'goodsList' => $cartGoodsList->filter(function (CartGoods $cartGoods) {
-                    return $cartGoods->shop_id == 0;
-                })->map(function (CartGoods $cartGoods) {
-                    unset($cartGoods->shop_id);
-                    unset($cartGoods->goods_category_id);
-                    return $cartGoods;
-                })
-            ]);
-        }
-
         $recommendGoodsList = GoodsService::getInstance()->getRecommendGoodsList($goodsIds, $goodsCategoryIds);
 
         return $this->success([
-            'cartList' => $cartList,
+            'cartList' => $cartGoodsList,
             'recommendGoodsList' => $recommendGoodsList
         ]);
     }
