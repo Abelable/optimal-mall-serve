@@ -108,49 +108,4 @@ class User extends BaseModel implements JWTSubject, AuthenticatableContract, Aut
             'signature' => $this->signature,
         ];
     }
-
-    public function merchant()
-    {
-        return $this->hasOne(Merchant::class, 'user_id')->where('status', 2);
-    }
-
-    public function shopInfo()
-    {
-        return $this->hasOne(Shop::class, 'user_id')->where('status', 1);
-    }
-
-    public function scenicProvider()
-    {
-        return $this->hasOne(ScenicProvider::class, 'user_id')->where('status', 2);
-    }
-
-    public function scenicShop()
-    {
-        return $this->hasOne(ScenicShop::class, 'user_id')->where('status', 1);
-    }
-
-    public function hotelProvider()
-    {
-        return $this->hasOne(HotelProvider::class, 'user_id')->where('status', 2);
-    }
-
-    public function cateringProvider()
-    {
-        return $this->hasOne(CateringProvider::class, 'user_id')->where('status', 2);
-    }
-
-    public function authInfo()
-    {
-        return $this->hasOne(AuthInfo::class, 'user_id')->where('status', 1);
-    }
-
-    public function followedUsersNumber()
-    {
-        return $this->hasMany(Fan::class, 'fan_id')->count();
-    }
-
-    public function fansNumber()
-    {
-        return $this->hasMany(Fan::class, 'author_id')->count();
-    }
 }
