@@ -7,13 +7,11 @@ use App\Models\Address;
 use App\Models\CartGoods;
 use App\Models\FreightTemplate;
 use App\Models\Order;
-use App\Models\Shop;
 use App\Services\AddressService;
 use App\Services\CartGoodsService;
 use App\Services\FreightTemplateService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
-use App\Services\ShopService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\CreateOrderInput;
@@ -89,34 +87,10 @@ class OrderController extends Controller
 
         $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);
 
-        $shopIds = array_unique($cartGoodsList->pluck('shop_id')->toArray());
-        $shopList = ShopService::getInstance()->getShopListByIds($shopIds, ['id', 'avatar', 'name']);
-        $goodsLists = $shopList->map(function (Shop $shop) use ($cartGoodsList) {
-            return [
-                'shopInfo' => $shop,
-                'goodsList' => $cartGoodsList->filter(function (CartGoods $cartGoods) use ($shop) {
-                    return $cartGoods->shop_id == $shop->id;
-                })->map(function (CartGoods $cartGoods) {
-                    unset($cartGoods->shop_id);
-                    return $cartGoods;
-                })
-            ];
-        });
-        if (in_array(0, $shopIds)) {
-            $goodsLists->prepend([
-                'goodsList' => $cartGoodsList->filter(function (CartGoods $cartGoods) {
-                    return $cartGoods->shop_id == 0;
-                })->map(function (CartGoods $cartGoods) {
-                    unset($cartGoods->shop_id);
-                    return $cartGoods;
-                })
-            ]);
-        }
-
         return $this->success([
             'errMsg' => $errMsg,
             'addressInfo' => $address,
-            'goodsLists' => $goodsLists,
+            'goodsLists' => $cartGoodsList,
             'freightPrice' => $totalFreightPrice,
             'totalPrice' => $totalPrice,
             'totalNumber' => $totalNumber,
@@ -155,28 +129,13 @@ class OrderController extends Controller
                     return $freightTemplate;
                 })->keyBy('id');
 
-            // 4.按商家进行订单拆分，生成对应订单
-            $shopIds = array_unique($cartGoodsList->pluck('shop_id')->toArray());
-            $shopList = ShopService::getInstance()->getShopListByIds($shopIds);
-
-            $orderIds = $shopList->map(function (Shop $shop) use ($address, $cartGoodsList, $freightTemplateList) {
-                $filterCartGoodsList = $cartGoodsList->filter(function (CartGoods $cartGoods) use ($shop) {
-                    return $cartGoods->shop_id == $shop->id;
-                });
-                return OrderService::getInstance()->createOrder($this->userId(), $filterCartGoodsList, $freightTemplateList, $address, $shop);
-            });
-            if (in_array(0, $shopIds)) {
-                $filterCartGoodsList = $cartGoodsList->filter(function (CartGoods $cartGoods) {
-                    return $cartGoods->shop_id == 0;
-                });
-                $orderId = OrderService::getInstance()->createOrder($this->userId(), $filterCartGoodsList, $freightTemplateList, $address);
-                $orderIds->push($orderId);
-            }
+            // 4.生成订单
+            $orderId = OrderService::getInstance()->createOrder($this->userId(), $cartGoodsList, $freightTemplateList, $address);
 
             // 4.清空购物车
             CartGoodsService::getInstance()->deleteCartGoodsList($this->userId(), $input->cartGoodsIds);
 
-            return $orderIds;
+            return $orderId;
         });
 
         return $this->success($orderIds);
@@ -251,9 +210,6 @@ class OrderController extends Controller
                 'id' => $order->id,
                 'status' => $order->status,
                 'statusDesc' => OrderEnums::STATUS_TEXT_MAP[$order->status],
-                'shopId' => $order->shop_id,
-                'shopAvatar' => $order->shop_avatar,
-                'shopName' => $order->shop_name,
                 'goodsList' => $goodsList,
                 'paymentAmount' => $order->payment_amount,
                 'consignee' => $order->consignee,
@@ -305,9 +261,6 @@ class OrderController extends Controller
             'consignee',
             'mobile',
             'address',
-            'shop_id',
-            'shop_avatar',
-            'shop_name',
             'goods_price',
             'freight_price',
             'payment_amount',

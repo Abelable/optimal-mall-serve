@@ -8,20 +8,20 @@ class GoodsCategoryInput extends BaseInput
 {
     public $shopCategoryId;
     public $name;
-    public $minSalesCommissionRate;
-    public $maxSalesCommissionRate;
-    public $minPromotionCommissionRate;
-    public $maxPromotionCommissionRate;
+    public $minLeaderCommissionRate;
+    public $maxLeaderCommissionRate;
+    public $minShareCommissionRate;
+    public $maxShareCommissionRate;
 
     public function rules()
     {
         return [
             'shopCategoryId' => 'required|integer|digits_between:1,20',
             'name' => 'required|string',
-            'minSalesCommissionRate' => 'required|integer',
-            'maxSalesCommissionRate' => 'required|integer',
-            'minPromotionCommissionRate' => 'required|integer',
-            'maxPromotionCommissionRate' => 'required|integer',
+            'minLeaderCommissionRate' => 'required|integer',
+            'maxLeaderCommissionRate' => 'required|integer',
+            'minShareCommissionRate' => 'required|integer',
+            'maxShareCommissionRate' => 'required|integer',
         ];
     }
 }

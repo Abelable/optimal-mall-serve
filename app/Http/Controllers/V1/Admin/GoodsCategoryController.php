@@ -8,7 +8,6 @@ use App\Services\GoodsCategoryService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsCategoryInput;
 use App\Utils\Inputs\Admin\GoodsCategoryPageInput;
-use App\Utils\Inputs\PageInput;
 
 class GoodsCategoryController extends Controller
 {
@@ -45,12 +44,11 @@ class GoodsCategoryController extends Controller
         }
 
         $category = GoodsCategory::new();
-        $category->shop_category_id = $input->shopCategoryId;
         $category->name = $input->name;
-        $category->min_sales_commission_rate = $input->minSalesCommissionRate;
-        $category->max_sales_commission_rate = $input->maxSalesCommissionRate;
-        $category->min_promotion_commission_rate = $input->minPromotionCommissionRate;
-        $category->max_promotion_commission_rate = $input->maxPromotionCommissionRate;
+        $category->min_leader_commission_rate = $input->minLeaderCommissionRate;
+        $category->max_leader_commission_rate = $input->maxLeaderCommissionRate;
+        $category->min_share_commission_rate = $input->minShareCommissionRate;
+        $category->max_share_commission_rate = $input->maxShareCommissionRate;
         $category->save();
 
         return $this->success();
@@ -67,12 +65,11 @@ class GoodsCategoryController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品分类不存在');
         }
 
-        $category->shop_category_id = $input->shopCategoryId;
         $category->name = $input->name;
-        $category->min_sales_commission_rate = $input->minSalesCommissionRate;
-        $category->max_sales_commission_rate = $input->maxSalesCommissionRate;
-        $category->min_promotion_commission_rate = $input->minPromotionCommissionRate;
-        $category->max_promotion_commission_rate = $input->maxPromotionCommissionRate;
+        $category->min_leader_commission_rate = $input->minLeaderCommissionRate;
+        $category->max_leader_commission_rate = $input->maxLeaderCommissionRate;
+        $category->min_share_commission_rate = $input->minShareCommissionRate;
+        $category->max_share_commission_rate = $input->maxShareCommissionRate;
         $category->save();
 
         return $this->success();
