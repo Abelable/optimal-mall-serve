@@ -15,8 +15,7 @@ class GoodsController extends Controller
 
     public function categoryOptions()
     {
-        $shopCategoryId = $this->verifyRequiredId('shopCategoryId');
-        $options = GoodsCategoryService::getInstance()->getOptionsByShopCategoryId($shopCategoryId, ['id', 'name']);
+        $options = GoodsCategoryService::getInstance()->getCategoryOptions(['id', 'name']);
         return $this->success($options);
     }
 
@@ -24,12 +23,8 @@ class GoodsController extends Controller
     {
         /** @var GoodsPageInput $input */
         $input = GoodsPageInput::new();
-
         $page = GoodsService::getInstance()->getAllList($input);
-        $goodsList = collect($page->items());
-        $list = GoodsService::getInstance()->addShopInfoToGoodsList($goodsList);
-
-        return $this->success($this->paginate($page, $list));
+        return $this->successPaginate($page);
     }
 
     public function search()

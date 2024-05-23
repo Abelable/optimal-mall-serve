@@ -28,11 +28,6 @@ class GoodsCategoryService extends BaseService
         return GoodsCategory::query()->orderBy('id', 'asc')->get($columns);
     }
 
-    public function getOptionsByShopCategoryId($shopCategoryId, $columns = ['*'])
-    {
-        return GoodsCategory::query()->where('shop_category_id', $shopCategoryId)->get($columns);
-    }
-
     public function getOptionsByShopCategoryIds(array $shopCategoryIds, $columns = ['*'])
     {
         return GoodsCategory::query()->whereIn('shop_category_id', $shopCategoryIds)->get($columns);
