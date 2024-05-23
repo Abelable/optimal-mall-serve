@@ -40,7 +40,6 @@ class CartController extends Controller
         $list = CartGoodsService::getInstance()->cartGoodsList($this->userId(), $cartGoodsColumns);
         $goodsIds = array_unique($list->pluck('goods_id')->toArray());
         $goodsCategoryIds = array_unique($list->pluck('goods_category_id')->toArray());
-        $shopIds = array_unique($list->pluck('shop_id')->toArray());
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
         $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList) {

@@ -102,7 +102,7 @@ class GoodsService extends BaseService
         $goodsIds,
         $categoryIds,
         $limit = 10,
-        $columns=['id', 'shop_id', 'cover', 'name', 'price', 'market_price', 'sales_volume']
+        $columns=['id', 'cover', 'name', 'price', 'market_price', 'sales_volume']
     )
     {
         return $this->getTopListByCategoryIds($goodsIds, $categoryIds, $limit, $columns);
