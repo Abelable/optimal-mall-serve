@@ -3,16 +3,13 @@
 namespace App\Services;
 
 use App\Models\GoodsCategory;
-use App\Utils\Inputs\Admin\GoodsCategoryPageInput;
+use App\Utils\Inputs\PageInput;
 
 class GoodsCategoryService extends BaseService
 {
-    public function getCategoryList(GoodsCategoryPageInput $input, $columns = ['*'])
+    public function getCategoryList(PageInput $input, $columns = ['*'])
     {
         $query = GoodsCategory::query();
-        if (!empty($input->shopCategoryId)) {
-            $query = $query->where('shop_category_id', $input->shopCategoryId);
-        }
         return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 

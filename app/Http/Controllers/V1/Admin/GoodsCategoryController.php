@@ -7,7 +7,7 @@ use App\Models\GoodsCategory;
 use App\Services\GoodsCategoryService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsCategoryInput;
-use App\Utils\Inputs\Admin\GoodsCategoryPageInput;
+use App\Utils\Inputs\PageInput;
 
 class GoodsCategoryController extends Controller
 {
@@ -15,10 +15,10 @@ class GoodsCategoryController extends Controller
 
     public function list()
     {
-        /** @var GoodsCategoryPageInput $input */
-        $input = GoodsCategoryPageInput::new();
+        /** @var PageInput $input */
+        $input = PageInput::new();
 
-        $list = GoodsCategoryService::getInstance()->getCategoryList($input);
+        $list = PageInput::getInstance()->getCategoryList($input);
 
         return $this->successPaginate($list);
     }
