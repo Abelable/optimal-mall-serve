@@ -4,9 +4,6 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\FanService;
-use App\Services\KeywordService;
-use App\Services\Media\MediaService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\SearchPageInput;
@@ -20,20 +17,6 @@ class UserController extends Controller
     public function userInfo()
     {
         $user = $this->user();
-        $beLikedTimes = MediaService::getInstance()->beLikedTimes($this->userId());
-        $beCollectedTimes = MediaService::getInstance()->beCollectedTimes($this->userId());
-        $followedAuthorNumbers = FanService::getInstance()->followedAuthorNumber($this->userId());
-        $fansNumber = FanService::getInstance()->fansNumber($this->userId());
-
-        $user['authInfoId'] = $user->authInfo->id ?? 0;
-        $user['merchantId'] = $user->merchant->id ?? 0;
-        $user['scenicProviderId'] = $user->scenicProvider->id ?? 0;
-        $user['hotelProviderId'] = $user->hotelProvider->id ?? 0;
-        $user['cateringProviderId'] = $user->cateringProvider->id ?? 0;
-        $user['be_liked_times'] = $beLikedTimes;
-        $user['be_collected_times'] = $beCollectedTimes;
-        $user['followed_author_number'] = $followedAuthorNumbers;
-        $user['fans_number'] = $fansNumber;
 
         unset($user->openid);
         unset($user->unionid);

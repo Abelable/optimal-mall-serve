@@ -6,7 +6,6 @@ use App\Utils\Inputs\BaseInput;
 
 class GoodsCategoryInput extends BaseInput
 {
-    public $shopCategoryId;
     public $name;
     public $minLeaderCommissionRate;
     public $maxLeaderCommissionRate;
@@ -16,7 +15,6 @@ class GoodsCategoryInput extends BaseInput
     public function rules()
     {
         return [
-            'shopCategoryId' => 'required|integer|digits_between:1,20',
             'name' => 'required|string',
             'minLeaderCommissionRate' => 'required|integer',
             'maxLeaderCommissionRate' => 'required|integer',
