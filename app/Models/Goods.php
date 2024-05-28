@@ -56,6 +56,8 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Query\Builder|Goods withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Goods withoutTrashed()
  * @mixin \Eloquent
+ * @property int $merchant_id 商家id
+ * @method static \Illuminate\Database\Eloquent\Builder|Goods whereMerchantId($value)
  */
 class Goods extends BaseModel
 {

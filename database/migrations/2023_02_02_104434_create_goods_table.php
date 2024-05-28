@@ -17,6 +17,7 @@ class CreateGoodsTable extends Migration
             $table->id();
             $table->integer('status')->default(0)->comment('商品状态：1-销售中，2-下架');
             $table->integer('category_id')->comment('商品分类id');
+            $table->integer('merchant_id')->default(0)->comment('商家id');
             $table->string('cover')->comment('商品封面');
             $table->longText('image_list')->comment('主图图片列表');
             $table->longText('detail_image_list')->comment('详情图片列表');
