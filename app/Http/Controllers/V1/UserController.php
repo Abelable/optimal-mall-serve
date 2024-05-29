@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\SearchPageInput;
 use App\Utils\Inputs\UserInfoInput;
 use App\Utils\TimServe;
 
@@ -75,34 +73,6 @@ class UserController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前用户不存在');
         }
 
-        $beLikedTimes = MediaService::getInstance()->beLikedTimes($authorId);
-        $beCollectedTimes = MediaService::getInstance()->beCollectedTimes($authorId);
-        $followedAuthorNumbers = FanService::getInstance()->followedAuthorNumber($authorId);
-        $fansNumber = FanService::getInstance()->fansNumber($authorId);
-
-        $authorInfo['be_liked_times'] = $beLikedTimes;
-        $authorInfo['be_collected_times'] = $beCollectedTimes;
-        $authorInfo['followed_author_number'] = $followedAuthorNumbers;
-        $authorInfo['fans_number'] = $fansNumber;
-
         return $this->success($authorInfo);
-    }
-
-    public function search()
-    {
-        /** @var SearchPageInput $input */
-        $input = SearchPageInput::new();
-
-        $followUserIds = $this->isLogin() ? FanService::getInstance()->followAuthorIds($this->userId()) : [];
-
-        $page = UserService::getInstance()->searchPage($input);
-        $list = collect($page->items())->map(function (User $user) use ($followUserIds) {
-            $user['isFollow'] = $this->isLogin() && in_array($user->id, $followUserIds);
-            $user['followedUsersNumber'] = $user->followedUsersNumber();
-            $user['fansNumber'] = $user->fansNumber();
-            return $user;
-        });
-
-        return $this->success($this->paginate($page, $list));
     }
 }
