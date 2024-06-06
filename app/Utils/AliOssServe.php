@@ -19,7 +19,7 @@ class AliOssServe
         // 文件大小限制
         $conditions[] = ['content-length-range', 0, 1048576000];
         // 设置上传目录
-        $dir = 'tiddler/' . date('Ymd') . '/';
+        $dir = 'img/' . date('Ymd') . '/';
         $conditions[] = ['starts-with', '$key', $dir];
 
         $policy = base64_encode(json_encode([
