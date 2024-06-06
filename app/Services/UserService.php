@@ -9,11 +9,10 @@ use App\Utils\Inputs\WxMpRegisterInput;
 
 class UserService extends BaseService
 {
-    public function register($openid, $unionid, WxMpRegisterInput $input)
+    public function register($openid, WxMpRegisterInput $input)
     {
         $user = User::new();
         $user->openid = $openid;
-        $user->unionid = $unionid;
         $user->avatar = $input->avatar;
         $user->nickname = $input->nickname;
         $user->gender = $input->gender;

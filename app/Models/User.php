@@ -19,7 +19,6 @@ use Illuminate\Notifications\Notifiable;
  * @property string $avatar 用户头像图片
  * @property string $mobile 用户手机号码
  * @property string $openid 小程序openid
- * @property string $unionid 微信unionid
  * @property int $gender 性别：0-未知，1-男，2-女
  * @property string $bg 背景图
  * @property string $birthday 生日
@@ -29,15 +28,8 @@ use Illuminate\Notifications\Notifiable;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Models\AuthInfo|null $authInfo
- * @property-read \App\Models\CateringProvider|null $cateringProvider
- * @property-read \App\Models\HotelProvider|null $hotelProvider
- * @property-read \App\Models\Merchant|null $merchant
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
- * @property-read \App\Models\ScenicProvider|null $scenicProvider
- * @property-read \App\Models\ScenicShop|null $scenicShop
- * @property-read \App\Models\Shop|null $shopInfo
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
@@ -56,7 +48,6 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereNickname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOpenid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereSignature($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUnionid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|User withoutTrashed()
@@ -79,8 +70,7 @@ class User extends BaseModel implements JWTSubject, AuthenticatableContract, Aut
      * @var array<int, string>
      */
     protected $hidden = [
-        'openid',
-        'unionid'
+        'openid'
     ];
 
     /**

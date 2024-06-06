@@ -17,7 +17,6 @@ class UserController extends Controller
         $user = $this->user();
 
         unset($user->openid);
-        unset($user->unionid);
         unset($user->created_at);
         unset($user->updated_at);
         unset($user->authInfo);

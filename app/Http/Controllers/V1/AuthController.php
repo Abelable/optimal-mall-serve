@@ -31,7 +31,7 @@ class AuthController extends Controller
             return $this->fail(CodeResponse::AUTH_NAME_REGISTERED);
         }
 
-        $user = UserService::getInstance()->register($result['openid'], $result['unionid'], $input);
+        $user = UserService::getInstance()->register($result['openid'], $input);
         $token = Auth::guard('user')->login($user);
         return $this->success($token);
     }
