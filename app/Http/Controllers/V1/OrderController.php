@@ -110,7 +110,7 @@ class OrderController extends Controller
             $this->fail(CodeResponse::FAIL, '请勿重复提交订单');
         }
 
-        $orderIds = DB::transaction(function () use ($input) {
+        $orderId = DB::transaction(function () use ($input) {
             // 1.获取地址
             $address = AddressService::getInstance()->getById($this->userId(), $input->addressId);
             if (is_null($address)) {
@@ -138,13 +138,13 @@ class OrderController extends Controller
             return $orderId;
         });
 
-        return $this->success($orderIds);
+        return $this->success($orderId);
     }
 
     public function payParams()
     {
-        $orderIds = $this->verifyArrayNotEmpty('orderIds');
-        $order = OrderService::getInstance()->createWxPayOrder($this->userId(), $orderIds, $this->user()->openid);
+        $orderId = $this->verifyRequiredId('orderId');
+        $order = OrderService::getInstance()->createWxPayOrder($this->userId(), $orderId, $this->user()->openid);
         $payParams = Pay::wechat()->miniapp($order);
         return $this->success($payParams);
     }

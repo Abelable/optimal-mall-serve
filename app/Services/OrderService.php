@@ -44,11 +44,11 @@ class OrderService extends BaseService
         return Order::query()->where('user_id', $userId)->find($id, $columns);
     }
 
-    public function getUnpaidList(int $userId, array $orderIds, $columns = ['*'])
+    public function getUnpaidList(int $userId, $orderId, $columns = ['*'])
     {
         return Order::query()
             ->where('user_id', $userId)
-            ->whereIn('id', $orderIds)
+            ->where('id', $orderId)
             ->where('status', OrderEnums::STATUS_CREATE)
             ->get($columns);
     }
@@ -148,9 +148,9 @@ class OrderService extends BaseService
         return $order->id;
     }
 
-    public function createWxPayOrder($userId, array $orderIds, $openid)
+    public function createWxPayOrder($userId, $orderId, $openid)
     {
-        $orderList = $this->getUnpaidList($userId, $orderIds);
+        $orderList = $this->getUnpaidList($userId, $orderId);
         if (count($orderList) == 0) {
             $this->throwBusinessException(CodeResponse::NOT_FOUND, '订单不存在');
         }
