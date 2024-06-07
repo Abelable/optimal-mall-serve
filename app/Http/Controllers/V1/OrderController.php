@@ -90,7 +90,7 @@ class OrderController extends Controller
         return $this->success([
             'errMsg' => $errMsg,
             'addressInfo' => $address,
-            'goodsLists' => $cartGoodsList,
+            'goodsList' => $cartGoodsList,
             'freightPrice' => $totalFreightPrice,
             'totalPrice' => $totalPrice,
             'totalNumber' => $totalNumber,
