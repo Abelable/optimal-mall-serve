@@ -58,7 +58,7 @@ class OrderController extends Controller
             $totalNumber = $totalNumber + $cartGoods->number;
 
             // 计算运费
-            if ($cartGoods->freight_template_id == 0) {
+            if (is_null($address) || $cartGoods->freight_template_id == 0) {
                 $freightPrice = 0;
             } else {
                 /** @var FreightTemplate $freightTemplate */
