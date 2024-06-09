@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\FreightTemplate;
 use App\Services\FreightTemplateService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\Admin\NamePageInput;
 use App\Utils\Inputs\FreightTemplateInput;
+use App\Utils\Inputs\PageInput;
 
 class FreightTemplateController extends Controller
 {
@@ -15,8 +15,8 @@ class FreightTemplateController extends Controller
 
     public function list()
     {
-        /** @var NamePageInput $input */
-        $input = NamePageInput::new();
+        /** @var PageInput $input */
+        $input = PageInput::new();
         $page = FreightTemplateService::getInstance()->getFreightTemplateList($input);
         return $this->successPaginate($page);
     }

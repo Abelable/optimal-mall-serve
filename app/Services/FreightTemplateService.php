@@ -3,17 +3,13 @@
 namespace App\Services;
 
 use App\Models\FreightTemplate;
-use App\Utils\Inputs\Admin\NamePageInput;
+use App\Utils\Inputs\PageInput;
 
 class FreightTemplateService extends BaseService
 {
-    public function getFreightTemplateList(NamePageInput $input, $columns = ['*'])
+    public function getFreightTemplateList(PageInput $input, $columns = ['*'])
     {
-        $query = FreightTemplate::query();
-        if (!empty($input->name)) {
-            $query = $query->where('name', 'like', "%$input->name%");
-        }
-        return $query
+        return FreightTemplate::query()
             ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
