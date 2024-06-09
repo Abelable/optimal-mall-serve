@@ -1,19 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\FreightTemplate;
 use App\Services\FreightTemplateService;
 use App\Utils\CodeResponse;
+use App\Utils\Inputs\Admin\NamePageInput;
 use App\Utils\Inputs\FreightTemplateInput;
 
 class FreightTemplateController extends Controller
 {
+    protected $guard = 'Admin';
+
     public function list()
     {
-        $list = FreightTemplateService::getInstance()->getListByUserId($this->userId(), ['id', 'name']);
-        return $this->success($list);
+        /** @var NamePageInput $input */
+        $input = NamePageInput::new();
+        $page = FreightTemplateService::getInstance()->getFreightTemplateList($input);
+        return $this->successPaginate($page);
     }
 
     public function detail()
@@ -28,10 +33,7 @@ class FreightTemplateController extends Controller
     {
         /** @var FreightTemplateInput $input */
         $input = FreightTemplateInput::new();
-
         $freightTemplate = FreightTemplate::new();
-        $freightTemplate->user_id = $this->userId();
-
         $this->update($freightTemplate, $input);
 
         return $this->success();
@@ -76,5 +78,11 @@ class FreightTemplateController extends Controller
         }
         $freightTemplate->delete();
         return $this->success();
+    }
+
+    public function options()
+    {
+        $options = FreightTemplateService::getInstance()->getFreightTemplateOptions();
+        return $this->success($options);
     }
 }

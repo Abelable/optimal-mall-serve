@@ -45,22 +45,6 @@ Route::prefix('keyword')->group(function () {
 });
 
 Route::prefix('shop')->group(function () {
-    Route::prefix('freight_template')->group(function () {
-        Route::get('list', 'FreightTemplateController@list');
-        Route::get('detail', 'FreightTemplateController@detail');
-        Route::post('add', 'FreightTemplateController@add');
-        Route::post('edit', 'FreightTemplateController@edit');
-        Route::post('delete', 'FreightTemplateController@delete');
-    });
-
-    Route::prefix('goods_return_address')->group(function () {
-        Route::get('list', 'GoodsReturnAddressController@list');
-        Route::get('detail', 'GoodsReturnAddressController@detail');
-        Route::post('add', 'GoodsReturnAddressController@add');
-        Route::post('edit', 'GoodsReturnAddressController@edit');
-        Route::post('delete', 'GoodsReturnAddressController@delete');
-    });
-
     Route::get('goods_list', 'GoodsController@shopGoodsList');
     Route::prefix('goods')->group(function () {
         Route::get('category_options', 'GoodsController@shopCategoryOptions');
@@ -194,6 +178,15 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('edit', 'MerchantController@edit');
         Route::post('delete', 'MerchantController@delete');
         Route::get('options', 'MerchantController@options');
+    });
+
+    Route::prefix('freight_template')->group(function () {
+        Route::get('list', 'FreightTemplateController@list');
+        Route::get('detail', 'FreightTemplateController@detail');
+        Route::post('add', 'FreightTemplateController@add');
+        Route::post('edit', 'FreightTemplateController@edit');
+        Route::post('delete', 'FreightTemplateController@delete');
+        Route::get('options', 'FreightTemplateController@options');
     });
 
     Route::prefix('goods')->group(function () {
