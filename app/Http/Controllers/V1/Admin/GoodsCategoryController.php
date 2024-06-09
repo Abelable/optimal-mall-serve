@@ -17,9 +17,7 @@ class GoodsCategoryController extends Controller
     {
         /** @var PageInput $input */
         $input = PageInput::new();
-
-        $list = PageInput::getInstance()->getCategoryList($input);
-
+        $list = GoodsCategoryService::getInstance()->getCategoryList($input);
         return $this->successPaginate($list);
     }
 
