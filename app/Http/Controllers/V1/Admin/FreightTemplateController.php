@@ -18,7 +18,11 @@ class FreightTemplateController extends Controller
         /** @var PageInput $input */
         $input = PageInput::new();
         $page = FreightTemplateService::getInstance()->getFreightTemplateList($input);
-        return $this->successPaginate($page);
+        $list = collect($page->items())->map(function (FreightTemplate $freightTemplate) {
+            $freightTemplate->area_list = json_encode($freightTemplate->area_list);
+            return $freightTemplate;
+        });
+        return $this->success($this->paginate($page, $list));
     }
 
     public function detail()
