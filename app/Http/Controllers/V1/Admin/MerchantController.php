@@ -65,4 +65,10 @@ class MerchantController extends Controller
         $merchant->delete();
         return $this->success();
     }
+
+    public function options()
+    {
+        $options = MerchantService::getInstance()->getMerchantOptions(['id', 'name']);
+        return $this->success($options);
+    }
 }

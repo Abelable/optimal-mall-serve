@@ -187,6 +187,15 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::get('options', 'ExpressController@options');
     });
 
+    Route::prefix('merchant')->group(function () {
+        Route::post('list', 'MerchantController@list');
+        Route::get('detail', 'MerchantController@detail');
+        Route::post('add', 'MerchantController@add');
+        Route::post('edit', 'MerchantController@edit');
+        Route::post('delete', 'MerchantController@delete');
+        Route::get('options', 'MerchantController@options');
+    });
+
     Route::prefix('goods')->group(function () {
         Route::prefix('category')->group(function () {
             Route::post('list', 'GoodsCategoryController@list');
