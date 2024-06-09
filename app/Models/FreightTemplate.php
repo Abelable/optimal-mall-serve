@@ -6,7 +6,6 @@ namespace App\Models;
  * App\Models\FreightTemplate
  *
  * @property int $id
- * @property int $user_id 用户id
  * @property string $name 模板名称
  * @property string $title 模板标题，可展示在商品详情页
  * @property int $compute_mode 计算方式：1-不计重量和件数，2-按商品件数
@@ -28,7 +27,6 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|FreightTemplate whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FreightTemplate whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FreightTemplate whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FreightTemplate whereUserId($value)
  * @method static \Illuminate\Database\Query\Builder|FreightTemplate withTrashed()
  * @method static \Illuminate\Database\Query\Builder|FreightTemplate withoutTrashed()
  * @mixin \Eloquent

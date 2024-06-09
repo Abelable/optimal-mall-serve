@@ -15,7 +15,6 @@ class CreateFreightTemplatesTable extends Migration
     {
         Schema::create('freight_templates', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->default(0)->comment('用户id');
             $table->string('name')->comment('模板名称');
             $table->string('title')->comment('模板标题，可展示在商品详情页');
             $table->integer('compute_mode')->default(1)->comment('计算方式：1-不计重量和件数，2-按商品件数');
