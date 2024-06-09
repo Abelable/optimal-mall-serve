@@ -181,7 +181,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
     });
 
     Route::prefix('freight_template')->group(function () {
-        Route::get('list', 'FreightTemplateController@list');
+        Route::post('list', 'FreightTemplateController@list');
         Route::get('detail', 'FreightTemplateController@detail');
         Route::post('add', 'FreightTemplateController@add');
         Route::post('edit', 'FreightTemplateController@edit');
