@@ -36,7 +36,9 @@ class MerchantService extends BaseService
         $merchant->consignee_name = $input->consigneeName;
         $merchant->mobile = $input->mobile;
         $merchant->address_detail = $input->addressDetail;
-        $merchant->supplement = $input->supplement;
+        if (!empty($input->supplement)) {
+            $merchant->supplement = $input->supplement;
+        }
         $merchant->save();
 
         return $merchant;
