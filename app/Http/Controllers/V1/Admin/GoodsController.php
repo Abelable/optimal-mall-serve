@@ -19,6 +19,8 @@ class GoodsController extends Controller
         $input = GoodsListInput::new();
         $page = GoodsService::getInstance()->getGoodsList($input);
         $list = collect($page->items())->map(function (Goods $goods) {
+            $goods->image_list = json_decode($goods->image_list);
+            $goods->detail_image_list = json_decode($goods->detail_image_list);
             $goods->sku_list = json_decode($goods->sku_list);
             $goods->spec_list = json_decode($goods->spec_list);
             return $goods;
