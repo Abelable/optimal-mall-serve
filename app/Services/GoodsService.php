@@ -82,7 +82,7 @@ class GoodsService extends BaseService
         return Goods::query()->whereIn('id', $ids)->get($columns);
     }
 
-    public function getOwnerGoodsList(GoodsListInput $input, $columns=['*'])
+    public function getGoodsList(GoodsListInput $input, $columns=['*'])
     {
         $query = Goods::query();
         if (!empty($input->name)) {

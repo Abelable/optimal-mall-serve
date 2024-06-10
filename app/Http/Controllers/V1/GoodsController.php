@@ -74,16 +74,6 @@ class GoodsController extends Controller
         return $this->success($goods);
     }
 
-    public function goodsListTotals()
-    {
-        return $this->success([
-            GoodsService::getInstance()->getListTotal($this->userId(), 1),
-            GoodsService::getInstance()->getListTotal($this->userId(), 3),
-            GoodsService::getInstance()->getListTotal($this->userId(), 0),
-            GoodsService::getInstance()->getListTotal($this->userId(), 2),
-        ]);
-    }
-
     public function goodsInfo()
     {
         $id = $this->verifyRequiredId('id');

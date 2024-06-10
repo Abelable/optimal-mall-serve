@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Goods;
 use App\Services\GoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsListInput;
@@ -16,8 +17,13 @@ class GoodsController extends Controller
     {
         /** @var GoodsListInput $input */
         $input = GoodsListInput::new();
-        $list = GoodsService::getInstance()->getOwnerGoodsList($input);
-        return $this->successPaginate($list);
+        $page = GoodsService::getInstance()->getGoodsList($input);
+        $list = collect($page->items())->map(function (Goods $goods) {
+            $goods->sku_list = json_decode($goods->sku_list);
+            $goods->spec_list = json_decode($goods->spec_list);
+            return $goods;
+        });
+        return $this->success($this->paginate($page, $list));
     }
 
     public function detail()
