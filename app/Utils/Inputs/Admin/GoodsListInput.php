@@ -8,7 +8,7 @@ class GoodsListInput extends PageInput
 {
     public $name;
     public $status;
-    public $shopCategoryId;
+    public $merchantId;
     public $categoryId;
 
     public function rules()
@@ -16,7 +16,7 @@ class GoodsListInput extends PageInput
         return array_merge([
             'name' => 'string',
             'status' => 'integer|in:0,1,2,3',
-            'shopCategoryId' => 'integer|digits_between:1,20',
+            'merchantId' => 'integer|digits_between:1,20',
             'categoryId' => 'integer|digits_between:1,20',
         ], parent::rules());
     }

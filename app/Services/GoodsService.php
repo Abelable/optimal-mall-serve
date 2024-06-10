@@ -91,6 +91,9 @@ class GoodsService extends BaseService
         if (!empty($input->categoryId)) {
             $query = $query->where('category_id', $input->categoryId);
         }
+        if (!empty($input->merchantId)) {
+            $query = $query->where('merchant_id', $input->merchantId);
+        }
         if (!empty($input->status)) {
             $query = $query->where('status', $input->status);
         }
