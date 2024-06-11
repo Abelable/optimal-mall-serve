@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers\V1;
+
+use App\Http\Controllers\Controller;
+use App\Services\TeamLeaderService;
+use App\Utils\CodeResponse;
+use App\Utils\Inputs\TeamLeaderInput;
+
+class TeamLeaderController extends Controller
+{
+    public function addTeamLeader()
+    {
+        /** @var TeamLeaderInput $input */
+        $input = TeamLeaderInput::new();
+
+        $teamLeader = TeamLeaderService::getInstance()->getTeamLeaderByUserId($this->userId());
+        if (!is_null($teamLeader)) {
+            return $this->fail(CodeResponse::DATA_EXISTED, '您已提交团长申请');
+        }
+
+        TeamLeaderService::getInstance()->createMerchant($input, $this->userId());
+        return $this->success();
+    }
+
+    public function statusInfo()
+    {
+        $statusInfo = TeamLeaderService::getInstance()->getTeamLeaderByUserId($this->userId(), ['id', 'status', 'failure_reason']);
+        if (is_null($statusInfo)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '您暂未提交团长申请，无法获取状态信息');
+        }
+        return $this->success($statusInfo);
+    }
+
+    public function delete()
+    {
+        $teamLeader = TeamLeaderService::getInstance()->getTeamLeaderByUserId($this->userId());
+        if (is_null($teamLeader)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '您暂未提交团长申请，无法删除');
+        }
+        $teamLeader->delete();
+        return $this->success();
+    }
+}
