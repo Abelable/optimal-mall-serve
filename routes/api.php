@@ -30,6 +30,12 @@ Route::prefix('user')->group(function () {
     Route::get('search', 'UserController@search');
 });
 
+Route::prefix('team_leader')->group(function () {
+    Route::post('settle_in', 'TeamLeaderController@addTeamLeader');
+    Route::get('status', 'TeamLeaderController@statusInfo');
+    Route::post('reapply', 'TeamLeaderController@reapply');
+});
+
 Route::get('oss_config', 'CommonController@ossConfig');
 
 Route::prefix('wx')->group(function () {
@@ -42,21 +48,6 @@ Route::prefix('keyword')->group(function () {
     Route::post('add', 'KeywordController@add');
     Route::post('clear', 'KeywordController@clear');
     Route::get('hot_list', 'KeywordController@hotList');
-});
-
-Route::prefix('shop')->group(function () {
-    Route::get('goods_list', 'GoodsController@shopGoodsList');
-    Route::prefix('goods')->group(function () {
-        Route::get('category_options', 'GoodsController@shopCategoryOptions');
-        Route::get('totals', 'GoodsController@goodsListTotals');
-        Route::get('list', 'GoodsController@merchantGoodsList');
-        Route::get('info', 'GoodsController@goodsInfo');
-        Route::post('add', 'GoodsController@add');
-        Route::post('edit', 'GoodsController@edit');
-        Route::post('up', 'GoodsController@up');
-        Route::post('down', 'GoodsController@down');
-        Route::post('delete', 'GoodsController@delete');
-    });
 });
 
 Route::prefix('goods')->group(function () {
@@ -144,12 +135,12 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('delete', 'UserController@delete');
     });
 
-    Route::prefix('auth_info')->group(function () {
-        Route::post('list', 'AuthInfoController@list');
-        Route::get('detail', 'AuthInfoController@detail');
-        Route::post('approved', 'AuthInfoController@approved');
-        Route::post('reject', 'AuthInfoController@reject');
-        Route::post('delete', 'AuthInfoController@delete');
+    Route::prefix('team_leader')->group(function () {
+        Route::post('list', 'TeamLeaderController@list');
+        Route::get('detail', 'TeamLeaderController@detail');
+        Route::post('approved', 'TeamLeaderController@approved');
+        Route::post('reject', 'TeamLeaderController@reject');
+        Route::post('delete', 'TeamLeaderController@delete');
     });
 
     Route::prefix('mall_banner')->group(function () {

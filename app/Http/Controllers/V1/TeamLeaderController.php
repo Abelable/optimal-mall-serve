@@ -32,13 +32,16 @@ class TeamLeaderController extends Controller
         return $this->success($statusInfo);
     }
 
-    public function delete()
+    public function reapply()
     {
         $teamLeader = TeamLeaderService::getInstance()->getTeamLeaderByUserId($this->userId());
         if (is_null($teamLeader)) {
             return $this->fail(CodeResponse::NOT_FOUND, '您暂未提交团长申请，无法删除');
         }
-        $teamLeader->delete();
-        return $this->success();
+
+        $teamLeader->status = 0;
+        $teamLeader->save();
+
+        return $this->success($teamLeader);
     }
 }
