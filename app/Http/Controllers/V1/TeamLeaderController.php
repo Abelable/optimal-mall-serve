@@ -26,10 +26,7 @@ class TeamLeaderController extends Controller
     public function statusInfo()
     {
         $statusInfo = TeamLeaderService::getInstance()->getTeamLeaderByUserId($this->userId(), ['id', 'status', 'failure_reason']);
-        if (is_null($statusInfo)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '您暂未提交团长申请，无法获取状态信息');
-        }
-        return $this->success($statusInfo);
+        return $this->success($statusInfo ?: null);
     }
 
     public function reapply()
