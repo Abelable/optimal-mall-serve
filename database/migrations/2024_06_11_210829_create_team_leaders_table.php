@@ -25,7 +25,7 @@ class CreateTeamLeadersTable extends Migration
             $table->string('id_card_front_photo')->comment('身份证正面照片');
             $table->string('id_card_back_photo')->comment('身份证反面照片');
             $table->string('hold_id_card_photo')->comment('手持身份证照片');
-            $table->string('qualification_photo')->comment('团长资质证明');
+            $table->longText('qualification_photo')->comment('团长资质证明');
             $table->timestamps();
             $table->softDeletes();
         });
