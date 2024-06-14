@@ -23,7 +23,7 @@ class TeamLeaderInput extends BaseInput
             'idCardFrontPhoto' => 'required|string',
             'idCardBackPhoto' => 'required|string',
             'holdIdCardPhoto' => 'required|string',
-            'qualificationPhoto' => 'required|string',
+            'qualificationPhoto' => 'required|array',
         ];
     }
 }

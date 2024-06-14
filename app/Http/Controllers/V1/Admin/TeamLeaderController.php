@@ -15,7 +15,7 @@ class TeamLeaderController extends Controller
     {
         /** @var TeamLeaderPageInput $input */
         $input = TeamLeaderPageInput::new();
-        $list = TeamLeaderService::getInstance()->getTeamLeaderList($input);
+        $list = TeamLeaderService::getInstance()->getTeamLeaderList($input, ['id', 'status', 'name', 'mobile', 'created_at', 'updated_at']);
         return $this->successPaginate($list);
     }
 
@@ -26,6 +26,7 @@ class TeamLeaderController extends Controller
         if (is_null($teamLeader)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前团长不存在');
         }
+        $teamLeader->qualification_photo = json_decode($teamLeader->qualification_photo);
         return $this->success($teamLeader);
     }
 

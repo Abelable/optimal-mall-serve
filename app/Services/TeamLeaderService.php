@@ -19,7 +19,7 @@ class TeamLeaderService extends BaseService
         $teamLeader->id_card_front_photo = $input->idCardFrontPhoto;
         $teamLeader->id_card_back_photo = $input->idCardBackPhoto;
         $teamLeader->hold_id_card_photo = $input->holdIdCardPhoto;
-        $teamLeader->qualification_photo = $input->qualificationPhoto;
+        $teamLeader->qualification_photo = json_encode($input->qualificationPhoto);
         $teamLeader->save();
 
         return $teamLeader;
