@@ -15,15 +15,12 @@ class UserController extends Controller
     public function userInfo()
     {
         $user = $this->user();
+        $user['teamLeaderId'] = $user->teamLeader->id ?? 0;
 
         unset($user->openid);
         unset($user->created_at);
         unset($user->updated_at);
-        unset($user->authInfo);
-        unset($user->merchant);
-        unset($user->scenicProvider);
-        unset($user->hotelProvider);
-        unset($user->cateringProvider);
+        unset($user->teamLeader);
 
         return $this->success($user);
     }

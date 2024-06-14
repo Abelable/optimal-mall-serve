@@ -30,6 +30,7 @@ use Illuminate\Notifications\Notifiable;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
+ * @property-read \App\Models\TeamLeader|null $teamLeader
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
@@ -97,5 +98,9 @@ class User extends BaseModel implements JWTSubject, AuthenticatableContract, Aut
             'nickname' => $this->nickname,
             'signature' => $this->signature,
         ];
+    }
+
+    public function teamLeader() {
+        return $this->hasOne(TeamLeader::class, 'user_id')->where('status', 1);
     }
 }
