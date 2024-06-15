@@ -15,7 +15,7 @@ class CreateGoodsTable extends Migration
     {
         Schema::create('goods', function (Blueprint $table) {
             $table->id();
-            $table->integer('status')->default(0)->comment('商品状态：1-销售中，2-下架');
+            $table->integer('status')->default(1)->comment('商品状态：1-销售中，2-下架');
             $table->integer('category_id')->comment('商品分类id');
             $table->integer('merchant_id')->default(0)->comment('商家id');
             $table->string('cover')->comment('商品封面');
