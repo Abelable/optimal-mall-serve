@@ -36,8 +36,8 @@ class GoodsInput extends BaseInput
             'stock' => 'required|integer',
             'leaderCommissionRate' => 'required|numeric',
             'shareCommissionRate' => 'required|numeric',
-            'specList' => 'required|array',
-            'skuList' => 'required|array',
+            'specList' => 'array',
+            'skuList' => 'array',
         ];
     }
 }
