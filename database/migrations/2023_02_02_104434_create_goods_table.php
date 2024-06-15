@@ -24,7 +24,6 @@ class CreateGoodsTable extends Migration
             $table->string('default_spec_image')->comment('默认规格图片');
             $table->string('name')->comment('商品名称');
             $table->integer('freight_template_id')->default(0)->comment('运费模板id：0-包邮');
-            $table->integer('return_address_id')->comment('退货地址id');
             $table->float('price')->comment('商品价格');
             $table->float('market_price')->default(0)->comment('市场价格');
             $table->integer('stock')->comment('商品库存');

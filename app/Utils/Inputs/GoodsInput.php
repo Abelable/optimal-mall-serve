@@ -11,7 +11,7 @@ class GoodsInput extends BaseInput
     public $name;
     public $freightTemplateId;
     public $categoryId;
-    public $returnAddressId;
+    public $merchantId;
     public $price;
     public $marketPrice;
     public $stock;
@@ -30,7 +30,7 @@ class GoodsInput extends BaseInput
             'name' => 'required|string',
             'freightTemplateId' => 'required|integer|digits_between:1,20',
             'categoryId' => 'required|integer|digits_between:1,20',
-            'returnAddressId' => 'required|integer|digits_between:1,20',
+            'merchantId' => 'required|integer|digits_between:1,20',
             'price' => 'required|numeric',
             'marketPrice' => 'numeric',
             'stock' => 'required|integer',

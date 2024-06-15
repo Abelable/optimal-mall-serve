@@ -171,7 +171,7 @@ class GoodsService extends BaseService
         $goods->name = $input->name;
         $goods->freight_template_id = $input->freightTemplateId;
         $goods->category_id = $input->categoryId;
-        $goods->return_address_id = $input->returnAddressId;
+        $goods->merchant_id = $input->merchantId;
         $goods->price = $input->price;
         $goods->market_price = $input->marketPrice ?: 0;
         $goods->stock = $input->stock;

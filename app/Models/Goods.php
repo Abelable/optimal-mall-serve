@@ -10,13 +10,13 @@ use Laravel\Scout\Searchable;
  * @property int $id
  * @property int $status 商品状态：1-销售中，2-下架
  * @property int $category_id 商品分类id
+ * @property int $merchant_id 商家id
  * @property string $cover 商品封面
  * @property string $image_list 主图图片列表
  * @property string $detail_image_list 详情图片列表
  * @property string $default_spec_image 默认规格图片
  * @property string $name 商品名称
  * @property int $freight_template_id 运费模板id：0-包邮
- * @property int $return_address_id 退货地址id
  * @property float $price 商品价格
  * @property float $market_price 市场价格
  * @property int $stock 商品库存
@@ -43,9 +43,9 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereImageList($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereLeaderCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereMarketPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Goods whereMerchantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods wherePrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Goods whereReturnAddressId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereSalesVolume($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereShareCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereSkuList($value)
@@ -56,8 +56,6 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Query\Builder|Goods withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Goods withoutTrashed()
  * @mixin \Eloquent
- * @property int $merchant_id 商家id
- * @method static \Illuminate\Database\Eloquent\Builder|Goods whereMerchantId($value)
  */
 class Goods extends BaseModel
 {
