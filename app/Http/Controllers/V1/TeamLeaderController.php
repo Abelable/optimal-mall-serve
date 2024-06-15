@@ -26,7 +26,7 @@ class TeamLeaderController extends Controller
 
     public function statusInfo()
     {
-        $statusInfo = TeamLeaderService::getInstance()->getTeamLeaderByUserId($this->userId(), ['id', 'status', 'failure_reason']);
+        $statusInfo = TeamLeaderService::getInstance()->getTeamLeaderByUserId($this->userId(), [0, 1, 2], ['id', 'status', 'failure_reason']);
         return $this->success($statusInfo ?: null);
     }
 
