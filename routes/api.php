@@ -34,6 +34,7 @@ Route::prefix('team_leader')->group(function () {
     Route::post('settle_in', 'TeamLeaderController@addTeamLeader');
     Route::get('status', 'TeamLeaderController@statusInfo');
     Route::post('reapply', 'TeamLeaderController@reapply');
+    Route::get('info', 'TeamLeaderController@userInfo');
 });
 
 Route::get('oss_config', 'CommonController@ossConfig');

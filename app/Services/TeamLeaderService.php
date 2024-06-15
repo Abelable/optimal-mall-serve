@@ -40,9 +40,9 @@ class TeamLeaderService extends BaseService
         return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getTeamLeaderByUserId($userId, $columns = ['*'])
+    public function getTeamLeaderByUserId($userId, array $statusList = [0, 1, 2], $columns = ['*'])
     {
-        return TeamLeader::query()->where('user_id', $userId)->first($columns);
+        return TeamLeader::query()->where('user_id', $userId)->whereIn('status', $statusList)->first($columns);
     }
 
     public function getTeamLeaderById($id, $columns = ['*'])
