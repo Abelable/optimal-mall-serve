@@ -47,7 +47,7 @@ class CommonController extends Controller
     public function wxPayNotify()
     {
         $data = Pay::wechat()->verify()->toArray();
-        Log::info('order_wx_pay_notify', $data);
+        Log ::info('order_wx_pay_notify', $data);
 
         if (strpos($data['body'], 'order_sn_list')) {
             Log::info('order_wx_pay_notify', $data);
