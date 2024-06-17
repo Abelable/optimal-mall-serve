@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Services\OrderService;
 use App\Utils\AliOssServe;
 use App\Utils\WxMpServe;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yansongda\LaravelPay\Facades\Pay;
 
@@ -48,12 +47,11 @@ class CommonController extends Controller
     public function wxPayNotify()
     {
         $data = Pay::wechat()->verify()->toArray();
+        Log::info('order_wx_pay_notify', $data);
 
         if (strpos($data['body'], 'order_sn_list')) {
             Log::info('order_wx_pay_notify', $data);
-            DB::transaction(function () use ($data) {
-                OrderService::getInstance()->wxPaySuccess($data);
-            });
+            OrderService::getInstance()->wxPaySuccess($data);
         }
 
         return Pay::wechat()->success();
