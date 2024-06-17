@@ -128,11 +128,6 @@ class OrderService extends BaseService
         $order->consignee = $address->name;
         $order->mobile = $address->mobile;
         $order->address = $address->region_desc . ' ' . $address->address_detail;
-        if (!is_null($shopInfo)) {
-            $order->shop_id = $shopInfo->id;
-            $order->shop_avatar = $shopInfo->avatar;
-            $order->shop_name = $shopInfo->name;
-        }
         $order->goods_price = $totalPrice;
         $order->freight_price = $totalFreightPrice;
         $order->payment_amount = bcadd($totalPrice, $totalFreightPrice, 2);
