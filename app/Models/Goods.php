@@ -16,10 +16,12 @@ use Laravel\Scout\Searchable;
  * @property string $detail_image_list 详情图片列表
  * @property string $default_spec_image 默认规格图片
  * @property string $name 商品名称
+ * @property string $introduction 商品介绍
  * @property int $freight_template_id 运费模板id：0-包邮
  * @property float $price 商品价格
  * @property float $market_price 市场价格
  * @property int $stock 商品库存
+ * @property int $original_stock 原始库存
  * @property float $leader_commission_rate 团队长佣金比例%
  * @property float $share_commission_rate 分享佣金比例%
  * @property string $spec_list 商品规格列表
@@ -41,10 +43,12 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereFreightTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereImageList($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Goods whereIntroduction($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereLeaderCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereMarketPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereMerchantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Goods whereOriginalStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereSalesVolume($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereShareCommissionRate($value)

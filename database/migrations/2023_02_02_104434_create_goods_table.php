@@ -23,10 +23,12 @@ class CreateGoodsTable extends Migration
             $table->longText('detail_image_list')->comment('详情图片列表');
             $table->string('default_spec_image')->comment('默认规格图片');
             $table->string('name')->comment('商品名称');
+            $table->string('introduction')->default('')->comment('商品介绍');
             $table->integer('freight_template_id')->default(0)->comment('运费模板id：0-包邮');
             $table->float('price')->comment('商品价格');
             $table->float('market_price')->default(0)->comment('市场价格');
             $table->integer('stock')->comment('商品库存');
+            $table->integer('original_stock')->comment('原始库存');
             $table->float('leader_commission_rate')->comment('团队长佣金比例%');
             $table->float('share_commission_rate')->comment('分享佣金比例%');
             $table->longText('spec_list')->comment('商品规格列表');

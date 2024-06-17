@@ -169,12 +169,16 @@ class GoodsService extends BaseService
         $goods->detail_image_list = json_encode($input->detailImageList);
         $goods->default_spec_image = $input->defaultSpecImage;
         $goods->name = $input->name;
+        if (!empty($input->introduction)) {
+            $goods->introduction = $input->introduction;
+        }
         $goods->freight_template_id = $input->freightTemplateId;
         $goods->category_id = $input->categoryId;
         $goods->merchant_id = $input->merchantId;
         $goods->price = $input->price;
         $goods->market_price = $input->marketPrice ?: 0;
         $goods->stock = $input->stock;
+        $goods->original_stock = $input->stock;
         $goods->leader_commission_rate = $input->leaderCommissionRate;
         $goods->share_commission_rate = $input->shareCommissionRate;
         $goods->spec_list = json_encode($input->specList);

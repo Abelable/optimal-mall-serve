@@ -9,6 +9,7 @@ class GoodsInput extends BaseInput
     public $detailImageList;
     public $defaultSpecImage;
     public $name;
+    public $introduction;
     public $freightTemplateId;
     public $categoryId;
     public $merchantId;
@@ -28,6 +29,7 @@ class GoodsInput extends BaseInput
             'detailImageList' => 'required|array',
             'defaultSpecImage' => 'required|string',
             'name' => 'required|string',
+            'introduction' => 'string',
             'freightTemplateId' => 'required|integer|digits_between:1,20',
             'categoryId' => 'required|integer|digits_between:1,20',
             'merchantId' => 'required|integer|digits_between:1,20',
