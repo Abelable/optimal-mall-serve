@@ -8,6 +8,7 @@ use App\Utils\AliOssServe;
 use App\Utils\WxMpServe;
 use Illuminate\Support\Facades\Log;
 use Yansongda\LaravelPay\Facades\Pay;
+use Yansongda\Pay\Exceptions\GatewayException;
 
 class CommonController extends Controller
 {
@@ -50,13 +51,13 @@ class CommonController extends Controller
      */
     public function wxPayNotify()
     {
-        $data = Pay::wechat()->verify()->toArray();
-
-        if (strpos($data['body'], 'order_sn_list')) {
+        try {
+            $data = Pay::wechat()->verify()->toArray();
             Log::info('order_wx_pay_notify', $data);
             OrderService::getInstance()->wxPaySuccess($data);
+        } catch (GatewayException $exception) {
+            Log::error('wx_pay_notify_fail', [$exception]);
         }
-
         return Pay::wechat()->success();
     }
 }

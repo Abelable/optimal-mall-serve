@@ -159,7 +159,8 @@ class OrderService extends BaseService
 
         return [
             'out_trade_no' => time(),
-            'body' => 'order_sn_list:' . json_encode($orderSnList),
+            'body' => 'body',
+            'attach' => json_encode($orderSnList),
             'total_fee' => bcmul($paymentAmount, 100),
             'openid' => $openid
         ];
@@ -167,8 +168,7 @@ class OrderService extends BaseService
 
     public function wxPaySuccess(array $data)
     {
-        $orderSnList = $data['body'] ?
-            json_encode(str_replace('order_sn_list:', '', $data['body'])) : [];
+        $orderSnList = json_decode($data['attach']);
         $payId = $data['transaction_id'] ?? '';
         $actualPaymentAmount = $data['total_fee'] ? bcdiv($data['total_fee'], 100, 2) : 0;
 
@@ -179,7 +179,7 @@ class OrderService extends BaseService
             $paymentAmount = bcadd($order->payment_amount, $paymentAmount, 2);
         }
         if (bccomp($actualPaymentAmount, $paymentAmount, 2) != 0) {
-            $errMsg = "支付回调，订单{$data['body']}金额不一致，请检查，支付回调金额：{$actualPaymentAmount}，订单总金额：{$paymentAmount}";
+            $errMsg = "支付回调，订单{$data['attach']}金额不一致，请检查，支付回调金额：{$actualPaymentAmount}，订单总金额：{$paymentAmount}";
             Log::error($errMsg);
             $this->throwBusinessException(CodeResponse::FAIL, $errMsg);
         }
