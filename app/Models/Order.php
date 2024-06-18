@@ -18,7 +18,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property float $goods_price 商品总价格
  * @property float $freight_price 运费
  * @property float $payment_amount 支付金额
- * @property int $pay_id 支付id
+ * @property string $pay_id 支付id
  * @property string $pay_time 支付时间
  * @property string $ship_sn 发货编号
  * @property string $ship_channel 快递公司

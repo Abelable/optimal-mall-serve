@@ -25,7 +25,7 @@ class CreateOrdersTable extends Migration
             $table->float('goods_price')->comment('商品总价格');
             $table->float('freight_price')->comment('运费');
             $table->float('payment_amount')->comment('支付金额');
-            $table->integer('pay_id')->default(0)->comment('支付id');
+            $table->string('pay_id')->default('')->comment('支付id');
             $table->string('pay_time')->default('')->comment('支付时间');
             $table->string('ship_sn')->default('')->comment('发货编号');
             $table->string('ship_channel')->default('')->comment('快递公司');
