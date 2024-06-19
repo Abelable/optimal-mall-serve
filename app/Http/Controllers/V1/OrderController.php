@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Address;
-use App\Models\CartGoods;
 use App\Models\FreightTemplate;
 use App\Models\Order;
 use App\Services\AddressService;
@@ -157,20 +156,6 @@ class OrderController extends Controller
 
         $statusList = $this->statusList($status);
         $page = OrderService::getInstance()->getOrderListByStatus($this->userId(), $statusList, $input);
-        $list = $this->orderList($page);
-
-        return $this->success($this->paginate($page, $list));
-    }
-
-    public function shopList()
-    {
-        /** @var PageInput $input */
-        $input = PageInput::new();
-        $status = $this->verifyRequiredInteger('status');
-        $shopId = $this->verifyId('shopId');
-
-        $statusList = $this->statusList($status);
-        $page = OrderService::getInstance()->getShopOrderList($shopId, $statusList, $input);
         $list = $this->orderList($page);
 
         return $this->success($this->paginate($page, $list));

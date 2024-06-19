@@ -11,6 +11,7 @@ use App\Models\OrderGoods;
 use App\Models\Shop;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
+use App\Utils\Inputs\Admin\OrderPageInput;
 use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -28,11 +29,20 @@ class OrderService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getShopOrderList($shopId, $statusList, PageInput $input, $columns = ['*'])
+    public function getOrderList(OrderPageInput $input, $columns = ['*'])
     {
-        $query = Order::query()->where('shop_id', $shopId);
-        if (count($statusList) != 0) {
-            $query = $query->whereIn('status', $statusList);
+        $query = Order::query();
+        if (!empty($input->status)) {
+            $query = $query->where('status', $input->status);
+        }
+        if (!empty($input->orderSn)) {
+            $query = $query->where('order_sn', $input->orderSn);
+        }
+        if (!empty($input->consignee)) {
+            $query = $query->where('consignee', $input->consignee);
+        }
+        if (!empty($input->mobile)) {
+            $query = $query->where('mobile', $input->mobile);
         }
         return $query
             ->orderBy($input->sort, $input->order)
