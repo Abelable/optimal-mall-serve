@@ -33,10 +33,7 @@ class GoodsController extends Controller
         /** @var GoodsPageInput $input */
         $input = GoodsPageInput::new();
         $page = GoodsService::getInstance()->search($keywords, $input);
-        $goodsList = collect($page->items());
-        $list = GoodsService::getInstance()->addShopInfoToGoodsList($goodsList);
-
-        return $this->success($this->paginate($page, $list));
+        return $this->successPaginate($page);
     }
 
     public function detail()
