@@ -49,9 +49,9 @@ class OrderService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getOrderById($userId, $id, $columns = ['*'])
+    public function getOrderById($id, $columns = ['*'])
     {
-        return Order::query()->where('user_id', $userId)->find($id, $columns);
+        return Order::query()->find($id, $columns);
     }
 
     public function getUnpaidList(int $userId, $orderId, $columns = ['*'])

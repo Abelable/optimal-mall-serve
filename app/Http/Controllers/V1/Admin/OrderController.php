@@ -25,7 +25,7 @@ class OrderController extends Controller
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
-        $order = OrderService::getInstance()->getOrderById($this->userId(), $id);
+        $order = OrderService::getInstance()->getOrderById($id);
         if (is_null($order)) {
             return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
         }
