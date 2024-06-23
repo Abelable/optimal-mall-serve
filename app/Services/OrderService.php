@@ -54,6 +54,11 @@ class OrderService extends BaseService
         return Order::query()->find($id, $columns);
     }
 
+    public function getUserOrderById($userId, $id, $columns = ['*'])
+    {
+        return Order::query()->where('user_id', $userId)->find($id, $columns);
+    }
+
     public function getUnpaidList(int $userId, $orderId, $columns = ['*'])
     {
         return Order::query()
@@ -241,6 +246,7 @@ class OrderService extends BaseService
                 $order->status = OrderEnums::STATUS_CANCEL;
                 break;
         }
+        $order->finish_time = now()->toDateTimeString();
         if ($order->cas() == 0) {
             $this->throwUpdateFail();
         }

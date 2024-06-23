@@ -255,7 +255,7 @@ class OrderController extends Controller
             'created_at',
             'updated_at',
         ];
-        $order = OrderService::getInstance()->getOrderById($this->userId(), $id, $columns);
+        $order = OrderService::getInstance()->getUserOrderById($this->userId(), $id, $columns);
         if (is_null($order)) {
             return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
         }
