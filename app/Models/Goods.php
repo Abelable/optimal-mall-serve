@@ -11,6 +11,7 @@ use Laravel\Scout\Searchable;
  * @property int $status 商品状态：1-销售中，2-下架
  * @property int $category_id 商品分类id
  * @property int $merchant_id 商家id
+ * @property string $video 商品视频
  * @property string $cover 商品封面
  * @property string $image_list 主图图片列表
  * @property string $detail_image_list 详情图片列表
@@ -57,6 +58,7 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Goods whereVideo($value)
  * @method static \Illuminate\Database\Query\Builder|Goods withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Goods withoutTrashed()
  * @mixin \Eloquent

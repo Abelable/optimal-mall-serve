@@ -164,6 +164,9 @@ class GoodsService extends BaseService
 
     public function updateGoods(Goods $goods, GoodsInput $input)
     {
+        if (!empty($input->video)) {
+            $goods->video = $input->video;
+        }
         $goods->cover = $input->cover;
         $goods->image_list = json_encode($input->imageList);
         $goods->detail_image_list = json_encode($input->detailImageList);
