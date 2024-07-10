@@ -43,6 +43,7 @@ class GoodsController extends Controller
         $columns = [
             'id',
             'category_id',
+            'video',
             'cover',
             'image_list',
             'default_spec_image',
