@@ -32,7 +32,7 @@ class CartGoodsService extends BaseService
 
         [$goods, $skuList] = $this->validateCartGoodsStatus($goodsId, $selectedSkuIndex, $number);
 
-        $cartGoods = $this->getExistCartGoods($goodsId, $selectedSkuIndex, $scene);
+        $cartGoods = $this->getExistCartGoods($userId, $goodsId, $selectedSkuIndex, $scene);
         if (!is_null($cartGoods)) {
             $cartGoods->number = $scene == 1 ? ($cartGoods->number + $number) : $number;
         } else {
@@ -44,7 +44,7 @@ class CartGoodsService extends BaseService
             $cartGoods->freight_template_id = $goods->freight_template_id;
             $cartGoods->cover = $goods->cover;
             $cartGoods->name = $goods->name;
-            if (count($skuList) != 0 && $selectedSkuIndex != -1 ) {
+            if (count($skuList) != 0 && $selectedSkuIndex != -1) {
                 $cartGoods->selected_sku_index = $selectedSkuIndex;
                 $cartGoods->selected_sku_name = $skuList[$selectedSkuIndex]->name;
                 $cartGoods->price = $skuList[$selectedSkuIndex]->price;
@@ -121,13 +121,14 @@ class CartGoodsService extends BaseService
         return [$goods, $skuList];
     }
 
-    public function getExistCartGoods($goodsId, $selectedSkuIndex, $scene, $id = 0, $columns = ['*'])
+    public function getExistCartGoods($userId, $goodsId, $selectedSkuIndex, $scene, $id = 0, $columns = ['*'])
     {
         $query = CartGoods::query();
         if ($id != 0) {
             $query = $query->where('id', '!=', $id);
         }
         return $query
+            ->where('user_id', $userId)
             ->where('goods_id', $goodsId)
             ->where('selected_sku_index', $selectedSkuIndex)
             ->where('scene', $scene)
