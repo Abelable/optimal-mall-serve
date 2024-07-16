@@ -87,6 +87,7 @@ Route::prefix('order')->group(function () {
     Route::post('pre_order_info', 'OrderController@preOrderInfo');
     Route::post('submit', 'OrderController@submit');
     Route::post('pay_params', 'OrderController@payParams');
+    Route::get('totals', 'OrderController@orderListTotals');
     Route::get('list', 'OrderController@list');
     Route::get('detail', 'OrderController@detail');
     Route::post('confirm', 'OrderController@confirm');

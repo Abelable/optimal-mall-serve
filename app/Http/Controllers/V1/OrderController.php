@@ -148,6 +148,16 @@ class OrderController extends Controller
         return $this->success($payParams);
     }
 
+    public function orderListTotals()
+    {
+        return $this->success([
+            OrderService::getInstance()->getListTotal($this->userId(), $this->statusList(1)),
+            OrderService::getInstance()->getListTotal($this->userId(), $this->statusList(2)),
+            OrderService::getInstance()->getListTotal($this->userId(), $this->statusList(3)),
+            OrderService::getInstance()->getListTotal($this->userId(), $this->statusList(5)),
+        ]);
+    }
+
     public function list()
     {
         /** @var PageInput $input */
@@ -173,6 +183,9 @@ class OrderController extends Controller
                 $statusList = [OrderEnums::STATUS_CONFIRM, OrderEnums::STATUS_AUTO_CONFIRM];
                 break;
             case 4:
+                $statusList = [OrderEnums::STATUS_FINISHED];
+                break;
+            case 5:
                 $statusList = [OrderEnums::STATUS_REFUND, OrderEnums::STATUS_REFUND_CONFIRM];
                 break;
             default:

@@ -8,7 +8,6 @@ use App\Models\CartGoods;
 use App\Models\FreightTemplate;
 use App\Models\Order;
 use App\Models\OrderGoods;
-use App\Models\Shop;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\Admin\OrderPageInput;
@@ -27,6 +26,11 @@ class OrderService extends BaseService
         return $query
             ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
+    public function getListTotal($userId, $statusList)
+    {
+        return Order::query()->where('user_id', $userId)->whereIn('status', $statusList)->count();
     }
 
     public function getOrderList(OrderPageInput $input, $columns = ['*'])
