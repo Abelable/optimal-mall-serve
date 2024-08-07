@@ -273,7 +273,7 @@ class OrderService extends BaseService
 
     public function confirm($userId, $orderId, $isAuto = false)
     {
-        $order = $this->getOrderById($userId, $orderId);
+        $order = $this->getUserOrderById($userId, $orderId);
         if (is_null($order)) {
             $this->throwBadArgumentValue();
         }
@@ -294,7 +294,7 @@ class OrderService extends BaseService
 
     public function finish($userId, $orderId)
     {
-        $order = $this->getOrderById($userId, $orderId);
+        $order = $this->getUserOrderById($userId, $orderId);
         if (is_null($order)) {
             $this->throwBadArgumentValue();
         }
@@ -310,7 +310,7 @@ class OrderService extends BaseService
 
     public function delete($userId, $orderId)
     {
-        $order = $this->getOrderById($userId, $orderId);
+        $order = $this->getUserOrderById($userId, $orderId);
         if (is_null($order)) {
             $this->throwBadArgumentValue();
         }
@@ -324,7 +324,7 @@ class OrderService extends BaseService
 
     public function refund($userId, $orderId)
     {
-        $order = $this->getOrderById($userId, $orderId);
+        $order = $this->getUserOrderById($userId, $orderId);
         if (is_null($order)) {
             $this->throwBadArgumentValue();
         }
