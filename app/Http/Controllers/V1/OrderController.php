@@ -216,7 +216,8 @@ class OrderController extends Controller
                 'consignee' => $order->consignee,
                 'mobile' => $order->mobile,
                 'address' => $order->address,
-                'orderSn' => $order->order_sn
+                'orderSn' => $order->order_sn,
+                'createdAt' => $order->created_at
             ];
         });
     }
