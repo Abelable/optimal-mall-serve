@@ -28,7 +28,7 @@ class OverTimeCancelOrder implements ShouldQueue
     {
         $this->userId = $userId;
         $this->orderId = $orderId;
-        $this->delay(now()->addMinutes(3));
+        $this->delay(now()->addHours(24));
     }
 
     /**
