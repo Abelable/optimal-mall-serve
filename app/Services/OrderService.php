@@ -97,7 +97,7 @@ class OrderService extends BaseService
         return Order::query()->where('order_sn', $orderSn)->exists();
     }
 
-    public function createOrder($userId, $cartGoodsList, $freightTemplateList, Address $address, Shop $shopInfo = null)
+    public function createOrder($userId, $cartGoodsList, $freightTemplateList, Address $address)
     {
         $totalPrice = 0;
         $totalFreightPrice = 0;
@@ -153,11 +153,8 @@ class OrderService extends BaseService
         $order->refund_amount = $order->payment_amount;
         $order->save();
 
-        // 生成订单商品快照
-        OrderGoodsService::getInstance()->createList($cartGoodsList, $order->id);
-
         // 设置订单支付超时任务
-         dispatch(new OverTimeCancelOrder($userId, $order->id));
+        dispatch(new OverTimeCancelOrder($userId, $order->id));
 
         return $order->id;
     }
@@ -232,7 +229,7 @@ class OrderService extends BaseService
 
     public function cancel($userId, $orderId, $role = 'user')
     {
-        $order = $this->getOrderById($userId, $orderId);
+        $order = $this->getUserOrderById($userId, $orderId);
         if (is_null($order)) {
             $this->throwBadArgumentValue();
         }

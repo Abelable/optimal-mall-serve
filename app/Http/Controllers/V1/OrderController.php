@@ -131,7 +131,10 @@ class OrderController extends Controller
             // 4.生成订单
             $orderId = OrderService::getInstance()->createOrder($this->userId(), $cartGoodsList, $freightTemplateList, $address);
 
-            // 4.清空购物车
+            // 5.生成订单商品快照
+            OrderGoodsService::getInstance()->createList($cartGoodsList, $orderId);
+
+            // 6.清空购物车
             CartGoodsService::getInstance()->deleteCartGoodsList($this->userId(), $input->cartGoodsIds);
 
             return $orderId;
