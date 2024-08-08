@@ -225,10 +225,10 @@ class OrderService extends BaseService
         });
     }
 
-    public function systemCancel($userId, array $orderIds)
+    public function systemCancel($userId, $orderId)
     {
-        return DB::transaction(function () use ($userId, $orderIds) {
-            return $this->cancel($userId, $orderIds, 'system');
+        return DB::transaction(function () use ($userId, $orderId) {
+            return $this->cancel($userId, [$orderId], 'system');
         });
     }
 
