@@ -63,6 +63,11 @@ class OrderService extends BaseService
         return Order::query()->where('user_id', $userId)->find($id, $columns);
     }
 
+    public function getUserOrderList($userId, $ids, $columns = ['*'])
+    {
+        return Order::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
+    }
+
     public function getUnpaidList(int $userId, $orderId, $columns = ['*'])
     {
         return Order::query()
@@ -216,46 +221,50 @@ class OrderService extends BaseService
     public function userCancel($userId, $orderId)
     {
         return DB::transaction(function () use ($userId, $orderId) {
-            return $this->cancel($userId, $orderId);
+            return $this->cancel($userId, [$orderId]);
         });
     }
 
-    public function systemCancel($userId, $orderId)
+    public function systemCancel($userId, array $orderIds)
     {
-        return DB::transaction(function () use ($userId, $orderId) {
-            return $this->cancel($userId, $orderId, 'system');
+        return DB::transaction(function () use ($userId, $orderIds) {
+            return $this->cancel($userId, $orderIds, 'system');
         });
     }
 
-    public function cancel($userId, $orderId, $role = 'user')
+    public function cancel($userId, array $orderIds, $role = 'user')
     {
-        $order = $this->getUserOrderById($userId, $orderId);
-        if (is_null($order)) {
+        $orderList = $this->getUserOrderList($userId, $orderIds);
+
+        if (count($orderList) == 0) {
             $this->throwBadArgumentValue();
         }
-        if ($order->status != OrderEnums::STATUS_CREATE) {
-            $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能取消');
-        }
-        switch ($role) {
-            case 'system':
-                $order->status = OrderEnums::STATUS_AUTO_CANCEL;
-                break;
-            case 'admin':
-                $order->status = OrderEnums::STATUS_ADMIN_CANCEL;
-                break;
-            case 'user':
-                $order->status = OrderEnums::STATUS_CANCEL;
-                break;
-        }
-        $order->finish_time = now()->toDateTimeString();
-        if ($order->cas() == 0) {
-            $this->throwUpdateFail();
-        }
 
-        // 返还库存
-        $this->returnStock($order->id);
+        return $orderList->map(function (Order $order) use ($role) {
+            if ($order->status != OrderEnums::STATUS_CREATE) {
+                $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能取消');
+            }
+            switch ($role) {
+                case 'system':
+                    $order->status = OrderEnums::STATUS_AUTO_CANCEL;
+                    break;
+                case 'admin':
+                    $order->status = OrderEnums::STATUS_ADMIN_CANCEL;
+                    break;
+                case 'user':
+                    $order->status = OrderEnums::STATUS_CANCEL;
+                    break;
+            }
+            $order->finish_time = now()->toDateTimeString();
+            if ($order->cas() == 0) {
+                $this->throwUpdateFail();
+            }
 
-        return $order;
+            // 返还库存
+            $this->returnStock($order->id);
+
+            return $order;
+        });
     }
 
     public function returnStock($orderId)
@@ -308,18 +317,19 @@ class OrderService extends BaseService
         return $order;
     }
 
-    public function delete($userId, $orderId)
+    public function delete($userId, array $orderIds)
     {
-        $order = $this->getUserOrderById($userId, $orderId);
-        if (is_null($order)) {
+        $orderList = $this->getUserOrderList($userId, $orderIds);
+        if (count($orderList) == 0) {
             $this->throwBadArgumentValue();
         }
-        if (!$order->canDeleteHandle()) {
-            $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能删除');
+        foreach ($orderList as $order) {
+            if (!$order->canDeleteHandle()) {
+                $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能删除');
+            }
+            OrderGoodsService::getInstance()->delete($order->id);
+            $order->delete();
         }
-
-        OrderGoodsService::getInstance()->delete($order->id);
-        $order->delete();
     }
 
     public function refund($userId, $orderId)

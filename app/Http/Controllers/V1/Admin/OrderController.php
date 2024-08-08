@@ -36,8 +36,8 @@ class OrderController extends Controller
 
     public function cancel()
     {
-        $id = $this->verifyRequiredId('id');
-        OrderService::getInstance()->systemCancel($this->userId(), $id);
+        $ids = $this->verifyArrayNotEmpty('ids', []);
+        OrderService::getInstance()->systemCancel($this->userId(), $ids);
         return $this->success();
     }
 
@@ -50,9 +50,9 @@ class OrderController extends Controller
 
     public function delete()
     {
-        $id = $this->verifyRequiredId('id');
-        DB::transaction(function () use ($id) {
-            OrderService::getInstance()->delete($this->userId(), $id);
+        $ids = $this->verifyArrayNotEmpty('ids', []);
+        DB::transaction(function () use ($ids) {
+            OrderService::getInstance()->delete($this->userId(), $ids);
         });
         return $this->success();
     }
