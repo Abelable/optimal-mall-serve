@@ -315,12 +315,8 @@ class OrderService extends BaseService
         return $order;
     }
 
-    public function delete($userId, array $orderIds)
+    public function delete($orderList)
     {
-        $orderList = $this->getUserOrderList($userId, $orderIds);
-        if (count($orderList) == 0) {
-            $this->throwBadArgumentValue();
-        }
         foreach ($orderList as $order) {
             if (!$order->canDeleteHandle()) {
                 $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能删除');

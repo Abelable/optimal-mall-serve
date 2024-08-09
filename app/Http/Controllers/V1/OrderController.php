@@ -239,8 +239,12 @@ class OrderController extends Controller
     public function delete()
     {
         $ids = $this->verifyArrayNotEmpty('ids', []);
-        DB::transaction(function () use ($ids) {
-            OrderService::getInstance()->delete($this->userId(), $ids);
+        $orderList = OrderService::getInstance()->getUserOrderList($this->userId(), $ids);
+        if (count($orderList) == 0) {
+            return $this->fail(CodeResponse::PARAM_VALUE_ILLEGAL, '订单不存在');
+        }
+        DB::transaction(function () use ($orderList) {
+            OrderService::getInstance()->delete($orderList);
         });
         return $this->success();
     }

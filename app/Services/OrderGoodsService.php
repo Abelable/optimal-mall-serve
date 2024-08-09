@@ -38,4 +38,9 @@ class OrderGoodsService extends BaseService
     {
         return OrderGoods::query()->where('order_id', $orderId)->delete();
     }
+
+    public function batchDelete(array $orderIds)
+    {
+        return OrderGoods::query()->whereIn('order_id', $orderIds)->delete();
+    }
 }
