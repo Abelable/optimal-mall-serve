@@ -53,25 +53,6 @@ class OrderService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getOrderById($id, $columns = ['*'])
-    {
-        return Order::query()->find($id, $columns);
-    }
-    public function getOrderListByIds(array $ids, $columns = ['*'])
-    {
-        return Order::query()->whereIn('id', $ids)->get($columns);
-    }
-
-    public function getUserOrderById($userId, $id, $columns = ['*'])
-    {
-        return Order::query()->where('user_id', $userId)->find($id, $columns);
-    }
-
-    public function getUserOrderList($userId, $ids, $columns = ['*'])
-    {
-        return Order::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
-    }
-
     public function getUnpaidList(int $userId, $orderId, $columns = ['*'])
     {
         return Order::query()
@@ -369,5 +350,24 @@ class OrderService extends BaseService
         // todo 开启自动退款定时任务
 
         return $order;
+    }
+
+    public function getOrderById($id, $columns = ['*'])
+    {
+        return Order::query()->find($id, $columns);
+    }
+    public function getOrderListByIds(array $ids, $columns = ['*'])
+    {
+        return Order::query()->whereIn('id', $ids)->get($columns);
+    }
+
+    public function getUserOrderById($userId, $id, $columns = ['*'])
+    {
+        return Order::query()->where('user_id', $userId)->find($id, $columns);
+    }
+
+    public function getUserOrderList($userId, $ids, $columns = ['*'])
+    {
+        return Order::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
     }
 }
