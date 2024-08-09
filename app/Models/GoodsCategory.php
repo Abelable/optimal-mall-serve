@@ -6,7 +6,9 @@ namespace App\Models;
  * App\Models\GoodsCategory
  *
  * @property int $id
+ * @property int $status 状态: 1-显示,2-隐藏
  * @property string $name 商品分类名称
+ * @property int $sort 排序
  * @property int $min_leader_commission_rate 最小团队长佣金比例
  * @property int $max_leader_commission_rate 最大团队长佣金比例
  * @property int $min_share_commission_rate 最小分享佣金比例
@@ -26,6 +28,8 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsCategory whereMinLeaderCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsCategory whereMinShareCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsCategory whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GoodsCategory whereSort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GoodsCategory whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsCategory whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|GoodsCategory withTrashed()
  * @method static \Illuminate\Database\Query\Builder|GoodsCategory withoutTrashed()
