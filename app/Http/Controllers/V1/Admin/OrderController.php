@@ -37,7 +37,10 @@ class OrderController extends Controller
     public function cancel()
     {
         $ids = $this->verifyArrayNotEmpty('ids', []);
-        OrderService::getInstance()->systemCancel($this->userId(), $ids);
+        OrderService::getInstance()->adminCancel($ids);
+
+        // todo: 管理员操组记录
+
         return $this->success();
     }
 

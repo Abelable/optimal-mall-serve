@@ -57,6 +57,10 @@ class OrderService extends BaseService
     {
         return Order::query()->find($id, $columns);
     }
+    public function getOrderListByIds(array $ids, $columns = ['*'])
+    {
+        return Order::query()->whereIn('id', $ids)->get($columns);
+    }
 
     public function getUserOrderById($userId, $id, $columns = ['*'])
     {
@@ -221,25 +225,38 @@ class OrderService extends BaseService
     public function userCancel($userId, $orderId)
     {
         return DB::transaction(function () use ($userId, $orderId) {
-            return $this->cancel($userId, [$orderId]);
+            $orderList = $this->getUserOrderList($userId, [$orderId]);
+            if (count($orderList) == 0) {
+                $this->throwBadArgumentValue();
+            }
+            return $this->cancel($orderList);
         });
     }
 
     public function systemCancel($userId, $orderId)
     {
         return DB::transaction(function () use ($userId, $orderId) {
-            return $this->cancel($userId, [$orderId], 'system');
+            $orderList = $this->getUserOrderList($userId, [$orderId]);
+            if (count($orderList) == 0) {
+                $this->throwBadArgumentValue();
+            }
+            return $this->cancel($orderList, 'system');
         });
     }
 
-    public function cancel($userId, array $orderIds, $role = 'user')
+    public function adminCancel($orderIds)
     {
-        $orderList = $this->getUserOrderList($userId, $orderIds);
+        return DB::transaction(function () use ($orderIds) {
+            $orderList = $this->getOrderListByIds($orderIds);
+            if (count($orderList) == 0) {
+                $this->throwBadArgumentValue();
+            }
+            return $this->cancel($orderList, 'admin');
+        });
+    }
 
-        if (count($orderList) == 0) {
-            $this->throwBadArgumentValue();
-        }
-
+    public function cancel($orderList, $role = 'user')
+    {
         return $orderList->map(function (Order $order) use ($role) {
             if ($order->status != OrderEnums::STATUS_CREATE) {
                 $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能取消');
