@@ -17,6 +17,7 @@ class CreateRuralRegionsTable extends Migration
             $table->id();
             $table->string('name')->comment('地区名称');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
