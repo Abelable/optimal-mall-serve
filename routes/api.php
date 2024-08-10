@@ -175,6 +175,8 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::get('detail', 'RuralRegionController@detail');
             Route::post('add', 'RuralRegionController@add');
             Route::post('edit', 'RuralRegionController@edit');
+            Route::post('edit_sort', 'RuralRegionController@editSort');
+            Route::post('edit_status', 'RuralRegionController@editStatus');
             Route::post('delete', 'RuralRegionController@delete');
             Route::get('options', 'RuralRegionController@options');
         });

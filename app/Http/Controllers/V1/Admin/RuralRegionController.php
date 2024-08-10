@@ -67,6 +67,36 @@ class RuralRegionController extends Controller
         return $this->success();
     }
 
+    public function editSort() {
+        $id = $this->verifyRequiredId('id');
+        $sort = $this->verifyRequiredInteger('sort');
+
+        $region = RuralRegionService::getInstance()->getRegionById($id);
+        if (is_null($region)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前地区不存在');
+        }
+
+        $region->sort = $sort;
+        $region->save();
+
+        return $this->success();
+    }
+
+    public function editStatus() {
+        $id = $this->verifyRequiredId('id');
+        $status = $this->verifyRequiredInteger('status');
+
+        $region = RuralRegionService::getInstance()->getRegionById($id);
+        if (is_null($region)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前地区不存在');
+        }
+
+        $region->status = $status;
+        $region->save();
+
+        return $this->success();
+    }
+
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
