@@ -50,6 +50,15 @@ class GoodsService extends BaseService
         return $query->paginate($input->limit,'page', $input->page);
     }
 
+    public function getGoodsOptions($keywords, $columns = ['*'])
+    {
+        if (!empty($keywords)) {
+            $query = Goods::search($keywords)->where('status', 1);
+        } else {
+            $query = Goods::query()->where('status', 1);
+        }
+        return $query->get($columns);
+    }
 
     public function getTopListByCategoryIds(array $goodsIds, array $categoryIds, $limit, $columns=['*'])
     {

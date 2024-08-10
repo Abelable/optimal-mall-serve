@@ -239,6 +239,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('delete', 'GoodsController@delete');
         Route::post('add', 'GoodsController@add');
         Route::post('edit', 'GoodsController@edit');
+        Route::get('options', 'GoodsController@options');
     });
 
     Route::prefix('order')->group(function () {

@@ -99,4 +99,11 @@ class GoodsController extends Controller
 
         return $this->success();
     }
+
+    public function options()
+    {
+        $name = $this->verifyString('name');
+        $goodsOptions = GoodsService::getInstance()->getGoodsOptions($name, ['id', 'cover', 'name']);
+        return $this->success($goodsOptions);
+    }
 }
