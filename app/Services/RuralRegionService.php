@@ -24,6 +24,6 @@ class RuralRegionService extends BaseService
 
     public function getRegionOptions($columns = ['*'])
     {
-        return RuralRegion::query()->get($columns);
+        return RuralRegion::query()->where('status', 1)->orderBy('sort', 'desc')->get($columns);
     }
 }
