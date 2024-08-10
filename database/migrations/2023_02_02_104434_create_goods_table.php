@@ -35,6 +35,7 @@ class CreateGoodsTable extends Migration
             $table->longText('spec_list')->comment('商品规格列表');
             $table->longText('sku_list')->comment('商品sku');
             $table->integer('sales_volume')->default(0)->comment('商品销量');
+            $table->integer('avg_score')->default(0)->comment('综合评分');
             $table->timestamps();
             $table->softDeletes();
         });

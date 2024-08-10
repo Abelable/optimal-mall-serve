@@ -28,6 +28,7 @@ use Laravel\Scout\Searchable;
  * @property string $spec_list 商品规格列表
  * @property string $sku_list 商品sku
  * @property int $sales_volume 商品销量
+ * @property int $avg_score 综合评分
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -35,6 +36,7 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|Goods newQuery()
  * @method static \Illuminate\Database\Query\Builder|Goods onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Goods query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Goods whereAvgScore($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCover($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCreatedAt($value)
