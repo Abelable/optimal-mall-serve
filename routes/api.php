@@ -154,6 +154,19 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('delete', 'MallBannerController@delete');
     });
 
+    Route::prefix('rural')->group(function () {
+        Route::prefix('banner')->group(function () {
+            Route::post('list', 'RuralBannerController@list');
+            Route::get('detail', 'RuralBannerController@detail');
+            Route::post('add', 'RuralBannerController@add');
+            Route::post('edit', 'RuralBannerController@edit');
+            Route::post('up', 'RuralBannerController@up');
+            Route::post('down', 'RuralBannerController@down');
+            Route::post('delete', 'RuralBannerController@delete');
+        });
+    });
+
+
     Route::prefix('express')->group(function () {
         Route::post('list', 'ExpressController@list');
         Route::get('detail', 'ExpressController@detail');
