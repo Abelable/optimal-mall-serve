@@ -52,10 +52,9 @@ class GoodsService extends BaseService
 
     public function getGoodsOptions($keywords, $columns = ['*'])
     {
+        $query = Goods::query()->where('status', 1);
         if (!empty($keywords)) {
-            $query = Goods::search($keywords)->where('status', 1);
-        } else {
-            $query = Goods::query()->where('status', 1);
+            $query = $query->where('name', 'like', "%$keywords%");
         }
         return $query->get($columns);
     }
