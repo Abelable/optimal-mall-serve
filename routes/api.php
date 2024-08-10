@@ -102,6 +102,7 @@ Route::prefix('mall')->group(function () {
 
 Route::prefix('rural')->group(function () {
     Route::get('banner_list', 'RuralController@bannerList');
+    Route::get('region_options', 'RuralController@regionOptions');
 });
 
 /*
@@ -168,8 +169,16 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('down', 'RuralBannerController@down');
             Route::post('delete', 'RuralBannerController@delete');
         });
-    });
 
+        Route::prefix('region')->group(function () {
+            Route::post('list', 'RuralRegionController@list');
+            Route::get('detail', 'RuralRegionController@detail');
+            Route::post('add', 'RuralRegionController@add');
+            Route::post('edit', 'RuralRegionController@edit');
+            Route::post('delete', 'RuralRegionController@delete');
+            Route::get('options', 'RuralRegionController@options');
+        });
+    });
 
     Route::prefix('express')->group(function () {
         Route::post('list', 'ExpressController@list');
