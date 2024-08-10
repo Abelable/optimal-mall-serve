@@ -25,6 +25,7 @@ class GoodsService extends BaseService
         } else {
             $query = $query
                 ->orderBy('sales_volume', 'desc')
+                ->orderBy('avg_score', 'desc')
                 ->orderBy('share_commission_rate', 'desc')
                 ->orderBy('created_at', 'desc');
         }
