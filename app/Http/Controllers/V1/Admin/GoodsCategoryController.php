@@ -54,7 +54,7 @@ class GoodsCategoryController extends Controller
 
     public function edit()
     {
-        $id = $this->verifyId('id');
+        $id = $this->verifyRequiredId('id');
         /** @var GoodsCategoryInput $input */
         $input = GoodsCategoryInput::new();
 
@@ -68,6 +68,36 @@ class GoodsCategoryController extends Controller
         $category->max_leader_commission_rate = $input->maxLeaderCommissionRate;
         $category->min_share_commission_rate = $input->minShareCommissionRate;
         $category->max_share_commission_rate = $input->maxShareCommissionRate;
+        $category->save();
+
+        return $this->success();
+    }
+
+    public function editSort() {
+        $id = $this->verifyRequiredId('id');
+        $sort = $this->verifyRequiredInteger('sort');
+
+        $category = GoodsCategoryService::getInstance()->getCategoryById($id);
+        if (is_null($category)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前商品分类不存在');
+        }
+
+        $category->sort = $sort;
+        $category->save();
+
+        return $this->success();
+    }
+
+    public function editStatus() {
+        $id = $this->verifyRequiredId('id');
+        $status = $this->verifyRequiredInteger('status');
+
+        $category = GoodsCategoryService::getInstance()->getCategoryById($id);
+        if (is_null($category)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前商品分类不存在');
+        }
+
+        $category->status = $status;
         $category->save();
 
         return $this->success();

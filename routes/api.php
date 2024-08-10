@@ -187,6 +187,8 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::get('detail', 'GoodsCategoryController@detail');
             Route::post('add', 'GoodsCategoryController@add');
             Route::post('edit', 'GoodsCategoryController@edit');
+            Route::post('edit_sort', 'GoodsCategoryController@editSort');
+            Route::post('edit_status', 'GoodsCategoryController@editStatus');
             Route::post('delete', 'GoodsCategoryController@delete');
             Route::get('options', 'GoodsCategoryController@options');
             Route::get('filter_options', 'GoodsCategoryController@filterOptions');
