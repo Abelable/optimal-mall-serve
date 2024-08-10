@@ -100,6 +100,10 @@ Route::prefix('mall')->group(function () {
     Route::get('banner_list', 'MallController@bannerList');
 });
 
+Route::prefix('rural')->group(function () {
+    Route::get('banner_list', 'RuralController@bannerList');
+});
+
 /*
 |--------------------------------------------------------------------------
 | 管理后台接口
