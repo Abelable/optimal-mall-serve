@@ -43,6 +43,7 @@ class GoodsService extends BaseService
         } else {
             $query = $query
                 ->orderBy('sales_volume', 'desc')
+                ->orderBy('avg_score', 'desc')
                 ->orderBy('share_commission_rate', 'desc')
                 ->orderBy('created_at', 'desc');
         }
@@ -62,6 +63,7 @@ class GoodsService extends BaseService
         }
         return $query
                 ->orderBy('sales_volume', 'desc')
+                ->orderBy('avg_score', 'desc')
                 ->orderBy('share_commission_rate', 'desc')
                 ->orderBy('created_at', 'desc')
                 ->take($limit)
@@ -80,7 +82,13 @@ class GoodsService extends BaseService
 
     public function getGoodsListByIds($ids, $columns=['*'])
     {
-        return Goods::query()->whereIn('id', $ids)->get($columns);
+        return Goods::query()
+            ->whereIn('id', $ids)
+            ->orderBy('sales_volume', 'desc')
+            ->orderBy('avg_score', 'desc')
+            ->orderBy('share_commission_rate', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get($columns);
     }
 
     public function getGoodsList(GoodsListInput $input, $columns=['*'])

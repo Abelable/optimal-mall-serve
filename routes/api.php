@@ -103,6 +103,7 @@ Route::prefix('mall')->group(function () {
 Route::prefix('rural')->group(function () {
     Route::get('banner_list', 'RuralController@bannerList');
     Route::get('region_options', 'RuralController@regionOptions');
+    Route::get('goods_list', 'RuralController@goodsList');
 });
 
 /*
@@ -179,6 +180,12 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('edit_status', 'RuralRegionController@editStatus');
             Route::post('delete', 'RuralRegionController@delete');
             Route::get('options', 'RuralRegionController@options');
+        });
+
+        Route::prefix('goods')->group(function () {
+            Route::post('list', 'RuralGoodsController@list');
+            Route::post('add', 'RuralGoodsController@add');
+            Route::post('delete', 'RuralGoodsController@delete');
         });
     });
 
