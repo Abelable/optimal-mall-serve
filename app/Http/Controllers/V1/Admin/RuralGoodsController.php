@@ -18,7 +18,7 @@ class RuralGoodsController extends Controller
     {
         /** @var RuralGoodsPageInput $input */
         $input = RuralGoodsPageInput::new();
-        $list = RuralGoodsService::getInstance()->getGoodsList($input);
+        $list = RuralGoodsService::getInstance()->getGoodsPage($input);
         return $this->successPaginate($list);
     }
 
