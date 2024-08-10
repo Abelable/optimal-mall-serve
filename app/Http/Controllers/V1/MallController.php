@@ -5,8 +5,6 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Services\MallBannerService;
 use App\Services\MallService;
-use App\Services\ShopService;
-use App\Utils\Inputs\BannerPageInput;
 use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\DB;
 
