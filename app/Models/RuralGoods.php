@@ -8,8 +8,8 @@ namespace App\Models;
  * @property int $id
  * @property int $region_id 地区id
  * @property int $goods_id 商品id
- * @property int $goods_cover 商品图片
- * @property int $goods_name 商品名称
+ * @property string $goods_cover 商品图片
+ * @property string $goods_name 商品名称
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at

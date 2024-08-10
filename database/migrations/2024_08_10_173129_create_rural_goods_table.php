@@ -17,8 +17,8 @@ class CreateRuralGoodsTable extends Migration
             $table->id();
             $table->integer('region_id')->comment('地区id');
             $table->integer('goods_id')->comment('商品id');
-            $table->integer('goods_cover')->comment('商品图片');
-            $table->integer('goods_name')->comment('商品名称');
+            $table->string('goods_cover')->comment('商品图片');
+            $table->string('goods_name')->comment('商品名称');
             $table->timestamps();
             $table->softDeletes();
         });
