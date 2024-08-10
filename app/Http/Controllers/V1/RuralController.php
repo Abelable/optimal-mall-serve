@@ -29,6 +29,9 @@ class RuralController extends Controller
         $regionId = $this->verifyRequiredId('regionId');
         $goodsIds = RuralGoodsService::getInstance()->getGoodsList($regionId, ['goods_id'])->pluck('goods_id')->toArray();
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
+
+        // todo 商品列表存缓存
+
         return $this->success($goodsList);
     }
 }
