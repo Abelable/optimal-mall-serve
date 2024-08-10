@@ -102,8 +102,8 @@ class GoodsController extends Controller
 
     public function options()
     {
-        $name = $this->verifyString('name');
-        $goodsOptions = GoodsService::getInstance()->getGoodsOptions($name, ['id', 'cover', 'name']);
+        $keywords = $this->verifyString('keywords');
+        $goodsOptions = GoodsService::getInstance()->getGoodsOptions($keywords, ['id', 'cover', 'name']);
         return $this->success($goodsOptions);
     }
 }
