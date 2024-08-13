@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\IntegrityGoods;
+use App\Models\TodayGoods;
 use App\Services\GoodsService;
 use App\Services\TodayGoodsService;
 use App\Utils\CodeResponse;
@@ -35,7 +35,7 @@ class TodayGoodsController extends Controller
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
 
         foreach ($goodsList as $goods) {
-            $todayGoods = IntegrityGoods::new();
+            $todayGoods = TodayGoods::new();
             $todayGoods->goods_id = $goods->id;
             $todayGoods->goods_cover = $goods->cover;
             $todayGoods->goods_name = $goods->name;

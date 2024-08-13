@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\IntegrityGoods;
+use App\Models\AdvanceGoods;
 use App\Services\GoodsService;
 use App\Services\AdvanceGoodsService;
 use App\Utils\CodeResponse;
@@ -35,7 +35,7 @@ class AdvanceGoodsController extends Controller
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
 
         foreach ($goodsList as $goods) {
-            $advanceGoods = IntegrityGoods::new();
+            $advanceGoods = AdvanceGoods::new();
             $advanceGoods->goods_id = $goods->id;
             $advanceGoods->goods_cover = $goods->cover;
             $advanceGoods->goods_name = $goods->name;
