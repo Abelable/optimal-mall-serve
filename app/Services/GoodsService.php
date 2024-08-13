@@ -193,7 +193,7 @@ class GoodsService extends BaseService
             $goods->introduction = $input->introduction;
         }
         $goods->freight_template_id = $input->freightTemplateId;
-        $goods->category_ids = json_decode($input->categoryIds);
+        $goods->category_ids = json_encode($input->categoryIds);
         $goods->merchant_id = $input->merchantId;
         $goods->price = $input->price;
         $goods->market_price = $input->marketPrice ?: 0;
