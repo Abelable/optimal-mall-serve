@@ -33,7 +33,7 @@ class GoodsInput extends BaseInput
             'name' => 'required|string',
             'introduction' => 'string',
             'freightTemplateId' => 'required|integer|digits_between:1,20',
-            'categoryIds' => 'required|array',
+            'categoryIds' => 'required|string',
             'merchantId' => 'required|integer|digits_between:1,20',
             'price' => 'required|numeric',
             'marketPrice' => 'numeric',

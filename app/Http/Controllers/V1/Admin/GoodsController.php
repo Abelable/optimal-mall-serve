@@ -19,11 +19,7 @@ class GoodsController extends Controller
         $input = GoodsListInput::new();
         $columns = ['id', 'cover', 'name', 'status', 'merchant_id', 'category_ids', 'price', 'sales_volume', 'stock', 'leader_commission_rate', 'share_commission_rate', 'created_at', 'updated_at'];
         $page = GoodsService::getInstance()->getGoodsList($input, $columns);
-        $list = collect($page->items())->map(function (Goods $goods) {
-            $goods->category_ids = json_decode($goods->category_ids);
-            return $goods;
-        });
-        return $this->success($this->paginate($page, $list));
+        return $this->successPaginate($page);
     }
 
     public function detail()
@@ -33,7 +29,7 @@ class GoodsController extends Controller
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
-        $goods->category_ids = json_decode($goods->category_ids);
+        $goods->category_ids = $goods->category_ids;
         $goods->image_list = json_decode($goods->image_list);
         $goods->detail_image_list = json_decode($goods->detail_image_list);
         $goods->sku_list = json_decode($goods->sku_list);
