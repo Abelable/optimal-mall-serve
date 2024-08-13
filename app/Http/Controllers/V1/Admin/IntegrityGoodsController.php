@@ -7,7 +7,7 @@ use App\Models\IntegrityGoods;
 use App\Services\GoodsService;
 use App\Services\IntegrityGoodsService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\IntegrityGoodsInput;
+use App\Utils\Inputs\GoodsListInput;
 use App\Utils\Inputs\PageInput;
 
 class IntegrityGoodsController extends Controller
@@ -24,22 +24,22 @@ class IntegrityGoodsController extends Controller
 
     public function add()
     {
-        /** @var IntegrityGoodsInput $input */
-        $input = IntegrityGoodsInput::new();
+        /** @var GoodsListInput $input */
+        $input = GoodsListInput::new();
 
-        $ruralGoodsList = IntegrityGoodsService::getInstance()->getFilterGoodsList($input);
-        if (count($ruralGoodsList) != 0) {
+        $integrityGoodsList = IntegrityGoodsService::getInstance()->getFilterGoodsList($input);
+        if (count($integrityGoodsList) != 0) {
             return $this->fail(CodeResponse::DATA_EXISTED, '当前地区已添加相同商品');
         }
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
 
         foreach ($goodsList as $goods) {
-            $ruralGoods = IntegrityGoods::new();
-            $ruralGoods->goods_id = $goods->id;
-            $ruralGoods->goods_cover = $goods->cover;
-            $ruralGoods->goods_name = $goods->name;
-            $ruralGoods->save();
+            $integrityGoods = IntegrityGoods::new();
+            $integrityGoods->goods_id = $goods->id;
+            $integrityGoods->goods_cover = $goods->cover;
+            $integrityGoods->goods_name = $goods->name;
+            $integrityGoods->save();
         }
 
         return $this->success();

@@ -3,19 +3,42 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\AdvanceGoodsService;
+use App\Services\GoodsService;
 use App\Services\MallBannerService;
 use App\Services\MallService;
+use App\Services\TodayGoodsService;
 use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\DB;
 
 class MallController extends Controller
 {
-    protected $except = ['bannerList', 'list'];
+    protected $only = [];
 
     public function bannerList()
     {
         $list = MallBannerService::getInstance()->getBannerList();
         return $this->success($list);
+    }
+
+    public function todayGoodsList()
+    {
+        $goodsIds = TodayGoodsService::getInstance()->getGoodsList(['goods_id'])->pluck('goods_id')->toArray();
+        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
+
+        // todo 商品列表存缓存
+
+        return $this->success($goodsList);
+    }
+
+    public function advanceGoodsList()
+    {
+        $goodsIds = AdvanceGoodsService::getInstance()->getGoodsList(['goods_id'])->pluck('goods_id')->toArray();
+        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
+
+        // todo 商品列表存缓存
+
+        return $this->success($goodsList);
     }
 
     public function list()

@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\RuralGoods;
-use App\Utils\Inputs\RuralGoodsInput;
+use App\Utils\Inputs\GoodsListInput;
 use App\Utils\Inputs\RuralGoodsPageInput;
 
 class RuralGoodsService extends BaseService
@@ -22,7 +22,7 @@ class RuralGoodsService extends BaseService
         return RuralGoods::query()->where('region_id', $regionId)->get($columns);
     }
 
-    public function getFilterGoodsList(RuralGoodsInput $input, $columns = ['*'])
+    public function getFilterGoodsList(GoodsListInput $input, $columns = ['*'])
     {
         return RuralGoods::query()
             ->where('region_id', $input->regionId)

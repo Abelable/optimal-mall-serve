@@ -3,22 +3,22 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\RuralGoods;
+use App\Models\IntegrityGoods;
 use App\Services\GoodsService;
-use App\Services\RuralGoodsService;
+use App\Services\AdvanceGoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsListInput;
-use App\Utils\Inputs\RuralGoodsPageInput;
+use App\Utils\Inputs\PageInput;
 
-class RuralGoodsController extends Controller
+class AdvanceGoodsController extends Controller
 {
     protected $guard = 'Admin';
 
     public function list()
     {
-        /** @var RuralGoodsPageInput $input */
-        $input = RuralGoodsPageInput::new();
-        $list = RuralGoodsService::getInstance()->getGoodsPage($input);
+        /** @var PageInput $input */
+        $input = PageInput::new();
+        $list = AdvanceGoodsService::getInstance()->getGoodsPage($input);
         return $this->successPaginate($list);
     }
 
@@ -27,20 +27,19 @@ class RuralGoodsController extends Controller
         /** @var GoodsListInput $input */
         $input = GoodsListInput::new();
 
-        $ruralGoodsList = RuralGoodsService::getInstance()->getFilterGoodsList($input);
-        if (count($ruralGoodsList) != 0) {
+        $advanceGoodsList = AdvanceGoodsService::getInstance()->getFilterGoodsList($input);
+        if (count($advanceGoodsList) != 0) {
             return $this->fail(CodeResponse::DATA_EXISTED, '当前地区已添加相同商品');
         }
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
 
         foreach ($goodsList as $goods) {
-            $ruralGoods = RuralGoods::new();
-            $ruralGoods->region_id = $input->regionId;
-            $ruralGoods->goods_id = $goods->id;
-            $ruralGoods->goods_cover = $goods->cover;
-            $ruralGoods->goods_name = $goods->name;
-            $ruralGoods->save();
+            $advanceGoods = IntegrityGoods::new();
+            $advanceGoods->goods_id = $goods->id;
+            $advanceGoods->goods_cover = $goods->cover;
+            $advanceGoods->goods_name = $goods->name;
+            $advanceGoods->save();
         }
 
         return $this->success();
@@ -49,7 +48,7 @@ class RuralGoodsController extends Controller
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
-        $goods = RuralGoodsService::getInstance()->getGoodsById($id);
+        $goods = AdvanceGoodsService::getInstance()->getGoodsById($id);
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }

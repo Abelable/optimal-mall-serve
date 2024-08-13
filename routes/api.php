@@ -98,6 +98,8 @@ Route::prefix('order')->group(function () {
 
 Route::prefix('mall')->group(function () {
     Route::get('banner_list', 'MallController@bannerList');
+    Route::get('today_goods_list', 'MallController@goodsList');
+    Route::get('advance_goods_list', 'MallController@goodsList');
 });
 
 Route::prefix('rural')->group(function () {
@@ -155,15 +157,30 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('delete', 'TeamLeaderController@delete');
     });
 
-    Route::prefix('mall_banner')->group(function () {
-        Route::post('list', 'MallBannerController@list');
-        Route::get('detail', 'MallBannerController@detail');
-        Route::post('add', 'MallBannerController@add');
-        Route::post('edit', 'MallBannerController@edit');
-        Route::post('up', 'MallBannerController@up');
-        Route::post('down', 'MallBannerController@down');
-        Route::post('delete', 'MallBannerController@delete');
+    Route::prefix('mall')->group(function () {
+        Route::prefix('banner')->group(function () {
+            Route::post('list', 'MallBannerController@list');
+            Route::get('detail', 'MallBannerController@detail');
+            Route::post('add', 'MallBannerController@add');
+            Route::post('edit', 'MallBannerController@edit');
+            Route::post('up', 'MallBannerController@up');
+            Route::post('down', 'MallBannerController@down');
+            Route::post('delete', 'MallBannerController@delete');
+        });
+
+        Route::prefix('today_goods')->group(function () {
+            Route::post('list', 'TodayGoodsController@list');
+            Route::post('add', 'TodayGoodsController@add');
+            Route::post('delete', 'TodayGoodsController@delete');
+        });
+
+        Route::prefix('advance_goods')->group(function () {
+            Route::post('list', 'AdvanceGoodsController@list');
+            Route::post('add', 'AdvanceGoodsController@add');
+            Route::post('delete', 'AdvanceGoodsController@delete');
+        });
     });
+
 
     Route::prefix('rural')->group(function () {
         Route::prefix('banner')->group(function () {
