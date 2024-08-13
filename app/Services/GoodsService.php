@@ -18,7 +18,7 @@ class GoodsService extends BaseService
             $query = $query->orderByRaw(DB::raw("FIELD(id, " . implode(',', $input->goodsIds) . ") DESC"));
         }
         if (!empty($input->categoryId)) {
-            $query = $query->where('category_id', $input->categoryId);
+            $query = $query->where('category_ids', 'like', "%$input->categoryId%");
         }
         if (!empty($input->sort)) {
             $query = $query->orderBy($input->sort, $input->order);
@@ -36,7 +36,7 @@ class GoodsService extends BaseService
     {
         $query = Goods::search($keywords)->where('status', 1);
         if (!empty($input->categoryId)) {
-            $query = $query->where('category_id', $input->categoryId);
+            $query = $query->where('category_ids', 'like', "%$input->categoryId%");
         }
         if (!empty($input->sort)) {
             $query = $query->orderBy($input->sort, $input->order);
@@ -106,7 +106,7 @@ class GoodsService extends BaseService
             $query = $query->where('name', 'like', "%$input->name%");
         }
         if (!empty($input->categoryId)) {
-            $query = $query->where('category_id', $input->categoryId);
+            $query = $query->where('category_ids', 'like', "%$input->categoryId%");
         }
         if (!empty($input->merchantId)) {
             $query = $query->where('merchant_id', $input->merchantId);
@@ -193,7 +193,7 @@ class GoodsService extends BaseService
             $goods->introduction = $input->introduction;
         }
         $goods->freight_template_id = $input->freightTemplateId;
-        $goods->category_id = $input->categoryId;
+        $goods->category_ids = json_decode($input->categoryIds);
         $goods->merchant_id = $input->merchantId;
         $goods->price = $input->price;
         $goods->market_price = $input->marketPrice ?: 0;
