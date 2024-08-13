@@ -10,7 +10,7 @@ use App\Services\RuralRegionService;
 
 class RuralController extends Controller
 {
-    protected $except = ['bannerList', 'list'];
+    protected $only = [];
 
     public function bannerList()
     {

@@ -106,6 +106,11 @@ Route::prefix('rural')->group(function () {
     Route::get('goods_list', 'RuralController@goodsList');
 });
 
+Route::prefix('integrity')->group(function () {
+    Route::get('banner_list', 'IntegrityController@bannerList');
+    Route::get('goods_list', 'IntegrityController@goodsList');
+});
+
 /*
 |--------------------------------------------------------------------------
 | 管理后台接口
@@ -186,6 +191,24 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('list', 'RuralGoodsController@list');
             Route::post('add', 'RuralGoodsController@add');
             Route::post('delete', 'RuralGoodsController@delete');
+        });
+    });
+
+    Route::prefix('integrity')->group(function () {
+        Route::prefix('banner')->group(function () {
+            Route::post('list', 'IntegrityBannerController@list');
+            Route::get('detail', 'IntegrityBannerController@detail');
+            Route::post('add', 'IntegrityBannerController@add');
+            Route::post('edit', 'IntegrityBannerController@edit');
+            Route::post('up', 'IntegrityBannerController@up');
+            Route::post('down', 'IntegrityBannerController@down');
+            Route::post('delete', 'IntegrityBannerController@delete');
+        });
+
+        Route::prefix('goods')->group(function () {
+            Route::post('list', 'IntegrityGoodsController@list');
+            Route::post('add', 'IntegrityGoodsController@add');
+            Route::post('delete', 'IntegrityGoodsController@delete');
         });
     });
 
