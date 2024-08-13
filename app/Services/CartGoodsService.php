@@ -40,7 +40,7 @@ class CartGoodsService extends BaseService
             $cartGoods->scene = $scene;
             $cartGoods->user_id = $userId;
             $cartGoods->goods_id = $goodsId;
-            $cartGoods->category_id = $goods->category_id;
+            $cartGoods->category_ids = $goods->category_ids;
             $cartGoods->freight_template_id = $goods->freight_template_id;
             $cartGoods->cover = $goods->cover;
             $cartGoods->name = $goods->name;

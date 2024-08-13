@@ -11,7 +11,7 @@ namespace App\Models;
  * @property string $status_desc 购物车商品状态描述
  * @property int $user_id 用户id
  * @property int $goods_id 商品id
- * @property int $category_id 商品分类id
+ * @property string $category_ids 商品分类
  * @property int $freight_template_id 运费模板id
  * @property string $cover 商品图片
  * @property string $name 商品名称
@@ -27,7 +27,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods newQuery()
  * @method static \Illuminate\Database\Query\Builder|CartGoods onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods query()
- * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereCategoryIds($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereCover($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereDeletedAt($value)
