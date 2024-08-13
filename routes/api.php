@@ -98,8 +98,8 @@ Route::prefix('order')->group(function () {
 
 Route::prefix('mall')->group(function () {
     Route::get('banner_list', 'MallController@bannerList');
-    Route::get('today_goods_list', 'MallController@goodsList');
-    Route::get('advance_goods_list', 'MallController@goodsList');
+    Route::get('today_goods_list', 'MallController@todayGoodsList');
+    Route::get('advance_goods_list', 'MallController@advanceGoodsList');
 });
 
 Route::prefix('rural')->group(function () {
