@@ -27,7 +27,7 @@ class CartController extends Controller
             'status',
             'status_desc',
             'goods_id',
-            'category_id',
+            'category_ids',
             'freight_template_id',
             'cover',
             'name',
@@ -40,7 +40,7 @@ class CartController extends Controller
         ];
         $list = CartGoodsService::getInstance()->cartGoodsList($this->userId(), $cartGoodsColumns);
         $goodsIds = array_unique($list->pluck('goods_id')->toArray());
-        $goodsCategoryIds = array_unique($list->pluck('goods_category_id')->toArray());
+        $goodsCategoryIds = implode(',', array_unique(explode(',', implode(',', $list->pluck('category_ids')->toArray()))));
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
         $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList) {

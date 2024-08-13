@@ -27,9 +27,4 @@ class GoodsCategoryService extends BaseService
     {
         return GoodsCategory::query()->where('status', 1)->orderBy('sort', 'desc')->get($columns);
     }
-
-    public function getOptionsByShopCategoryIds(array $shopCategoryIds, $columns = ['*'])
-    {
-        return GoodsCategory::query()->whereIn('shop_category_id', $shopCategoryIds)->get($columns);
-    }
 }
