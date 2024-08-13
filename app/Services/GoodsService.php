@@ -64,7 +64,9 @@ class GoodsService extends BaseService
         $query = Goods::query()->where('status', 1);
 
         if (!empty($categoryIds)) {
-            $query = $query->whereIn('category_id', $categoryIds);
+            foreach ($categoryIds as $categoryId) {
+                $query = $query->where('category_ids', 'like', "%$categoryId%");
+            }
         }
         if (!empty($goodsIds)) {
             $query = $query->whereNotIn('id', $goodsIds);

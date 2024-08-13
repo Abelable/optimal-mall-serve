@@ -41,7 +41,7 @@ class GoodsController extends Controller
 
         $columns = [
             'id',
-            'category_id',
+            'category_ids',
             'video',
             'cover',
             'image_list',
@@ -65,8 +65,8 @@ class GoodsController extends Controller
         $goods->spec_list = json_decode($goods->spec_list);
         $goods->sku_list = json_decode($goods->sku_list);
 
-        $goods['recommend_goods_list'] = GoodsService::getInstance()->getRecommendGoodsList([$id], [$goods->category_id]);
-        unset($goods->category_id);
+        $goods['recommend_goods_list'] = GoodsService::getInstance()->getRecommendGoodsList([$id], [$goods->category_ids]);
+        unset($goods->category_ids);
 
         return $this->success($goods);
     }
