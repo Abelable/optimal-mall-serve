@@ -4,11 +4,13 @@ namespace App\Http\Controllers\V1;
 
 use App\Exceptions\BusinessException;
 use App\Http\Controllers\Controller;
+use App\Services\RelationService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\WxMpRegisterInput;
 use App\Utils\WxMpServe;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -23,6 +25,7 @@ class AuthController extends Controller
 
     public function wxMpRegister()
     {
+        /** @var WxMpRegisterInput $input */
         $input = WxMpRegisterInput::new();
 
         $result = WxMpServe::new()->getUserOpenid($input->code);
@@ -31,8 +34,18 @@ class AuthController extends Controller
             return $this->fail(CodeResponse::AUTH_NAME_REGISTERED);
         }
 
-        $user = UserService::getInstance()->register($result['openid'], $input);
-        $token = Auth::guard('user')->login($user);
+        $token = DB::transaction(function () use ($input, $result) {
+            // 用户注册
+            $user = UserService::getInstance()->register($result['openid'], $input);
+
+            // 绑定上下级
+            if (!empty($input->superiorId)) {
+                RelationService::getInstance()->banding($input->superiorId, $user->id);
+            }
+
+            return Auth::guard('user')->login($user);
+        });
+
         return $this->success($token);
     }
 

@@ -5,6 +5,7 @@ namespace App\Utils\Inputs;
 class WxMpRegisterInput extends BaseInput
 {
     public $code;
+    public $superiorId;
     public $avatar;
     public $nickname;
     public $gender;
@@ -14,6 +15,7 @@ class WxMpRegisterInput extends BaseInput
     {
         return [
             'code' => 'required|string',
+            'superiorId' => 'integer|digits_between:1,20',
             'avatar' => 'required|string',
             'nickname' => 'required|string',
             'gender' => 'integer|in:0,1,2',
