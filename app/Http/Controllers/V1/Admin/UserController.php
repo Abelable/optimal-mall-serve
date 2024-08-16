@@ -75,7 +75,7 @@ class UserController extends Controller
     public function superiorOptions()
     {
         $superiorIds = UserLevelService::getInstance()->getOptionsByLevelList([1, 2, 3, 4, 5])->pluck('user_id')->toArray();
-        $superiorOptions = UserService::getInstance()->getListByIds($superiorIds, ['id', 'nickname']);
+        $superiorOptions = UserService::getInstance()->getListByIds($superiorIds, ['id', 'avatar', 'nickname']);
         return $this->success($superiorOptions);
     }
 }
