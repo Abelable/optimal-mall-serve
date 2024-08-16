@@ -45,7 +45,7 @@ class AuthController extends Controller
             }
 
             // 初始化用户等级
-            UserLevelService::getInstance()->initLevel($user->id);
+            UserLevelService::getInstance()->initUserLevel($user->id);
 
             return Auth::guard('user')->login($user);
         });
