@@ -55,4 +55,11 @@ class UserController extends Controller
         $user->delete();
         return $this->success();
     }
+
+    public function teamLeaderOptions()
+    {
+        $teamLeaderIds = UserLevelService::getInstance()->getOptionsByLevelList([1, 2, 3, 4, 5])->pluck('user_id')->toArray();
+        $teamLeaderOptions = UserService::getInstance()->getListByIds($teamLeaderIds, ['id', 'nickname']);
+        return $this->success($teamLeaderOptions);
+    }
 }

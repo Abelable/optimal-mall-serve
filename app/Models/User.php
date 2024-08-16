@@ -101,6 +101,6 @@ class User extends BaseModel implements JWTSubject, AuthenticatableContract, Aut
     }
 
     public function teamLeader() {
-        return $this->hasOne(TeamLeader::class, 'user_id')->where('status', 1);
+        return $this->hasOne(UserLevel::class, 'user_id')->whereIn('level', [1, 2, 3, 4, 5]);
     }
 }

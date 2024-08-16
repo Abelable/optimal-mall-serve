@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\UserLevel;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\UserLevelScene;
+use App\Utils\Inputs\UserLevelPageInput;
 
 class UserLevelService extends BaseService
 {
@@ -94,5 +95,18 @@ class UserLevelService extends BaseService
     public function getListByUserIds(array $userIds, $columns = ['*'])
     {
         return UserLevel::query()->whereIn('user_id', $userIds)->get($columns);
+    }
+
+    public function getUserLevelPage(UserLevelPageInput $input, $columns = ['*'])
+    {
+       return UserLevel::query()
+           ->whereIn('level', $input->levelList)
+           ->orderBy($input->sort, $input->order)
+           ->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
+    public function getOptionsByLevelList(array $levelList, $columns = ['*'])
+    {
+        return UserLevel::query()->whereIn('level', $levelList)->get($columns);
     }
 }
