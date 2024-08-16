@@ -25,16 +25,16 @@ class UserController extends Controller
 
         $userIds = $userList->pluck('id')->toArray();
         $userLevelList = UserLevelService::getInstance()->getListByUserIds($userIds)->keyBy('user_id');
-        $superiorIds = RelationService::getInstance()->getRelationListByFanIds($userIds)->keyBy('fan_id');
+        $relationList = RelationService::getInstance()->getRelationListByFanIds($userIds)->keyBy('fan_id');
 
-        $list = $userList->map(function (User $user) use ($superiorIds, $userLevelList) {
+        $list = $userList->map(function (User $user) use ($userLevelList, $relationList) {
             /** @var UserLevel $userLevel */
             $userLevel = $userLevelList->get($user->id);
             $user['level'] = $userLevel->level;
 
             /** @var Relation $relation */
-            $relation = $superiorIds->get($user->id);
-            $user['superiorId'] = $relation->superior_id;
+            $relation = $relationList->get($user->id);
+            $user['superiorId'] = $relation ? $relation->superior_id : 0;
 
             return $user;
         });
@@ -62,10 +62,10 @@ class UserController extends Controller
         return $this->success();
     }
 
-    public function teamLeaderOptions()
+    public function superiorOptions()
     {
-        $teamLeaderIds = UserLevelService::getInstance()->getOptionsByLevelList([1, 2, 3, 4, 5])->pluck('user_id')->toArray();
-        $teamLeaderOptions = UserService::getInstance()->getListByIds($teamLeaderIds, ['id', 'nickname']);
-        return $this->success($teamLeaderOptions);
+        $superiorIds = UserLevelService::getInstance()->getOptionsByLevelList([1, 2, 3, 4, 5])->pluck('user_id')->toArray();
+        $superiorOptions = UserService::getInstance()->getListByIds($superiorIds, ['id', 'nickname']);
+        return $this->success($superiorOptions);
     }
 }
