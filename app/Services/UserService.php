@@ -28,7 +28,10 @@ class UserService extends BaseService
 
     public function getUserPage(array $userIds, UserPageInput $input, $columns = ['*'])
     {
-        $query = User::query()->whereIn('user_id', $userIds);
+        $query = User::query();
+        if (count($userIds) != 0) {
+            $query = $query->whereIn('user_id', $userIds);
+        }
         if (!empty($input->nickname)) {
             $query = $query->where('nickname', 'like', "%$input->nickname%");
         }
