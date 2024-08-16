@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\UserLevelService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\UserInfoInput;
@@ -15,7 +16,9 @@ class UserController extends Controller
     public function userInfo()
     {
         $user = $this->user();
-        $user['teamLeaderId'] = $user->teamLeader->id ?? 0;
+
+        $userLevel = UserLevelService::getInstance()->getUserLevelByUserId($user->id);
+        $user['level'] = $userLevel->level;
 
         unset($user->openid);
         unset($user->created_at);
