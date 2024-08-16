@@ -20,7 +20,17 @@ class UserController extends Controller
     {
         /** @var UserPageInput $input */
         $input = UserPageInput::new();
-        $page = UserService::getInstance()->getUserPage($input);
+
+        $userIds = [];
+        if (!empty($input->level)) {
+            $userIds = UserLevelService::getInstance()->getOptionsByLevelList([$input->level])->pluck('user_id')->toArray();
+        }
+        if (!empty($input->superiorId)) {
+            $fanIds = RelationService::getInstance()->getRelationListBySuperiorIds([$input->superiorId])->pluck('user_id')->toArray();
+            $userIds = array_unique(array_merge($userIds, $fanIds));
+        }
+
+        $page = UserService::getInstance()->getUserPage($userIds, $input);
         $userList = collect($page->items());
 
         $userIds = $userList->pluck('id')->toArray();

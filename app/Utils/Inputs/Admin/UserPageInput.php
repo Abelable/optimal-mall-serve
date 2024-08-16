@@ -8,12 +8,16 @@ class UserPageInput extends PageInput
 {
     public $nickname;
     public $mobile;
+    public $level;
+    public $superiorId;
 
     public function rules()
     {
         return array_merge([
             'nickname' => 'string',
             'mobile' => 'regex:/^1[345789][0-9]{9}$/',
+            'level' => 'integer',
+            'superiorId' => 'integer',
         ], parent::rules());
     }
 }

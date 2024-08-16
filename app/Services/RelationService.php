@@ -24,4 +24,9 @@ class RelationService extends BaseService
     {
         return Relation::query()->whereIn('fan_id', $fanIds)->get($columns);
     }
+    
+    public function getRelationListBySuperiorIds(array $superiorIds, $columns = ['*'])
+    {
+        return Relation::query()->whereIn('superior_id', $superiorIds)->get($columns);
+    }
 }

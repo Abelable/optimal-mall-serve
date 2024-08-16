@@ -26,9 +26,9 @@ class UserService extends BaseService
         return User::query()->where('openid', $openid)->first();
     }
 
-    public function getUserPage(UserPageInput $input, $columns = ['*'])
+    public function getUserPage(array $userIds, UserPageInput $input, $columns = ['*'])
     {
-        $query = User::query();
+        $query = User::query()->whereIn('user_id', $userIds);
         if (!empty($input->nickname)) {
             $query = $query->where('nickname', 'like', "%$input->nickname%");
         }
