@@ -147,6 +147,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('list', 'UserController@list');
         Route::get('detail', 'UserController@detail');
         Route::post('delete', 'UserController@delete');
+        Route::get('team_leader_options', 'UserController@teamLeaderOptions');
     });
 
     Route::prefix('team_leader')->group(function () {
