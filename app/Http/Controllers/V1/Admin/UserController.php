@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Services\RelationService;
+use App\Services\UserLevelService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\Admin\UserListInput;
+use App\Utils\Inputs\Admin\UserPageInput;
 
 class UserController extends Controller
 {
@@ -13,9 +16,23 @@ class UserController extends Controller
 
     public function list()
     {
-        $input = UserListInput::new();
-        $list = UserService::getInstance()->getUserList($input);
-        return $this->successPaginate($list);
+        /** @var UserPageInput $input */
+        $input = UserPageInput::new();
+        $page = UserService::getInstance()->getUserPage($input);
+        $userList = collect($page->items());
+
+        $userIds = $userList->pluck('id')->toArray();
+        $userLevelList = UserLevelService::getInstance()->getListByUserIds($userIds)->groupBy('user_id');
+        $superiorIds = RelationService::getInstance()->getRelationListByFanIds($userIds)->groupBy('fan_id');
+
+        $list = $userList->map(function (User $user) use ($superiorIds, $userLevelList) {
+            $level = $userLevelList->get($user->id);
+            $superiorId = $superiorIds->get($user->id);
+            $user['level'] = $level;
+            $user['superiorId'] = $superiorId;
+            return $user;
+        });
+        return $this->success($this->paginate($page, $list));
     }
 
     public function detail()

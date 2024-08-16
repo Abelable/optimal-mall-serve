@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Utils\Inputs\Admin\UserListInput;
+use App\Utils\Inputs\Admin\UserPageInput;
 use App\Utils\Inputs\SearchPageInput;
 use App\Utils\Inputs\WxMpRegisterInput;
 
@@ -26,7 +26,7 @@ class UserService extends BaseService
         return User::query()->where('openid', $openid)->first();
     }
 
-    public function getUserList(UserListInput $input, $columns = ['*'])
+    public function getUserPage(UserPageInput $input, $columns = ['*'])
     {
         $query = User::query();
         if (!empty($input->nickname)) {

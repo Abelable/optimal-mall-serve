@@ -19,4 +19,9 @@ class RelationService extends BaseService
     {
         return Relation::query()->where('fan_id', $fanId)->first($columns);
     }
+
+    public function getRelationListByFanIds(array $fanIds, $columns = ['*'])
+    {
+        return Relation::query()->whereIn('fan_id', $fanIds)->get($columns);
+    }
 }

@@ -4,7 +4,7 @@ namespace App\Utils\Inputs\Admin;
 
 use App\Utils\Inputs\PageInput;
 
-class UserListInput extends PageInput
+class UserPageInput extends PageInput
 {
     public $nickname;
     public $mobile;
