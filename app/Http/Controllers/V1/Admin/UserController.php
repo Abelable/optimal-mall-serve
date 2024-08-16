@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Relation;
 use App\Models\User;
+use App\Models\UserLevel;
 use App\Services\RelationService;
 use App\Services\UserLevelService;
 use App\Services\UserService;
@@ -22,14 +24,18 @@ class UserController extends Controller
         $userList = collect($page->items());
 
         $userIds = $userList->pluck('id')->toArray();
-        $userLevelList = UserLevelService::getInstance()->getListByUserIds($userIds)->groupBy('user_id');
-        $superiorIds = RelationService::getInstance()->getRelationListByFanIds($userIds)->groupBy('fan_id');
+        $userLevelList = UserLevelService::getInstance()->getListByUserIds($userIds)->keyBy('user_id');
+        $superiorIds = RelationService::getInstance()->getRelationListByFanIds($userIds)->keyBy('fan_id');
 
         $list = $userList->map(function (User $user) use ($superiorIds, $userLevelList) {
-            $level = $userLevelList->get($user->id);
-            $superiorId = $superiorIds->get($user->id);
-            $user['level'] = $level;
-            $user['superiorId'] = $superiorId;
+            /** @var UserLevel $userLevel */
+            $userLevel = $userLevelList->get($user->id);
+            $user['level'] = $userLevel->level;
+
+            /** @var Relation $relation */
+            $relation = $superiorIds->get($user->id);
+            $user['superiorId'] = $relation->superior_id;
+
             return $user;
         });
         return $this->success($this->paginate($page, $list));
