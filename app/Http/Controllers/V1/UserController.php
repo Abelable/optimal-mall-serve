@@ -23,7 +23,6 @@ class UserController extends Controller
         unset($user->openid);
         unset($user->created_at);
         unset($user->updated_at);
-        unset($user->teamLeader);
 
         return $this->success($user);
     }
