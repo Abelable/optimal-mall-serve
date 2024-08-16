@@ -30,7 +30,7 @@ class UserService extends BaseService
     {
         $query = User::query();
         if (!is_null($userIds)) {
-            $query = $query->whereIn('user_id', $userIds);
+            $query = $query->whereIn('id', $userIds);
         }
         if (!empty($input->nickname)) {
             $query = $query->where('nickname', 'like', "%$input->nickname%");

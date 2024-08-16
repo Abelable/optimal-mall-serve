@@ -26,8 +26,8 @@ class UserController extends Controller
             $userIds = UserLevelService::getInstance()->getOptionsByLevelList([$input->level])->pluck('user_id')->toArray();
         }
         if (!empty($input->superiorId)) {
-            $fanIds = RelationService::getInstance()->getRelationListBySuperiorIds([$input->superiorId])->pluck('user_id')->toArray();
-            $userIds = array_unique(array_merge($userIds, $fanIds));
+            $fanIds = RelationService::getInstance()->getRelationListBySuperiorIds([$input->superiorId])->pluck('fan_id')->toArray();
+            $userIds = array_unique(array_merge($userIds ?: [], $fanIds));
         }
 
         $page = UserService::getInstance()->getUserPage($input, $userIds);
