@@ -30,7 +30,7 @@ class CreateGoodsTable extends Migration
             $table->float('market_price')->default(0)->comment('市场价格');
             $table->integer('stock')->comment('商品库存');
             $table->integer('original_stock')->comment('原始库存');
-            $table->integer('commission_rate')->default(0)->comment('分享佣金比例%');
+            $table->float('commission_rate')->comment('分享佣金比例%');
             $table->longText('spec_list')->comment('商品规格列表');
             $table->longText('sku_list')->comment('商品sku');
             $table->integer('sales_volume')->default(0)->comment('商品销量');
