@@ -92,8 +92,8 @@ class PromoterService extends BaseService
            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getOptionsByLevelList(array $levelList, $columns = ['*'])
+    public function getOptions($columns = ['*'])
     {
-        return Promoter::query()->whereIn('level', $levelList)->get($columns);
+        return Promoter::query()->get($columns);
     }
 }
