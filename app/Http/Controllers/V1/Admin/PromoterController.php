@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Relation;
 use App\Models\User;
 use App\Services\RelationService;
+use App\Services\PromoterService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\UserPageInput;
 
-class UserController extends Controller
+class PromoterController extends Controller
 {
     protected $guard = 'Admin';
 
@@ -59,5 +60,12 @@ class UserController extends Controller
         }
         $user->delete();
         return $this->success();
+    }
+
+    public function superiorOptions()
+    {
+        $superiorIds = PromoterService::getInstance()->getOptionsByLevelList([1, 2, 3, 4, 5])->pluck('user_id')->toArray();
+        $superiorOptions = UserService::getInstance()->getListByIds($superiorIds, ['id', 'avatar', 'nickname']);
+        return $this->success($superiorOptions);
     }
 }

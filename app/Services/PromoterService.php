@@ -9,19 +9,6 @@ use App\Utils\Inputs\PromoterPageInput;
 
 class PromoterService extends BaseService
 {
-    public function initPromoter($userId)
-    {
-        $promoter = $this->getPromoterByUserId($userId);
-        if (!is_null($promoter)) {
-            $this->throwBusinessException(CodeResponse::DATA_EXISTED, '非新用户，无法初始化等级');
-        }
-
-        $promoter = Promoter::new();
-        $promoter->user_id = $userId;
-        $promoter->save();
-        return $promoter;
-    }
-
     public function toBePromoter($userId)
     {
         $promoter = $this->getExactPromoter($userId, PromoterScene::LEVEL_USER, PromoterScene::SCENE_USER);

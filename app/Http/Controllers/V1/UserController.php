@@ -18,7 +18,7 @@ class UserController extends Controller
         $user = $this->user();
 
         $promoter = PromoterService::getInstance()->getPromoterByUserId($user->id);
-        $user['level'] = $promoter->level;
+        $user['level'] = $promoter ? $promoter->level : 0;
 
         unset($user->openid);
         unset($user->created_at);

@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     protected $guard = 'Admin';
-    protected $only = ['info'];
 
     public function login()
     {

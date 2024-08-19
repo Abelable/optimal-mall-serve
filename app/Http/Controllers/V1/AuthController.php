@@ -5,7 +5,6 @@ namespace App\Http\Controllers\V1;
 use App\Exceptions\BusinessException;
 use App\Http\Controllers\Controller;
 use App\Services\RelationService;
-use App\Services\PromoterService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\WxMpRegisterInput;
@@ -43,9 +42,6 @@ class AuthController extends Controller
             if (!empty($input->superiorId)) {
                 RelationService::getInstance()->banding($input->superiorId, $user->id);
             }
-
-            // 初始化用户等级
-            PromoterService::getInstance()->initPromoter($user->id);
 
             return Auth::guard('user')->login($user);
         });

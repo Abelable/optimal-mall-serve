@@ -140,14 +140,13 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('list', 'UserController@list');
         Route::get('detail', 'UserController@detail');
         Route::post('delete', 'UserController@delete');
-        Route::get('superior_options', 'UserController@superiorOptions');
     });
 
     Route::prefix('team')->group(function () {
         Route::prefix('promoter')->group(function () {
-            Route::post('list', 'UserController@list');
-            Route::get('detail', 'UserController@detail');
-            Route::post('delete', 'UserController@delete');
+            Route::post('list', 'PromoterController@list');
+            Route::post('delete', 'PromoterController@delete');
+            Route::get('options', 'PromoterController@options');
         });
 
         Route::prefix('goods')->group(function () {
