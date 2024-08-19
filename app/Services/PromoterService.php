@@ -86,10 +86,11 @@ class PromoterService extends BaseService
 
     public function getPromoterPage(PromoterPageInput $input, $columns = ['*'])
     {
-       return Promoter::query()
-           ->where('level', $input->level)
-           ->orderBy($input->sort, $input->order)
-           ->paginate($input->limit, $columns, 'page', $input->page);
+        $query = Promoter::query();
+        if (!empty($input->level)) {
+            $query->where('level', $input->level);
+        }
+       return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function getOptions($columns = ['*'])
