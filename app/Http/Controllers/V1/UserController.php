@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\UserLevelService;
+use App\Services\PromoterService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\UserInfoInput;
@@ -17,8 +17,8 @@ class UserController extends Controller
     {
         $user = $this->user();
 
-        $userLevel = UserLevelService::getInstance()->getUserLevelByUserId($user->id);
-        $user['level'] = $userLevel->level;
+        $promoter = PromoterService::getInstance()->getPromoterByUserId($user->id);
+        $user['level'] = $promoter->level;
 
         unset($user->openid);
         unset($user->created_at);

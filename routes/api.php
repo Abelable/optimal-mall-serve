@@ -143,6 +143,20 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::get('superior_options', 'UserController@superiorOptions');
     });
 
+    Route::prefix('team')->group(function () {
+        Route::prefix('promoter')->group(function () {
+            Route::post('list', 'UserController@list');
+            Route::get('detail', 'UserController@detail');
+            Route::post('delete', 'UserController@delete');
+        });
+
+        Route::prefix('goods')->group(function () {
+            Route::post('list', 'GiftGoodsController@list');
+            Route::post('add', 'GiftGoodsController@add');
+            Route::post('delete', 'GiftGoodsController@delete');
+        });
+    });
+
     Route::prefix('mall')->group(function () {
         Route::prefix('banner')->group(function () {
             Route::post('list', 'MallBannerController@list');
@@ -166,7 +180,6 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('delete', 'AdvanceGoodsController@delete');
         });
     });
-
 
     Route::prefix('rural')->group(function () {
         Route::prefix('banner')->group(function () {

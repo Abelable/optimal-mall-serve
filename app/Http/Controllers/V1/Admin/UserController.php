@@ -5,9 +5,8 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Relation;
 use App\Models\User;
-use App\Models\UserLevel;
 use App\Services\RelationService;
-use App\Services\UserLevelService;
+use App\Services\PromoterService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\UserPageInput;
@@ -22,26 +21,17 @@ class UserController extends Controller
         $input = UserPageInput::new();
 
         $userIds = null;
-        if (!empty($input->level)) {
-            $userIds = UserLevelService::getInstance()->getOptionsByLevelList([$input->level])->pluck('user_id')->toArray();
-        }
         if (!empty($input->superiorId)) {
-            $fanIds = RelationService::getInstance()->getRelationListBySuperiorIds([$input->superiorId])->pluck('fan_id')->toArray();
-            $userIds = array_unique(array_merge($userIds ?: [], $fanIds));
+            $userIds = RelationService::getInstance()->getRelationListBySuperiorIds([$input->superiorId])->pluck('fan_id')->toArray();
         }
 
         $page = UserService::getInstance()->getUserPage($input, $userIds);
         $userList = collect($page->items());
 
         $userIds = $userList->pluck('id')->toArray();
-        $userLevelList = UserLevelService::getInstance()->getListByUserIds($userIds)->keyBy('user_id');
         $relationList = RelationService::getInstance()->getRelationListByFanIds($userIds)->keyBy('fan_id');
 
-        $list = $userList->map(function (User $user) use ($userLevelList, $relationList) {
-            /** @var UserLevel $userLevel */
-            $userLevel = $userLevelList->get($user->id);
-            $user['level'] = $userLevel->level;
-
+        $list = $userList->map(function (User $user) use ($relationList) {
             /** @var Relation $relation */
             $relation = $relationList->get($user->id);
             $user['superiorId'] = $relation ? $relation->superior_id : 0;
@@ -74,7 +64,7 @@ class UserController extends Controller
 
     public function superiorOptions()
     {
-        $superiorIds = UserLevelService::getInstance()->getOptionsByLevelList([1, 2, 3, 4, 5])->pluck('user_id')->toArray();
+        $superiorIds = PromoterService::getInstance()->getOptionsByLevelList([1, 2, 3, 4, 5])->pluck('user_id')->toArray();
         $superiorOptions = UserService::getInstance()->getListByIds($superiorIds, ['id', 'avatar', 'nickname']);
         return $this->success($superiorOptions);
     }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserLevelsTable extends Migration
+class CreatePromotersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateUserLevelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_levels', function (Blueprint $table) {
+        Schema::create('promoters', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->comment('用户id');
             $table->integer('level')->default(0)->comment('用户等级：0-普通用户，1-乡村推广员，2-乡村组织者C1，3-C2，4-C3，5-乡村振兴委员会');
@@ -30,6 +30,6 @@ class CreateUserLevelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_levels');
+        Schema::dropIfExists('promoters');
     }
 }

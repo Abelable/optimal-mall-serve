@@ -2,7 +2,7 @@
 
 namespace App\Utils\Enums;
 
-class UserLevelScene
+class PromoterScene
 {
     const LEVEL_USER = 0;
     const LEVEL_PROMOTER = 1;

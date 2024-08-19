@@ -2,7 +2,7 @@
 
 namespace App\Utils\Inputs;
 
-class UserLevelPageInput extends PageInput
+class PromoterPageInput extends PageInput
 {
     public $levelList;
 
