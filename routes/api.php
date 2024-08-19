@@ -106,6 +106,10 @@ Route::prefix('integrity')->group(function () {
     Route::get('goods_list', 'IntegrityController@goodsList');
 });
 
+Route::prefix('gift')->group(function () {
+    Route::get('goods_list', 'GiftController@goodsList');
+});
+
 /*
 |--------------------------------------------------------------------------
 | 管理后台接口
