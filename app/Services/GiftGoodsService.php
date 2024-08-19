@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\GiftGoods;
 use App\Utils\Inputs\GiftGoodsPageInput;
+use App\Utils\Inputs\GiftGoodsListInput;
 
 class GiftGoodsService extends BaseService
 {
@@ -18,6 +19,11 @@ class GiftGoodsService extends BaseService
     public function getGoodsList($type, $columns = ['*'])
     {
         return GiftGoods::query()->where('type', $type)->get($columns);
+    }
+
+    public function getFilterGoodsList(GiftGoodsListInput $input, $columns = ['*'])
+    {
+        return GiftGoods::query()->where('type', $input->type)->whereIn('goods_id', $input->goodsIds)->get($columns);
     }
 
     public function getGoodsById($id, $columns = ['*'])
