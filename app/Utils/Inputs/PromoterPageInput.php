@@ -4,12 +4,12 @@ namespace App\Utils\Inputs;
 
 class PromoterPageInput extends PageInput
 {
-    public $levelList;
+    public $level;
 
     public function rules()
     {
         return array_merge(parent::rules(), [
-            'levelList' => 'array',
+            'levelList' => 'integer|in:1,2,3,4,5',
         ]);
     }
 }
