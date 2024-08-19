@@ -26,7 +26,7 @@ class GoodsService extends BaseService
             $query = $query
                 ->orderBy('sales_volume', 'desc')
                 ->orderBy('avg_score', 'desc')
-                ->orderBy('share_commission_rate', 'desc')
+                ->orderBy('commission_rate', 'desc')
                 ->orderBy('created_at', 'desc');
         }
         return $query->paginate($input->limit, $columns, 'page', $input->page);
@@ -44,7 +44,7 @@ class GoodsService extends BaseService
             $query = $query
                 ->orderBy('sales_volume', 'desc')
                 ->orderBy('avg_score', 'desc')
-                ->orderBy('share_commission_rate', 'desc')
+                ->orderBy('commission_rate', 'desc')
                 ->orderBy('created_at', 'desc');
         }
         return $query->paginate($input->limit,'page', $input->page);
@@ -74,7 +74,7 @@ class GoodsService extends BaseService
         return $query
                 ->orderBy('sales_volume', 'desc')
                 ->orderBy('avg_score', 'desc')
-                ->orderBy('share_commission_rate', 'desc')
+                ->orderBy('commission_rate', 'desc')
                 ->orderBy('created_at', 'desc')
                 ->take($limit)
                 ->get($columns);
@@ -96,7 +96,7 @@ class GoodsService extends BaseService
             ->whereIn('id', $ids)
             ->orderBy('sales_volume', 'desc')
             ->orderBy('avg_score', 'desc')
-            ->orderBy('share_commission_rate', 'desc')
+            ->orderBy('commission_rate', 'desc')
             ->orderBy('created_at', 'desc')
             ->get($columns);
     }
@@ -201,8 +201,7 @@ class GoodsService extends BaseService
         $goods->market_price = $input->marketPrice ?: 0;
         $goods->stock = $input->stock;
         $goods->original_stock = $input->stock;
-        $goods->leader_commission_rate = $input->leaderCommissionRate;
-        $goods->share_commission_rate = $input->shareCommissionRate;
+        $goods->commission_rate = $input->commissionRate;
         $goods->spec_list = json_encode($input->specList);
         $goods->sku_list = json_encode($input->skuList);
         $goods->save();

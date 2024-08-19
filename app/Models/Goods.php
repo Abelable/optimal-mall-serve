@@ -23,8 +23,7 @@ use Laravel\Scout\Searchable;
  * @property float $market_price 市场价格
  * @property int $stock 商品库存
  * @property int $original_stock 原始库存
- * @property float $leader_commission_rate 团队长佣金比例%
- * @property float $share_commission_rate 分享佣金比例%
+ * @property int $commission_rate 分享佣金比例%
  * @property string $spec_list 商品规格列表
  * @property string $sku_list 商品sku
  * @property int $sales_volume 商品销量
@@ -38,6 +37,7 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|Goods query()
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereAvgScore($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCategoryIds($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCover($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereDefaultSpecImage($value)
@@ -47,14 +47,12 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereImageList($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereIntroduction($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Goods whereLeaderCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereMarketPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereMerchantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereOriginalStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereSalesVolume($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Goods whereShareCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereSkuList($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereSpecList($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereStatus($value)

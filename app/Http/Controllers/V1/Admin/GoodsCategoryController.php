@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\GoodsCategory;
 use App\Services\GoodsCategoryService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\Admin\GoodsCategoryInput;
 use App\Utils\Inputs\PageInput;
 
 class GoodsCategoryController extends Controller
@@ -33,20 +32,15 @@ class GoodsCategoryController extends Controller
 
     public function add()
     {
-        /** @var GoodsCategoryInput $input */
-        $input = GoodsCategoryInput::new();
+        $name = $this->verifyRequiredString('name');
 
-        $category = GoodsCategoryService::getInstance()->getCategoryByName($input->name);
+        $category = GoodsCategoryService::getInstance()->getCategoryByName($name);
         if (!is_null($category)) {
             return $this->fail(CodeResponse::DATA_EXISTED, '当前商品分类已存在');
         }
 
         $category = GoodsCategory::new();
-        $category->name = $input->name;
-        $category->min_leader_commission_rate = $input->minLeaderCommissionRate;
-        $category->max_leader_commission_rate = $input->maxLeaderCommissionRate;
-        $category->min_share_commission_rate = $input->minShareCommissionRate;
-        $category->max_share_commission_rate = $input->maxShareCommissionRate;
+        $category->name = $name;
         $category->save();
 
         return $this->success();
@@ -55,19 +49,14 @@ class GoodsCategoryController extends Controller
     public function edit()
     {
         $id = $this->verifyRequiredId('id');
-        /** @var GoodsCategoryInput $input */
-        $input = GoodsCategoryInput::new();
+        $name = $this->verifyRequiredString('name');
 
         $category = GoodsCategoryService::getInstance()->getCategoryById($id);
         if (is_null($category)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品分类不存在');
         }
 
-        $category->name = $input->name;
-        $category->min_leader_commission_rate = $input->minLeaderCommissionRate;
-        $category->max_leader_commission_rate = $input->maxLeaderCommissionRate;
-        $category->min_share_commission_rate = $input->minShareCommissionRate;
-        $category->max_share_commission_rate = $input->maxShareCommissionRate;
+        $category->name = $name;
         $category->save();
 
         return $this->success();
