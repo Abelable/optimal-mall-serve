@@ -59,7 +59,7 @@ class UserController extends Controller
     {
         $superiorId = $this->verifyRequiredId('superiorId');
 
-        $superiorInfo = UserService::getInstance()->getUserById($superiorId, ['id', 'avatar', 'nickname', 'gender', 'wx_qrcode', 'signature']);
+        $superiorInfo = UserService::getInstance()->getUserById($superiorId, ['id', 'mobile', 'avatar', 'nickname', 'gender', 'wx_qrcode', 'signature']);
         if (is_null($superiorInfo)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前上级用户不存在');
         }
