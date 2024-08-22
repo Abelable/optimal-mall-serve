@@ -8,9 +8,7 @@ class UserInfoInput extends BaseInput
     public $avatar;
     public $nickname;
     public $gender;
-    public $birthday;
-    public $constellation;
-    public $career;
+    public $wxQrcode;
     public $signature;
 
     public function rules()
@@ -20,9 +18,7 @@ class UserInfoInput extends BaseInput
             'avatar' => 'string',
             'nickname' => 'string',
             'gender' => 'integer|in:0,1,2',
-            'birthday' => 'string',
-            'constellation' => 'string',
-            'career' => 'string',
+            'wxQrcode' => 'string',
             'signature' => 'string',
         ];
     }

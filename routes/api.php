@@ -26,8 +26,7 @@ Route::prefix('user')->group(function () {
     Route::get('info', 'UserController@userInfo');
     Route::post('update', 'UserController@updateUserInfo');
     Route::get('tim_login_info', 'UserController@timLoginInfo');
-    Route::get('author_info', 'UserController@authorInfo');
-    Route::get('search', 'UserController@search');
+    Route::get('superior_info', 'UserController@superiorInfo');
 });
 
 Route::get('oss_config', 'CommonController@ossConfig');

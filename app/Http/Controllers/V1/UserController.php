@@ -11,8 +11,6 @@ use App\Utils\TimServe;
 
 class UserController extends Controller
 {
-    protected $except = ['authorInfo', 'search'];
-
     public function userInfo()
     {
         $user = $this->user();
@@ -33,17 +31,11 @@ class UserController extends Controller
         $input = UserInfoInput::new();
         $user = $this->user();
 
-        if (!empty($input->bg)) {
-            $user->bg = $input->bg;
-        }
         $user->avatar = $input->avatar;
         $user->nickname = $input->nickname;
         $user->gender = $input->gender;
-        if (!empty($input->birthday)) {
-            $user->birthday = $input->birthday;
-        }
-        if (!empty($input->constellation)) {
-            $user->constellation = $input->constellation;
+        if (!empty($input->wxQrcode)) {
+            $user->wx_qrcode = $input->wxQrcode;
         }
         if (!empty($input->signature)) {
             $user->signature = $input->signature;
@@ -62,15 +54,15 @@ class UserController extends Controller
         return $this->success($loginInfo);
     }
 
-    public function authorInfo()
+    public function superiorInfo()
     {
-        $authorId = $this->verifyRequiredId('authorId');
+        $superiorId = $this->verifyRequiredId('superiorId');
 
-        $authorInfo = UserService::getInstance()->getUserById($authorId, ['id', 'avatar', 'nickname', 'bg', 'gender', 'signature']);
-        if (is_null($authorInfo)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前用户不存在');
+        $superiorInfo = UserService::getInstance()->getUserById($superiorId, ['id', 'avatar', 'nickname', 'gender', 'wx_qrcode', 'signature']);
+        if (is_null($superiorInfo)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前上级用户不存在');
         }
 
-        return $this->success($authorInfo);
+        return $this->success($superiorInfo);
     }
 }
