@@ -92,4 +92,8 @@ class User extends BaseModel implements JWTSubject, AuthenticatableContract, Aut
             'signature' => $this->signature,
         ];
     }
+
+    public function superiorId() {
+        return $this->hasOne(Relation::class, 'fan_id')->value('superior_id');
+    }
 }
