@@ -32,9 +32,10 @@ class GoodsService extends BaseService
         return $query->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function search($keywords, GoodsPageInput $input)
+    public function search($keywords, GoodsPageInput $input, $columns=['*'])
     {
-        $query = Goods::search($keywords)->where('status', 1);
+
+        $query = Goods::query()->where('status', 1)->where('name', 'like', "%$keywords%");
         if (!empty($input->categoryId)) {
             $query = $query->where('category_ids', 'like', "%$input->categoryId%");
         }
@@ -47,7 +48,22 @@ class GoodsService extends BaseService
                 ->orderBy('commission_rate', 'desc')
                 ->orderBy('created_at', 'desc');
         }
-        return $query->paginate($input->limit,'page', $input->page);
+        return $query->paginate($input->limit, $columns, 'page', $input->page);
+
+//        $query = Goods::search($keywords)->where('status', 1);
+//        if (!empty($input->categoryId)) {
+//            $query = $query->where('category_ids', 'like', "%$input->categoryId%");
+//        }
+//        if (!empty($input->sort)) {
+//            $query = $query->orderBy($input->sort, $input->order);
+//        } else {
+//            $query = $query
+//                ->orderBy('sales_volume', 'desc')
+//                ->orderBy('avg_score', 'desc')
+//                ->orderBy('commission_rate', 'desc')
+//                ->orderBy('created_at', 'desc');
+//        }
+//        return $query->paginate($input->limit,'page', $input->page);
     }
 
     public function getGoodsOptions($keywords, $columns = ['*'])
