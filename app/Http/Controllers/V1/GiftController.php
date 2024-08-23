@@ -15,9 +15,13 @@ class GiftController extends Controller
         $type = $this->verifyRequiredInteger('type');
         $goodsIds = GiftGoodsService::getInstance()->getGoodsList($type, ['goods_id'])->pluck('goods_id')->toArray();
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
+        $list = $goodsList->map(function ($goods) {
+            $goods['isGift'] = 1;
+            return $goods;
+        });
 
         // todo 商品列表存缓存
 
-        return $this->success($goodsList);
+        return $this->success($list);
     }
 }
