@@ -17,8 +17,12 @@ class MerchantController extends Controller
     {
         /** @var MerchantListInput $input */
         $input = MerchantListInput::new();
-        $list = MerchantService::getInstance()->getMerchantList($input);
-        return $this->successPaginate($list);
+        $page = MerchantService::getInstance()->getMerchantPage($input);
+        $list = collect($page->items())->map(function (Merchant $merchant) {
+            $merchant->license = json_decode($merchant->license);
+            return $merchant;
+        });
+        return $this->success($this->paginate($page, $list));
     }
 
     public function detail()
@@ -28,6 +32,7 @@ class MerchantController extends Controller
         if (is_null($merchant)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商家不存在');
         }
+        $merchant->license = json_decode($merchant->license);
         return $this->success($merchant);
     }
 

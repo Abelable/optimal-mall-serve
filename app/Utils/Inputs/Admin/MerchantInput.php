@@ -10,6 +10,7 @@ class MerchantInput extends BaseInput
     public $consigneeName;
     public $mobile;
     public $addressDetail;
+    public $license;
     public $supplement;
 
     public function rules()
@@ -19,6 +20,7 @@ class MerchantInput extends BaseInput
             'consigneeName' => 'required|string',
             'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
             'addressDetail' => 'required|string',
+            'license' => 'required|array',
             'supplement' => 'string'
         ];
     }

@@ -9,7 +9,7 @@ use App\Utils\Inputs\Admin\MerchantListInput;
 
 class MerchantService extends BaseService
 {
-    public function getMerchantList(MerchantListInput $input, $columns = ['*'])
+    public function getMerchantPage(MerchantListInput $input, $columns = ['*'])
     {
         $query = Merchant::query();
         if (!empty($input->name)) {
@@ -36,6 +36,7 @@ class MerchantService extends BaseService
         $merchant->consignee_name = $input->consigneeName;
         $merchant->mobile = $input->mobile;
         $merchant->address_detail = $input->addressDetail;
+        $merchant->license = json_encode($input->license);
         if (!empty($input->supplement)) {
             $merchant->supplement = $input->supplement;
         }

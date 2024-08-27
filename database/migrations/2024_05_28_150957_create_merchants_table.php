@@ -19,6 +19,7 @@ class CreateMerchantsTable extends Migration
             $table->string('consignee_name')->comment('收货人姓名');
             $table->string('mobile')->comment('手机号');
             $table->string('address_detail')->comment('收获地址');
+            $table->longText('license')->comment('经营资质');
             $table->string('supplement')->default('')->comment('补充说明');
             $table->timestamps();
             $table->softDeletes();
