@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\TodayGoods;
-use App\Utils\Inputs\GoodsListInput;
 use App\Utils\Inputs\PageInput;
 
 class TodayGoodsService extends BaseService
@@ -18,9 +17,9 @@ class TodayGoodsService extends BaseService
         return TodayGoods::query()->get($columns);
     }
 
-    public function getFilterGoodsList(GoodsListInput $input, $columns = ['*'])
+    public function getFilterGoodsList(array $goodsIds, $columns = ['*'])
     {
-        return TodayGoods::query()->whereIn('goods_id', $input->goodsIds)->get($columns);
+        return TodayGoods::query()->whereIn('goods_id', $goodsIds)->get($columns);
     }
 
     public function getGoodsById($id, $columns = ['*'])

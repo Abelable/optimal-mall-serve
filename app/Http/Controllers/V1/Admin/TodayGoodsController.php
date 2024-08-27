@@ -7,7 +7,6 @@ use App\Models\TodayGoods;
 use App\Services\GoodsService;
 use App\Services\TodayGoodsService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\GoodsListInput;
 use App\Utils\Inputs\PageInput;
 
 class TodayGoodsController extends Controller
@@ -24,21 +23,22 @@ class TodayGoodsController extends Controller
 
     public function add()
     {
-        /** @var GoodsListInput $input */
-        $input = GoodsListInput::new();
+        $goodsIds = $this->verifyArrayNotEmpty('goodsIds');
+        $type = $this->verifyRequiredInteger('type');
 
-        $todayGoodsList = TodayGoodsService::getInstance()->getFilterGoodsList($input);
+        $todayGoodsList = TodayGoodsService::getInstance()->getFilterGoodsList($goodsIds);
         if (count($todayGoodsList) != 0) {
-            return $this->fail(CodeResponse::DATA_EXISTED, '当前地区已添加相同商品');
+            return $this->fail(CodeResponse::DATA_EXISTED, '已添加相同商品');
         }
 
-        $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
+        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds, ['id', 'cover', 'name']);
 
         foreach ($goodsList as $goods) {
             $todayGoods = TodayGoods::new();
             $todayGoods->goods_id = $goods->id;
             $todayGoods->goods_cover = $goods->cover;
             $todayGoods->goods_name = $goods->name;
+            $todayGoods->type = $type;
             $todayGoods->save();
         }
 

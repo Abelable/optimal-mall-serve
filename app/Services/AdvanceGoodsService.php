@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\AdvanceGoods;
-use App\Utils\Inputs\GoodsListInput;
 use App\Utils\Inputs\PageInput;
 
 class AdvanceGoodsService extends BaseService
@@ -18,9 +17,9 @@ class AdvanceGoodsService extends BaseService
         return AdvanceGoods::query()->get($columns);
     }
 
-    public function getFilterGoodsList(GoodsListInput $input, $columns = ['*'])
+    public function getFilterGoodsList(array $goodsIds, $columns = ['*'])
     {
-        return AdvanceGoods::query()->whereIn('goods_id', $input->goodsIds)->get($columns);
+        return AdvanceGoods::query()->whereIn('goods_id', $goodsIds)->get($columns);
     }
 
     public function getGoodsById($id, $columns = ['*'])

@@ -7,7 +7,6 @@ use App\Models\AdvanceGoods;
 use App\Services\GoodsService;
 use App\Services\AdvanceGoodsService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\GoodsListInput;
 use App\Utils\Inputs\PageInput;
 
 class AdvanceGoodsController extends Controller
@@ -24,21 +23,22 @@ class AdvanceGoodsController extends Controller
 
     public function add()
     {
-        /** @var GoodsListInput $input */
-        $input = GoodsListInput::new();
+        $goodsIds = $this->verifyArrayNotEmpty('goodsIds');
+        $type = $this->verifyRequiredInteger('type');
 
-        $advanceGoodsList = AdvanceGoodsService::getInstance()->getFilterGoodsList($input);
+        $advanceGoodsList = AdvanceGoodsService::getInstance()->getFilterGoodsList($goodsIds);
         if (count($advanceGoodsList) != 0) {
-            return $this->fail(CodeResponse::DATA_EXISTED, '当前地区已添加相同商品');
+            return $this->fail(CodeResponse::DATA_EXISTED, '已添加相同商品');
         }
 
-        $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
+        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds, ['id', 'cover', 'name']);
 
         foreach ($goodsList as $goods) {
             $advanceGoods = AdvanceGoods::new();
             $advanceGoods->goods_id = $goods->id;
             $advanceGoods->goods_cover = $goods->cover;
             $advanceGoods->goods_name = $goods->name;
+            $advanceGoods->type = $type;
             $advanceGoods->save();
         }
 
