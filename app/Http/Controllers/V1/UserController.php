@@ -16,6 +16,7 @@ class UserController extends Controller
         $user = $this->user();
 
         $promoter = PromoterService::getInstance()->getPromoterByUserId($user->id);
+        $user['promoterId'] = $promoter ? $promoter->id : 0;
         $user['level'] = $promoter ? $promoter->level : 0;
         $user['superiorId'] = $user->superiorId();
 
