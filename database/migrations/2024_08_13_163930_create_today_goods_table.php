@@ -16,6 +16,7 @@ class CreateTodayGoodsTable extends Migration
         Schema::create('today_goods', function (Blueprint $table) {
             $table->id();
             $table->integer('goods_id')->comment('商品id');
+            $table->integer('type')->comment('商品类型：1-农产品，2-爆品');
             $table->string('goods_cover')->comment('商品图片');
             $table->string('goods_name')->comment('商品名称');
             $table->timestamps();

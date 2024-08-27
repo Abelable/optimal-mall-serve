@@ -7,6 +7,7 @@ namespace App\Models;
  *
  * @property int $id
  * @property int $goods_id 商品id
+ * @property int $type 商品类型：1-农产品，2-爆品
  * @property string $goods_cover 商品图片
  * @property string $goods_name 商品名称
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -22,6 +23,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|AdvanceGoods whereGoodsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AdvanceGoods whereGoodsName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AdvanceGoods whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AdvanceGoods whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AdvanceGoods whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|AdvanceGoods withTrashed()
  * @method static \Illuminate\Database\Query\Builder|AdvanceGoods withoutTrashed()
