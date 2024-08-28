@@ -7,8 +7,8 @@ use App\Models\Activity;
 use App\Services\GoodsService;
 use App\Services\ActivityService;
 use App\Utils\CodeResponse;
+use App\Utils\Inputs\ActivityPageInput;
 use App\Utils\Inputs\Admin\ActivityInput;
-use App\Utils\Inputs\PageInput;
 
 class ActivityController extends Controller
 {
@@ -16,8 +16,8 @@ class ActivityController extends Controller
 
     public function list()
     {
-        /** @var PageInput $input */
-        $input = PageInput::new();
+        /** @var ActivityPageInput $input */
+        $input = ActivityPageInput::new();
         $list = ActivityService::getInstance()->getActivityPage($input);
         return $this->successPaginate($list);
     }

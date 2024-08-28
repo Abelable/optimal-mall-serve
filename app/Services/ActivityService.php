@@ -3,16 +3,20 @@
 namespace App\Services;
 
 use App\Models\Activity;
-use App\Utils\Inputs\PageInput;
+use App\Utils\Inputs\ActivityPageInput;
 
 class ActivityService extends BaseService
 {
-    public function getActivityPage(PageInput $input, $columns = ['*'])
+    public function getActivityPage(ActivityPageInput $input, $columns = ['*'])
     {
-        return Activity::query()
-            ->whereIn('status', [0, 1])
-            ->orderBy($input->sort, $input->order)
-            ->paginate($input->limit, $columns, 'page', $input->page);
+        $query = Activity::query();
+        if (!is_null($input->status)) {
+            $query = $query->where('status', $input->status);
+        }
+        if (!is_null($input->goodsType)) {
+            $query = $query->where('goods_type', $input->goodsType);
+        }
+        return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function getActivityList($columns = ['*'])
