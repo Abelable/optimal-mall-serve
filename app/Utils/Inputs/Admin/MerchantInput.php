@@ -20,7 +20,7 @@ class MerchantInput extends BaseInput
             'consigneeName' => 'required|string',
             'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
             'addressDetail' => 'required|string',
-            'license' => 'required|array',
+            'license' => 'array',
             'supplement' => 'string'
         ];
     }
