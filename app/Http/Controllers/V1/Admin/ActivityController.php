@@ -36,6 +36,7 @@ class ActivityController extends Controller
 
         foreach ($goodsList as $goods) {
             $activity = Activity::new();
+            $activity->name = $input->name;
             $activity->status = $input->status;
             if (!is_null($input->startTime)) {
                 $activity->start_time = $input->startTime;
