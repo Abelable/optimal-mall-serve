@@ -10,6 +10,9 @@ class ActivityService extends BaseService
     public function getActivityPage(ActivityPageInput $input, $columns = ['*'])
     {
         $query = Activity::query();
+        if (!is_null($input->name)) {
+            $query = $query->where('name', 'like', "%$input->name%");
+        }
         if (!is_null($input->status)) {
             $query = $query->where('status', $input->status);
         }
