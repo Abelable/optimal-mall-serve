@@ -181,6 +181,12 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('add', 'AdvanceGoodsController@add');
             Route::post('delete', 'AdvanceGoodsController@delete');
         });
+
+        Route::prefix('activity')->group(function () {
+            Route::post('list', 'ActivityController@list');
+            Route::post('add', 'ActivityController@add');
+            Route::post('delete', 'ActivityController@delete');
+        });
     });
 
     Route::prefix('rural')->group(function () {
