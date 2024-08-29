@@ -91,8 +91,6 @@ Route::prefix('order')->group(function () {
 Route::prefix('mall')->group(function () {
     Route::get('banner_list', 'MallController@bannerList');
     Route::get('activity_list', 'MallController@activityList');
-    Route::get('today_goods_list', 'MallController@todayGoodsList');
-    Route::get('advance_goods_list', 'MallController@advanceGoodsList');
 });
 
 Route::prefix('rural')->group(function () {
@@ -169,18 +167,6 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('up', 'MallBannerController@up');
             Route::post('down', 'MallBannerController@down');
             Route::post('delete', 'MallBannerController@delete');
-        });
-
-        Route::prefix('today_goods')->group(function () {
-            Route::post('list', 'TodayGoodsController@list');
-            Route::post('add', 'TodayGoodsController@add');
-            Route::post('delete', 'TodayGoodsController@delete');
-        });
-
-        Route::prefix('advance_goods')->group(function () {
-            Route::post('list', 'AdvanceGoodsController@list');
-            Route::post('add', 'AdvanceGoodsController@add');
-            Route::post('delete', 'AdvanceGoodsController@delete');
         });
 
         Route::prefix('activity')->group(function () {
