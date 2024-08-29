@@ -90,6 +90,7 @@ Route::prefix('order')->group(function () {
 
 Route::prefix('mall')->group(function () {
     Route::get('banner_list', 'MallController@bannerList');
+    Route::get('activity_list', 'MallController@activityList');
     Route::get('today_goods_list', 'MallController@todayGoodsList');
     Route::get('advance_goods_list', 'MallController@advanceGoodsList');
 });

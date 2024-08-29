@@ -7,7 +7,7 @@ class PageInput extends BaseInput
 {
     public $page = 1;
     public $limit = 10;
-    public $sort = 'created_at';
+    public $sort = 'id';
     public $order = 'desc';
 
     public function rules()

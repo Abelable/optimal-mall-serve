@@ -22,9 +22,9 @@ class ActivityService extends BaseService
         return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getActivityList($columns = ['*'])
+    public function getActivityList($status, $columns = ['*'])
     {
-        return Activity::query()->get($columns);
+        return Activity::query()->where('status', $status)->get($columns);
     }
 
     public function getActivityListByGoodsIds(array $goodsIds, $columns = ['*'])
