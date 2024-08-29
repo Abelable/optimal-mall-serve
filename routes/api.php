@@ -184,6 +184,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
 
         Route::prefix('activity')->group(function () {
             Route::post('list', 'ActivityController@list');
+            Route::get('detail', 'ActivityController@detail');
             Route::post('add', 'ActivityController@add');
             Route::post('edit', 'ActivityController@edit');
             Route::post('edit_followers', 'ActivityController@editFollwers');

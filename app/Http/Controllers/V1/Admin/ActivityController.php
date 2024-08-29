@@ -23,6 +23,16 @@ class ActivityController extends Controller
         return $this->successPaginate($list);
     }
 
+    public function detail()
+    {
+        $id = $this->verifyRequiredId('id');
+        $activity = ActivityService::getInstance()->getActivityById($id);
+        if (is_null($activity)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前活动不存在');
+        }
+        return $this->success($activity);
+    }
+
     public function add()
     {
         /** @var ActivityInput $input */
