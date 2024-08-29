@@ -185,6 +185,10 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::prefix('activity')->group(function () {
             Route::post('list', 'ActivityController@list');
             Route::post('add', 'ActivityController@add');
+            Route::post('edit', 'ActivityController@edit');
+            Route::post('edit_followers', 'ActivityController@editFollwers');
+            Route::post('edit_sales', 'ActivityController@editSales');
+            Route::post('end', 'ActivityController@end');
             Route::post('delete', 'ActivityController@delete');
         });
     });
