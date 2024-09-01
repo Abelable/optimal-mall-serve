@@ -9,7 +9,7 @@ class StatusPageInput extends PageInput
     public function rules()
     {
         return array_merge([
-            'status' => 'integer|digits_between:1,20',
+            'status' => 'required|integer|digits_between:1,20',
         ], parent::rules());
     }
 }
