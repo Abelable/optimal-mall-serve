@@ -179,6 +179,16 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('end', 'ActivityController@end');
             Route::post('delete', 'ActivityController@delete');
         });
+
+        Route::prefix('coupon')->group(function () {
+            Route::post('list', 'CouponController@list');
+            Route::get('detail', 'CouponController@detail');
+            Route::post('add', 'CouponController@add');
+            Route::post('edit', 'CouponController@edit');
+            Route::post('edit_received_num', 'CouponController@editReceivedNum');
+            Route::post('down', 'CouponController@down');
+            Route::post('delete', 'CouponController@delete');
+        });
     });
 
     Route::prefix('rural')->group(function () {

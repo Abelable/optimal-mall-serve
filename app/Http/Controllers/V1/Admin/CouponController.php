@@ -7,6 +7,7 @@ use App\Models\Coupon;
 use App\Services\GoodsService;
 use App\Services\CouponService;
 use App\Utils\CodeResponse;
+use App\Utils\Inputs\Admin\CouponEditInput;
 use App\Utils\Inputs\CouponPageInput;
 use App\Utils\Inputs\Admin\CouponInput;
 
@@ -25,7 +26,8 @@ class CouponController extends Controller
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
-        $coupon = CouponService::getInstance()->getCouponById($id, ['id', 'status', 'name', 'start_time', 'end_time', 'goods_type']);
+        $columns = ['id', 'denomination', 'name', 'description', 'num_limit', 'price_limit', 'expiration_time'];
+        $coupon = CouponService::getInstance()->getCouponById($id, $columns);
         if (is_null($coupon)) {
             return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
         }
@@ -64,70 +66,56 @@ class CouponController extends Controller
 
     public function edit()
     {
-        /** @var CouponInput $input */
-        $input = CouponInput::new();
-        $id = $this->verifyRequiredInteger('id');
+        /** @var CouponEditInput $input */
+        $input = CouponEditInput::new();
 
-        $coupon = CouponService::getInstance()->getCouponById($id);
+        $coupon = CouponService::getInstance()->getCouponById($input->id);
         if (is_null($coupon)) {
             return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
         }
 
+        $coupon->denomination = $input->denomination;
         $coupon->name = $input->name;
-        $coupon->status = $input->status;
-        if (!is_null($input->startTime)) {
-            $coupon->start_time = $input->startTime;
+        $coupon->description = $input->description;
+        if (!is_null($input->numLimit)) {
+            $coupon->num_limit = $input->numLimit;
         }
-        if (!is_null($input->endTime)) {
-            $coupon->end_time = $input->endTime;
+        if (!is_null($input->priceLimit)) {
+            $coupon->price_limit = $input->priceLimit;
         }
-        $coupon->goods_type = $input->goodsType;
+        if (!is_null($input->expirationTime)) {
+            $coupon->expiration_time = $input->expirationTime;
+        }
         $coupon->save();
 
         return $this->success();
     }
 
-    public function editFollowers()
+    public function editReceivedNum()
     {
         $id = $this->verifyRequiredInteger('id');
-        $followers = $this->verifyRequiredInteger('followers');
+        $num = $this->verifyRequiredInteger('num');
 
         $coupon = CouponService::getInstance()->getCouponById($id);
         if (is_null($coupon)) {
             return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
         }
 
-        $coupon->followers = $followers;
-        $coupon->save();
-
-        return $this->success();
-    }
-
-    public function editSales()
-    {
-        $id = $this->verifyRequiredInteger('id');
-        $sales = $this->verifyRequiredInteger('sales');
-
-        $coupon = CouponService::getInstance()->getCouponById($id);
-        if (is_null($coupon)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
-        }
-
-        $coupon->sales = $sales;
+        $coupon->received_num = $num;
         $coupon->save();
 
         return $this->success();
     }
 
 
-    public function end()
+    public function down()
     {
         $id = $this->verifyRequiredId('id');
         $coupon = CouponService::getInstance()->getCouponById($id);
         if (is_null($coupon)) {
             return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
         }
-        $coupon->status = 2;
+        $coupon->status = 3;
         $coupon->save();
         return $this->success();
     }
