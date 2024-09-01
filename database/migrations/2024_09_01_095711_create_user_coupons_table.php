@@ -17,7 +17,7 @@ class CreateUserCouponsTable extends Migration
             $table->id();
             $table->integer('user_id')->comment('用户id');
             $table->integer('coupon_id')->comment('优惠券id');
-            $table->integer('status')->comment('优惠券状态：1-未使用，2-已使用，3-已过期');
+            $table->integer('status')->default(1)->comment('优惠券状态：1-未使用，2-已使用，3-已过期');
             $table->timestamps();
             $table->softDeletes();
         });

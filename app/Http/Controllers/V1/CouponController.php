@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Address;
-use App\Services\AddressService;
+use App\Models\Coupon;
+use App\Models\UserCoupon;
 use App\Services\CouponService;
+use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\AddressInput;
+use App\Utils\Inputs\StatusPageInput;
+use Illuminate\Support\Facades\DB;
 
 class CouponController extends Controller
 {
@@ -17,82 +19,61 @@ class CouponController extends Controller
     {
         $goodsId = $this->verifyRequiredInteger('goodsId');
         $couponList = CouponService::getInstance()->getCouponListByGoodsId($goodsId);
-        $couponIds = $couponList->pluck('id')->toArray();
 
+        $userCouponList = [];
         if ($this->isLogin()) {
-
+            $couponIds = $couponList->pluck('id')->toArray();
+            $userCouponList = UserCouponService::getInstance()->getListByCouponIds($this->userId(), $couponIds)->keyBy('coupon_id');
         }
 
-    }
+        $list = $couponList->map(function (Coupon $coupon) use ($userCouponList) {
+            $userCoupon = count($userCouponList) != 0 ? $userCouponList->get($coupon->id) : null;
+            $coupon['isReceived'] = !is_null($userCoupon) ? 1 : 0;
+            return $coupon;
+        });
 
-    public function list()
-    {
-        $columns = ['id', 'is_default', 'name', 'mobile', 'region_desc', 'address_detail'];
-        $list = AddressService::getInstance()->getList($this->userId(), $columns);
         return $this->success($list);
     }
 
-    public function detail()
+    public function receiveCoupon()
     {
-        $id = $this->verifyRequiredId('id');
-        $columns = ['id', 'is_default', 'name', 'mobile', 'region_code_list', 'region_desc', 'address_detail'];
-        $address = AddressService::getInstance()->getById($this->userId(), $id, $columns);
-        if (is_null($address)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '收货地址不存在');
+        $id = $this->verifyRequiredInteger('id');
+        $coupon = CouponService::getInstance()->getCouponById($id);
+        if (is_null($coupon)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
         }
-        $address->region_code_list = json_decode($address->region_code_list);
-        return $this->success($address);
-    }
 
-    public function add()
-    {
-        /** @var AddressInput $input */
-        $input = AddressInput::new();
+        DB::transaction(function () use ($coupon) {
+            $userCoupon = UserCoupon::new();
+            $userCoupon->user_id = $this->userId();
+            $userCoupon->coupon_id = $coupon->id;
+            $userCoupon->save();
 
-        $address = Address::new();
-        $address->user_id = $this->userId();
-        $this->updateAddress($address, $input);
+            $coupon->received_num = $coupon->received_num + 1;
+            $coupon->save();
+        });
 
         return $this->success();
     }
 
-    public function edit()
+    public function userCouponList()
     {
-        /** @var AddressInput $input */
-        $input = AddressInput::new();
+        /** @var StatusPageInput $input */
+        $input = StatusPageInput::new();
 
-        $address = AddressService::getInstance()->getById($this->userId(), $input->id);
-        if (is_null($address)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '收货地址不存在');
-        }
-        $this->updateAddress($address, $input);
+        $page = UserCouponService::getInstance()->getUserCouponPage($this->userId(), $input);
+        $userCouponList = collect($page->items());
 
-        return $this->success();
-    }
+        $couponIds = $userCouponList->pluck('coupon_id')->toArray();
+        $couponList = CouponService::getInstance()->getCouponListByIds($couponIds)->keyBy('id');
 
-    private function updateAddress(Address $address, AddressInput $input)
-    {
-        $address->name = $input->name;
-        $address->mobile = $input->mobile;
-        $address->region_desc = $input->regionDesc;
-        $address->region_code_list = $input->regionCodeList;
-        $address->address_detail = $input->addressDetail;
-        if ($input->isDefault == 1 && $address->is_default == 0) {
-            AddressService::getInstance()->resetDefaultAddress($this->userId());
-        }
-        $address->is_default = $input->isDefault;
-        $address->save();
-        return $address;
-    }
+        $list = $userCouponList->map(function (UserCoupon $userCoupon) use ($couponList) {
+            /** @var Coupon $coupon */
+            $coupon = $couponList->get($userCoupon->coupon_id);
+            $coupon->status = $userCoupon->status;
+            return $coupon;
+        });
 
-    public function delete()
-    {
-        $id = $this->verifyRequiredId('id');
-        $address = AddressService::getInstance()->getById($this->userId(), $id);
-        if (is_null($address)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '收货地址不存在');
-        }
-        $address->delete();
-        return $this->success();
+        return $this->success($this->paginate($page, $list));
     }
 }

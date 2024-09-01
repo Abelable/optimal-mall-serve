@@ -93,6 +93,12 @@ Route::prefix('mall')->group(function () {
     Route::get('activity_list', 'MallController@activityList');
 });
 
+Route::prefix('coupon')->group(function () {
+    Route::get('goods_list', 'CouponController@goodsCouponList');
+    Route::post('receive', 'MallController@receiveCoupon');
+    Route::get('user_list', 'CouponController@userCouponList');
+});
+
 Route::prefix('rural')->group(function () {
     Route::get('banner_list', 'RuralController@bannerList');
     Route::get('region_options', 'RuralController@regionOptions');

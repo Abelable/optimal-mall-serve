@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Coupon;
 use App\Models\UserCoupon;
 use App\Utils\Inputs\StatusPageInput;
 
@@ -19,7 +18,7 @@ class UserCouponService extends BaseService
 
     public function getListByCouponIds($userId, array $couponIds, $columns = ['*'])
     {
-        return Coupon::query()
+        return UserCoupon::query()
             ->where('user_id', $userId)
             ->where('status', 1)
             ->whereIn('coupon_id', $couponIds)
