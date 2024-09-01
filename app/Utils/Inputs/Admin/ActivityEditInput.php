@@ -12,7 +12,6 @@ class ActivityEditInput extends BaseInput
     public $startTime;
     public $endTime;
     public $goodsType;
-    public $goodsIds;
 
     public function rules()
     {

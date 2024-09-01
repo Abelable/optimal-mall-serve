@@ -37,26 +37,25 @@ class CouponController extends Controller
         /** @var CouponInput $input */
         $input = CouponInput::new();
 
-        $couponList = CouponService::getInstance()->getCouponListByGoodsIds($input->goodsIds);
-        if (count($couponList) != 0) {
-            return $this->fail(CodeResponse::DATA_EXISTED, '已添加相同活动');
-        }
-
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
 
         foreach ($goodsList as $goods) {
             $coupon = Coupon::new();
+            $coupon->denomination = $input->denomination;
             $coupon->name = $input->name;
-            $coupon->status = $input->status;
-            if (!is_null($input->startTime)) {
-                $coupon->start_time = $input->startTime;
-            }
-            if (!is_null($input->endTime)) {
-                $coupon->end_time = $input->endTime;
-            }
+            $coupon->description = $input->description;
             $coupon->goods_id = $goods->id;
             $coupon->goods_cover = $goods->cover;
             $coupon->goods_name = $goods->name;
+            if (!is_null($input->numLimit)) {
+                $coupon->num_limit = $input->numLimit;
+            }
+            if (!is_null($input->priceLimit)) {
+                $coupon->price_limit = $input->priceLimit;
+            }
+            if (!is_null($input->expirationTime)) {
+                $coupon->expiration_time = $input->expirationTime;
+            }
             $coupon->save();
         }
 
