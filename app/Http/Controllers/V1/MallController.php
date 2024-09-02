@@ -31,7 +31,7 @@ class MallController extends Controller
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
 
         $groupedCouponList = CouponService::getInstance()
-            ->getCouponListByGoodsIds($goodsIds, ['name', 'denomination', 'type', 'num_limit', 'price_limit'])
+            ->getCouponListByGoodsIds($goodsIds, ['goods_id', 'name', 'denomination', 'type', 'num_limit', 'price_limit'])
             ->groupBy('goods_id');
 
         $list = $goodsList->map(function (Goods $goods) use ($activityKeyList, $groupedCouponList) {
