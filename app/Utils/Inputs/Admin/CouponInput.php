@@ -17,12 +17,12 @@ class CouponInput extends BaseInput
     public function rules()
     {
         return [
-            'denomination' => 'required|integer|digits_between:1,20',
+            'denomination' => 'required|numeric',
             'name' => 'required|string',
             'description' => 'required|string',
             'goodsIds' => 'required|array',
             'numLimit' => 'integer|digits_between:1,20',
-            'priceLimit' => 'integer|digits_between:1,20',
+            'priceLimit' => 'numeric',
             'expirationTime' => 'string'
         ];
     }

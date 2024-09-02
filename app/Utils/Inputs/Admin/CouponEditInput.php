@@ -18,11 +18,11 @@ class CouponEditInput extends BaseInput
     {
         return [
             'id' => 'required|integer|digits_between:1,20',
-            'denomination' => 'required|integer|digits_between:1,20',
+            'denomination' => 'required|numeric',
             'name' => 'required|string',
             'description' => 'required|string',
             'numLimit' => 'integer|digits_between:1,20',
-            'priceLimit' => 'integer|digits_between:1,20',
+            'priceLimit' => 'numeric',
             'expirationTime' => 'string'
         ];
     }
