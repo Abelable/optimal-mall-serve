@@ -19,6 +19,7 @@ class CreateCouponsTable extends Migration
             $table->string('name')->comment('优惠券名称');
             $table->float('denomination')->comment('优惠券面额');
             $table->string('description')->comment('优惠券说明');
+            $table->integer('type')->comment('优惠券类型：1-无门槛，2-商品数量满减，3-价格满减');
             $table->integer('num_limit')->default(0)->comment('优惠券商品数量门槛');
             $table->float('price_limit')->default(0)->comment('优惠券价格门槛');
             $table->string('expiration_time')->default('')->comment('优惠券失效时间');

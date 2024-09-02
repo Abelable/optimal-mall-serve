@@ -10,6 +10,7 @@ namespace App\Models;
  * @property string $name 优惠券名称
  * @property float $denomination 优惠券面额
  * @property string $description 优惠券说明
+ * @property int $type 优惠券类型：1-无门槛，2-商品数量满减，3-价格满减
  * @property int $num_limit 优惠券商品数量门槛
  * @property float $price_limit 优惠券价格门槛
  * @property string $expiration_time 优惠券失效时间
@@ -38,6 +39,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon wherePriceLimit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereReceivedNum($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Coupon withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Coupon withoutTrashed()
