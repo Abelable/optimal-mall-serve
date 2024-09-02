@@ -89,6 +89,22 @@ class ActivityController extends Controller
         return $this->success();
     }
 
+    public function editTag()
+    {
+        $id = $this->verifyRequiredInteger('id');
+        $tag = $this->verifyRequiredInteger('tag');
+
+        $activity = ActivityService::getInstance()->getActivityById($id);
+        if (is_null($activity)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前活动不存在');
+        }
+
+        $activity->tag = tag;
+        $activity->save();
+
+        return $this->success();
+    }
+
     public function editFollowers()
     {
         $id = $this->verifyRequiredInteger('id');

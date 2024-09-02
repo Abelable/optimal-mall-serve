@@ -16,6 +16,9 @@ class ActivityService extends BaseService
         if (!is_null($input->status)) {
             $query = $query->where('status', $input->status);
         }
+        if (!is_null($input->tag)) {
+            $query = $query->where('tag', $input->tag);
+        }
         if (!is_null($input->goodsType)) {
             $query = $query->where('goods_type', $input->goodsType);
         }
