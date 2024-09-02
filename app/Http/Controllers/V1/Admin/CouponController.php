@@ -26,7 +26,7 @@ class CouponController extends Controller
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
-        $columns = ['id', 'denomination', 'name', 'description', 'num_limit', 'price_limit', 'expiration_time'];
+        $columns = ['id', 'denomination', 'name', 'description', 'type', 'num_limit', 'price_limit', 'expiration_time'];
         $coupon = CouponService::getInstance()->getCouponById($id, $columns);
         if (is_null($coupon)) {
             return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
