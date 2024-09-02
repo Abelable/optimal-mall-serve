@@ -10,6 +10,7 @@ class CouponInput extends BaseInput
     public $denomination;
     public $description;
     public $goodsIds;
+    public $type;
     public $numLimit;
     public $priceLimit;
     public $expirationTime;
@@ -21,6 +22,7 @@ class CouponInput extends BaseInput
             'name' => 'required|string',
             'description' => 'required|string',
             'goodsIds' => 'required|array',
+            'type' => 'required|integer|in:1,2,3',
             'numLimit' => 'integer|digits_between:1,20',
             'priceLimit' => 'numeric',
             'expirationTime' => 'string'

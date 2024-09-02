@@ -49,6 +49,7 @@ class CouponController extends Controller
             $coupon->goods_id = $goods->id;
             $coupon->goods_cover = $goods->cover;
             $coupon->goods_name = $goods->name;
+            $coupon->type = $input->type;
             if (!is_null($input->numLimit)) {
                 $coupon->num_limit = $input->numLimit;
             }
@@ -77,6 +78,7 @@ class CouponController extends Controller
         $coupon->denomination = $input->denomination;
         $coupon->name = $input->name;
         $coupon->description = $input->description;
+        $coupon->type = $input->type;
         if (!is_null($input->numLimit)) {
             $coupon->num_limit = $input->numLimit;
         }
