@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Goods;
 use App\Services\ActivityService;
+use App\Services\CouponService;
 use App\Services\GoodsService;
 use App\Services\MallBannerService;
 
@@ -29,7 +30,11 @@ class MallController extends Controller
         $goodsIds = $activityList->pluck('goods_id')->toArray();
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
 
-        $list = $goodsList->map(function (Goods $goods) use ($activityKeyList) {
+        $groupedCouponList = CouponService::getInstance()
+            ->getCouponListByGoodsIds($goodsIds, ['name', 'denomination', 'type', 'num_limit', 'price_limit'])
+            ->groupBy('goods_id');
+
+        $list = $goodsList->map(function (Goods $goods) use ($activityKeyList, $groupedCouponList) {
             /** @var Activity $activity */
             $activity = $activityKeyList->get($goods->id);
             $goods['type'] = $activity->goods_type;
@@ -37,6 +42,10 @@ class MallController extends Controller
             unset($activity->goods_id);
             unset($activity->goods_type);
             $goods['activityInfo'] = $activity;
+
+            $couponList = $groupedCouponList->get($goods->id);
+            $goods['couponList'] = $couponList ?: [];
+
             return $goods;
         });
 
