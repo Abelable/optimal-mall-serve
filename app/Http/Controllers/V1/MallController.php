@@ -23,7 +23,7 @@ class MallController extends Controller
     public function activityList()
     {
         $tag = $this->verifyRequiredInteger('tag');
-        $columns = ['tag', 'name', 'goods_id', 'goods_tag', 'start_time', 'end_time', 'followers', 'sales'];
+        $columns = ['status', 'name', 'tag', 'goods_tag', 'goods_id', 'start_time', 'end_time', 'followers', 'sales'];
         $activityList = ActivityService::getInstance()->getActivityList($tag, $columns);
         $activityKeyList = $activityList->keyBy('goods_id');
 
