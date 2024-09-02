@@ -37,10 +37,6 @@ class MallController extends Controller
         $list = $goodsList->map(function (Goods $goods) use ($activityKeyList, $groupedCouponList) {
             /** @var Activity $activity */
             $activity = $activityKeyList->get($goods->id);
-            $goods['tag'] = $activity->goods_tag;
-
-            unset($activity->goods_id);
-            unset($activity->goods_tag);
             $goods['activityInfo'] = $activity;
 
             $couponList = $groupedCouponList->get($goods->id);
