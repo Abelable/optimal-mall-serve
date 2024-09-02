@@ -6,7 +6,8 @@ namespace App\Models;
  * App\Models\Activity
  *
  * @property int $id
- * @property int $status 活动状态：0-活动预告，1-活动进行中，2-活动结束
+ * @property int $status 活动状态：0-预告，1-进行中，2-结束
+ * @property int $tag 活动标签：0-无标签，1-今日主推，2-活动预告
  * @property string $name 活动名称
  * @property string $start_time 活动开始时间
  * @property string $end_time 活动结束时间
@@ -36,6 +37,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereSales($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereStartTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereTag($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Activity withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Activity withoutTrashed()

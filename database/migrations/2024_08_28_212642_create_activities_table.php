@@ -15,7 +15,8 @@ class CreateActivitiesTable extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
-            $table->integer('status')->comment('活动状态：0-活动预告，1-活动进行中，2-活动结束');
+            $table->integer('status')->comment('活动状态：0-预告，1-进行中，2-结束');
+            $table->integer('tag')->default(0)->comment('活动标签：0-无标签，1-今日主推，2-活动预告');
             $table->string('name')->comment('活动名称');
             $table->string('start_time')->default('')->comment('活动开始时间');
             $table->string('end_time')->default('')->comment('活动结束时间');
