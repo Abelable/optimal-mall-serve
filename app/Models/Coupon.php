@@ -8,10 +8,10 @@ namespace App\Models;
  * @property int $id
  * @property int $status 优惠券状态：1-有效，2-过期，3-下架
  * @property string $name 优惠券名称
- * @property int $denomination 优惠券面额
+ * @property float $denomination 优惠券面额
  * @property string $description 优惠券说明
  * @property int $num_limit 优惠券商品数量门槛
- * @property int $price_limit 优惠券价格门槛
+ * @property float $price_limit 优惠券价格门槛
  * @property string $expiration_time 优惠券失效时间
  * @property int $goods_id 商品id
  * @property string $goods_cover 商品图片
