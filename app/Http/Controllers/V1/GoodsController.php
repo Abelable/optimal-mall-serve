@@ -70,20 +70,4 @@ class GoodsController extends Controller
 
         return $this->success($goods);
     }
-
-    public function goodsInfo()
-    {
-        $id = $this->verifyRequiredId('id');
-        $goods = GoodsService::getInstance()->getGoodsById($id);
-        if (is_null($goods)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
-        }
-
-        $goods->image_list = json_decode($goods->image_list);
-        $goods->detail_image_list = json_decode($goods->detail_image_list);
-        $goods->spec_list = json_decode($goods->spec_list);
-        $goods->sku_list = json_decode($goods->sku_list);
-
-        return $this->success($goods);
-    }
 }
