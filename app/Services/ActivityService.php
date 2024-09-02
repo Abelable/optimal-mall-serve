@@ -19,15 +19,15 @@ class ActivityService extends BaseService
         if (!is_null($input->tag)) {
             $query = $query->where('tag', $input->tag);
         }
-        if (!is_null($input->goodsType)) {
-            $query = $query->where('goods_type', $input->goodsType);
+        if (!is_null($input->goodsTag)) {
+            $query = $query->where('goods_tag', $input->goodsTag);
         }
         return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getActivityList($status, $columns = ['*'])
+    public function getActivityList($tag, $columns = ['*'])
     {
-        return Activity::query()->where('status', $status)->get($columns);
+        return Activity::query()->whereIn('status', [0, 1])->where('tag', $tag)->get($columns);
     }
 
     public function getActivityListByGoodsIds(array $goodsIds, $columns = ['*'])

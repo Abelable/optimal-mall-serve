@@ -22,9 +22,9 @@ class MallController extends Controller
 
     public function activityList()
     {
-        $status = $this->verifyRequiredInteger('status');
-        $columns = ['status', 'name', 'goods_id', 'goods_type', 'start_time', 'end_time', 'followers', 'sales'];
-        $activityList = ActivityService::getInstance()->getActivityList($status, $columns);
+        $tag = $this->verifyRequiredInteger('tag');
+        $columns = ['tag', 'name', 'goods_id', 'goods_tag', 'start_time', 'end_time', 'followers', 'sales'];
+        $activityList = ActivityService::getInstance()->getActivityList($tag, $columns);
         $activityKeyList = $activityList->keyBy('goods_id');
 
         $goodsIds = $activityList->pluck('goods_id')->toArray();
@@ -37,10 +37,10 @@ class MallController extends Controller
         $list = $goodsList->map(function (Goods $goods) use ($activityKeyList, $groupedCouponList) {
             /** @var Activity $activity */
             $activity = $activityKeyList->get($goods->id);
-            $goods['type'] = $activity->goods_type;
+            $goods['tag'] = $activity->goods_tag;
 
             unset($activity->goods_id);
-            unset($activity->goods_type);
+            unset($activity->goods_tag);
             $goods['activityInfo'] = $activity;
 
             $couponList = $groupedCouponList->get($goods->id);

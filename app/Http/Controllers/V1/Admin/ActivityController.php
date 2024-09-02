@@ -55,7 +55,6 @@ class ActivityController extends Controller
             if (!is_null($input->endTime)) {
                 $activity->end_time = $input->endTime;
             }
-            $activity->goods_type = $input->goodsType;
             $activity->goods_id = $goods->id;
             $activity->goods_cover = $goods->cover;
             $activity->goods_name = $goods->name;
@@ -99,7 +98,23 @@ class ActivityController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前活动不存在');
         }
 
-        $activity->tag = tag;
+        $activity->tag = $tag;
+        $activity->save();
+
+        return $this->success();
+    }
+
+    public function editGoodsTag()
+    {
+        $id = $this->verifyRequiredInteger('id');
+        $goodsTag = $this->verifyRequiredInteger('goodsTag');
+
+        $activity = ActivityService::getInstance()->getActivityById($id);
+        if (is_null($activity)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前活动不存在');
+        }
+
+        $activity->goods_tag = $goodsTag;
         $activity->save();
 
         return $this->success();

@@ -181,6 +181,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('add', 'ActivityController@add');
             Route::post('edit', 'ActivityController@edit');
             Route::post('edit_tag', 'ActivityController@editTag');
+            Route::post('edit_goods_tag', 'ActivityController@editGoodsTag');
             Route::post('edit_followers', 'ActivityController@editFollowers');
             Route::post('edit_sales', 'ActivityController@editSales');
             Route::post('end', 'ActivityController@end');

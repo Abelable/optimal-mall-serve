@@ -10,7 +10,6 @@ class ActivityInput extends BaseInput
     public $name;
     public $startTime;
     public $endTime;
-    public $goodsType;
     public $goodsIds;
 
     public function rules()
@@ -20,7 +19,6 @@ class ActivityInput extends BaseInput
             'name' => 'required|string',
             'startTime' => 'string',
             'endTime' => 'string',
-            'goodsType' => 'required|integer|in:1,2',
             'goodsIds' => 'required|array'
         ];
     }
