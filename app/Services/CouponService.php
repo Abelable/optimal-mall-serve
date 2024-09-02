@@ -16,6 +16,9 @@ class CouponService extends BaseService
         if (!is_null($input->status)) {
             $query = $query->where('status', $input->status);
         }
+        if (!is_null($input->type)) {
+            $query = $query->where('type', $input->type);
+        }
         if (!is_null($input->goodsId)) {
             $query = $query->where('goods_id', $input->goodsId);
         }

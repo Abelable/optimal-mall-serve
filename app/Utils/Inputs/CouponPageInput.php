@@ -6,6 +6,7 @@ class CouponPageInput extends PageInput
 {
     public $name;
     public $status;
+    public $type;
     public $goodsId;
 
     public function rules()
@@ -13,6 +14,7 @@ class CouponPageInput extends PageInput
         return array_merge(parent::rules(), [
             'name' => 'string',
             'status' => 'integer|in:1,2,3',
+            'type' => 'integer|in:1,2,3',
             'goodsId' => 'integer|digits_between:1,20',
         ]);
     }
