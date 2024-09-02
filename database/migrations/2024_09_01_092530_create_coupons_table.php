@@ -15,7 +15,7 @@ class CreateCouponsTable extends Migration
     {
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
-            $table->integer('status')->comment('优惠券状态：1-有效，2-过期，3-下架');
+            $table->integer('status')->default(1)->comment('优惠券状态：1-有效，2-过期，3-下架');
             $table->string('name')->comment('优惠券名称');
             $table->float('denomination')->comment('优惠券面额');
             $table->string('description')->comment('优惠券说明');
