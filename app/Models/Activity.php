@@ -7,11 +7,11 @@ namespace App\Models;
  *
  * @property int $id
  * @property int $status 活动状态：0-预告，1-进行中，2-结束
- * @property int $tag 活动标签：0-无标签，1-今日主推，2-活动预告
+ * @property int $tag 活动标签：1-今日主推，2-活动预告
  * @property string $name 活动名称
  * @property string $start_time 活动开始时间
  * @property string $end_time 活动结束时间
- * @property int $goods_type 商品类型：1-农产品，2-爆品
+ * @property int $goods_tag 商品标签：1-农产品，2-爆品
  * @property int $goods_id 商品id
  * @property string $goods_cover 商品图片
  * @property string $goods_name 商品名称
@@ -31,7 +31,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereGoodsCover($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereGoodsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereGoodsName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Activity whereGoodsType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereGoodsTag($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereSales($value)
