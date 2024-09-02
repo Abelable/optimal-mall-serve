@@ -26,7 +26,7 @@ class ActivityController extends Controller
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
-        $activity = ActivityService::getInstance()->getActivityById($id, ['id', 'status', 'name', 'start_time', 'end_time', 'goods_type']);
+        $activity = ActivityService::getInstance()->getActivityById($id, ['id', 'status', 'name', 'start_time', 'end_time', 'goods_tag']);
         if (is_null($activity)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前活动不存在');
         }
@@ -82,7 +82,6 @@ class ActivityController extends Controller
         if (!is_null($input->endTime)) {
             $activity->end_time = $input->endTime;
         }
-        $activity->goods_type = $input->goodsType;
         $activity->save();
 
         return $this->success();
