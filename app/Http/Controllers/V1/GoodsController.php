@@ -45,7 +45,7 @@ class GoodsController extends Controller
             $goods['activityInfo'] = $activity;
 
             $couponList = $groupedCouponList->get($goods->id);
-            $goods['couponList'] = $couponList;
+            $goods['couponList'] = $couponList ?: [];
 
             $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
 
