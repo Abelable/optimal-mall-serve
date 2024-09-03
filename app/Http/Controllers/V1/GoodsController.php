@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Goods;
+use App\Services\ActivityService;
+use App\Services\CouponService;
+use App\Services\GiftGoodsService;
 use App\Services\GoodsCategoryService;
 use App\Services\GoodsService;
 use App\Utils\CodeResponse;
@@ -23,7 +27,32 @@ class GoodsController extends Controller
         /** @var GoodsPageInput $input */
         $input = GoodsPageInput::new();
         $page = GoodsService::getInstance()->getAllList($input);
-        return $this->successPaginate($page);
+        $goodsList = collect($page->items());
+        $goodsIds = $goodsList->pluck('id')->toArray();
+
+        $activityList = ActivityService::getInstance()
+            ->getActivityListByGoodsIds($goodsIds, ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
+            ->keyBy('goods_id');
+
+        $groupedCouponList = CouponService::getInstance()
+            ->getCouponListByGoodsIds($goodsIds, ['goods_id', 'name', 'denomination', 'type', 'num_limit', 'price_limit'])
+            ->groupBy('goods_id');
+
+        $giftGoodsIds = GiftGoodsService::getInstance()->getGoodsList([1, 2])->pluck('goods_id')->toArray();
+
+        $list = $goodsList->map(function (Goods $goods) use ($activityList, $groupedCouponList, $giftGoodsIds) {
+            $activity = $activityList->get($goods->id);
+            $goods['activityInfo'] = $activity;
+
+            $couponList = $groupedCouponList->get($goods->id);
+            $goods['couponList'] = $couponList;
+
+            $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
+
+            return $goods;
+        });
+
+        return $this->success($this->paginate($page, $list));
     }
 
     public function search()

@@ -16,9 +16,9 @@ class GiftGoodsService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getGoodsList($type, $columns = ['*'])
+    public function getGoodsList(array $typeList, $columns = ['*'])
     {
-        return GiftGoods::query()->where('type', $type)->get($columns);
+        return GiftGoods::query()->whereIn('type', $typeList)->get($columns);
     }
 
     public function getFilterGoodsList(GiftGoodsListInput $input, $columns = ['*'])
