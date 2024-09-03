@@ -11,6 +11,7 @@ use App\Services\GoodsCategoryService;
 use App\Services\GoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsPageInput;
+use App\Utils\Inputs\PageInput;
 
 class GoodsController extends Controller
 {
@@ -24,9 +25,9 @@ class GoodsController extends Controller
 
     public function list()
     {
-        /** @var GoodsPageInput $input */
-        $input = GoodsPageInput::new();
-        $page = GoodsService::getInstance()->getAllList($input);
+        /** @var PageInput $input */
+        $input = PageInput::new();
+        $page = GoodsService::getInstance()->getGoodsPage($input);
         $goodsList = collect($page->items());
         $goodsIds = $goodsList->pluck('id')->toArray();
 

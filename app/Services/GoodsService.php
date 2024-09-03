@@ -7,6 +7,7 @@ use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsListInput;
 use App\Utils\Inputs\GoodsInput;
 use App\Utils\Inputs\GoodsPageInput;
+use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\DB;
 
 class GoodsService extends BaseService
@@ -30,6 +31,20 @@ class GoodsService extends BaseService
                 ->orderBy('created_at', 'desc');
         }
         return $query->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
+    public function getGoodsPage(PageInput $input, $columns=['*'])
+    {
+        $query = Goods::query()->where('status', 1);
+        if (!empty($input->categoryId)) {
+            $query = $query->where('category_ids', 'like', "%$input->categoryId%");
+        }
+        return $query->orderBy('sales_volume', 'desc')
+            ->orderBy('avg_score', 'desc')
+            ->orderBy('commission_rate', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function search($keywords, GoodsPageInput $input, $columns=['*'])
