@@ -7,7 +7,6 @@ use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsListInput;
 use App\Utils\Inputs\GoodsInput;
 use App\Utils\Inputs\GoodsPageInput;
-use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\DB;
 
 class GoodsService extends BaseService
@@ -33,7 +32,7 @@ class GoodsService extends BaseService
         return $query->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getGoodsPage(PageInput $input, $columns=['*'])
+    public function getGoodsPage(GoodsPageInput $input, $columns=['*'])
     {
         $query = Goods::query()->where('status', 1);
         if (!empty($input->categoryId)) {
