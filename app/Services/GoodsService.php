@@ -118,7 +118,9 @@ class GoodsService extends BaseService
             $query = $query->where('name', 'like', "%$input->name%");
         }
         if (!empty($input->categoryId)) {
-            $query = $query->where('category_ids', 'like', "%$input->categoryId%");
+            $query->whereHas('categories', function ($q) use ($input) {
+                $q->where('category_id', $input->categoryId);
+            });
         }
         if (!empty($input->merchantId)) {
             $query = $query->where('merchant_id', $input->merchantId);

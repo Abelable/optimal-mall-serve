@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Goods;
 use App\Services\GoodsCategoryService;
 use App\Services\GoodsService;
 use App\Utils\CodeResponse;
@@ -18,9 +19,13 @@ class GoodsController extends Controller
     {
         /** @var GoodsListInput $input */
         $input = GoodsListInput::new();
-        $columns = ['id', 'cover', 'name', 'status', 'merchant_id', 'category_ids', 'price', 'sales_volume', 'stock', 'commission_rate', 'created_at', 'updated_at'];
-        $page = GoodsService::getInstance()->getGoodsList($input, $columns);
-        return $this->successPaginate($page);
+        $page = GoodsService::getInstance()->getGoodsList($input);
+        $list = collect($page->items())->map(function (Goods $goods) {
+            $goods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
+            unset($goods->categories);
+            return $goods;
+        });
+        return $this->success($this->paginate($page, $list));
     }
 
     public function detail()
@@ -30,6 +35,8 @@ class GoodsController extends Controller
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
+        $goods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
+        unset($goods->categories);
         $goods->image_list = json_decode($goods->image_list);
         $goods->detail_image_list = json_decode($goods->detail_image_list);
         $goods->sku_list = json_decode($goods->sku_list);

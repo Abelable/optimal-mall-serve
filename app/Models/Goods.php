@@ -30,6 +30,8 @@ use Laravel\Scout\Searchable;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\GoodsCategory[] $categories
+ * @property-read int|null $categories_count
  * @method static \Illuminate\Database\Eloquent\Builder|Goods newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Goods newQuery()
  * @method static \Illuminate\Database\Query\Builder|Goods onlyTrashed()
@@ -73,5 +75,10 @@ class Goods extends BaseModel
     public function toSearchableArray()
     {
         return $this->only('id', 'name');
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(GoodsCategory::class, 'goods_id');
     }
 }

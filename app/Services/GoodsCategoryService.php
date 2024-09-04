@@ -27,6 +27,11 @@ class GoodsCategoryService extends BaseService
         return GoodsCategory::query()->where('goods_id', $goodsId)->get($columns);
     }
 
+    public function getListByGoodsIds(array $goodsIds, $columns = ['*'])
+    {
+        return GoodsCategory::query()->whereIn('goods_id', $goodsIds)->get($columns);
+    }
+
     public function getGoodsCategory($goodsId, $categoryId, $columns = ['*'])
     {
         return GoodsCategory::query()->where('goods_id', $goodsId)->where('category_id', $categoryId)->first($columns);
