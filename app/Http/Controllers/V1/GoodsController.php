@@ -84,7 +84,6 @@ class GoodsController extends Controller
         $id = $this->verifyRequiredId('id');
         $columns = [
             'id',
-            'category_ids',
             'video',
             'cover',
             'image_list',
