@@ -38,14 +38,12 @@ class RuralController extends Controller
             ->getCouponListByGoodsIds($goodsIds, ['goods_id', 'name', 'denomination', 'type', 'num_limit', 'price_limit'])
             ->groupBy('goods_id');
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
-        $list = $goodsList->map(function (Goods $goods) use ($activityList, $groupedCouponList, $giftGoodsIds) {
+        $list = $goodsList->map(function (Goods $goods) use ($activityList, $groupedCouponList) {
             $activity = $activityList->get($goods->id);
             $goods['activityInfo'] = $activity;
 
             $couponList = $groupedCouponList->get($goods->id);
             $goods['couponList'] = $couponList ?: [];
-
-            $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
 
             return $goods;
         });
