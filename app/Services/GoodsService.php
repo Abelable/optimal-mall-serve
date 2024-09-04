@@ -15,7 +15,7 @@ class GoodsService extends BaseService
     public function getGoodsPage(GoodsPageInput $input, $columns=['*'])
     {
         $query = Goods::query()->where('status', 1);
-        if (!empty($input->goodsIds)) {
+        if (count($input->goodsIds) != 0) {
             $query = $query->orderByRaw(DB::raw("FIELD(id, " . implode(',', $input->goodsIds) . ") DESC"));
         }
         if (!empty($input->categoryId)) {
@@ -124,10 +124,10 @@ class GoodsService extends BaseService
     public function getRecommendGoodsList(RecommendGoodsPageInput $input, $columns=['*'])
     {
         $query = Goods::query()->where('status', 1);
-        if (!empty($input->goodsIds)) {
+        if (count($input->goodsIds) != 0) {
             $query = $query->whereNotIn('id', $input->goodsIds);
         }
-        if (!empty($input->categoryIds)) {
+        if (count($input->categoryIds) != 0) {
             $query->whereHas('categories', function ($q) use ($input) {
                 $q->whereIn('category_id', $input->categoryIds);
             });
