@@ -9,6 +9,7 @@ use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\CategoryService;
 use App\Services\GoodsService;
+use App\Services\MerchantService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsPageInput;
 use App\Utils\Inputs\RecommendGoodsPageInput;
@@ -84,6 +85,7 @@ class GoodsController extends Controller
         $id = $this->verifyRequiredId('id');
         $columns = [
             'id',
+            'merchant_id',
             'video',
             'cover',
             'image_list',
@@ -117,6 +119,10 @@ class GoodsController extends Controller
 
         $giftGoods = GiftGoodsService::getInstance()->getGoodsByGoodsId($goods->id);
         $goods['isGift'] = !is_null($giftGoods) ? 1 : 0;
+
+        $merchant = MerchantService::getInstance()->getMerchantById($goods->merchant_id);
+        $goods['merchantInfo'] = $merchant;
+        unset($goods->merchant_id);
 
         return $this->success($goods);
     }
