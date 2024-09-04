@@ -21,7 +21,6 @@ class CreateCartGoodsTable extends Migration
             $table->string('status_desc')->default('')->comment('购物车商品状态描述');
             $table->integer('user_id')->comment('用户id');
             $table->integer('goods_id')->comment('商品id');
-            $table->string('category_ids')->comment('商品分类');
             $table->integer('freight_template_id')->comment('运费模板id');
             $table->string('cover')->comment('商品图片');
             $table->string('name')->comment('商品名称');

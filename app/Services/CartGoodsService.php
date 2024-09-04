@@ -30,7 +30,20 @@ class CartGoodsService extends BaseService
         $selectedSkuIndex = $input->selectedSkuIndex;
         $number = $input->number;
 
-        [$goods, $skuList] = $this->validateCartGoodsStatus($goodsId, $selectedSkuIndex, $number);
+        $goods = GoodsService::getInstance()->getOnSaleGoods($goodsId);
+        if (is_null($goods)) {
+            $this->throwBusinessException(CodeResponse::NOT_FOUND, '当前商品不存在');
+        }
+        $skuList = json_decode($goods->sku_list);
+        if (count($skuList) != 0 && $selectedSkuIndex != -1) {
+            $stock = $skuList[$selectedSkuIndex]->stock;
+            if ($stock == 0 || $number > $stock) {
+                $this->throwBusinessException(CodeResponse::CART_INVALID_OPERATION, '所选规格库存不足');
+            }
+        }
+        if ($goods->stock == 0 || $number > $goods->stock) {
+            $this->throwBusinessException(CodeResponse::CART_INVALID_OPERATION, '商品库存不足');
+        }
 
         $cartGoods = $this->getExistCartGoods($userId, $goodsId, $selectedSkuIndex, $scene);
         if (!is_null($cartGoods)) {
@@ -40,7 +53,6 @@ class CartGoodsService extends BaseService
             $cartGoods->scene = $scene;
             $cartGoods->user_id = $userId;
             $cartGoods->goods_id = $goodsId;
-            $cartGoods->category_ids = $goods->category_ids;
             $cartGoods->freight_template_id = $goods->freight_template_id;
             $cartGoods->cover = $goods->cover;
             $cartGoods->name = $goods->name;
@@ -71,7 +83,20 @@ class CartGoodsService extends BaseService
             $this->throwBusinessException(CodeResponse::DATA_EXISTED, '购物车中已存在当前规格商品');
         }
 
-        [$goods, $skuList] = $this->validateCartGoodsStatus($goodsId, $selectedSkuIndex, $number);
+        $goods = GoodsService::getInstance()->getOnSaleGoods($goodsId);
+        if (is_null($goods)) {
+            $this->throwBusinessException(CodeResponse::NOT_FOUND, '当前商品不存在');
+        }
+        $skuList = json_decode($goods->sku_list);
+        if (count($skuList) != 0 && $selectedSkuIndex != -1) {
+            $stock = $skuList[$selectedSkuIndex]->stock;
+            if ($stock == 0 || $number > $stock) {
+                $this->throwBusinessException(CodeResponse::CART_INVALID_OPERATION, '所选规格库存不足');
+            }
+        }
+        if ($goods->stock == 0 || $number > $goods->stock) {
+            $this->throwBusinessException(CodeResponse::CART_INVALID_OPERATION, '商品库存不足');
+        }
 
         $cartGoods = $this->getCartGoodsById($cartGoodsId);
         if (is_null($cartGoods)) {
@@ -96,29 +121,6 @@ class CartGoodsService extends BaseService
         $cartGoods['stock'] = (count($skuList) != 0 && $selectedSkuIndex != -1) ? $skuList[$selectedSkuIndex]->stock : $goods->stock;
 
         return $cartGoods;
-    }
-
-    public function validateCartGoodsStatus($goodsId, $selectedSkuIndex, $number)
-    {
-        $goods = GoodsService::getInstance()->getOnSaleGoods($goodsId);
-
-        if (is_null($goods)) {
-            $this->throwBusinessException(CodeResponse::NOT_FOUND, '当前商品不存在');
-        }
-
-        $skuList = json_decode($goods->sku_list);
-
-        if (count($skuList) != 0 && $selectedSkuIndex != -1) {
-            $stock = $skuList[$selectedSkuIndex]->stock;
-            if ($stock == 0 || $number > $stock) {
-                $this->throwBusinessException(CodeResponse::CART_INVALID_OPERATION, '所选规格库存不足');
-            }
-        }
-        if ($goods->stock == 0 || $number > $goods->stock) {
-            $this->throwBusinessException(CodeResponse::CART_INVALID_OPERATION, '商品库存不足');
-        }
-
-        return [$goods, $skuList];
     }
 
     public function getExistCartGoods($userId, $goodsId, $selectedSkuIndex, $scene, $id = 0, $columns = ['*'])

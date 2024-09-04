@@ -25,7 +25,6 @@ class CartController extends Controller
             'status',
             'status_desc',
             'goods_id',
-            'category_ids',
             'freight_template_id',
             'cover',
             'name',
@@ -43,6 +42,7 @@ class CartController extends Controller
         $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList) {
             /** @var Goods $goods */
             $goods = $goodsList->get($cartGoods->goods_id);
+            $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
             if (is_null($goods) || $goods->status != 1) {
                 $cartGoods->status = 3;
                 $cartGoods->status_desc = '商品已下架';
@@ -132,6 +132,6 @@ class CartController extends Controller
     {
         $ids = $this->verifyArrayNotEmpty('ids', []);
         CartGoodsService::getInstance()->deleteCartGoodsList($this->userId(), $ids);
-        return $this->success();;
+        return $this->success();
     }
 }
