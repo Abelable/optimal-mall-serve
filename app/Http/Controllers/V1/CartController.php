@@ -38,7 +38,6 @@ class CartController extends Controller
         ];
         $list = CartGoodsService::getInstance()->cartGoodsList($this->userId(), $cartGoodsColumns);
         $goodsIds = array_unique($list->pluck('goods_id')->toArray());
-        $goodsCategoryIds = array_unique(explode(',', implode(',', $list->pluck('category_ids')->toArray())));
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
         $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList) {
@@ -94,12 +93,7 @@ class CartController extends Controller
             return $cartGoods;
         });
 
-        $recommendGoodsList = GoodsService::getInstance()->getRecommendGoodsList($goodsIds, $goodsCategoryIds);
-
-        return $this->success([
-            'cartList' => $cartGoodsList,
-            'recommendGoodsList' => $recommendGoodsList
-        ]);
+        return $this->success($cartGoodsList);
     }
 
     public function fastAdd()

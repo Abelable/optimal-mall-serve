@@ -7,6 +7,7 @@ use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsListInput;
 use App\Utils\Inputs\GoodsInput;
 use App\Utils\Inputs\GoodsPageInput;
+use App\Utils\Inputs\RecommendGoodsPageInput;
 use Illuminate\Support\Facades\DB;
 
 class GoodsService extends BaseService
@@ -89,27 +90,6 @@ class GoodsService extends BaseService
         return $query->get($columns);
     }
 
-    public function getTopListByCategoryIds(array $goodsIds, array $categoryIds, $limit, $columns=['*'])
-    {
-        $query = Goods::query()->where('status', 1);
-
-        if (!empty($categoryIds)) {
-            foreach ($categoryIds as $categoryId) {
-                $query = $query->where('category_ids', 'like', "%$categoryId%");
-            }
-        }
-        if (!empty($goodsIds)) {
-            $query = $query->whereNotIn('id', $goodsIds);
-        }
-        return $query
-                ->orderBy('sales_volume', 'desc')
-                ->orderBy('avg_score', 'desc')
-                ->orderBy('commission_rate', 'desc')
-                ->orderBy('created_at', 'desc')
-                ->take($limit)
-                ->get($columns);
-    }
-
     public function getGoodsById($id, $columns=['*'])
     {
         return Goods::query()->find($id, $columns);
@@ -149,15 +129,23 @@ class GoodsService extends BaseService
         return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getRecommendGoodsList
-    (
-        $goodsIds,
-        $categoryIds,
-        $limit = 10,
-        $columns=['id', 'cover', 'name', 'price', 'market_price', 'sales_volume']
-    )
+    public function getRecommendGoodsList(RecommendGoodsPageInput $input, $columns=['*'])
     {
-        return $this->getTopListByCategoryIds($goodsIds, $categoryIds, $limit, $columns);
+        $query = Goods::query()->where('status', 1);
+        if (!empty($input->goodsIds)) {
+            $query = $query->whereNotIn('id', $input->goodsIds);
+        }
+        if (!empty($input->categoryIds)) {
+            foreach ($input->categoryIds as $categoryId) {
+                $query = $query->where('category_ids', 'like', "%$categoryId%");
+            }
+        }
+        return $query->orderBy('sales_volume', 'desc')
+            ->orderBy('avg_score', 'desc')
+            ->orderBy('commission_rate', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function reduceStock($id, $number, $selectedSkuIndex = -1)

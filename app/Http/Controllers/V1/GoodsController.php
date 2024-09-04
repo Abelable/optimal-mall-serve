@@ -11,6 +11,7 @@ use App\Services\GoodsCategoryService;
 use App\Services\GoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsPageInput;
+use App\Utils\Inputs\RecommendGoodsPageInput;
 
 class GoodsController extends Controller
 {
@@ -27,6 +28,15 @@ class GoodsController extends Controller
         /** @var GoodsPageInput $input */
         $input = GoodsPageInput::new();
         $page = GoodsService::getInstance()->getGoodsPage($input);
+        $list = $this->handleGoodsList($page);
+        return $this->success($this->paginate($page, $list));
+    }
+
+    public function recommendList()
+    {
+        /** @var RecommendGoodsPageInput $input */
+        $input = RecommendGoodsPageInput::new();
+        $page = GoodsService::getInstance()->getRecommendGoodsList($input);
         $list = $this->handleGoodsList($page);
         return $this->success($this->paginate($page, $list));
     }
@@ -72,7 +82,6 @@ class GoodsController extends Controller
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
-
         $columns = [
             'id',
             'category_ids',
@@ -98,9 +107,6 @@ class GoodsController extends Controller
         $goods->detail_image_list = json_decode($goods->detail_image_list);
         $goods->spec_list = json_decode($goods->spec_list);
         $goods->sku_list = json_decode($goods->sku_list);
-
-        $goods['recommend_goods_list'] = GoodsService::getInstance()->getRecommendGoodsList([$id], [$goods->category_ids]);
-        unset($goods->category_ids);
 
         return $this->success($goods);
     }
