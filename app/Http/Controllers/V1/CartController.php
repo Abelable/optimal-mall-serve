@@ -5,10 +5,8 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\CartGoods;
 use App\Models\Goods;
-use App\Models\Shop;
 use App\Services\CartGoodsService;
 use App\Services\GoodsService;
-use App\Services\ShopService;
 use App\Utils\Inputs\CartGoodsInput;
 use App\Utils\Inputs\CartGoodsEditInput;
 
