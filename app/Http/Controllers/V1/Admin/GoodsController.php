@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Goods;
+use App\Services\GoodsCategoryService;
 use App\Services\GoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsListInput;
 use App\Utils\Inputs\GoodsInput;
+use Illuminate\Support\Facades\DB;
 
 class GoodsController extends Controller
 {
@@ -81,7 +82,11 @@ class GoodsController extends Controller
     {
         /** @var GoodsInput $input */
         $input = GoodsInput::new();
-        GoodsService::getInstance()->createGoods($input);
+        DB::transaction(function () use ($input) {
+            $goods = GoodsService::getInstance()->createGoods($input);
+            GoodsCategoryService::getInstance()->createList($goods->id, $input->categoryIds);
+        });
+
         return $this->success();
     }
 
@@ -96,7 +101,11 @@ class GoodsController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
 
-        GoodsService::getInstance()->updateGoods($goods, $input);
+        DB::transaction(function () use ($input, $goods) {
+            GoodsService::getInstance()->updateGoods($goods, $input);
+            GoodsCategoryService::getInstance()->deleteListByGoodsId($goods->id);
+            GoodsCategoryService::getInstance()->createList($goods->id, $input->categoryIds);
+        });
 
         return $this->success();
     }

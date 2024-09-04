@@ -7,24 +7,38 @@ use App\Utils\Inputs\PageInput;
 
 class GoodsCategoryService extends BaseService
 {
-    public function getCategoryList(PageInput $input, $columns = ['*'])
+    public function createList($goodsId, array $categoryIds)
     {
-        $query = GoodsCategory::query();
-        return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+        foreach ($categoryIds as $categoryId) {
+            $goodsCategory = GoodsCategory::new();
+            $goodsCategory->goods_id = $goodsId;
+            $goodsCategory->category_id = $categoryId;
+            $goodsCategory->save();
+        }
     }
 
-    public function getCategoryById($id, $columns = ['*'])
+    public function getPage(PageInput $input, $columns = ['*'])
     {
-        return GoodsCategory::query()->find($id, $columns = ['*']);
+        return GoodsCategory::query()->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getCategoryByName($name, $columns = ['*'])
+    public function getListByGoodsId($goodsId, $columns = ['*'])
     {
-        return GoodsCategory::query()->where('name', $name)->first($columns);
+        return GoodsCategory::query()->where('goods_id', $goodsId)->get($columns);
     }
 
-    public function getCategoryOptions($columns = ['*'])
+    public function getGoodsCategory($goodsId, $categoryId, $columns = ['*'])
     {
-        return GoodsCategory::query()->where('status', 1)->orderBy('sort', 'desc')->get($columns);
+        return GoodsCategory::query()->where('goods_id', $goodsId)->where('category_id', $categoryId)->first($columns);
+    }
+
+    public function delete($goodsId, $categoryId)
+    {
+        return GoodsCategory::query()->where('goods_id', $goodsId)->where('category_id', $categoryId)->delete();
+    }
+
+    public function deleteListByGoodsId($goodsId)
+    {
+        return GoodsCategory::query()->where('goods_id', $goodsId)->delete();
     }
 }
