@@ -4,10 +4,11 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Goods;
+use App\Models\GoodsCategory;
 use App\Services\ActivityService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
-use App\Services\GoodsCategoryService;
+use App\Services\CategoryService;
 use App\Services\GoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsPageInput;
@@ -19,7 +20,7 @@ class GoodsController extends Controller
 
     public function categoryOptions()
     {
-        $options = GoodsCategoryService::getInstance()->getCategoryOptions(['id', 'name']);
+        $options = CategoryService::getInstance()->getCategoryOptions(['id', 'name']);
         return $this->success($options);
     }
 

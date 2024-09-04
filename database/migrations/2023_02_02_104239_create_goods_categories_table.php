@@ -15,9 +15,8 @@ class CreateGoodsCategoriesTable extends Migration
     {
         Schema::create('goods_categories', function (Blueprint $table) {
             $table->id();
-            $table->integer('status')->default(1)->comment('状态: 1-显示,2-隐藏');
-            $table->string('name')->comment('商品分类名称');
-            $table->integer('sort')->default(1)->comment('排序');
+            $table->integer('goods_id')->comment('商品id');
+            $table->integer('category_id')->comment('分类id');
             $table->timestamps();
             $table->softDeletes();
         });
