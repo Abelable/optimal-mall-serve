@@ -14,7 +14,7 @@ use App\Utils\Inputs\GoodsPageInput;
 
 class GoodsController extends Controller
 {
-    protected $except = ['categoryOptions', 'list', 'search', 'detail', 'shopGoodsList'];
+    protected $only = [];
 
     public function categoryOptions()
     {
@@ -27,6 +27,22 @@ class GoodsController extends Controller
         /** @var GoodsPageInput $input */
         $input = GoodsPageInput::new();
         $page = GoodsService::getInstance()->getGoodsPage($input);
+        $list = $this->handleGoodsList($page);
+        return $this->success($this->paginate($page, $list));
+    }
+
+    public function search()
+    {
+        $keywords = $this->verifyRequiredString('keywords');
+        /** @var GoodsPageInput $input */
+        $input = GoodsPageInput::new();
+        $page = GoodsService::getInstance()->search($keywords, $input);
+        $list = $this->handleGoodsList($page);
+        return $this->success($this->paginate($page, $list));
+    }
+
+    private function handleGoodsList($page)
+    {
         $goodsList = collect($page->items());
         $goodsIds = $goodsList->pluck('id')->toArray();
 
@@ -40,7 +56,7 @@ class GoodsController extends Controller
 
         $giftGoodsIds = GiftGoodsService::getInstance()->getGoodsList([1, 2])->pluck('goods_id')->toArray();
 
-        $list = $goodsList->map(function (Goods $goods) use ($activityList, $groupedCouponList, $giftGoodsIds) {
+        return $goodsList->map(function (Goods $goods) use ($activityList, $groupedCouponList, $giftGoodsIds) {
             $activity = $activityList->get($goods->id);
             $goods['activityInfo'] = $activity;
 
@@ -51,17 +67,6 @@ class GoodsController extends Controller
 
             return $goods;
         });
-
-        return $this->success($this->paginate($page, $list));
-    }
-
-    public function search()
-    {
-        $keywords = $this->verifyRequiredString('keywords');
-        /** @var GoodsPageInput $input */
-        $input = GoodsPageInput::new();
-        $page = GoodsService::getInstance()->search($keywords, $input);
-        return $this->successPaginate($page);
     }
 
     public function detail()
