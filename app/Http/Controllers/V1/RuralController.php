@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Goods;
+use App\Services\ActivityService;
+use App\Services\CouponService;
 use App\Services\GoodsService;
 use App\Services\RuralBannerService;
 use App\Services\RuralGoodsService;
@@ -28,10 +31,27 @@ class RuralController extends Controller
     {
         $regionId = $this->verifyRequiredId('regionId');
         $goodsIds = RuralGoodsService::getInstance()->getGoodsList($regionId, ['goods_id'])->pluck('goods_id')->toArray();
+        $activityList = ActivityService::getInstance()
+            ->getActivityListByGoodsIds($goodsIds, ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
+            ->keyBy('goods_id');
+        $groupedCouponList = CouponService::getInstance()
+            ->getCouponListByGoodsIds($goodsIds, ['goods_id', 'name', 'denomination', 'type', 'num_limit', 'price_limit'])
+            ->groupBy('goods_id');
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
+        $list = $goodsList->map(function (Goods $goods) use ($activityList, $groupedCouponList, $giftGoodsIds) {
+            $activity = $activityList->get($goods->id);
+            $goods['activityInfo'] = $activity;
+
+            $couponList = $groupedCouponList->get($goods->id);
+            $goods['couponList'] = $couponList ?: [];
+
+            $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
+
+            return $goods;
+        });
 
         // todo 商品列表存缓存
 
-        return $this->success($goodsList);
+        return $this->success($list);
     }
 }
