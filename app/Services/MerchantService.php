@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Services;
 
 use App\Models\Merchant;
-use App\Services\BaseService;
 use App\Utils\Inputs\Admin\MerchantInput;
 use App\Utils\Inputs\Admin\MerchantListInput;
 

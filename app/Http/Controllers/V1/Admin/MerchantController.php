@@ -4,7 +4,7 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Merchant;
-use App\Services\Admin\MerchantService;
+use App\Services\MerchantService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\MerchantInput;
 use App\Utils\Inputs\Admin\MerchantListInput;
