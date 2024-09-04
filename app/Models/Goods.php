@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
  *
  * @property int $id
  * @property int $status 商品状态：1-销售中，2-下架
- * @property string $category_ids 商品分类
  * @property int $merchant_id 商家id
  * @property string $video 商品视频
  * @property string $cover 商品封面
@@ -36,7 +35,6 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Query\Builder|Goods onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Goods query()
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereAvgScore($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCategoryIds($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCover($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCreatedAt($value)
