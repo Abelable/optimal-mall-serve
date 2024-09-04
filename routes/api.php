@@ -46,7 +46,7 @@ Route::prefix('keyword')->group(function () {
 Route::prefix('goods')->group(function () {
     Route::get('category_options', 'GoodsController@categoryOptions');
     Route::get('list', 'GoodsController@list');
-    Route::get('recommend_list', 'GoodsController@recommendList');
+    Route::post('recommend_list', 'GoodsController@recommendList');
     Route::get('search', 'GoodsController@search');
     Route::get('detail', 'GoodsController@detail');
 
