@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Goods;
-use App\Models\GoodsCategory;
 use App\Services\ActivityService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
