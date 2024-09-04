@@ -12,16 +12,18 @@ use Illuminate\Support\Facades\DB;
 
 class GoodsService extends BaseService
 {
-    public function getAllList(GoodsPageInput $input, $columns=['*'])
+    public function getGoodsPage(GoodsPageInput $input, $columns=['*'])
     {
         $query = Goods::query()->where('status', 1);
         if (!empty($input->goodsIds)) {
             $query = $query->orderByRaw(DB::raw("FIELD(id, " . implode(',', $input->goodsIds) . ") DESC"));
         }
         if (!empty($input->categoryId)) {
-            $query = $query->where('category_ids', 'like', "%$input->categoryId%");
+            $query->whereHas('categories', function ($q) use ($input) {
+                $q->where('category_id', $input->categoryId);
+            });
         }
-        if (!empty($input->sort)) {
+        if ($input->sort != 'id') {
             $query = $query->orderBy($input->sort, $input->order);
         } else {
             $query = $query
@@ -33,26 +35,14 @@ class GoodsService extends BaseService
         return $query->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getGoodsPage(GoodsPageInput $input, $columns=['*'])
-    {
-        $query = Goods::query()->where('status', 1);
-        if (!empty($input->categoryId)) {
-            $query = $query->where('category_ids', 'like', "%$input->categoryId%");
-        }
-        return $query->orderBy('sales_volume', 'desc')
-            ->orderBy('avg_score', 'desc')
-            ->orderBy('commission_rate', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->orderBy($input->sort, $input->order)
-            ->paginate($input->limit, $columns, 'page', $input->page);
-    }
-
     public function search($keywords, GoodsPageInput $input, $columns=['*'])
     {
 
         $query = Goods::query()->where('status', 1)->where('name', 'like', "%$keywords%");
         if (!empty($input->categoryId)) {
-            $query = $query->where('category_ids', 'like', "%$input->categoryId%");
+            $query->whereHas('categories', function ($q) use ($input) {
+                $q->where('category_id', $input->categoryId);
+            });
         }
         if (!empty($input->sort)) {
             $query = $query->orderBy($input->sort, $input->order);
@@ -138,9 +128,9 @@ class GoodsService extends BaseService
             $query = $query->whereNotIn('id', $input->goodsIds);
         }
         if (!empty($input->categoryIds)) {
-            foreach ($input->categoryIds as $categoryId) {
-                $query = $query->where('category_ids', 'like', "%$categoryId%");
-            }
+            $query->whereHas('categories', function ($q) use ($input) {
+                $q->whereIn('category_id', $input->categoryIds);
+            });
         }
         return $query->orderBy('sales_volume', 'desc')
             ->orderBy('avg_score', 'desc')
