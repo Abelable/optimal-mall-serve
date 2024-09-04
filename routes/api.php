@@ -273,19 +273,19 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::get('options', 'FreightTemplateController@options');
     });
 
-    Route::prefix('goods')->group(function () {
-        Route::prefix('category')->group(function () {
-            Route::post('list', 'GoodsCategoryController@list');
-            Route::get('detail', 'GoodsCategoryController@detail');
-            Route::post('add', 'GoodsCategoryController@add');
-            Route::post('edit', 'GoodsCategoryController@edit');
-            Route::post('edit_sort', 'GoodsCategoryController@editSort');
-            Route::post('edit_status', 'GoodsCategoryController@editStatus');
-            Route::post('delete', 'GoodsCategoryController@delete');
-            Route::get('options', 'GoodsCategoryController@options');
-            Route::get('filter_options', 'GoodsCategoryController@filterOptions');
-        });
+    Route::prefix('category')->group(function () {
+        Route::post('list', 'CategoryController@list');
+        Route::get('detail', 'CategoryController@detail');
+        Route::post('add', 'CategoryController@add');
+        Route::post('edit', 'CategoryController@edit');
+        Route::post('edit_sort', 'CategoryController@editSort');
+        Route::post('edit_status', 'CategoryController@editStatus');
+        Route::post('delete', 'CategoryController@delete');
+        Route::get('options', 'CategoryController@options');
+        Route::get('filter_options', 'CategoryController@filterOptions');
+    });
 
+    Route::prefix('goods')->group(function () {
         Route::post('list', 'GoodsController@list');
         Route::get('detail', 'GoodsController@detail');
         Route::get('owner_list', 'GoodsController@ownerList');
