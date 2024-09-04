@@ -35,6 +35,11 @@ class ActivityService extends BaseService
         return Activity::query()->whereIn('status', [0, 1])->whereIn('goods_id', $goodsIds)->get($columns);
     }
 
+    public function getActivityByGoodsId($goodsId, $columns = ['*'])
+    {
+        return Activity::query()->whereIn('status', [0, 1])->where('goods_id', $goodsId)->first($columns);
+    }
+
     public function getActivityById($id, $columns = ['*'])
     {
         return Activity::query()->find($id, $columns);

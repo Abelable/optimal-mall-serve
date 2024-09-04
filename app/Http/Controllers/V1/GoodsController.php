@@ -107,6 +107,17 @@ class GoodsController extends Controller
         $goods->spec_list = json_decode($goods->spec_list);
         $goods->sku_list = json_decode($goods->sku_list);
 
+        $activityColumns = ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'];
+        $activity = ActivityService::getInstance()->getActivityByGoodsId($goods->id, $activityColumns);
+        $goods['activityInfo'] = $activity;
+
+        $couponColumns = ['goods_id', 'name', 'denomination', 'description', 'type', 'num_limit', 'price_limit', 'received_num'];
+        $couponList = CouponService::getInstance()->getCouponListByGoodsId($goods->id, $couponColumns);
+        $goods['couponList'] = $couponList;
+
+        $giftGoods = GiftGoodsService::getInstance()->getGoodsByGoodsId($goods->id);
+        $goods['isGift'] = !is_null($giftGoods) ? 1 : 0;
+
         return $this->success($goods);
     }
 }

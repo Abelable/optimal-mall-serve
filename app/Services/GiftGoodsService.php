@@ -26,6 +26,11 @@ class GiftGoodsService extends BaseService
         return GiftGoods::query()->where('type', $input->type)->whereIn('goods_id', $input->goodsIds)->get($columns);
     }
 
+    public function getGoodsByGoodsId($goodsId, $columns = ['*'])
+    {
+        return GiftGoods::query()->where('goods_id', $goodsId)->first($columns);
+    }
+
     public function getGoodsById($id, $columns = ['*'])
     {
         return GiftGoods::query()->find($id, $columns);
