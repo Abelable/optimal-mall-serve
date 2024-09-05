@@ -122,9 +122,11 @@ class GoodsController extends Controller
         $goods['isGift'] = !is_null($giftGoods) ? 1 : 0;
 
         $merchant = MerchantService::getInstance()->getMerchantById($goods->merchant_id, ['id', 'name', 'mobile', 'license']);
-        $merchant->license = json_decode($merchant->license);
-        $goods['merchantInfo'] = $merchant;
-        unset($goods->merchant_id);
+        if (!is_null($merchant)) {
+            $merchant->license = json_decode($merchant->license);
+            $goods['merchantInfo'] = $merchant;
+            unset($goods->merchant_id);
+        }
 
         return $this->success($goods);
     }
