@@ -91,6 +91,7 @@ class GoodsController extends Controller
             'image_list',
             'default_spec_image',
             'name',
+            'introduction',
             'price',
             'market_price',
             'stock',
