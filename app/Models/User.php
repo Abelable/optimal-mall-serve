@@ -25,6 +25,7 @@ use Illuminate\Notifications\Notifiable;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\AuthInfo|null $authInfo
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @method static \Database\Factories\UserFactory factory(...$parameters)
@@ -95,5 +96,10 @@ class User extends BaseModel implements JWTSubject, AuthenticatableContract, Aut
 
     public function superiorId() {
         return $this->hasOne(Relation::class, 'fan_id')->value('superior_id');
+    }
+
+    public function authInfo()
+    {
+        return $this->hasOne(AuthInfo::class, 'user_id')->where('status', 1);
     }
 }
