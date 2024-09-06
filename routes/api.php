@@ -94,8 +94,7 @@ Route::prefix('mall')->group(function () {
 });
 
 Route::prefix('coupon')->group(function () {
-    Route::get('goods_list', 'CouponController@goodsCouponList');
-    Route::post('receive', 'MallController@receiveCoupon');
+    Route::post('receive', 'CouponController@receiveCoupon');
     Route::get('user_list', 'CouponController@userCouponList');
 });
 

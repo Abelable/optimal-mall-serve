@@ -13,28 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class CouponController extends Controller
 {
-    protected $except = ['goodsCouponList'];
-
-    public function goodsCouponList()
-    {
-        $goodsId = $this->verifyRequiredInteger('goodsId');
-        $couponList = CouponService::getInstance()->getCouponListByGoodsId($goodsId);
-
-        $userCouponList = [];
-        if ($this->isLogin()) {
-            $couponIds = $couponList->pluck('id')->toArray();
-            $userCouponList = UserCouponService::getInstance()->getListByCouponIds($this->userId(), $couponIds)->keyBy('coupon_id');
-        }
-
-        $list = $couponList->map(function (Coupon $coupon) use ($userCouponList) {
-            $userCoupon = count($userCouponList) != 0 ? $userCouponList->get($coupon->id) : null;
-            $coupon['isReceived'] = !is_null($userCoupon) ? 1 : 0;
-            return $coupon;
-        });
-
-        return $this->success($list);
-    }
-
     public function receiveCoupon()
     {
         $id = $this->verifyRequiredInteger('id');
