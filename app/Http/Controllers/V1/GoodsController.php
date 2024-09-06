@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
 use App\Models\Goods;
 use App\Services\ActivityService;
 use App\Services\CouponService;
@@ -10,6 +11,7 @@ use App\Services\GiftGoodsService;
 use App\Services\CategoryService;
 use App\Services\GoodsService;
 use App\Services\MerchantService;
+use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsPageInput;
 use App\Utils\Inputs\RecommendGoodsPageInput;
@@ -110,12 +112,21 @@ class GoodsController extends Controller
         $goods->spec_list = json_decode($goods->spec_list);
         $goods->sku_list = json_decode($goods->sku_list);
 
+        $goods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
+        unset($goods->categories);
+
         $activityColumns = ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'];
         $activity = ActivityService::getInstance()->getActivityByGoodsId($goods->id, $activityColumns);
         $goods['activityInfo'] = $activity;
 
-        $couponColumns = ['goods_id', 'name', 'denomination', 'description', 'type', 'num_limit', 'price_limit', 'received_num'];
-        $couponList = CouponService::getInstance()->getCouponListByGoodsId($goods->id, $couponColumns);
+        $couponList = CouponService::getInstance()->getCouponListByGoodsId($goods->id);
+        if ($this->isLogin()) {
+            $receivedCouponIds = UserCouponService::getInstance()->getUserCouponList($this->userId())->pluck('coupon_id')->toArray();
+            $couponList = $couponList->map(function (Coupon $coupon) use ($receivedCouponIds) {
+                $coupon['isReceived'] = in_array($coupon->id, $receivedCouponIds) ? 1 : 0;
+                return $coupon;
+            });
+        }
         $goods['couponList'] = $couponList;
 
         $giftGoods = GiftGoodsService::getInstance()->getGoodsByGoodsId($goods->id);

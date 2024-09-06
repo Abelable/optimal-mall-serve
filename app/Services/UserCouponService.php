@@ -16,6 +16,14 @@ class UserCouponService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
+    public function getUserCouponList($userId, $columns = ['*'])
+    {
+        return UserCoupon::query()
+            ->where('user_id', $userId)
+            ->where('status', 1)
+            ->get($columns);
+    }
+
     public function getListByCouponIds($userId, array $couponIds, $columns = ['*'])
     {
         return UserCoupon::query()
