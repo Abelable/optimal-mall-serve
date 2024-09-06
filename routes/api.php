@@ -29,6 +29,13 @@ Route::prefix('user')->group(function () {
     Route::get('superior_info', 'UserController@superiorInfo');
 });
 
+Route::prefix('auth_info')->group(function () {
+    Route::get('detail', 'AuthInfoController@detail');
+    Route::post('add', 'AuthInfoController@add');
+    Route::post('edit', 'AuthInfoController@edit');
+    Route::post('delete', 'AuthInfoController@delete');
+});
+
 Route::get('oss_config', 'CommonController@ossConfig');
 
 Route::prefix('wx')->group(function () {
@@ -147,6 +154,14 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('list', 'UserController@list');
         Route::get('detail', 'UserController@detail');
         Route::post('delete', 'UserController@delete');
+    });
+
+    Route::prefix('auth_info')->group(function () {
+        Route::post('list', 'AuthInfoController@list');
+        Route::get('detail', 'AuthInfoController@detail');
+        Route::post('approved', 'AuthInfoController@approved');
+        Route::post('reject', 'AuthInfoController@reject');
+        Route::post('delete', 'AuthInfoController@delete');
     });
 
     Route::prefix('team')->group(function () {
