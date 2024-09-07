@@ -10,6 +10,15 @@ use App\Utils\Inputs\AddressInput;
 
 class AddressController extends Controller
 {
+    protected $only = ['defaultAddress'];
+
+    public function defaultAddress()
+    {
+        $columns = ['id', 'region_desc', 'address_detail'];
+        $address = AddressService::getInstance()->getDefaultAddress($this->userId(), $columns);
+        return $this->success($address);
+    }
+
     public function list()
     {
         $columns = ['id', 'is_default', 'name', 'mobile', 'region_desc', 'address_detail'];

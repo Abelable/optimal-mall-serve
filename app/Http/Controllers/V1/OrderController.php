@@ -29,7 +29,7 @@ class OrderController extends Controller
         $addressColumns = ['id', 'name', 'mobile', 'region_code_list', 'region_desc', 'address_detail'];
         if (is_null($addressId)) {
             /** @var Address $address */
-            $address = AddressService::getInstance()->getDefautlAddress($this->userId(), $addressColumns);
+            $address = AddressService::getInstance()->getDefaultAddress($this->userId(), $addressColumns);
         } else {
             /** @var Address $address */
             $address = AddressService::getInstance()->getById($this->userId(), $addressId, $addressColumns);

@@ -75,6 +75,7 @@ Route::prefix('cart')->group(function () {
 });
 
 Route::prefix('address')->group(function () {
+    Route::get('default', 'AddressController@defaultAddress');
     Route::get('list', 'AddressController@list');
     Route::get('detail', 'AddressController@detail');
     Route::post('add', 'AddressController@add');

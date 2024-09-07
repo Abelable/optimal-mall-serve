@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Address;
 use App\Models\Coupon;
 use App\Models\Goods;
 use App\Services\ActivityService;
+use App\Services\AddressService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\CategoryService;
@@ -85,6 +87,8 @@ class GoodsController extends Controller
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
+        $addressId = $this->verifyId('addressId');
+
         $columns = [
             'id',
             'merchant_id',
@@ -114,6 +118,18 @@ class GoodsController extends Controller
 
         $goods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
         unset($goods->categories);
+
+        if ($this->isLogin()) {
+            $addressColumns = ['id', 'name', 'mobile', 'region_code_list', 'region_desc', 'address_detail'];
+            if (is_null($addressId)) {
+                /** @var Address $address */
+                $address = AddressService::getInstance()->getDefaultAddress($this->userId(), $addressColumns);
+            } else {
+                /** @var Address $address */
+                $address = AddressService::getInstance()->getById($this->userId(), $addressId, $addressColumns);
+            }
+            $goods['addressInfo'] = $address;
+        }
 
         $activityColumns = ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'];
         $activity = ActivityService::getInstance()->getActivityByGoodsId($goods->id, $activityColumns);

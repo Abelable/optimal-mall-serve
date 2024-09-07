@@ -19,7 +19,7 @@ class AddressService extends BaseService
         return Address::query()->where('user_id', $userId)->find($id, $columns);
     }
 
-    public function getDefautlAddress($userId, $columns=['*'])
+    public function getDefaultAddress($userId, $columns=['*'])
     {
         $address = Address::query()->where('user_id', $userId)->where('is_default', 1)->first($columns);
         if (is_null($address)) {
