@@ -181,13 +181,13 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
 
     Route::prefix('mall')->group(function () {
         Route::prefix('banner')->group(function () {
-            Route::post('list', 'MallBannerController@list');
-            Route::get('detail', 'MallBannerController@detail');
-            Route::post('add', 'MallBannerController@add');
-            Route::post('edit', 'MallBannerController@edit');
-            Route::post('up', 'MallBannerController@up');
-            Route::post('down', 'MallBannerController@down');
-            Route::post('delete', 'MallBannerController@delete');
+            Route::post('list', 'BannerController@list');
+            Route::get('detail', 'BannerController@detail');
+            Route::post('add', 'BannerController@add');
+            Route::post('edit', 'BannerController@edit');
+            Route::post('up', 'BannerController@up');
+            Route::post('down', 'BannerController@down');
+            Route::post('delete', 'BannerController@delete');
         });
 
         Route::prefix('activity')->group(function () {

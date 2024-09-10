@@ -8,7 +8,7 @@ use App\Models\Goods;
 use App\Services\ActivityService;
 use App\Services\CouponService;
 use App\Services\GoodsService;
-use App\Services\MallBannerService;
+use App\Services\BannerService;
 
 class MallController extends Controller
 {
@@ -16,7 +16,7 @@ class MallController extends Controller
 
     public function bannerList()
     {
-        $list = MallBannerService::getInstance()->getBannerList();
+        $list = BannerService::getInstance()->getBannerList();
         return $this->success($list);
     }
 

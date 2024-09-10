@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\MallBanner;
-use App\Services\MallBannerService;
+use App\Models\Banner;
+use App\Services\BannerService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\BannerInput;
 use App\Utils\Inputs\BannerPageInput;
 
-class MallBannerController extends Controller
+class BannerController extends Controller
 {
     protected $guard = 'Admin';
 
@@ -17,14 +17,14 @@ class MallBannerController extends Controller
     {
         /** @var BannerPageInput $input */
         $input = BannerPageInput::new();
-        $list = MallBannerService::getInstance()->getBannerPage($input);
+        $list = BannerService::getInstance()->getBannerPage($input);
         return $this->successPaginate($list);
     }
 
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
-        $banner = MallBannerService::getInstance()->getBannerById($id);
+        $banner = BannerService::getInstance()->getBannerById($id);
         if (is_null($banner)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前活动banner不存在');
         }
@@ -35,8 +35,8 @@ class MallBannerController extends Controller
     {
         /** @var BannerInput $input */
         $input = BannerInput::new();
-        $banner = MallBanner::new();
-        MallBannerService::getInstance()->updateBanner($banner, $input);
+        $banner = Banner::new();
+        BannerService::getInstance()->updateBanner($banner, $input);
         return $this->success();
     }
 
@@ -46,12 +46,12 @@ class MallBannerController extends Controller
         /** @var BannerInput $input */
         $input = BannerInput::new();
 
-        $banner = MallBannerService::getInstance()->getBannerById($id);
+        $banner = BannerService::getInstance()->getBannerById($id);
         if (is_null($banner)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前活动banner不存在');
         }
 
-        MallBannerService::getInstance()->updateBanner($banner, $input);
+        BannerService::getInstance()->updateBanner($banner, $input);
 
         return $this->success();
     }
@@ -59,7 +59,7 @@ class MallBannerController extends Controller
     public function up()
     {
         $id = $this->verifyRequiredId('id');
-        $banner = MallBannerService::getInstance()->getBannerById($id);
+        $banner = BannerService::getInstance()->getBannerById($id);
         if (is_null($banner)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前活动banner不存在');
         }
@@ -73,7 +73,7 @@ class MallBannerController extends Controller
     public function down()
     {
         $id = $this->verifyRequiredId('id');
-        $banner = MallBannerService::getInstance()->getBannerById($id);
+        $banner = BannerService::getInstance()->getBannerById($id);
         if (is_null($banner)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前活动banner不存在');
         }
@@ -87,7 +87,7 @@ class MallBannerController extends Controller
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
-        $banner = MallBannerService::getInstance()->getBannerById($id);
+        $banner = BannerService::getInstance()->getBannerById($id);
         if (is_null($banner)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前活动banner不存在');
         }

@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\MallBanner;
+use App\Models\Banner;
 use App\Utils\Inputs\Admin\BannerInput;
 use App\Utils\Inputs\BannerPageInput;
 
-class MallBannerService extends BaseService
+class BannerService extends BaseService
 {
-    public function updateBanner(MallBanner $banner, BannerInput $input)
+    public function updateBanner(Banner $banner, BannerInput $input)
     {
         $banner->cover = $input->cover;
         if (!is_null($input->desc)) {
@@ -22,7 +22,7 @@ class MallBannerService extends BaseService
 
     public function getBannerPage(BannerPageInput $input, $columns = ['*'])
     {
-        $query = MallBanner::query();
+        $query = Banner::query();
         if (!is_null($input->status)) {
             $query->where('status', $input->status);
         }
@@ -36,11 +36,11 @@ class MallBannerService extends BaseService
 
     public function getBannerById($id, $columns = ['*'])
     {
-        return MallBanner::query()->find($id, $columns);
+        return Banner::query()->find($id, $columns);
     }
 
     public function getBannerList($columns = ['*'])
     {
-        return MallBanner::query()->where('status', 1)->get($columns);
+        return Banner::query()->where('status', 1)->get($columns);
     }
 }
