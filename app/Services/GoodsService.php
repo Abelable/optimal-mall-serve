@@ -15,7 +15,7 @@ class GoodsService extends BaseService
     public function getGoodsPage(GoodsPageInput $input, $columns=['*'])
     {
         $query = Goods::query()->where('status', 1);
-        if (count($input->goodsIds) != 0) {
+        if (!empty($input->goodsIds) && count($input->goodsIds) != 0) {
             $query = $query->orderByRaw(DB::raw("FIELD(id, " . implode(',', $input->goodsIds) . ") DESC"));
         }
         if (!empty($input->categoryId)) {
