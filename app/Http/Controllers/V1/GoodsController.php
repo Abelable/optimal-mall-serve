@@ -94,6 +94,7 @@ class GoodsController extends Controller
             'merchant_id',
             'video',
             'cover',
+            'commission_rate',
             'image_list',
             'default_spec_image',
             'name',
