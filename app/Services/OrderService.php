@@ -137,6 +137,9 @@ class OrderService extends BaseService
             }
         }
 
+        $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);
+        $paymentAmount = bcsub($paymentAmount, $couponDenomination, 2);
+
         $order = Order::new();
         $order->order_sn = $this->generateOrderSn();
         $order->status = OrderEnums::STATUS_CREATE;
@@ -147,7 +150,7 @@ class OrderService extends BaseService
         $order->goods_price = $totalPrice;
         $order->freight_price = $totalFreightPrice;
         $order->coupon_denomination = $couponDenomination;
-        $order->payment_amount = bcadd($totalPrice, $totalFreightPrice, 2);
+        $order->payment_amount = $paymentAmount;
         $order->refund_amount = $order->payment_amount;
         $order->save();
 

@@ -349,6 +349,7 @@ class OrderController extends Controller
             'address',
             'goods_price',
             'freight_price',
+            'coupon_denomination',
             'payment_amount',
             'pay_time',
             'ship_time',
