@@ -12,7 +12,7 @@ namespace App\Models;
  * @property string $cover 列表图片
  * @property string $name 商品名称
  * @property float $price 商品价格
- * @property float $commission 商品佣金
+ * @property float $commission_rate 分享佣金比例%
  * @property string $selected_sku_name 选中的规格名称
  * @property int $selected_sku_index 选中的规格索引
  * @property int $number 商品数量
@@ -23,7 +23,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods newQuery()
  * @method static \Illuminate\Database\Query\Builder|OrderGoods onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods query()
- * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereCommission($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereCover($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereDeletedAt($value)

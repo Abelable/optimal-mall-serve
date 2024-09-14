@@ -20,7 +20,7 @@ namespace App\Models;
  * @property int $selected_sku_index 选中的规格索引
  * @property float $price 商品价格
  * @property float $market_price 市场价格
- * @property float $commission 商品佣金
+ * @property float $commission_rate 分享佣金比例%
  * @property int $number 商品数量
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -29,7 +29,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods newQuery()
  * @method static \Illuminate\Database\Query\Builder|CartGoods onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods query()
- * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereCommission($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereCover($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereDeletedAt($value)

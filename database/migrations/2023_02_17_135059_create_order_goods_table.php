@@ -21,7 +21,7 @@ class CreateOrderGoodsTable extends Migration
             $table->string('cover')->comment('列表图片');
             $table->string('name')->comment('商品名称');
             $table->float('price')->comment('商品价格');
-            $table->float('commission')->comment('商品佣金');
+            $table->float('commission_rate')->comment('分享佣金比例%');
             $table->string('selected_sku_name')->comment('选中的规格名称');
             $table->integer('selected_sku_index')->comment('选中的规格索引');
             $table->integer('number')->comment('商品数量');
