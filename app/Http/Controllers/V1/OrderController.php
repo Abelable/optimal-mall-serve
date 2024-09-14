@@ -63,7 +63,7 @@ class OrderController extends Controller
         if (count($couponList) != 0) {
             if (is_null($couponId)) {
                 $couponDenomination = $couponList->first()->denomination;
-            } else {
+            } else if ($couponId != 0) {
                 $couponDenomination = $couponList->keyBy('id')->get($couponId)->denomination;
             }
         }
@@ -173,7 +173,7 @@ class OrderController extends Controller
 
             // 2.获取优惠券
             $coupon = null;
-            if (!is_null($input->couponId)) {
+            if (!is_null($input->couponId) && $input->couponId != 0) {
                 $userCoupon = UserCouponService::getInstance()->getUserCoupon($this->userId(), $input->couponId);
                 if (is_null($userCoupon)) {
                     return $this->fail(CodeResponse::NOT_FOUND, '优惠券无法使用');
