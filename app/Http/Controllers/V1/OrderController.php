@@ -206,7 +206,14 @@ class OrderController extends Controller
                 // 6.生成订单商品快照
                 OrderGoodsService::getInstance()->createList($filterCartGoodsList, $orderId);
 
-                // todo 7.生成商品佣金记录
+                // todo 7.生成商品佣金记录（前提：非礼包商品）
+                // 场景1：普通用户且没有上级 - 不需要生成佣金记录
+                // 场景2：普通用户拥有上级 - 生成"分享场景"佣金记录
+                // 场景3：推官员 - 生成"自购场景"佣金记录
+                if ((!$this->user()->promoterInfo && $this->user()->superiorId()) || $this->user()->promoterInfo) {
+                    $scene = $this->user()->promoterInfo ? 1 : 2;
+                }
+
 
 
                 return $orderId;

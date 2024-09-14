@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\PromoterService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\UserInfoInput;
@@ -14,17 +13,13 @@ class UserController extends Controller
     public function userInfo()
     {
         $user = $this->user();
-
-        $promoter = PromoterService::getInstance()->getPromoterByUserId($user->id);
-        $user['promoterId'] = $promoter ? $promoter->id : 0;
-        $user['level'] = $promoter ? $promoter->level : 0;
+        $user['promoterId'] = $user->promoterInfo->id ?? 0;
+        $user['level'] = $user->promoterInfo->level ?? 0;
         $user['superiorId'] = $user->superiorId();
         $user['authInfoId'] = $user->authInfo->id ?? 0;
-
         unset($user->openid);
         unset($user->created_at);
         unset($user->updated_at);
-
         return $this->success($user);
     }
 

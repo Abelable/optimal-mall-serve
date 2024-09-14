@@ -28,6 +28,7 @@ use Illuminate\Notifications\Notifiable;
  * @property-read \App\Models\AuthInfo|null $authInfo
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
+ * @property-read \App\Models\Promoter|null $promoterInfo
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
@@ -96,6 +97,11 @@ class User extends BaseModel implements JWTSubject, AuthenticatableContract, Aut
 
     public function superiorId() {
         return $this->hasOne(Relation::class, 'fan_id')->value('superior_id');
+    }
+
+    public function promoterInfo()
+    {
+        return $this->hasOne(Promoter::class, 'user_id');
     }
 
     public function authInfo()
