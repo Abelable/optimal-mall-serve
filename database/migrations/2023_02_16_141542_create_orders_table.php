@@ -24,6 +24,7 @@ class CreateOrdersTable extends Migration
             $table->string('address')->comment('具体收货地址');
             $table->float('goods_price')->comment('商品总价格');
             $table->float('freight_price')->comment('运费');
+            $table->integer('coupon_id')->default(0)->comment('优惠券id');
             $table->float('coupon_denomination')->default(0)->comment('优惠券抵扣');
             $table->float('payment_amount')->comment('支付金额');
             $table->string('pay_id')->default('')->comment('支付id');

@@ -149,7 +149,10 @@ class OrderService extends BaseService
         $order->address = $address->region_desc . ' ' . $address->address_detail;
         $order->goods_price = $totalPrice;
         $order->freight_price = $totalFreightPrice;
-        $order->coupon_denomination = $couponDenomination;
+        if (!is_null($coupon)) {
+            $order->coupon_id = $coupon->id;
+            $order->coupon_denomination = $couponDenomination;
+        }
         $order->payment_amount = $paymentAmount;
         $order->refund_amount = $order->payment_amount;
         $order->save();
