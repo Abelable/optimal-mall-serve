@@ -58,11 +58,13 @@ class OrderController extends Controller
         $totalNumber = 0;
 
         // 优惠券逻辑
-        $couponList = $this->getCouponList($cartGoodsIds, $cartGoodsList);
-        if (is_null($couponId)) {
-            $couponDenomination = $couponList->first()->denomination ?: 0;
-        } else {
-            $couponDenomination = $couponList->get($couponId)->denomination ?: 0;
+        $couponList = $this->getCouponList($cartGoodsList);
+        if (count($couponList) != 0) {
+            if (is_null($couponId)) {
+                $couponDenomination = $couponList->first()->denomination ?: 0;
+            } else {
+                $couponDenomination = $couponList->get($couponId)->denomination ?: 0;
+            }
         }
 
         foreach ($cartGoodsList as $cartGoods) {
@@ -106,6 +108,7 @@ class OrderController extends Controller
             'addressInfo' => $address,
             'goodsList' => $cartGoodsList,
             'freightPrice' => $totalFreightPrice,
+            'couponList' => $couponList,
             'couponDenomination' => $couponDenomination,
             'totalPrice' => $totalPrice,
             'totalNumber' => $totalNumber,
@@ -113,11 +116,10 @@ class OrderController extends Controller
         ]);
     }
 
-    private function getCouponList(array $goodsIds, $cartGoodsList)
+    private function getCouponList($cartGoodsList)
     {
-        $userCouponList = UserCouponService::getInstance()->getUserCouponList($this->userId());
-        $couponIds = $userCouponList->pluck('coupon_id')->toArray();
-        $couponList = CouponService::getInstance()->getUserCouponListByGoodsIds($couponIds, $goodsIds)->keyBy('goods_id');
+        $couponIds = UserCouponService::getInstance()->getUserCouponList($this->userId())->pluck('coupon_id')->toArray();
+        $couponList = CouponService::getInstance()->getAvailableCouponListByIds($couponIds)->keyBy('goods_id');
         $suitableCouponList = $cartGoodsList->map(function (CartGoods $cartGoods) use ($couponList) {
             /** @var Coupon $coupon */
             $coupon = $couponList->get($cartGoods->goods_id);
@@ -140,7 +142,7 @@ class OrderController extends Controller
                 }
             }
             return null;
-        })->filter()->sortBy('denomination')->keyBy('id');;
+        })->filter()->sortBy('denomination')->keyBy('id');
         return $suitableCouponList;
     }
 

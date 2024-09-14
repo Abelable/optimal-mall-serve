@@ -35,11 +35,6 @@ class CouponService extends BaseService
         return Coupon::query()->where('status', 1)->whereIn('goods_id', $goodsIds)->get($columns);
     }
 
-    public function getUserCouponListByGoodsIds(array $ids, array $goodsIds, $columns = ['*'])
-    {
-        return Coupon::query()->where('status', 1)->whereIn('id', $ids)->whereIn('goods_id', $goodsIds)->get($columns);
-    }
-
     public function getCouponListByGoodsId($goodsId, $columns = ['*'])
     {
         return Coupon::query()->where('status', 1)->where('goods_id', $goodsId)->get($columns);
@@ -53,5 +48,10 @@ class CouponService extends BaseService
     public function getCouponListByIds(array $ids, $columns = ['*'])
     {
         return Coupon::query()->whereIn('id', $ids)->get($columns);
+    }
+
+    public function getAvailableCouponListByIds(array $ids, $columns = ['*'])
+    {
+        return Coupon::query()->where('status', 1)->whereIn('id', $ids)->get($columns);
     }
 }
