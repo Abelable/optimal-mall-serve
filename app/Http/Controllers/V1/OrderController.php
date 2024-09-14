@@ -40,7 +40,7 @@ class OrderController extends Controller
             $address = AddressService::getInstance()->getById($this->userId(), $addressId, $addressColumns);
         }
 
-        $cartGoodsListColumns = ['cover', 'name', 'freight_template_id', 'selected_sku_name', 'price', 'number'];
+        $cartGoodsListColumns = ['goods_id', 'cover', 'name', 'freight_template_id', 'selected_sku_name', 'price', 'number'];
         $cartGoodsList = CartGoodsService::getInstance()->getCartGoodsListByIds($this->userId(), $cartGoodsIds, $cartGoodsListColumns);
 
         $freightTemplateIds = $cartGoodsList->pluck('freight_template_id')->toArray();
@@ -61,9 +61,9 @@ class OrderController extends Controller
         $couponList = $this->getCouponList($cartGoodsList);
         if (count($couponList) != 0) {
             if (is_null($couponId)) {
-                $couponDenomination = $couponList->first()->denomination ?: 0;
+                $couponDenomination = $couponList->first()->denomination;
             } else {
-                $couponDenomination = $couponList->get($couponId)->denomination ?: 0;
+                $couponDenomination = $couponList->keyBy('id')->get($couponId)->denomination;
             }
         }
 
@@ -120,7 +120,7 @@ class OrderController extends Controller
     {
         $couponIds = UserCouponService::getInstance()->getUserCouponList($this->userId())->pluck('coupon_id')->toArray();
         $couponList = CouponService::getInstance()->getAvailableCouponListByIds($couponIds)->keyBy('goods_id');
-        $suitableCouponList = $cartGoodsList->map(function (CartGoods $cartGoods) use ($couponList) {
+        return $cartGoodsList->map(function (CartGoods $cartGoods) use ($couponList) {
             /** @var Coupon $coupon */
             $coupon = $couponList->get($cartGoods->goods_id);
             if (!is_null($coupon)) {
@@ -142,8 +142,7 @@ class OrderController extends Controller
                 }
             }
             return null;
-        })->filter()->sortBy('denomination')->keyBy('id');
-        return $suitableCouponList;
+        })->filter()->sortBy('denomination');
     }
 
     public function submit()
