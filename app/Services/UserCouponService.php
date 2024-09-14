@@ -42,6 +42,11 @@ class UserCouponService extends BaseService
             ->first($columns);
     }
 
+    public function getUserCouponByCouponId($couponId, $columns = ['*'])
+    {
+        return UserCoupon::query()->where('coupon_id', $couponId)->first($columns);
+    }
+
     public function useCoupon($userId, $couponId)
     {
         $userCoupon = $this->getUserCoupon($userId, $couponId);

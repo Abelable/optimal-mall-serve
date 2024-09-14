@@ -275,6 +275,11 @@ class OrderService extends BaseService
             // 返还库存
             $this->returnStock($order->id);
 
+            // 恢复优惠券
+            if ($order->coupon_id != 0) {
+                $this->restoreCoupon($order->coupon_id);
+            }
+
             return $order;
         });
     }
@@ -290,6 +295,14 @@ class OrderService extends BaseService
                 $this->throwUpdateFail();
             }
         }
+    }
+
+    public function restoreCoupon($couponId)
+    {
+        $userCoupon = UserCouponService::getInstance()->getUserCouponByCouponId($couponId);
+        $userCoupon->status = 1;
+        $userCoupon->save();
+        return $userCoupon;
     }
 
     public function confirm($userId, $orderId, $isAuto = false)
