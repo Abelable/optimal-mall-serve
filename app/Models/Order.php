@@ -17,6 +17,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property string $address 具体收货地址
  * @property float $goods_price 商品总价格
  * @property float $freight_price 运费
+ * @property float $coupon_denomination 优惠券抵扣
  * @property float $payment_amount 支付金额
  * @property string $pay_id 支付id
  * @property string $pay_time 支付时间
@@ -39,6 +40,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereConfirmTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereConsignee($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereCouponDenomination($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereFinishTime($value)
