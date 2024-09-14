@@ -68,7 +68,7 @@ class CartGoodsService extends BaseService
                 $cartGoods->price = $goods->price;
             }
             $cartGoods->market_price = $goods->market_price;
-            $cartGoods->commission = $goods->commission_rate;
+            $cartGoods->commission_rate = $goods->commission_rate;
             $cartGoods->number = $number;
         }
         $cartGoods->save();

@@ -20,6 +20,7 @@ class OrderGoodsService extends BaseService
             $goods->selected_sku_name = $cartGoods->selected_sku_name;
             $goods->selected_sku_index = $cartGoods->selected_sku_index;
             $goods->price = $cartGoods->price;
+            $goods->commission_rate = $cartGoods->commission_rate;
             $goods->number = $cartGoods->number;
             $goods->save();
         }
