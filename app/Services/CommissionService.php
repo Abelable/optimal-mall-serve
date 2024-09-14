@@ -88,79 +88,52 @@ class CommissionService extends BaseService
         return Commission::query()->where('order_sn', $orderSn)->exists();
     }
 
-    public function createCommission($userId, $cartGoodsList, $freightTemplateList, Address $address, Coupon $coupon = null)
+    public function createCommission($scene, $userId, $orderId, CartGoods $cartGoods, $freightTemplateList, $address, $superiorId = null, Coupon $coupon = null)
     {
-        $totalPrice = 0;
-        $totalFreightPrice = 0;
         $couponDenomination = 0;
+        if (!is_null($coupon) && $coupon->goods_id == $cartGoods->goods_id) {
+            $couponDenomination = $coupon->denomination;
+        }
 
-        /** @var CartGoods $cartGoods */
-        foreach ($cartGoodsList as $cartGoods) {
-            $price = bcmul($cartGoods->price, $cartGoods->number, 2);
-            $totalPrice = bcadd($totalPrice, $price, 2);
+        $price = bcmul($cartGoods->price, $cartGoods->number, 2);
 
-            // 计算运费
-            if ($cartGoods->freight_template_id == 0) {
+        /** @var FreightTemplate $freightTemplate */
+        $freightTemplate = $freightTemplateList->get($cartGoods->freight_template_id);
+        if ($freightTemplate->free_quota != 0 && $price > $freightTemplate->free_quota) {
+            $freightPrice = 0;
+        } else {
+            $cityCode = substr(json_decode($address->region_code_list)[1], 0, 4);
+            $area = collect($freightTemplate->area_list)->first(function ($area) use ($cityCode) {
+                return in_array($cityCode, explode(',', $area->pickedCityCodes));
+            });
+            if (is_null($area)) {
                 $freightPrice = 0;
             } else {
-                /** @var FreightTemplate $freightTemplate */
-                $freightTemplate = $freightTemplateList->get($cartGoods->freight_template_id);
-                if ($freightTemplate->free_quota != 0 && $price > $freightTemplate->free_quota) {
-                    $freightPrice = 0;
+                if ($freightTemplate->compute_mode == 1) {
+                    $freightPrice = $area->fee;
                 } else {
-                    $cityCode = substr(json_decode($address->region_code_list)[1], 0, 4);
-                    $area = collect($freightTemplate->area_list)->first(function ($area) use ($cityCode) {
-                        return in_array($cityCode, explode(',', $area->pickedCityCodes));
-                    });
-                    if (is_null($area)) {
-                        $freightPrice = 0;
-                    } else {
-                        if ($freightTemplate->compute_mode == 1) {
-                            $freightPrice = $area->fee;
-                        } else {
-                            $freightPrice = bcmul($area->fee, $cartGoods->number, 2);
-                        }
-                    }
+                    $freightPrice = bcmul($area->fee, $cartGoods->number, 2);
                 }
             }
-            $totalFreightPrice = bcadd($totalFreightPrice, $freightPrice, 2);
-
-            // 优惠券
-            if (!is_null($coupon) && $coupon->goods_id == $cartGoods->goods_id) {
-                $couponDenomination = $coupon->denomination;
-            }
-
-            // 商品减库存
-            $row = GoodsService::getInstance()->reduceStock($cartGoods->goods_id, $cartGoods->number, $cartGoods->selected_sku_index);
-            if ($row == 0) {
-                $this->throwBusinessException(CodeResponse::GOODS_NO_STOCK);
-            }
         }
 
-        $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);
+        $paymentAmount = bcadd($price, $freightPrice, 2);
         $paymentAmount = bcsub($paymentAmount, $couponDenomination, 2);
 
-        $order = Commission::new();
-        $order->order_sn = $this->generateCommissionSn();
-        $order->status = CommissionEnums::STATUS_CREATE;
-        $order->user_id = $userId;
-        $order->consignee = $address->name;
-        $order->mobile = $address->mobile;
-        $order->address = $address->region_desc . ' ' . $address->address_detail;
-        $order->goods_price = $totalPrice;
-        $order->freight_price = $totalFreightPrice;
-        if (!is_null($coupon)) {
-            $order->coupon_id = $coupon->id;
-            $order->coupon_denomination = $couponDenomination;
+        $commission = Commission::new();
+        $commission->scene = $scene;
+        $commission->user_id = $userId;
+        if (!is_null($superiorId)) {
+            $commission->superior_id = $superiorId;
         }
-        $order->payment_amount = $paymentAmount;
-        $order->refund_amount = $order->payment_amount;
-        $order->save();
+        $commission->order_id = $orderId;
+        $commission->goods_id = $cartGoods->goods_id;
+        $commission->payment_amount = $paymentAmount;
+        $commission->commission_rate = $cartGoods->commission_rate;
+        $commission->commission = bcdiv(bcmul($paymentAmount, $cartGoods->commission_rate, 2), 100, 2);
+        $commission->save();
 
-        // 设置订单支付超时任务
-        dispatch(new OverTimeCancelCommission($userId, $order->id));
-
-        return $order->id;
+        return $commission;
     }
 
     public function createWxPayCommission($userId, array $orderIds, $openid)

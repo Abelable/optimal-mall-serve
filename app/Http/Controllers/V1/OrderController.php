@@ -10,6 +10,7 @@ use App\Models\FreightTemplate;
 use App\Models\Order;
 use App\Services\AddressService;
 use App\Services\CartGoodsService;
+use App\Services\CommissionService;
 use App\Services\CouponService;
 use App\Services\FreightTemplateService;
 use App\Services\GiftGoodsService;
@@ -199,30 +200,43 @@ class OrderController extends Controller
             // 5.按商家进行订单拆分，生成对应订单
             $merchantIds = collect(array_unique($cartGoodsList->pluck('merchant_id')->toArray()));
 
-            $orderIds = $merchantIds->map(function ($merchantId) use ($coupon, $address, $cartGoodsList, $freightTemplateList) {
+            $promoterInfo = $this->user()->promoterInfo;
+            $superiorId = $this->user()->superiorId();
+            $userId = $this->userId();
+
+            $orderIds = $merchantIds->map(function ($merchantId) use ($superiorId, $promoterInfo, $userId, $coupon, $address, $cartGoodsList, $freightTemplateList) {
                 $filterCartGoodsList = $cartGoodsList->groupBy('merchant_id')->get($merchantId);
-                $orderId = OrderService::getInstance()->createOrder($this->userId(), $merchantId, $filterCartGoodsList, $freightTemplateList, $address, $coupon);
+                $orderId = OrderService::getInstance()->createOrder($userId, $merchantId, $filterCartGoodsList, $freightTemplateList, $address, $coupon);
 
                 // 6.生成订单商品快照
                 OrderGoodsService::getInstance()->createList($filterCartGoodsList, $orderId);
 
-                // todo 7.生成商品佣金记录（前提：非礼包商品）
-                // 场景1：普通用户且没有上级 - 不需要生成佣金记录
-                // 场景2：普通用户拥有上级 - 生成"分享场景"佣金记录
-                // 场景3：推官员 - 生成"自购场景"佣金记录
-                if ((!$this->user()->promoterInfo && $this->user()->superiorId()) || $this->user()->promoterInfo) {
-                    $scene = $this->user()->promoterInfo ? 1 : 2;
+                /** @var CartGoods $cartGoods */
+                foreach ($filterCartGoodsList as $cartGoods) {
+                    if ($cartGoods->is_gift && !$promoterInfo) {
+                        // todo 7.礼包逻辑
+                        // 1.用户在确认收货之后的7天，成为推广员
+                        // 2.生成礼包佣金记录
+                    } else {
+                        // 8.生成商品佣金记录（前提：非礼包商品）
+                        // 场景1：普通用户且没有上级 - 不需要生成佣金记录
+                        // 场景2：普通用户拥有上级 - 生成"分享场景"佣金记录
+                        // 场景3：推官员 - 生成"自购场景"佣金记录
+                        if (!is_null($promoterInfo) || !is_null($superiorId)) {
+                            $scene = !is_null($promoterInfo) ? 1 : 2;
+                            $superiorId = !is_null($promoterInfo) ? null : $superiorId;
+                            CommissionService::getInstance()->createCommission($scene, $userId, $orderId, $cartGoods, $freightTemplateList, $address, $superiorId, $coupon);
+                        }
+                    }
                 }
-
-
 
                 return $orderId;
             });
 
-            // 8.清空购物车
+            // 9.清空购物车
             CartGoodsService::getInstance()->deleteCartGoodsList($this->userId(), $input->cartGoodsIds);
 
-            // 9.优惠券已使用
+            // 10.优惠券已使用
             if (!is_null($input->couponId)) {
                 UserCouponService::getInstance()->useCoupon($this->userId(), $input->couponId);
             }
