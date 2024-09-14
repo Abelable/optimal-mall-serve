@@ -12,6 +12,7 @@ use App\Services\AddressService;
 use App\Services\CartGoodsService;
 use App\Services\CouponService;
 use App\Services\FreightTemplateService;
+use App\Services\GiftGoodsService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\UserCouponService;
@@ -120,7 +121,13 @@ class OrderController extends Controller
     {
         $couponIds = UserCouponService::getInstance()->getUserCouponList($this->userId())->pluck('coupon_id')->toArray();
         $couponList = CouponService::getInstance()->getAvailableCouponListByIds($couponIds)->keyBy('goods_id');
-        return $cartGoodsList->map(function (CartGoods $cartGoods) use ($couponList) {
+        $giftGoodsIds = GiftGoodsService::getInstance()->getGoodsList([1, 2])->pluck('goods_id')->toArray();
+        return $cartGoodsList->map(function (CartGoods $cartGoods) use ($giftGoodsIds, $couponList) {
+            // 礼包商品不可使用优惠券
+            if (in_array($cartGoods->goods_id, $giftGoodsIds)) {
+                return null;
+            }
+
             /** @var Coupon $coupon */
             $coupon = $couponList->get($cartGoods->goods_id);
             if (!is_null($coupon)) {
