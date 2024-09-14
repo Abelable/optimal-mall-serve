@@ -88,7 +88,7 @@ class OrderService extends BaseService
         return Order::query()->where('order_sn', $orderSn)->exists();
     }
 
-    public function createOrder($userId, $cartGoodsList, $freightTemplateList, Address $address, Coupon $coupon)
+    public function createOrder($userId, $cartGoodsList, $freightTemplateList, Address $address, Coupon $coupon = null)
     {
         $totalPrice = 0;
         $totalFreightPrice = 0;
@@ -125,6 +125,11 @@ class OrderService extends BaseService
             }
             $totalFreightPrice = bcadd($totalFreightPrice, $freightPrice, 2);
 
+            // 优惠券
+            if (!is_null($coupon) && $coupon->goods_id == $cartGoods->goods_id) {
+                $couponDenomination = $coupon->denomination;
+            }
+
             // 商品减库存
             $row = GoodsService::getInstance()->reduceStock($cartGoods->goods_id, $cartGoods->number, $cartGoods->selected_sku_index);
             if ($row == 0) {
@@ -141,6 +146,7 @@ class OrderService extends BaseService
         $order->address = $address->region_desc . ' ' . $address->address_detail;
         $order->goods_price = $totalPrice;
         $order->freight_price = $totalFreightPrice;
+        $order->coupon_denomination = $couponDenomination;
         $order->payment_amount = bcadd($totalPrice, $totalFreightPrice, 2);
         $order->refund_amount = $order->payment_amount;
         $order->save();

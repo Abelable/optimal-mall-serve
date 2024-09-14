@@ -164,7 +164,7 @@ class OrderController extends Controller
             $this->fail(CodeResponse::FAIL, '请勿重复提交订单');
         }
 
-        $orderId = DB::transaction(function () use ($input) {
+        $orderIds = DB::transaction(function () use ($input) {
             // 1.获取地址
             $address = AddressService::getInstance()->getById($this->userId(), $input->addressId);
             if (is_null($address)) {
@@ -196,11 +196,18 @@ class OrderController extends Controller
                     return $freightTemplate;
                 })->keyBy('id');
 
-            // 5.生成订单
-            $orderId = OrderService::getInstance()->createOrder($this->userId(), $cartGoodsList, $freightTemplateList, $address, $coupon);
+            // 5.按商家进行订单拆分，生成对应订单
+            $merchantIds = collect(array_unique($cartGoodsList->pluck('merchant_id')->toArray()));
 
-            // 6.生成订单商品快照
-            OrderGoodsService::getInstance()->createList($cartGoodsList, $orderId);
+            $orderIds = $merchantIds->map(function ($merchantId) use ($coupon, $address, $cartGoodsList, $freightTemplateList) {
+                $filterCartGoodsList = $cartGoodsList->groupBy('merchant_id')->get($merchantId);
+                $orderId = OrderService::getInstance()->createOrder($this->userId(), $filterCartGoodsList, $freightTemplateList, $address, $coupon);
+
+                // 6.生成订单商品快照
+                OrderGoodsService::getInstance()->createList($filterCartGoodsList, $orderId);
+
+                return $orderId;
+            });
 
             // 7.清空购物车
             CartGoodsService::getInstance()->deleteCartGoodsList($this->userId(), $input->cartGoodsIds);
@@ -210,10 +217,10 @@ class OrderController extends Controller
                 UserCouponService::getInstance()->useCoupon($this->userId(), $input->couponId);
             }
 
-            return $orderId;
+            return $orderIds;
         });
 
-        return $this->success($orderId);
+        return $this->success($orderIds);
     }
 
     public function payParams()
