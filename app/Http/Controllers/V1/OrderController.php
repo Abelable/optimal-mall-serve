@@ -225,8 +225,8 @@ class OrderController extends Controller
 
     public function payParams()
     {
-        $orderId = $this->verifyRequiredId('orderId');
-        $order = OrderService::getInstance()->createWxPayOrder($this->userId(), $orderId, $this->user()->openid);
+        $orderIds = $this->verifyArrayNotEmpty('orderIds');
+        $order = OrderService::getInstance()->createWxPayOrder($this->userId(), $orderIds, $this->user()->openid);
         $payParams = Pay::wechat()->miniapp($order);
         return $this->success($payParams);
     }
