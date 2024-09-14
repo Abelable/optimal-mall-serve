@@ -17,7 +17,8 @@
         "tencentcloud/tencentcloud-sdk-php": "^3.0",
         "tymon/jwt-auth": "^1.0",
         "vanry/laravel-scout-tntsearch": "^2.4",
-        "yansongda/laravel-pay": "^2.3.0"
+        "yansongda/laravel-pay": "^2.3.0",
+        "ext-bcmath": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.12",
