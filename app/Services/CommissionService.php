@@ -95,11 +95,11 @@ class CommissionService extends BaseService
             $couponDenomination = $coupon->denomination;
         }
 
-        $price = bcmul($cartGoods->price, $cartGoods->number, 2);
+        $totalPrice = bcmul($cartGoods->price, $cartGoods->number, 2);
 
         /** @var FreightTemplate $freightTemplate */
         $freightTemplate = $freightTemplateList->get($cartGoods->freight_template_id);
-        if ($freightTemplate->free_quota != 0 && $price > $freightTemplate->free_quota) {
+        if ($freightTemplate->free_quota != 0 && $totalPrice > $freightTemplate->free_quota) {
             $freightPrice = 0;
         } else {
             $cityCode = substr(json_decode($address->region_code_list)[1], 0, 4);
@@ -117,7 +117,7 @@ class CommissionService extends BaseService
             }
         }
 
-        $paymentAmount = bcadd($price, $freightPrice, 2);
+        $paymentAmount = bcadd($totalPrice, $freightPrice, 2);
         $paymentAmount = bcsub($paymentAmount, $couponDenomination, 2);
 
         $commission = Commission::new();
@@ -128,6 +128,12 @@ class CommissionService extends BaseService
         }
         $commission->order_id = $orderId;
         $commission->goods_id = $cartGoods->goods_id;
+        $commission->selected_sku_name = $cartGoods->selected_sku_name;
+        $commission->goods_price = $cartGoods->price;
+        $commission->goods_number = $cartGoods->number;
+        $commission->total_price = $totalPrice;
+        $commission->freight_price = $freightPrice;
+        $commission->coupon_denomination = $couponDenomination;
         $commission->payment_amount = $paymentAmount;
         $commission->commission_rate = $cartGoods->commission_rate;
         $commission->commission = bcdiv(bcmul($paymentAmount, $cartGoods->commission_rate, 2), 100, 2);
