@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Jobs\OverTimeCancelOrder;
 use App\Models\Address;
 use App\Models\CartGoods;
+use App\Models\Coupon;
 use App\Models\FreightTemplate;
 use App\Models\Order;
 use App\Models\OrderGoods;
@@ -87,10 +88,11 @@ class OrderService extends BaseService
         return Order::query()->where('order_sn', $orderSn)->exists();
     }
 
-    public function createOrder($userId, $cartGoodsList, $freightTemplateList, Address $address)
+    public function createOrder($userId, $cartGoodsList, $freightTemplateList, Address $address, Coupon $coupon)
     {
         $totalPrice = 0;
         $totalFreightPrice = 0;
+        $couponDenomination = 0;
 
         /** @var CartGoods $cartGoods */
         foreach ($cartGoodsList as $cartGoods) {

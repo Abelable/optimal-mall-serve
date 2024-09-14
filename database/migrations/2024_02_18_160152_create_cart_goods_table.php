@@ -19,6 +19,7 @@ class CreateCartGoodsTable extends Migration
             $table->integer('status')->default(1)
                 ->comment('购物车商品状态：1-正常状态，2-所选规格库存为0、所选规格已不存在，3-商品库存为0、商品已下架、商品已删除');
             $table->string('status_desc')->default('')->comment('购物车商品状态描述');
+            $table->integer('merchant_id')->comment('商家id');
             $table->integer('user_id')->comment('用户id');
             $table->integer('goods_id')->comment('商品id');
             $table->integer('freight_template_id')->comment('运费模板id');

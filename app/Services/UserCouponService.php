@@ -41,4 +41,12 @@ class UserCouponService extends BaseService
             ->where('coupon_id', $couponId)
             ->first($columns);
     }
+
+    public function useCoupon($userId, $couponId)
+    {
+        $userCoupon = $this->getUserCoupon($userId, $couponId);
+        $userCoupon->status = 2;
+        $userCoupon->save();
+        return $userCoupon;
+    }
 }

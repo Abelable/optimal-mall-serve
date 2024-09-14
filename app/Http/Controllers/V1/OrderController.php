@@ -171,10 +171,23 @@ class OrderController extends Controller
                 return $this->fail(CodeResponse::NOT_FOUND, '用户地址不存在');
             }
 
-            // 2.获取购物车商品
+            // 2.获取优惠券
+            $coupon = null;
+            if (!is_null($input->couponId)) {
+                $userCoupon = UserCouponService::getInstance()->getUserCoupon($this->userId(), $input->couponId);
+                if (is_null($userCoupon)) {
+                    return $this->fail(CodeResponse::NOT_FOUND, '优惠券无法使用');
+                }
+                $coupon = CouponService::getInstance()->getAvailableCouponById($input->couponId);
+                if (is_null($coupon)) {
+                    return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
+                }
+            }
+
+            // 3.获取购物车商品
             $cartGoodsList = CartGoodsService::getInstance()->getCartGoodsListByIds($this->userId(), $input->cartGoodsIds);
 
-            // 3.获取运费模板列表
+            // 4.获取运费模板列表
             $freightTemplateIds = $cartGoodsList->pluck('freight_template_id')->toArray();
             $freightTemplateList = FreightTemplateService::getInstance()
                 ->getListByIds($freightTemplateIds)
@@ -183,14 +196,19 @@ class OrderController extends Controller
                     return $freightTemplate;
                 })->keyBy('id');
 
-            // 4.生成订单
-            $orderId = OrderService::getInstance()->createOrder($this->userId(), $cartGoodsList, $freightTemplateList, $address);
+            // 5.生成订单
+            $orderId = OrderService::getInstance()->createOrder($this->userId(), $cartGoodsList, $freightTemplateList, $address, $coupon);
 
-            // 5.生成订单商品快照
+            // 6.生成订单商品快照
             OrderGoodsService::getInstance()->createList($cartGoodsList, $orderId);
 
-            // 6.清空购物车
+            // 7.清空购物车
             CartGoodsService::getInstance()->deleteCartGoodsList($this->userId(), $input->cartGoodsIds);
+
+            // 8.优惠券已使用
+            if (!is_null($input->couponId)) {
+                UserCouponService::getInstance()->useCoupon($this->userId(), $input->couponId);
+            }
 
             return $orderId;
         });

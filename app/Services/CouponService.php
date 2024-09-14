@@ -50,6 +50,11 @@ class CouponService extends BaseService
         return Coupon::query()->whereIn('id', $ids)->get($columns);
     }
 
+    public function getAvailableCouponById($id, $columns = ['*'])
+    {
+        return Coupon::query()->where('status', 1)->find($id, $columns);
+    }
+
     public function getAvailableCouponListByIds(array $ids, $columns = ['*'])
     {
         return Coupon::query()->where('status', 1)->whereIn('id', $ids)->get($columns);

@@ -9,6 +9,7 @@ namespace App\Models;
  * @property int $scene 场景值：1-添加购物车，2-直接购买
  * @property int $status 购物车商品状态：1-正常状态，2-所选规格库存为0、所选规格已不存在，3-商品库存为0、商品已下架、商品已删除
  * @property string $status_desc 购物车商品状态描述
+ * @property int $merchant_id 商家id
  * @property int $user_id 用户id
  * @property int $goods_id 商品id
  * @property int $freight_template_id 运费模板id
@@ -33,6 +34,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereGoodsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereMarketPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereMerchantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods wherePrice($value)
