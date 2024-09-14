@@ -4,13 +4,17 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Address;
+use App\Models\CartGoods;
+use App\Models\Coupon;
 use App\Models\FreightTemplate;
 use App\Models\Order;
 use App\Services\AddressService;
 use App\Services\CartGoodsService;
+use App\Services\CouponService;
 use App\Services\FreightTemplateService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
+use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\CreateOrderInput;
@@ -25,6 +29,7 @@ class OrderController extends Controller
     {
         $addressId = $this->verifyId('addressId');
         $cartGoodsIds = $this->verifyArrayNotEmpty('cartGoodsIds');
+        $couponId = $this->verifyId('couponId');
 
         $addressColumns = ['id', 'name', 'mobile', 'region_code_list', 'region_desc', 'address_detail'];
         if (is_null($addressId)) {
@@ -48,8 +53,17 @@ class OrderController extends Controller
 
         $errMsg = '';
         $totalFreightPrice = 0;
+        $couponDenomination = 0;
         $totalPrice = 0;
         $totalNumber = 0;
+
+        // 优惠券逻辑
+        $couponList = $this->getCouponList($cartGoodsIds, $cartGoodsList);
+        if (is_null($couponId)) {
+            $couponDenomination = $couponList->first()->denomination ?: 0;
+        } else {
+            $couponDenomination = $couponList->get($couponId)->denomination ?: 0;
+        }
 
         foreach ($cartGoodsList as $cartGoods) {
             $price = bcmul($cartGoods->price, $cartGoods->number, 2);
@@ -85,16 +99,49 @@ class OrderController extends Controller
         }
 
         $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);
+        $paymentAmount = bcsub($paymentAmount, $couponDenomination, 2);
 
         return $this->success([
             'errMsg' => $errMsg,
             'addressInfo' => $address,
             'goodsList' => $cartGoodsList,
             'freightPrice' => $totalFreightPrice,
+            'couponDenomination' => $couponDenomination,
             'totalPrice' => $totalPrice,
             'totalNumber' => $totalNumber,
             'paymentAmount' => $paymentAmount
         ]);
+    }
+
+    private function getCouponList(array $goodsIds, $cartGoodsList)
+    {
+        $userCouponList = UserCouponService::getInstance()->getUserCouponList($this->userId());
+        $couponIds = $userCouponList->pluck('coupon_id')->toArray();
+        $couponList = CouponService::getInstance()->getUserCouponListByGoodsIds($couponIds, $goodsIds)->keyBy('goods_id');
+        $suitableCouponList = $cartGoodsList->map(function (CartGoods $cartGoods) use ($couponList) {
+            /** @var Coupon $coupon */
+            $coupon = $couponList->get($cartGoods->goods_id);
+            if (!is_null($coupon)) {
+                switch ($coupon->type) {
+                    case 1:
+                        return $coupon;
+                    case 2:
+                        if ($cartGoods->number >= $coupon->num_limit) {
+                            return $coupon;
+                        } else {
+                            return null;
+                        }
+                    case 3:
+                        if (bcmul($cartGoods->price, $cartGoods->number, 2) >= $coupon->price_limit) {
+                            return $coupon;
+                        } else {
+                            return null;
+                        }
+                }
+            }
+            return null;
+        })->filter()->sortBy('denomination')->keyBy('id');;
+        return $suitableCouponList;
     }
 
     public function submit()
