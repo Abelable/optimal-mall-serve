@@ -2,25 +2,25 @@
 
 namespace App\Services;
 
-use App\Jobs\OverTimeCancelOrder;
+use App\Jobs\OverTimeCancelCommission;
 use App\Models\Address;
 use App\Models\CartGoods;
 use App\Models\Coupon;
 use App\Models\FreightTemplate;
-use App\Models\Order;
-use App\Models\OrderGoods;
+use App\Models\Commission;
+use App\Models\CommissionGoods;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\OrderEnums;
-use App\Utils\Inputs\Admin\OrderPageInput;
+use App\Utils\Enums\CommissionEnums;
+use App\Utils\Inputs\Admin\CommissionPageInput;
 use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class OrderService extends BaseService
+class CommissionService extends BaseService
 {
-    public function getOrderListByStatus($userId, $statusList, PageInput $input, $columns = ['*'])
+    public function getCommissionListByStatus($userId, $statusList, PageInput $input, $columns = ['*'])
     {
-        $query = Order::query()->where('user_id', $userId);
+        $query = Commission::query()->where('user_id', $userId);
         if (count($statusList) != 0) {
             $query = $query->whereIn('status', $statusList);
         }
@@ -31,12 +31,12 @@ class OrderService extends BaseService
 
     public function getListTotal($userId, $statusList)
     {
-        return Order::query()->where('user_id', $userId)->whereIn('status', $statusList)->count();
+        return Commission::query()->where('user_id', $userId)->whereIn('status', $statusList)->count();
     }
 
-    public function getOrderList(OrderPageInput $input, $columns = ['*'])
+    public function getCommissionList(CommissionPageInput $input, $columns = ['*'])
     {
-        $query = Order::query()->whereIn('status', [101, 102, 103, 104, 201, 301, 401, 402]);
+        $query = Commission::query()->whereIn('status', [101, 102, 103, 104, 201, 301, 401, 402]);
         if (!empty($input->status)) {
             $query = $query->where('status', $input->status);
         }
@@ -56,26 +56,26 @@ class OrderService extends BaseService
 
     public function getUnpaidList(int $userId, array $orderIds, $columns = ['*'])
     {
-        return Order::query()
+        return Commission::query()
             ->where('user_id', $userId)
             ->whereIn('id', $orderIds)
-            ->where('status', OrderEnums::STATUS_CREATE)
+            ->where('status', CommissionEnums::STATUS_CREATE)
             ->get($columns);
     }
 
     public function getUnpaidListBySn(array $orderSnList, $columns = ['*'])
     {
-        return Order::query()
+        return Commission::query()
             ->whereIn('order_sn', $orderSnList)
-            ->where('status', OrderEnums::STATUS_CREATE)
+            ->where('status', CommissionEnums::STATUS_CREATE)
             ->get($columns);
     }
 
-    public function generateOrderSn()
+    public function generateCommissionSn()
     {
         return retry(5, function () {
             $orderSn = date('YmdHis') . rand(100000, 999999);
-            if ($this->isOrderSnExists($orderSn)) {
+            if ($this->isCommissionSnExists($orderSn)) {
                 Log::warning('当前订单号已存在，orderSn：' . $orderSn);
                 $this->throwBusinessException(CodeResponse::FAIL, '订单号生成失败');
             }
@@ -83,12 +83,12 @@ class OrderService extends BaseService
         });
     }
 
-    public function isOrderSnExists(string $orderSn)
+    public function isCommissionSnExists(string $orderSn)
     {
-        return Order::query()->where('order_sn', $orderSn)->exists();
+        return Commission::query()->where('order_sn', $orderSn)->exists();
     }
 
-    public function createOrder($userId, $merchantId, $cartGoodsList, $freightTemplateList, Address $address, Coupon $coupon = null)
+    public function createCommission($userId, $cartGoodsList, $freightTemplateList, Address $address, Coupon $coupon = null)
     {
         $totalPrice = 0;
         $totalFreightPrice = 0;
@@ -140,11 +140,10 @@ class OrderService extends BaseService
         $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);
         $paymentAmount = bcsub($paymentAmount, $couponDenomination, 2);
 
-        $order = Order::new();
-        $order->order_sn = $this->generateOrderSn();
-        $order->status = OrderEnums::STATUS_CREATE;
+        $order = Commission::new();
+        $order->order_sn = $this->generateCommissionSn();
+        $order->status = CommissionEnums::STATUS_CREATE;
         $order->user_id = $userId;
-        $order->merchant_id = $merchantId;
         $order->consignee = $address->name;
         $order->mobile = $address->mobile;
         $order->address = $address->region_desc . ' ' . $address->address_detail;
@@ -159,12 +158,12 @@ class OrderService extends BaseService
         $order->save();
 
         // 设置订单支付超时任务
-        dispatch(new OverTimeCancelOrder($userId, $order->id));
+        dispatch(new OverTimeCancelCommission($userId, $order->id));
 
         return $order->id;
     }
 
-    public function createWxPayOrder($userId, array $orderIds, $openid)
+    public function createWxPayCommission($userId, array $orderIds, $openid)
     {
         $orderList = $this->getUnpaidList($userId, $orderIds);
         if (count($orderList) == 0) {
@@ -205,10 +204,10 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::FAIL, $errMsg);
         }
 
-        return $orderList->map(function (Order $order) use ($payId) {
+        return $orderList->map(function (Commission $order) use ($payId) {
             $order->pay_id = $payId;
             $order->pay_time = now()->toDateTimeString();
-            $order->status = OrderEnums::STATUS_PAY;
+            $order->status = CommissionEnums::STATUS_PAY;
             if ($order->cas() == 0) {
                 $this->throwUpdateFail();
             }
@@ -221,7 +220,7 @@ class OrderService extends BaseService
     public function userCancel($userId, $orderId)
     {
         return DB::transaction(function () use ($userId, $orderId) {
-            $orderList = $this->getUserOrderList($userId, [$orderId]);
+            $orderList = $this->getUserCommissionList($userId, [$orderId]);
             if (count($orderList) == 0) {
                 $this->throwBadArgumentValue();
             }
@@ -232,7 +231,7 @@ class OrderService extends BaseService
     public function systemCancel($userId, $orderId)
     {
         return DB::transaction(function () use ($userId, $orderId) {
-            $orderList = $this->getUserOrderList($userId, [$orderId]);
+            $orderList = $this->getUserCommissionList($userId, [$orderId]);
             if (count($orderList) == 0) {
                 $this->throwBadArgumentValue();
             }
@@ -243,7 +242,7 @@ class OrderService extends BaseService
     public function adminCancel($orderIds)
     {
         return DB::transaction(function () use ($orderIds) {
-            $orderList = $this->getOrderListByIds($orderIds);
+            $orderList = $this->getCommissionListByIds($orderIds);
             if (count($orderList) == 0) {
                 $this->throwBadArgumentValue();
             }
@@ -253,19 +252,19 @@ class OrderService extends BaseService
 
     public function cancel($orderList, $role = 'user')
     {
-        return $orderList->map(function (Order $order) use ($role) {
-            if ($order->status != OrderEnums::STATUS_CREATE) {
+        return $orderList->map(function (Commission $order) use ($role) {
+            if ($order->status != CommissionEnums::STATUS_CREATE) {
                 $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能取消');
             }
             switch ($role) {
                 case 'system':
-                    $order->status = OrderEnums::STATUS_AUTO_CANCEL;
+                    $order->status = CommissionEnums::STATUS_AUTO_CANCEL;
                     break;
                 case 'admin':
-                    $order->status = OrderEnums::STATUS_ADMIN_CANCEL;
+                    $order->status = CommissionEnums::STATUS_ADMIN_CANCEL;
                     break;
                 case 'user':
-                    $order->status = OrderEnums::STATUS_CANCEL;
+                    $order->status = CommissionEnums::STATUS_CANCEL;
                     break;
             }
             $order->finish_time = now()->toDateTimeString();
@@ -287,8 +286,8 @@ class OrderService extends BaseService
 
     public function returnStock($orderId)
     {
-        $goodsList = OrderGoodsService::getInstance()->getListByOrderId($orderId);
-        /** @var OrderGoods $goods */
+        $goodsList = CommissionGoodsService::getInstance()->getListByCommissionId($orderId);
+        /** @var CommissionGoods $goods */
         foreach ($goodsList as $goods)
         {
             $row = GoodsService::getInstance()->addStock($goods->goods_id, $goods->number, $goods->selected_sku_index);
@@ -308,15 +307,15 @@ class OrderService extends BaseService
 
     public function confirm($userId, $orderId, $isAuto = false)
     {
-        $order = $this->getUserOrderById($userId, $orderId);
+        $order = $this->getUserCommissionById($userId, $orderId);
         if (is_null($order)) {
             $this->throwBadArgumentValue();
         }
-        if ($order->status != OrderEnums::STATUS_SHIP) {
+        if ($order->status != CommissionEnums::STATUS_SHIP) {
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '该订单不能被确认收货');
         }
 
-        $order->status = $isAuto ? OrderEnums::STATUS_AUTO_CONFIRM : OrderEnums::STATUS_CONFIRM;
+        $order->status = $isAuto ? CommissionEnums::STATUS_AUTO_CONFIRM : CommissionEnums::STATUS_CONFIRM;
         $order->confirm_time = now()->toDateTimeString();
         if ($order->cas() == 0) {
             $this->throwUpdateFail();
@@ -329,14 +328,14 @@ class OrderService extends BaseService
 
     public function finish($userId, $orderId)
     {
-        $order = $this->getUserOrderById($userId, $orderId);
+        $order = $this->getUserCommissionById($userId, $orderId);
         if (is_null($order)) {
             $this->throwBadArgumentValue();
         }
         if (!$order->canFinishHandle()) {
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能设置为完成状态');
         }
-        $order->status = OrderEnums::STATUS_FINISHED;
+        $order->status = CommissionEnums::STATUS_FINISHED;
         if ($order->cas() == 0) {
             $this->throwUpdateFail();
         }
@@ -349,14 +348,14 @@ class OrderService extends BaseService
             if (!$order->canDeleteHandle()) {
                 $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能删除');
             }
-            OrderGoodsService::getInstance()->delete($order->id);
+            CommissionGoodsService::getInstance()->delete($order->id);
             $order->delete();
         }
     }
 
     public function refund($userId, $orderId)
     {
-        $order = $this->getUserOrderById($userId, $orderId);
+        $order = $this->getUserCommissionById($userId, $orderId);
         if (is_null($order)) {
             $this->throwBadArgumentValue();
         }
@@ -364,7 +363,7 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '该订单不能申请退款');
         }
 
-        $order->status = OrderEnums::STATUS_REFUND;
+        $order->status = CommissionEnums::STATUS_REFUND;
 
         if ($order->cas() == 0) {
             $this->throwUpdateFail();
@@ -376,22 +375,22 @@ class OrderService extends BaseService
         return $order;
     }
 
-    public function getOrderById($id, $columns = ['*'])
+    public function getCommissionById($id, $columns = ['*'])
     {
-        return Order::query()->find($id, $columns);
+        return Commission::query()->find($id, $columns);
     }
-    public function getOrderListByIds(array $ids, $columns = ['*'])
+    public function getCommissionListByIds(array $ids, $columns = ['*'])
     {
-        return Order::query()->whereIn('id', $ids)->get($columns);
-    }
-
-    public function getUserOrderById($userId, $id, $columns = ['*'])
-    {
-        return Order::query()->where('user_id', $userId)->find($id, $columns);
+        return Commission::query()->whereIn('id', $ids)->get($columns);
     }
 
-    public function getUserOrderList($userId, $ids, $columns = ['*'])
+    public function getUserCommissionById($userId, $id, $columns = ['*'])
     {
-        return Order::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
+        return Commission::query()->where('user_id', $userId)->find($id, $columns);
+    }
+
+    public function getUserCommissionList($userId, $ids, $columns = ['*'])
+    {
+        return Commission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
     }
 }

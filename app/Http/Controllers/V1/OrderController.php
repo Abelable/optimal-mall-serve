@@ -201,18 +201,21 @@ class OrderController extends Controller
 
             $orderIds = $merchantIds->map(function ($merchantId) use ($coupon, $address, $cartGoodsList, $freightTemplateList) {
                 $filterCartGoodsList = $cartGoodsList->groupBy('merchant_id')->get($merchantId);
-                $orderId = OrderService::getInstance()->createOrder($this->userId(), $filterCartGoodsList, $freightTemplateList, $address, $coupon);
+                $orderId = OrderService::getInstance()->createOrder($this->userId(), $merchantId, $filterCartGoodsList, $freightTemplateList, $address, $coupon);
 
                 // 6.生成订单商品快照
                 OrderGoodsService::getInstance()->createList($filterCartGoodsList, $orderId);
 
+                // todo 7.生成商品佣金记录
+
+
                 return $orderId;
             });
 
-            // 7.清空购物车
+            // 8.清空购物车
             CartGoodsService::getInstance()->deleteCartGoodsList($this->userId(), $input->cartGoodsIds);
 
-            // 8.优惠券已使用
+            // 9.优惠券已使用
             if (!is_null($input->couponId)) {
                 UserCouponService::getInstance()->useCoupon($this->userId(), $input->couponId);
             }

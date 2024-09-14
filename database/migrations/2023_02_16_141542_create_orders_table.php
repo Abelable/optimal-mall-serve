@@ -18,6 +18,7 @@ class CreateOrdersTable extends Migration
             $table->string('order_sn')->comment('订单编号');
             $table->integer('status')->comment('订单状态');
             $table->string('remarks')->default('')->comment('订单备注');
+            $table->integer('merchant_id')->comment('商家id');
             $table->integer('user_id')->comment('用户id');
             $table->string('consignee')->comment('收件人姓名');
             $table->string('mobile')->comment('收件人手机号');

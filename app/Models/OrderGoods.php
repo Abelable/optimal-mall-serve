@@ -8,6 +8,7 @@ namespace App\Models;
  * @property int $id
  * @property int $order_id 订单id
  * @property int $goods_id 商品id
+ * @property int $is_gift 是否为礼包商品：0-否，1-是
  * @property string $cover 列表图片
  * @property string $name 商品名称
  * @property float $price 商品价格
@@ -26,6 +27,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereGoodsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereIsGift($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereOrderId($value)

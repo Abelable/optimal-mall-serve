@@ -22,6 +22,7 @@ class CreateCartGoodsTable extends Migration
             $table->integer('merchant_id')->comment('商家id');
             $table->integer('user_id')->comment('用户id');
             $table->integer('goods_id')->comment('商品id');
+            $table->integer('is_gift')->comment('是否为礼包商品：0-否，1-是');
             $table->integer('freight_template_id')->comment('运费模板id');
             $table->string('cover')->comment('商品图片');
             $table->string('name')->comment('商品名称');

@@ -12,6 +12,7 @@ namespace App\Models;
  * @property int $merchant_id 商家id
  * @property int $user_id 用户id
  * @property int $goods_id 商品id
+ * @property int $is_gift 是否为礼包商品：0-否，1-是
  * @property int $freight_template_id 运费模板id
  * @property string $cover 商品图片
  * @property string $name 商品名称
@@ -33,6 +34,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereFreightTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereGoodsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereIsGift($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereMarketPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereMerchantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereName($value)

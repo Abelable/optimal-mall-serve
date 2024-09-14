@@ -11,6 +11,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property string $order_sn 订单编号
  * @property int $status 订单状态
  * @property string $remarks 订单备注
+ * @property int $merchant_id 商家id
  * @property int $user_id 用户id
  * @property string $consignee 收件人姓名
  * @property string $mobile 收件人手机号
@@ -49,6 +50,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereFreightPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereGoodsPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereMerchantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereMobile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereOrderSn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order wherePayId($value)

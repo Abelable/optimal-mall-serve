@@ -49,10 +49,13 @@ class CartGoodsService extends BaseService
         if (!is_null($cartGoods)) {
             $cartGoods->number = $scene == 1 ? ($cartGoods->number + $number) : $number;
         } else {
+            $giftGoodsIds = GiftGoodsService::getInstance()->getGoodsList([1, 2])->pluck('goods_id')->toArray();
+
             $cartGoods = CartGoods::new();
             $cartGoods->scene = $scene;
             $cartGoods->user_id = $userId;
             $cartGoods->goods_id = $goodsId;
+            $cartGoods->is_gift = in_array($goodsId, $giftGoodsIds) ? 1 : 0;
             $cartGoods->merchant_id = $goods->merchant_id;
             $cartGoods->freight_template_id = $goods->freight_template_id;
             $cartGoods->cover = $goods->cover;

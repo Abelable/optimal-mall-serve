@@ -14,6 +14,7 @@ class OrderGoodsService extends BaseService
             $goods = OrderGoods::new();
             $goods->order_id = $orderId;
             $goods->goods_id = $cartGoods->goods_id;
+            $goods->is_gift = $cartGoods->is_gift;
             $goods->cover = $cartGoods->cover;
             $goods->name = $cartGoods->name;
             $goods->selected_sku_name = $cartGoods->selected_sku_name;

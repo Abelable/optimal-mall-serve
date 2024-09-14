@@ -17,6 +17,7 @@ class CreateOrderGoodsTable extends Migration
             $table->id();
             $table->integer('order_id')->comment('订单id');
             $table->integer('goods_id')->comment('商品id');
+            $table->integer('is_gift')->comment('是否为礼包商品：0-否，1-是');
             $table->string('cover')->comment('列表图片');
             $table->string('name')->comment('商品名称');
             $table->float('price')->comment('商品价格');
