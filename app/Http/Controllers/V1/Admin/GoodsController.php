@@ -120,14 +120,14 @@ class GoodsController extends Controller
     public function editSales()
     {
         $id = $this->verifyRequiredId('id');
-        $sales_volume = $this->verifyRequiredInteger('sales_volume');
+        $sales = $this->verifyRequiredInteger('sales');
 
         $goods = GoodsService::getInstance()->getGoodsById($id);
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
 
-        $goods->sales_volume = $sales_volume;
+        $goods->sales_volume = $sales;
         $goods->save();
 
         return $this->success();
