@@ -324,25 +324,69 @@ class OrderService extends BaseService
         return $userCoupon;
     }
 
-    public function confirm($userId, $orderId, $isAuto = false)
+    public function userConfirm($userId, $orderId)
     {
-        $order = $this->getUserOrderById($userId, $orderId);
-        if (is_null($order)) {
-            $this->throwBadArgumentValue();
-        }
-        if ($order->status != OrderEnums::STATUS_SHIP) {
-            $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '该订单不能被确认收货');
-        }
+        return DB::transaction(function () use ($userId, $orderId) {
+            $orderList = $this->getUserOrderList($userId, [$orderId]);
+            if (count($orderList) == 0) {
+                $this->throwBadArgumentValue();
+            }
+            return $this->confirm($orderList);
+        });
+    }
 
-        $order->status = $isAuto ? OrderEnums::STATUS_AUTO_CONFIRM : OrderEnums::STATUS_CONFIRM;
-        $order->confirm_time = now()->toDateTimeString();
-        if ($order->cas() == 0) {
-            $this->throwUpdateFail();
-        }
+    public function systemConfirm($userId, $orderId)
+    {
+        return DB::transaction(function () use ($userId, $orderId) {
+            $orderList = $this->getUserOrderList($userId, [$orderId]);
+            if (count($orderList) == 0) {
+                $this->throwBadArgumentValue();
+            }
+            return $this->confirm($orderList, 'system');
+        });
+    }
 
-        // todo 佣金记录变更为已结算
+    public function adminConfirm($orderIds)
+    {
+        return DB::transaction(function () use ($orderIds) {
+            $orderList = $this->getOrderListByIds($orderIds);
+            if (count($orderList) == 0) {
+                $this->throwBadArgumentValue();
+            }
+            return $this->confirm($orderList, 'admin');
+        });
+    }
 
-        return $order;
+    public function confirm($orderList, $role = 'user')
+    {
+        $orderList = $orderList->map(function (Order $order) use ($role) {
+            if ($order->status != OrderEnums::STATUS_SHIP) {
+                $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单无法确认');
+            }
+            switch ($role) {
+                case 'system':
+                    $order->status = OrderEnums::STATUS_AUTO_CONFIRM;
+                    break;
+                case 'admin':
+                    $order->status = OrderEnums::STATUS_ADMIN_CONFIRM;
+                    break;
+                case 'user':
+                    $order->status = OrderEnums::STATUS_CONFIRM;
+                    break;
+            }
+            $order->confirm_time = now()->toDateTimeString();
+            if ($order->cas() == 0) {
+                $this->throwUpdateFail();
+            }
+
+            return $order;
+        });
+
+        // 佣金记录变更为已结算
+        $orderIds = $orderList->pluck('id')->toArray();
+        CommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
+
+        return $orderList;
     }
 
     public function finish($userId, $orderId)

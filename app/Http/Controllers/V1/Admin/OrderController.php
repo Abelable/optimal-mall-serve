@@ -46,8 +46,8 @@ class OrderController extends Controller
 
     public function confirm()
     {
-        $id = $this->verifyRequiredId('id');
-        OrderService::getInstance()->confirm($this->userId(), $id);
+        $ids = $this->verifyArrayNotEmpty('ids');
+        OrderService::getInstance()->adminConfirm($ids);
         return $this->success();
     }
 
@@ -61,13 +61,6 @@ class OrderController extends Controller
         DB::transaction(function () use ($orderList) {
             OrderService::getInstance()->delete($orderList);
         });
-        return $this->success();
-    }
-
-    public function refund()
-    {
-        $id = $this->verifyRequiredId('id');
-        OrderService::getInstance()->refund($this->userId(), $id);
         return $this->success();
     }
 }

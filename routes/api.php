@@ -319,7 +319,6 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('list', 'OrderController@list');
         Route::get('detail', 'OrderController@detail');
         Route::post('confirm', 'OrderController@confirm');
-        Route::post('refund', 'OrderController@refund');
         Route::post('cancel', 'OrderController@cancel');
         Route::post('delete', 'OrderController@delete');
     });

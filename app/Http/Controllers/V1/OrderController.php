@@ -336,7 +336,7 @@ class OrderController extends Controller
     public function confirm()
     {
         $id = $this->verifyRequiredId('id');
-        OrderService::getInstance()->confirm($this->userId(), $id);
+        OrderService::getInstance()->userConfirm($this->userId(), $id);
         return $this->success();
     }
 
