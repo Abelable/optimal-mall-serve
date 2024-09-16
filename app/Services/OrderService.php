@@ -210,16 +210,23 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::FAIL, $errMsg);
         }
 
-        return $orderList->map(function (Order $order) use ($payId) {
-            $order->pay_id = $payId;
-            $order->pay_time = now()->toDateTimeString();
-            $order->status = OrderEnums::STATUS_PAY;
-            if ($order->cas() == 0) {
-                $this->throwUpdateFail();
-            }
-            // todo 通知（邮件或钉钉）管理员、
-            // todo 通知（短信、系统消息）商家
-            return $order;
+        return DB::transaction(function () use ($payId, $orderList) {
+            $orderList = $orderList->map(function (Order $order) use ($payId) {
+                $order->pay_id = $payId;
+                $order->pay_time = now()->toDateTimeString();
+                $order->status = OrderEnums::STATUS_PAY;
+                if ($order->cas() == 0) {
+                    $this->throwUpdateFail();
+                }
+                // todo 通知（邮件或钉钉）管理员、
+                // todo 通知（短信、系统消息）商家
+                return $order;
+            });
+
+            $orderIds = $orderList->pluck('id')->toArray();
+            CommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
+
+            return $orderList;
         });
     }
 
@@ -258,7 +265,7 @@ class OrderService extends BaseService
 
     public function cancel($orderList, $role = 'user')
     {
-        return $orderList->map(function (Order $order) use ($role) {
+        $orderList = $orderList->map(function (Order $order) use ($role) {
             if ($order->status != OrderEnums::STATUS_CREATE) {
                 $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能取消');
             }
@@ -288,6 +295,12 @@ class OrderService extends BaseService
 
             return $order;
         });
+
+        // 删除佣金记录
+        $orderIds = $orderList->pluck('id')->toArray();
+        CommissionService::getInstance()->deleteUnpaidListByOrderIds($orderIds);
+
+        return $orderList;
     }
 
     public function returnStock($orderId)
@@ -327,7 +340,7 @@ class OrderService extends BaseService
             $this->throwUpdateFail();
         }
 
-        // todo 设置7天之后打款商家的定时任务，并通知管理员及商家。中间有退货的，取消定时任务。
+        // todo 佣金记录变更为已结算
 
         return $order;
     }
