@@ -103,25 +103,8 @@ class OrderService extends BaseService
             if ($cartGoods->freight_template_id == 0) {
                 $freightPrice = 0;
             } else {
-                /** @var FreightTemplate $freightTemplate */
                 $freightTemplate = $freightTemplateList->get($cartGoods->freight_template_id);
-                if ($freightTemplate->free_quota != 0 && $price > $freightTemplate->free_quota) {
-                    $freightPrice = 0;
-                } else {
-                    $cityCode = substr(json_decode($address->region_code_list)[1], 0, 4);
-                    $area = collect($freightTemplate->area_list)->first(function ($area) use ($cityCode) {
-                        return in_array($cityCode, explode(',', $area->pickedCityCodes));
-                    });
-                    if (is_null($area)) {
-                        $freightPrice = 0;
-                    } else {
-                        if ($freightTemplate->compute_mode == 1) {
-                            $freightPrice = $area->fee;
-                        } else {
-                            $freightPrice = bcmul($area->fee, $cartGoods->number, 2);
-                        }
-                    }
-                }
+                $freightPrice = $this->calcFreightPrice($freightTemplate, $address, $price, $cartGoods->number);
             }
             $totalFreightPrice = bcadd($totalFreightPrice, $freightPrice, 2);
 
@@ -162,6 +145,28 @@ class OrderService extends BaseService
         dispatch(new OverTimeCancelOrder($userId, $order->id));
 
         return $order->id;
+    }
+
+    public function calcFreightPrice(FreightTemplate $freightTemplate, Address $address, $totalPrice, $goodsNumber)
+    {
+        if ($freightTemplate->free_quota != 0 && $totalPrice > $freightTemplate->free_quota) {
+            $freightPrice = 0;
+        } else {
+            $cityCode = substr(json_decode($address->region_code_list)[1], 0, 4);
+            $area = collect($freightTemplate->area_list)->first(function ($area) use ($cityCode) {
+                return in_array($cityCode, explode(',', $area->pickedCityCodes));
+            });
+            if (is_null($area)) {
+                $freightPrice = 0;
+            } else {
+                if ($freightTemplate->compute_mode == 1) {
+                    $freightPrice = $area->fee;
+                } else {
+                    $freightPrice = bcmul($area->fee, $goodsNumber, 2);
+                }
+            }
+        }
+        return $freightPrice;
     }
 
     public function createWxPayOrder($userId, array $orderIds, $openid)

@@ -105,7 +105,8 @@ class GoodsController extends Controller
             'sales_volume',
             'detail_image_list',
             'spec_list',
-            'sku_list'
+            'sku_list',
+            'freight_template_id'
         ];
         $goods = GoodsService::getInstance()->getGoodsById($id, $columns);
         if (is_null($goods)) {

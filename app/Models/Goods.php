@@ -32,6 +32,7 @@ use Laravel\Scout\Searchable;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\GoodsCategory[] $categories
  * @property-read int|null $categories_count
+ * @property-read \App\Models\FreightTemplate|null $freightTemplateInfo
  * @method static \Illuminate\Database\Eloquent\Builder|Goods newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Goods newQuery()
  * @method static \Illuminate\Database\Query\Builder|Goods onlyTrashed()
@@ -80,5 +81,10 @@ class Goods extends BaseModel
     public function categories()
     {
         return $this->hasMany(GoodsCategory::class, 'goods_id');
+    }
+
+    public function freightTemplateInfo()
+    {
+        return $this->belongsTo(FreightTemplate::class, 'freight_template_id');
     }
 }

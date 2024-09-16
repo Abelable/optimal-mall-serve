@@ -6,7 +6,6 @@ use App\Jobs\OverTimeCancelCommission;
 use App\Models\Address;
 use App\Models\CartGoods;
 use App\Models\Coupon;
-use App\Models\FreightTemplate;
 use App\Models\Commission;
 use App\Models\CommissionGoods;
 use App\Utils\CodeResponse;
@@ -88,7 +87,7 @@ class CommissionService extends BaseService
         return Commission::query()->where('order_sn', $orderSn)->exists();
     }
 
-    public function createCommission($scene, $userId, $orderId, CartGoods $cartGoods, $freightTemplateList, $address, $superiorId = null, Coupon $coupon = null)
+    public function createCommission($scene, $userId, $orderId, CartGoods $cartGoods, $freightTemplateList, Address $address, $superiorId = null, Coupon $coupon = null)
     {
         $couponDenomination = 0;
         if (!is_null($coupon) && $coupon->goods_id == $cartGoods->goods_id) {
@@ -97,25 +96,8 @@ class CommissionService extends BaseService
 
         $totalPrice = bcmul($cartGoods->price, $cartGoods->number, 2);
 
-        /** @var FreightTemplate $freightTemplate */
         $freightTemplate = $freightTemplateList->get($cartGoods->freight_template_id);
-        if ($freightTemplate->free_quota != 0 && $totalPrice > $freightTemplate->free_quota) {
-            $freightPrice = 0;
-        } else {
-            $cityCode = substr(json_decode($address->region_code_list)[1], 0, 4);
-            $area = collect($freightTemplate->area_list)->first(function ($area) use ($cityCode) {
-                return in_array($cityCode, explode(',', $area->pickedCityCodes));
-            });
-            if (is_null($area)) {
-                $freightPrice = 0;
-            } else {
-                if ($freightTemplate->compute_mode == 1) {
-                    $freightPrice = $area->fee;
-                } else {
-                    $freightPrice = bcmul($area->fee, $cartGoods->number, 2);
-                }
-            }
-        }
+        $freightPrice = OrderService::getInstance()->calcFreightPrice($freightTemplate, $address, $totalPrice, $cartGoods->number);
 
         $paymentAmount = bcadd($totalPrice, $freightPrice, 2);
         $paymentAmount = bcsub($paymentAmount, $couponDenomination, 2);
