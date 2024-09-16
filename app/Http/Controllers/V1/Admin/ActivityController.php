@@ -89,7 +89,7 @@ class ActivityController extends Controller
 
     public function editTag()
     {
-        $id = $this->verifyRequiredInteger('id');
+        $id = $this->verifyRequiredId('id');
         $tag = $this->verifyRequiredInteger('tag');
 
         $activity = ActivityService::getInstance()->getActivityById($id);
@@ -105,7 +105,7 @@ class ActivityController extends Controller
 
     public function editGoodsTag()
     {
-        $id = $this->verifyRequiredInteger('id');
+        $id = $this->verifyRequiredId('id');
         $goodsTag = $this->verifyRequiredInteger('goodsTag');
 
         $activity = ActivityService::getInstance()->getActivityById($id);
@@ -121,7 +121,7 @@ class ActivityController extends Controller
 
     public function editFollowers()
     {
-        $id = $this->verifyRequiredInteger('id');
+        $id = $this->verifyRequiredId('id');
         $followers = $this->verifyRequiredInteger('followers');
 
         $activity = ActivityService::getInstance()->getActivityById($id);
@@ -137,7 +137,7 @@ class ActivityController extends Controller
 
     public function editSales()
     {
-        $id = $this->verifyRequiredInteger('id');
+        $id = $this->verifyRequiredId('id');
         $sales = $this->verifyRequiredInteger('sales');
 
         $activity = ActivityService::getInstance()->getActivityById($id);
@@ -150,7 +150,6 @@ class ActivityController extends Controller
 
         return $this->success();
     }
-
 
     public function end()
     {

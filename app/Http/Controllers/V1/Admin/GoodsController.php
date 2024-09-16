@@ -117,6 +117,22 @@ class GoodsController extends Controller
         return $this->success();
     }
 
+    public function editSales()
+    {
+        $id = $this->verifyRequiredId('id');
+        $sales_volume = $this->verifyRequiredInteger('sales_volume');
+
+        $goods = GoodsService::getInstance()->getGoodsById($id);
+        if (is_null($goods)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
+        }
+
+        $goods->sales_volume = $sales_volume;
+        $goods->save();
+
+        return $this->success();
+    }
+
     public function options()
     {
         $keywords = $this->verifyString('keywords');

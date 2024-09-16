@@ -311,6 +311,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('delete', 'GoodsController@delete');
         Route::post('add', 'GoodsController@add');
         Route::post('edit', 'GoodsController@edit');
+        Route::post('edit_sales', 'GoodsController@editSales');
         Route::get('options', 'GoodsController@options');
     });
 

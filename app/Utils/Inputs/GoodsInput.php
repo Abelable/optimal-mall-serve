@@ -6,6 +6,7 @@ class GoodsInput extends BaseInput
 {
     public $video;
     public $cover;
+    public $activityCover;
     public $imageList;
     public $detailImageList;
     public $defaultSpecImage;
@@ -26,6 +27,7 @@ class GoodsInput extends BaseInput
         return [
             'video' => 'string',
             'cover' => 'required|string',
+            'activityCover' => 'string',
             'imageList' => 'required|array',
             'detailImageList' => 'required|array',
             'defaultSpecImage' => 'required|string',
@@ -37,7 +39,7 @@ class GoodsInput extends BaseInput
             'price' => 'required|numeric',
             'marketPrice' => 'numeric',
             'stock' => 'required|integer',
-            'commissionRate' => 'required|numeric',
+            'commissionRate' => 'numeric',
             'specList' => 'array',
             'skuList' => 'array',
         ];

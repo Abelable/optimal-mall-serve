@@ -95,7 +95,7 @@ class CouponController extends Controller
 
     public function editReceivedNum()
     {
-        $id = $this->verifyRequiredInteger('id');
+        $id = $this->verifyRequiredId('id');
         $num = $this->verifyRequiredInteger('num');
 
         $coupon = CouponService::getInstance()->getCouponById($id);

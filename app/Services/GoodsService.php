@@ -197,6 +197,9 @@ class GoodsService extends BaseService
             $goods->video = $input->video;
         }
         $goods->cover = $input->cover;
+        if (!empty($input->activityCover)) {
+            $goods->activity_cover = $input->activityCover;
+        }
         $goods->image_list = json_encode($input->imageList);
         $goods->detail_image_list = json_encode($input->detailImageList);
         $goods->default_spec_image = $input->defaultSpecImage;
@@ -209,8 +212,9 @@ class GoodsService extends BaseService
         $goods->price = $input->price;
         $goods->market_price = $input->marketPrice ?: 0;
         $goods->stock = $input->stock;
-        $goods->original_stock = $input->stock;
-        $goods->commission_rate = $input->commissionRate;
+        if (!empty($input->commissionRate)) {
+            $goods->commission_rate = $input->commissionRate;
+        }
         $goods->spec_list = json_encode($input->specList);
         $goods->sku_list = json_encode($input->skuList);
         $goods->save();
