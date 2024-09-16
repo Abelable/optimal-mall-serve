@@ -157,6 +157,11 @@ class GoodsController extends Controller
             unset($goods->merchant_id);
         }
 
+        if ($goods->freight_template_id != 0) {
+            $goods['freightTemplateInfo'] = $goods->freightTemplateInfo;
+            unset($goods->freight_template_id);
+        }
+
         return $this->success($goods);
     }
 }
