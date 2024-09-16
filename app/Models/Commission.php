@@ -12,6 +12,7 @@ namespace App\Models;
  * @property int $superior_id 上级id
  * @property int $order_id 订单id
  * @property int $goods_id 商品id
+ * @property int $refund_status 是否支持7天无理由：0-不支持，1-支持
  * @property string $selected_sku_name 选中的规格名称
  * @property float $goods_price 商品价格
  * @property int $goods_number 商品数量
@@ -40,6 +41,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereOrderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission wherePaymentAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Commission whereRefundStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereScene($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereSelectedSkuName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereStatus($value)

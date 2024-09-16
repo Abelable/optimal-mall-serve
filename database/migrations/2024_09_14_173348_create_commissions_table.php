@@ -21,6 +21,7 @@ class CreateCommissionsTable extends Migration
             $table->integer('superior_id')->default(0)->comment('上级id');
             $table->integer('order_id')->comment('订单id');
             $table->integer('goods_id')->comment('商品id');
+            $table->integer('refund_status')->comment('是否支持7天无理由：0-不支持，1-支持');
             $table->string('selected_sku_name')->default('')->comment('选中的规格名称');
             $table->float('goods_price')->comment('商品价格');
             $table->integer('goods_number')->comment('商品数量');

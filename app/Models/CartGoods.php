@@ -13,6 +13,7 @@ namespace App\Models;
  * @property int $user_id 用户id
  * @property int $goods_id 商品id
  * @property int $is_gift 是否为礼包商品：0-否，1-是
+ * @property int $refund_status 是否支持7天无理由：0-不支持，1-支持
  * @property int $freight_template_id 运费模板id
  * @property string $cover 商品图片
  * @property string $name 商品名称
@@ -42,6 +43,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereRefundStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereScene($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereSelectedSkuIndex($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereSelectedSkuName($value)

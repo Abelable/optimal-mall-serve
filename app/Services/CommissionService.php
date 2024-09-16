@@ -40,6 +40,7 @@ class CommissionService extends BaseService
         }
         $commission->order_id = $orderId;
         $commission->goods_id = $cartGoods->goods_id;
+        $commission->refund_status = $cartGoods->refund_status;
         $commission->selected_sku_name = $cartGoods->selected_sku_name;
         $commission->goods_price = $cartGoods->price;
         $commission->goods_number = $cartGoods->number;
@@ -77,20 +78,20 @@ class CommissionService extends BaseService
             ->get($columns);
     }
 
-    public function updateListToOrderConfirmStatus($orderId)
+    public function updateListToOrderConfirmStatus($orderIds)
     {
-        $commissionList = $this->getPaidListByOrderId($orderId);
+        $commissionList = $this->getPaidListByOrderIds($orderIds);
         $commissionList->map(function (Commission $commission) {
             // 商品支持7天无理由，设置7天之后变更任务
             // 商品不支持7天无理由，立即变更
         });
     }
 
-    public function getPaidListByOrderId($orderId, $columns = ['*'])
+    public function getPaidListByOrderIds(array $orderIds, $columns = ['*'])
     {
         return Commission::query()
             ->where('status', 1)
-            ->where('order_id', $orderId)
+            ->whereIn('order_id', $orderIds)
             ->get($columns);
     }
 
