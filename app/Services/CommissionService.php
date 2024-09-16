@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\CommissionConfirm;
 use App\Jobs\OverTimeCancelCommission;
 use App\Models\Address;
 use App\Models\CartGoods;
@@ -81,10 +82,32 @@ class CommissionService extends BaseService
     public function updateListToOrderConfirmStatus($orderIds)
     {
         $commissionList = $this->getPaidListByOrderIds($orderIds);
-        $commissionList->map(function (Commission $commission) {
-            // 商品支持7天无理由，设置7天之后变更任务
-            // 商品不支持7天无理由，立即变更
+        return $commissionList->map(function (Commission $commission) {
+            if ($commission->refund_status == 1) {
+                // 7天无理由商品：确认收货7天后更新佣金状态
+                dispatch(new CommissionConfirm($commission->id));
+            } else {
+                $commission->status = 2;
+                $commission->save();
+            }
+            return $commission;
         });
+    }
+
+    public function updateToOrderConfirmStatus($id)
+    {
+        $commission = $this->getCommissionById($id);
+        if (is_null($commission)) {
+            $this->throwBusinessException(CodeResponse::NOT_FOUND, '佣金记录不存在或已删除');
+        }
+        $commission->status = 2;
+        $commission->save();
+        return $commission;
+    }
+
+    public function deletePaidListByOrderIds(array $orderIds)
+    {
+        return Commission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
     }
 
     public function getPaidListByOrderIds(array $orderIds, $columns = ['*'])

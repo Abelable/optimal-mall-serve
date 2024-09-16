@@ -426,16 +426,19 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '该订单不能申请退款');
         }
 
-        $order->status = OrderEnums::STATUS_REFUND;
+        return DB::transaction(function () use ($order) {
+            $order->status = OrderEnums::STATUS_REFUND;
+            if ($order->cas() == 0) {
+                $this->throwUpdateFail();
+            }
+            // todo 通知商家
+            // todo 开启自动退款定时任务
 
-        if ($order->cas() == 0) {
-            $this->throwUpdateFail();
-        }
+            // 删除佣金记录
+            CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
 
-        // todo 通知商家
-        // todo 开启自动退款定时任务
-
-        return $order;
+            return $order;
+        });
     }
 
     public function getOrderById($id, $columns = ['*'])
