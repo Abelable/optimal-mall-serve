@@ -19,6 +19,7 @@ class GoodsInput extends BaseInput
     public $marketPrice;
     public $stock;
     public $commissionRate;
+    public $refundStatus;
     public $specList;
     public $skuList;
 
@@ -40,6 +41,7 @@ class GoodsInput extends BaseInput
             'marketPrice' => 'numeric',
             'stock' => 'required|integer',
             'commissionRate' => 'numeric',
+            'refundStatus' => 'required|integer|in:0,1',
             'specList' => 'array',
             'skuList' => 'array',
         ];

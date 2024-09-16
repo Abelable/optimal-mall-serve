@@ -23,6 +23,7 @@ use Laravel\Scout\Searchable;
  * @property float $market_price 市场原价
  * @property int $stock 商品库存
  * @property float $commission_rate 佣金比例%
+ * @property int $refund_status 是否支持7天无理由：0-不支持，1-支持
  * @property string $spec_list 商品规格列表
  * @property string $sku_list 商品sku
  * @property int $sales_volume 商品销量
@@ -53,6 +54,7 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereMerchantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Goods whereRefundStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereSalesVolume($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereSkuList($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereSpecList($value)

@@ -92,21 +92,22 @@ class GoodsController extends Controller
         $columns = [
             'id',
             'merchant_id',
-            'video',
-            'cover',
-            'commission_rate',
-            'image_list',
-            'default_spec_image',
             'name',
             'introduction',
+            'video',
+            'cover',
             'price',
             'market_price',
+            'freight_template_id',
+            'commission_rate',
+            'refund_status',
+            'image_list',
+            'detail_image_list',
             'stock',
             'sales_volume',
-            'detail_image_list',
+            'default_spec_image',
             'spec_list',
-            'sku_list',
-            'freight_template_id'
+            'sku_list'
         ];
         $goods = GoodsService::getInstance()->getGoodsById($id, $columns);
         if (is_null($goods)) {
