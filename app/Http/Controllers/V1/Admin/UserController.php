@@ -28,7 +28,7 @@ class UserController extends Controller
         $userList = collect($page->items());
 
         $userIds = $userList->pluck('id')->toArray();
-        $relationList = RelationService::getInstance()->getRelationListByFanIds($userIds)->keyBy('fan_id');
+        $relationList = RelationService::getInstance()->getListByFanIds($userIds)->keyBy('fan_id');
 
         $list = $userList->map(function (User $user) use ($relationList) {
             /** @var Relation $relation */

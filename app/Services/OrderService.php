@@ -13,6 +13,7 @@ use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\Admin\OrderPageInput;
 use App\Utils\Inputs\PageInput;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -458,5 +459,22 @@ class OrderService extends BaseService
     public function getUserOrderList($userId, $ids, $columns = ['*'])
     {
         return Order::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
+    }
+
+    public function getTodayOrderList($columns = ['*'])
+    {
+        return Order::query()
+            ->whereDate('created_at', Carbon::today())
+            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->get($columns);
+    }
+
+    public function getTodayOrderCountByUserIds(array $userIds)
+    {
+        return Order::query()
+            ->whereIn('user_id', $userIds)
+            ->whereDate('created_at', Carbon::today())
+            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->count();
     }
 }

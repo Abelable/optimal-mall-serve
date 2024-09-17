@@ -27,6 +27,7 @@ Route::prefix('user')->group(function () {
     Route::post('update', 'UserController@updateUserInfo');
     Route::get('tim_login_info', 'UserController@timLoginInfo');
     Route::get('superior_info', 'UserController@superiorInfo');
+    Route::get('customer_data', 'UserController@customerData');
 });
 
 Route::prefix('auth_info')->group(function () {
@@ -119,6 +120,11 @@ Route::prefix('integrity')->group(function () {
 
 Route::prefix('gift')->group(function () {
     Route::get('goods_list', 'GiftController@goodsList');
+});
+
+Route::prefix('commission')->group(function () {
+    Route::get('sum', 'CommissionController@sum');
+    Route::get('time_data', 'CommissionController@timeData');
 });
 
 /*

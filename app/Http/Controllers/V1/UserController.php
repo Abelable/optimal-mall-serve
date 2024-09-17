@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\OrderService;
+use App\Services\RelationService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\UserInfoInput;
@@ -62,5 +64,26 @@ class UserController extends Controller
         }
 
         return $this->success($superiorInfo);
+    }
+
+    public function customerData()
+    {
+        $todayNewCustomerCount = RelationService::getInstance()->getTodayCountBySuperiorId($this->userId());
+        $customerTotalCount = RelationService::getInstance()->getCountBySuperiorId($this->userId());
+
+        $customerIds = RelationService::getInstance()->getListBySuperiorId($this->userId())->pluck('fan_id')->toArray();
+        $todayOrderingUserIds = OrderService::getInstance()->getTodayOrderList()->pluck('user_id')->toArray();
+        $todayOrderingCustomerCount = 0;
+        foreach ($customerIds as $customerId) {
+            if (in_array($customerId, $todayOrderingUserIds)) {
+                $todayOrderingCustomerCount = $todayOrderingCustomerCount + 1;
+            }
+        }
+
+        return $this->success([
+            'todayNewCount' => $todayNewCustomerCount,
+            'todayOrderingCount' => $todayOrderingCustomerCount,
+            'totalCount' => $customerTotalCount
+        ]);
     }
 }

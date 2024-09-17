@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Relation;
+use Illuminate\Support\Carbon;
 
 class RelationService extends BaseService
 {
@@ -15,18 +16,28 @@ class RelationService extends BaseService
         return $relation;
     }
 
-    public function getRelationByFanId($fanId, $columns = ['*'])
-    {
-        return Relation::query()->where('fan_id', $fanId)->first($columns);
-    }
-
-    public function getRelationListByFanIds(array $fanIds, $columns = ['*'])
+    public function getListByFanIds(array $fanIds, $columns = ['*'])
     {
         return Relation::query()->whereIn('fan_id', $fanIds)->get($columns);
     }
-    
+
+    public function getListBySuperiorId($superiorId, $columns = ['*'])
+    {
+        return Relation::query()->where('superior_id', $superiorId)->get($columns);
+    }
+
     public function getRelationListBySuperiorIds(array $superiorIds, $columns = ['*'])
     {
         return Relation::query()->whereIn('superior_id', $superiorIds)->get($columns);
+    }
+
+    public function getCountBySuperiorId($superiorId)
+    {
+        return Relation::query()->where('superior_id', $superiorId)->count();
+    }
+
+    public function getTodayCountBySuperiorId($superiorId)
+    {
+        return Relation::query()->whereDate('created_at', Carbon::today())->where('superior_id', $superiorId)->count();
     }
 }

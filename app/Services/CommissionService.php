@@ -13,6 +13,7 @@ use App\Utils\CodeResponse;
 use App\Utils\Enums\CommissionEnums;
 use App\Utils\Inputs\Admin\CommissionPageInput;
 use App\Utils\Inputs\PageInput;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -135,5 +136,37 @@ class CommissionService extends BaseService
     public function getUserCommissionList($userId, $ids, $columns = ['*'])
     {
         return Commission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
+    }
+
+    public function getUserCommissionSum($userId, $status)
+    {
+        return Commission::query()
+            ->where('user_id', $userId)
+            ->orWhere('superior_id', $userId)
+            ->where('status', $status)
+            ->sum('commission');
+    }
+
+    public function getUserCommissionQueryByTimeType($userId, $timeType)
+    {
+        $query = Commission::query()
+            ->where('user_id', $userId)
+            ->orWhere('superior_id', $userId);
+
+        switch ($timeType) {
+            case 1:
+                $query = $query->whereDate('created_at', Carbon::today());
+                break;
+            case 2:
+                $query = $query->whereDate('created_at', Carbon::yesterday());
+                break;
+            case 3:
+                $query = $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()]);
+                break;
+            case 4:
+                $query = $query->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
+                break;
+        }
+        return $query;
     }
 }
