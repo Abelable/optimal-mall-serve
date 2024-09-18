@@ -216,9 +216,9 @@ class OrderController extends Controller
 
                 /** @var CartGoods $cartGoods */
                 foreach ($filterCartGoodsList as $cartGoods) {
-                    if ($cartGoods->is_gift && !$promoterInfo) {
+                    if ($cartGoods->is_gift && is_null($promoterInfo)) {
                         // todo 7.礼包逻辑
-                        // 1.用户在确认收货之后的7天，成为推广员
+                        // 1.成为推广员
                         // 2.生成礼包佣金记录
                     } else {
                         // 8.生成商品佣金记录（前提：非礼包商品）
