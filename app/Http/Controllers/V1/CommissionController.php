@@ -36,4 +36,21 @@ class CommissionController extends Controller
             'settledAmount' => $settledAmount
         ]);
     }
+
+    public function cash()
+    {
+        $selfPurchase = CommissionService::getInstance()
+            ->getUserCommissionQuery($this->userId(), 2)
+            ->where('scene', 1)
+            ->sum('commission');
+        $share = CommissionService::getInstance()
+            ->getUserCommissionQuery($this->userId(), 2)
+            ->where('scene', 2)
+            ->sum('commission');
+
+        return $this->success([
+            'selfPurchase' => $selfPurchase,
+            'share' => $share
+        ]);
+    }
 }

@@ -125,6 +125,7 @@ Route::prefix('gift')->group(function () {
 Route::prefix('commission')->group(function () {
     Route::get('sum', 'CommissionController@sum');
     Route::get('time_data', 'CommissionController@timeData');
+    Route::get('cash', 'CommissionController@cash');
 });
 
 /*

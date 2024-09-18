@@ -140,11 +140,15 @@ class CommissionService extends BaseService
 
     public function getUserCommissionSum($userId, $status)
     {
+        return $this->getUserCommissionQuery($userId, $status)->sum('commission');
+    }
+
+    public function getUserCommissionQuery($userId, $status)
+    {
         return Commission::query()
             ->where('user_id', $userId)
             ->orWhere('superior_id', $userId)
-            ->where('status', $status)
-            ->sum('commission');
+            ->where('status', $status);
     }
 
     public function getUserCommissionQueryByTimeType($userId, $timeType)
