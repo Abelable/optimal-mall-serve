@@ -5,9 +5,11 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\CartGoods;
+use App\Models\Commission;
 use App\Models\Coupon;
 use App\Models\FreightTemplate;
 use App\Models\Order;
+use App\Models\OrderGoods;
 use App\Services\AddressService;
 use App\Services\CartGoodsService;
 use App\Services\CommissionService;
@@ -19,6 +21,7 @@ use App\Services\OrderService;
 use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
+use App\Utils\Inputs\CommissionOrderPageInput;
 use App\Utils\Inputs\CreateOrderInput;
 use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\Cache;
@@ -388,5 +391,50 @@ class OrderController extends Controller
         $goodsList = OrderGoodsService::getInstance()->getListByOrderId($order->id);
         $order['goods_list'] = $goodsList;
         return $this->success($order);
+    }
+
+    public function commissionOrderList()
+    {
+        $scene = $this->verifyRequiredInteger('scene');
+        $timeType = $this->verifyRequiredInteger('timeType');
+        /** @var PageInput $input */
+        $input = PageInput::new();
+
+        $commissionList = CommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType, $scene);
+        $orderIds = $commissionList->pluck('order_id')->toArray();
+
+        $goodsIds = $commissionList->pluck('goods_id')->toArray();
+        $goodsColumns = ['order_id', 'goods_id', 'cover', 'name', 'selected_sku_name', 'price', 'number'];
+        $goodsList = OrderGoodsService::getInstance()->getListByGoodsIds($goodsIds, $goodsColumns)->groupBy('order_id');
+
+        $page = OrderService::getInstance()->getOrderPageByIds($orderIds, $input);
+        $list = collect($page->items())->map(function (Order $order) use ($commissionList, $goodsList) {
+            $commissionList = $commissionList->groupBy('order_id')->get($order->id);
+
+            $commissionSum = $commissionList->sum('commission');
+            /** @var Commission $firstCommission */
+            $firstCommission = $commissionList->first();
+
+            $goodsList = $goodsList->get($order->id);
+            $goodsList->map(function (OrderGoods $goods) use ($commissionList) {
+                /** @var Commission $commission */
+                $commission = $commissionList->keyBy('goods_id')->get($goods->id);
+                $goods['commission'] = $commission->commission;
+                unset($goods->order_id);
+                return $goods;
+            });
+
+            return [
+                'id' => $order->id,
+                'orderSn' => $order->order_sn,
+                'status' => $firstCommission->status,
+                'createdAt' => $order->created_at,
+                'commission' => $commissionSum,
+                'scene' => $firstCommission->scene,
+                'goodsList' => $goodsList
+            ];
+        });
+
+        return $this->success($this->paginate($page, $list));
     }
 }

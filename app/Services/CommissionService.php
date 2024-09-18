@@ -151,6 +151,15 @@ class CommissionService extends BaseService
             ->where('status', $status);
     }
 
+    public function getUserCommissionListByTimeType($userId, $timeType, $scene, $columns = ['*'])
+    {
+        $query = $this->getUserCommissionQueryByTimeType($userId, $timeType);
+        return $query
+            ->where('scene', $scene)
+            ->whereIn('status', [1, 2, 3])
+            ->get($columns);
+    }
+
     public function getUserCommissionQueryByTimeType($userId, $timeType)
     {
         $query = Commission::query()

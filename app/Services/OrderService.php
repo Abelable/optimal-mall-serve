@@ -446,9 +446,18 @@ class OrderService extends BaseService
     {
         return Order::query()->find($id, $columns);
     }
+
     public function getOrderListByIds(array $ids, $columns = ['*'])
     {
         return Order::query()->whereIn('id', $ids)->get($columns);
+    }
+
+    public function getOrderPageByIds(array $ids, PageInput $input, $columns = ['*'])
+    {
+        return Order::query()
+            ->whereIn('id', $ids)
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);;
     }
 
     public function getUserOrderById($userId, $id, $columns = ['*'])
