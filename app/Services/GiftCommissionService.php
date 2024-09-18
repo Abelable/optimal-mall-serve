@@ -2,28 +2,18 @@
 
 namespace App\Services;
 
-use App\Jobs\CommissionConfirm;
+use App\Jobs\GiftCommissionConfirm;
 use App\Models\CartGoods;
-use App\Models\Coupon;
-use App\Models\Commission;
+use App\Models\GiftCommission;
 use App\Utils\CodeResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
-class CommissionService extends BaseService
+class GiftCommissionService extends BaseService
 {
-    public function createCommission($scene, $userId, $orderId, CartGoods $cartGoods, $superiorId = null, Coupon $coupon = null)
+    public function createCommission($userId, $orderId, CartGoods $cartGoods, $superiorId = null)
     {
-        $couponDenomination = 0;
-        if (!is_null($coupon) && $coupon->goods_id == $cartGoods->goods_id) {
-            $couponDenomination = $coupon->denomination;
-        }
-        $totalPrice = bcmul($cartGoods->price, $cartGoods->number, 2);
-        $basePrice = bcsub($totalPrice, $couponDenomination, 2);
-        $commissionRate = bcdiv($cartGoods->commission_rate, 100, 2);
-        $commissionAmount = bcmul($basePrice, $commissionRate, 2);
-
-        $commission = Commission::new();
-        $commission->scene = $scene;
+        $commission = GiftCommission::new();
         $commission->user_id = $userId;
         if (!is_null($superiorId)) {
             $commission->superior_id = $superiorId;
@@ -33,11 +23,7 @@ class CommissionService extends BaseService
         $commission->refund_status = $cartGoods->refund_status;
         $commission->selected_sku_name = $cartGoods->selected_sku_name;
         $commission->goods_price = $cartGoods->price;
-        $commission->goods_number = $cartGoods->number;
-        $commission->total_price = $totalPrice;
-        $commission->coupon_denomination = $couponDenomination;
-        $commission->commission_rate = $cartGoods->commission_rate;
-        $commission->commission = $commissionAmount;
+        $commission->commission = bcmul($cartGoods->price, 0.15, 2);
         $commission->save();
 
         return $commission;
@@ -46,7 +32,7 @@ class CommissionService extends BaseService
     public function updateListToOrderPaidStatus(array $orderIds)
     {
         $commissionList = $this->getUnpaidListByOrderIds($orderIds);
-        return $commissionList->map(function (Commission $commission) {
+        return $commissionList->map(function (GiftCommission $commission) {
             $commission->status = 1;
             $commission->save();
             return $commission;
@@ -55,12 +41,12 @@ class CommissionService extends BaseService
 
     public function deleteUnpaidListByOrderIds(array $orderIds)
     {
-        return Commission::query()->where('status', 0)->whereIn('order_id', $orderIds)->delete();
+        return GiftCommission::query()->where('status', 0)->whereIn('order_id', $orderIds)->delete();
     }
 
     public function getUnpaidListByOrderIds(array $orderIds, $columns = ['*'])
     {
-        return Commission::query()
+        return GiftCommission::query()
             ->where('status', 0)
             ->whereIn('order_id', $orderIds)
             ->get($columns);
@@ -69,13 +55,16 @@ class CommissionService extends BaseService
     public function updateListToOrderConfirmStatus($orderIds)
     {
         $commissionList = $this->getPaidListByOrderIds($orderIds);
-        return $commissionList->map(function (Commission $commission) {
+        return $commissionList->map(function (GiftCommission $commission) {
             if ($commission->refund_status == 1) {
-                // 7天无理由商品：确认收货7天后更新佣金状态
-                dispatch(new CommissionConfirm($commission->id));
+                // 7天无理由商品：确认收货7天后更新佣金状态，并成为推官员
+                dispatch(new GiftCommissionConfirm($commission->id));
             } else {
                 $commission->status = 2;
                 $commission->save();
+
+                // 成为推官员
+                PromoterService::getInstance()->toBePromoter($commission->user_id);
             }
             return $commission;
         });
@@ -87,19 +76,26 @@ class CommissionService extends BaseService
         if (is_null($commission)) {
             $this->throwBusinessException(CodeResponse::NOT_FOUND, '佣金记录不存在或已删除');
         }
-        $commission->status = 2;
-        $commission->save();
-        return $commission;
+
+        return DB::transaction(function () use ($commission) {
+            $commission->status = 2;
+            $commission->save();
+
+            // 成为推官员
+            PromoterService::getInstance()->toBePromoter($commission->user_id);
+
+            return $commission;
+        });
     }
 
     public function deletePaidListByOrderIds(array $orderIds)
     {
-        return Commission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
+        return GiftCommission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
     }
 
     public function getPaidListByOrderIds(array $orderIds, $columns = ['*'])
     {
-        return Commission::query()
+        return GiftCommission::query()
             ->where('status', 1)
             ->whereIn('order_id', $orderIds)
             ->get($columns);
@@ -107,21 +103,21 @@ class CommissionService extends BaseService
 
     public function getCommissionById($id, $columns = ['*'])
     {
-        return Commission::query()->find($id, $columns);
+        return GiftCommission::query()->find($id, $columns);
     }
     public function getCommissionListByIds(array $ids, $columns = ['*'])
     {
-        return Commission::query()->whereIn('id', $ids)->get($columns);
+        return GiftCommission::query()->whereIn('id', $ids)->get($columns);
     }
 
     public function getUserCommissionById($userId, $id, $columns = ['*'])
     {
-        return Commission::query()->where('user_id', $userId)->find($id, $columns);
+        return GiftCommission::query()->where('user_id', $userId)->find($id, $columns);
     }
 
     public function getUserCommissionList($userId, $ids, $columns = ['*'])
     {
-        return Commission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
+        return GiftCommission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
     }
 
     public function getUserCommissionSum($userId, $status)
@@ -131,7 +127,7 @@ class CommissionService extends BaseService
 
     public function getUserCommissionQuery($userId, $status)
     {
-        return Commission::query()
+        return GiftCommission::query()
             ->where('user_id', $userId)
             ->orWhere('superior_id', $userId)
             ->where('status', $status);
@@ -145,7 +141,7 @@ class CommissionService extends BaseService
 
     public function getUserCommissionQueryByTimeType($userId, $timeType, $scene = null)
     {
-        $query = Commission::query()
+        $query = GiftCommission::query()
             ->where('user_id', $userId)
             ->orWhere('superior_id', $userId);
 

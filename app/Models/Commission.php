@@ -17,9 +17,7 @@ namespace App\Models;
  * @property float $goods_price 商品价格
  * @property int $goods_number 商品数量
  * @property float $total_price 商品总价
- * @property float $freight_price 运费
  * @property float $coupon_denomination 优惠券抵扣
- * @property float $payment_amount 商品支付金额
  * @property float $commission_rate 商品佣金比例
  * @property float $commission 佣金金额
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -34,13 +32,11 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereCouponDenomination($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Commission whereFreightPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereGoodsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereGoodsNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereGoodsPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereOrderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Commission wherePaymentAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereRefundStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereScene($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereSelectedSkuName($value)

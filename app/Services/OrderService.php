@@ -224,8 +224,10 @@ class OrderService extends BaseService
                 return $order;
             });
 
+            // 佣金记录状态更新为：已支付待结算
             $orderIds = $orderList->pluck('id')->toArray();
             CommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
+            GiftCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
 
             return $orderList;
         });
@@ -300,6 +302,7 @@ class OrderService extends BaseService
         // 删除佣金记录
         $orderIds = $orderList->pluck('id')->toArray();
         CommissionService::getInstance()->deleteUnpaidListByOrderIds($orderIds);
+        GiftCommissionService::getInstance()->deleteUnpaidListByOrderIds($orderIds);
 
         return $orderList;
     }
@@ -383,9 +386,10 @@ class OrderService extends BaseService
             return $order;
         });
 
-        // 佣金记录变更为已结算
+        // 佣金记录变更为待提现
         $orderIds = $orderList->pluck('id')->toArray();
         CommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
+        GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
 
         return $orderList;
     }
@@ -437,6 +441,7 @@ class OrderService extends BaseService
 
             // 删除佣金记录
             CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+            GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
 
             return $order;
         });

@@ -15,13 +15,13 @@ use App\Services\CartGoodsService;
 use App\Services\CommissionService;
 use App\Services\CouponService;
 use App\Services\FreightTemplateService;
+use App\Services\GiftCommissionService;
 use App\Services\GiftGoodsService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
-use App\Utils\Inputs\CommissionOrderPageInput;
 use App\Utils\Inputs\CreateOrderInput;
 use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\Cache;
@@ -217,9 +217,8 @@ class OrderController extends Controller
                 /** @var CartGoods $cartGoods */
                 foreach ($filterCartGoodsList as $cartGoods) {
                     if ($cartGoods->is_gift && is_null($promoterInfo)) {
-                        // todo 7.礼包逻辑
-                        // 1.成为推广员
-                        // 2.生成礼包佣金记录
+                        // 7.礼包佣金逻辑
+                        GiftCommissionService::getInstance()->createCommission($userId, $orderId, $cartGoods, $superiorId);
                     } else {
                         // 8.生成商品佣金记录（前提：非礼包商品）
                         // 场景1：普通用户且没有上级 - 不需要生成佣金记录
@@ -228,7 +227,7 @@ class OrderController extends Controller
                         if (!is_null($promoterInfo) || !is_null($superiorId)) {
                             $scene = !is_null($promoterInfo) ? 1 : 2;
                             $superiorId = !is_null($promoterInfo) ? null : $superiorId;
-                            CommissionService::getInstance()->createCommission($scene, $userId, $orderId, $cartGoods, $freightTemplateList, $address, $superiorId, $coupon);
+                            CommissionService::getInstance()->createCommission($scene, $userId, $orderId, $cartGoods, $superiorId, $coupon);
                         }
                     }
                 }

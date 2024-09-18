@@ -11,10 +11,13 @@ class PromoterService extends BaseService
 {
     public function toBePromoter($userId)
     {
-        $promoter = $this->getExactPromoter($userId, PromoterScene::LEVEL_USER, PromoterScene::SCENE_USER);
-        if (is_null($promoter)) {
-            $this->throwBusinessException(CodeResponse::INVALID_OPERATION, '非普通用户，无法升级为推广员');
+        $promoter = $this->getExactPromoter($userId, PromoterScene::LEVEL_PROMOTER, PromoterScene::SCENE_PROMOTER);
+        if (!is_null($promoter)) {
+            $this->throwBusinessException(CodeResponse::INVALID_OPERATION, '您已经是推广员');
         }
+
+        $promoter = Promoter::new();
+        $promoter->user_id = $userId;
         $promoter->level = PromoterScene::LEVEL_PROMOTER;
         $promoter->scene = PromoterScene::SCENE_PROMOTER;
         $promoter->save();
