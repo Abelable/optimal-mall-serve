@@ -3,19 +3,12 @@
 namespace App\Services;
 
 use App\Jobs\CommissionConfirm;
-use App\Jobs\OverTimeCancelCommission;
 use App\Models\Address;
 use App\Models\CartGoods;
 use App\Models\Coupon;
 use App\Models\Commission;
-use App\Models\CommissionGoods;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\CommissionEnums;
-use App\Utils\Inputs\Admin\CommissionPageInput;
-use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class CommissionService extends BaseService
 {
@@ -154,17 +147,18 @@ class CommissionService extends BaseService
     public function getUserCommissionListByTimeType($userId, $timeType, $scene, $columns = ['*'])
     {
         $query = $this->getUserCommissionQueryByTimeType($userId, $timeType);
-        return $query
-            ->where('scene', $scene)
-            ->whereIn('status', [1, 2, 3])
-            ->get($columns);
+        return $query->whereIn('status', [1, 2, 3])->get($columns);
     }
 
-    public function getUserCommissionQueryByTimeType($userId, $timeType)
+    public function getUserCommissionQueryByTimeType($userId, $timeType, $scene = null)
     {
         $query = Commission::query()
             ->where('user_id', $userId)
             ->orWhere('superior_id', $userId);
+
+        if (!is_null($scene)) {
+            $query = $query->where('scene', $scene);
+        }
 
         switch ($timeType) {
             case 1:

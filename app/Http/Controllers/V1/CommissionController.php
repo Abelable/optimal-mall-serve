@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Commission;
-use App\Models\Order;
 use App\Services\CommissionService;
-use App\Services\OrderService;
 
 class CommissionController extends Controller
 {
@@ -25,8 +22,9 @@ class CommissionController extends Controller
     public function timeData()
     {
         $timeType = $this->verifyRequiredInteger('timeType');
+        $scene = $this->verifyInteger('scene');
 
-        $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType($this->userId(), $timeType);
+        $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType($this->userId(), $timeType, $scene);
         $orderCount = $query->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
         $salesVolume = $query->whereIn('status', [1, 2, 3])->sum('payment_amount');
         $pendingAmount = $query->where('status', 1)->sum('commission');
@@ -39,33 +37,6 @@ class CommissionController extends Controller
             'settledAmount' => $settledAmount
         ]);
     }
-//
-//    public function timeOrderList()
-//    {
-//        /** @var CommissionOrderPageInput $input */
-//        $input = CommissionOrderPageInput::new();
-//        $page = CommissionService::getInstance()->getUserTimePage($this->userId(), $input);
-//        $commissionList = collect($page->items());
-//
-//        $orderIds = $commissionList->pluck('order_id')->toArray();
-//        $orderList = OrderService::getInstance()->getOrderListByIds($orderIds);
-//
-////        $list = $commissionList->map(function (Commission $commission) use ($orderList) {
-////            /** @var Order $order */
-////            $order = $orderList->get($commission->order_id);
-////            return [
-////                'id' => $commission->id,
-////                'orderSn' => $order->order_sn,
-////                'status' => $commission->status,
-////                'createdAt' => $order->created_at,
-////                'commission' => $commission->commission,
-////                'scene' => $commission->scene,
-////
-////            ];
-////        });
-//
-//        return $this->success($this->paginate($page, $list));
-//    }
 
     public function cash()
     {
