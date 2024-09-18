@@ -40,4 +40,9 @@ class RelationService extends BaseService
     {
         return Relation::query()->whereDate('created_at', Carbon::today())->where('superior_id', $superiorId)->count();
     }
+
+    public function getSuperiorId($userId)
+    {
+        return Relation::query()->where('fan_id', $userId)->first()->superior_id;
+    }
 }

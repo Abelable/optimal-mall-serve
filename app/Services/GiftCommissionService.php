@@ -11,19 +11,40 @@ use Illuminate\Support\Facades\DB;
 
 class GiftCommissionService extends BaseService
 {
-    public function createCommission($userId, $orderId, CartGoods $cartGoods, $superiorId = null)
+    public function createCommission($userId, $orderId, CartGoods $cartGoods, $promoterId = null, $managerId = null)
     {
         $commission = GiftCommission::new();
         $commission->user_id = $userId;
-        if (!is_null($superiorId)) {
-            $commission->superior_id = $superiorId;
-        }
         $commission->order_id = $orderId;
         $commission->goods_id = $cartGoods->goods_id;
         $commission->refund_status = $cartGoods->refund_status;
         $commission->selected_sku_name = $cartGoods->selected_sku_name;
         $commission->goods_price = $cartGoods->price;
-        $commission->commission = bcmul($cartGoods->price, 0.15, 2);
+
+        // 场景1：普通用户没有上级 - 生成空的佣金记录，只作为记录用
+        // 场景2：普通用户上级为推广员，没有上上级，或上上级也为推广员 - 生成15%上级佣金的佣金记录
+        // 场景3：普通用户上级为推广员，上上级为C级 - 生成包含15%上级佣金、5%上上级佣金的佣金记录
+        // 场景4：普通用户上级为C级 - 生成包含20%上级佣金的佣金记录
+        if (!is_null($promoterId)) {
+            $promoterInfo = PromoterService::getInstance()->getPromoterByUserId($promoterId);
+            if ($promoterInfo->level > 1) {
+                $commission->promoter_commission_rate = 20;
+                $commission->promoter_commission = bcmul($cartGoods->price, 0.2, 2);
+            } else {
+                $commission->promoter_commission_rate = 15;
+                $commission->promoter_commission = bcmul($cartGoods->price, 0.15, 2);
+                if (!is_null($managerId)) {
+                    $managerInfo = PromoterService::getInstance()->getPromoterByUserId($managerId);
+                    if ($managerInfo->level > 1) {
+                        $commission->manager_id = $managerId;
+                        $commission->manager_commission_rate = 5;
+                        $commission->manager_commission = bcmul($cartGoods->price, 0.05, 2);
+                    }
+                }
+            }
+            $commission->promoter_id = $promoterId;
+        }
+
         $commission->save();
 
         return $commission;

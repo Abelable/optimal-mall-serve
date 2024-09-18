@@ -19,6 +19,7 @@ use App\Services\GiftCommissionService;
 use App\Services\GiftGoodsService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
+use App\Services\RelationService;
 use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
@@ -207,7 +208,12 @@ class OrderController extends Controller
             $superiorId = $this->user()->superiorId();
             $userId = $this->userId();
 
-            $orderIds = $merchantIds->map(function ($merchantId) use ($superiorId, $promoterInfo, $userId, $coupon, $address, $cartGoodsList, $freightTemplateList) {
+            $managerId = null;
+            if (!is_null($superiorId)) {
+                $managerId = RelationService::getInstance()->getSuperiorId($superiorId);
+            }
+
+            $orderIds = $merchantIds->map(function ($merchantId) use ($managerId, $superiorId, $promoterInfo, $userId, $coupon, $address, $cartGoodsList, $freightTemplateList) {
                 $filterCartGoodsList = $cartGoodsList->groupBy('merchant_id')->get($merchantId);
                 $orderId = OrderService::getInstance()->createOrder($userId, $merchantId, $filterCartGoodsList, $freightTemplateList, $address, $coupon);
 
@@ -217,8 +223,12 @@ class OrderController extends Controller
                 /** @var CartGoods $cartGoods */
                 foreach ($filterCartGoodsList as $cartGoods) {
                     if ($cartGoods->is_gift && is_null($promoterInfo)) {
-                        // 7.礼包佣金逻辑
-                        GiftCommissionService::getInstance()->createCommission($userId, $orderId, $cartGoods, $superiorId);
+                        // 7.礼包佣金逻辑（前提：礼包商品，普通用户）
+                        // 场景1：普通用户没有上级 - 生成佣金记录，只作为记录用
+                        // 场景2：普通用户上级为推广员，没有上上级，或上上级也为推广员 - 生成15%上级佣金的佣金记录
+                        // 场景3：普通用户上级为推广员，上上级为C级 - 生成包含15%上级佣金、5%上上级佣金的佣金记录
+                        // 场景4：普通用户上级为C级 - 生成包含20%上级佣金的佣金记录
+                        GiftCommissionService::getInstance()->createCommission($userId, $orderId, $cartGoods, $superiorId, $managerId);
                     } else {
                         // 8.生成商品佣金记录（前提：非礼包商品）
                         // 场景1：普通用户且没有上级 - 不需要生成佣金记录
