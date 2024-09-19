@@ -18,9 +18,9 @@ class CommissionService extends BaseService
             $couponDenomination = $coupon->denomination;
         }
         $totalPrice = bcmul($cartGoods->price, $cartGoods->number, 2);
-        $basePrice = bcsub($totalPrice, $couponDenomination, 2);
+        $commissionBase = bcsub($totalPrice, $couponDenomination, 2);
         $commissionRate = bcdiv($cartGoods->commission_rate, 100, 2);
-        $commissionAmount = bcmul($basePrice, $commissionRate, 2);
+        $commissionAmount = bcmul($commissionBase, $commissionRate, 2);
 
         $commission = Commission::new();
         $commission->scene = $scene;
@@ -35,9 +35,9 @@ class CommissionService extends BaseService
         $commission->goods_price = $cartGoods->price;
         $commission->goods_number = $cartGoods->number;
         $commission->total_price = $totalPrice;
-        $commission->coupon_denomination = $couponDenomination;
+        $commission->commission_base = $commissionBase;
         $commission->commission_rate = $cartGoods->commission_rate;
-        $commission->commission = $commissionAmount;
+        $commission->commission_amount = $commissionAmount;
         $commission->save();
 
         return $commission;

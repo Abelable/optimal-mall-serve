@@ -18,8 +18,9 @@ namespace App\Models;
  * @property int $goods_number 商品数量
  * @property float $total_price 商品总价
  * @property float $coupon_denomination 优惠券抵扣
+ * @property float $commission_base 商品佣金计算基数
  * @property float $commission_rate 商品佣金比例
- * @property float $commission 佣金金额
+ * @property float $commission_amount 佣金金额
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -27,7 +28,8 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Commission newQuery()
  * @method static \Illuminate\Database\Query\Builder|Commission onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Commission query()
- * @method static \Illuminate\Database\Eloquent\Builder|Commission whereCommission($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Commission whereCommissionAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Commission whereCommissionBase($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereCommissionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereCouponDenomination($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereCreatedAt($value)

@@ -27,8 +27,9 @@ class CreateCommissionsTable extends Migration
             $table->integer('goods_number')->comment('商品数量');
             $table->float('total_price')->comment('商品总价');
             $table->float('coupon_denomination')->default(0)->comment('优惠券抵扣');
+            $table->float('commission_base')->comment('商品佣金计算基数');
             $table->float('commission_rate')->comment('商品佣金比例');
-            $table->float('commission')->comment('佣金金额');
+            $table->float('commission_amount')->comment('佣金金额');
             $table->timestamps();
             $table->softDeletes();
         });
