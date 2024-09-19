@@ -126,7 +126,7 @@ class CommissionService extends BaseService
 
     public function getUserCommissionSum($userId, $status)
     {
-        return $this->getUserCommissionQuery($userId, $status)->sum('commission');
+        return $this->getUserCommissionQuery($userId, $status)->sum('commission_amount');
     }
 
     public function getUserCommissionQuery($userId, $status)

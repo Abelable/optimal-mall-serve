@@ -141,11 +141,6 @@ class GiftCommissionService extends BaseService
         return GiftCommission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
     }
 
-    public function getUserCommissionSum($userId, $status)
-    {
-        return $this->getUserCommissionQuery($userId, $status)->sum('commission');
-    }
-
     public function getUserCommissionQuery($userId, $status)
     {
         return GiftCommission::query()
