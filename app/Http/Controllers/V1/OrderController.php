@@ -428,7 +428,7 @@ class OrderController extends Controller
             $goodsList->map(function (OrderGoods $goods) use ($commissionList) {
                 /** @var Commission $commission */
                 $commission = $commissionList->keyBy('goods_id')->get($goods->id);
-                $goods['commission'] = $commission->commission;
+                $goods['commission'] = $commission->commission_amount;
                 unset($goods->order_id);
                 return $goods;
             });
