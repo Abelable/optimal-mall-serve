@@ -143,6 +143,12 @@ class CommissionService extends BaseService
         return $query->whereIn('status', [1, 2, 3])->get($columns);
     }
 
+    /**
+     * @param $userId
+     * @param $timeType: 1-今日数据，2-昨日数据，3-本月数据，4-上月数据
+     * @param $scene
+     * @return Commission|\Illuminate\Database\Eloquent\Builder
+     */
     public function getUserCommissionQueryByTimeType($userId, $timeType, $scene = null)
     {
         $query = Commission::query()
@@ -155,16 +161,16 @@ class CommissionService extends BaseService
 
         switch ($timeType) {
             case 1:
-                $query = $query->whereDate('created_at', Carbon::today());
+                $query = $query->whereDate('updated_at', Carbon::today());
                 break;
             case 2:
-                $query = $query->whereDate('created_at', Carbon::yesterday());
+                $query = $query->whereDate('updated_at', Carbon::yesterday());
                 break;
             case 3:
-                $query = $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()]);
+                $query = $query->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()]);
                 break;
             case 4:
-                $query = $query->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
+                $query = $query->whereBetween('updated_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
                 break;
         }
         return $query;

@@ -4,12 +4,16 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Services\CommissionService;
+use Illuminate\Support\Carbon;
 
 class CommissionController extends Controller
 {
     public function sum()
     {
-        $cashAmount = CommissionService::getInstance()->getUserCommissionSum($this->userId(), 2);
+        $cashAmount = CommissionService::getInstance()
+            ->getUserCommissionQuery($this->userId(), 2)
+            ->whereMonth('updated_at', '!=', Carbon::now()->month)
+            ->sum('commission');
         $pendingAmount = CommissionService::getInstance()->getUserCommissionSum($this->userId(), 1);
         $settledAmount = CommissionService::getInstance()->getUserCommissionSum($this->userId(), 3);
         return $this->success([
@@ -42,10 +46,12 @@ class CommissionController extends Controller
     {
         $selfPurchase = CommissionService::getInstance()
             ->getUserCommissionQuery($this->userId(), 2)
+            ->whereMonth('updated_at', '!=', Carbon::now()->month)
             ->where('scene', 1)
             ->sum('commission');
         $share = CommissionService::getInstance()
             ->getUserCommissionQuery($this->userId(), 2)
+            ->whereMonth('updated_at', '!=', Carbon::now()->month)
             ->where('scene', 2)
             ->sum('commission');
 
