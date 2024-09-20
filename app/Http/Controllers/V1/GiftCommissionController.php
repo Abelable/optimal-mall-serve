@@ -87,19 +87,24 @@ class GiftCommissionController extends Controller
     public function timeData()
     {
         $timeType = $this->verifyRequiredInteger('timeType');
-        $scene = $this->verifyInteger('scene');
 
-        $query = GiftCommissionService::getInstance()->getUserCommissionQueryByTimeType($this->userId(), $timeType, $scene);
-        $orderCount = $query->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
-        $salesVolume = $query->whereIn('status', [1, 2, 3])->sum('payment_amount');
-        $pendingAmount = $query->where('status', 1)->sum('commission_amount');
-        $settledAmount = $query->where('status', 3)->sum('commission_amount');
+        $promoterQuery = GiftCommissionService::getInstance()->getPromoterCommissionQueryByTimeType($this->userId(), $timeType);
+        $promoterOrderCount = $promoterQuery->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
+        $promoterSalesVolume = $promoterQuery->whereIn('status', [1, 2, 3])->sum('payment_amount');
+        $promoterPendingAmount = $promoterQuery->where('status', 1)->sum('commission_amount');
+        $promoterSettledAmount = $promoterQuery->where('status', 3)->sum('commission_amount');
+
+        $managerQuery = GiftCommissionService::getInstance()->getManagerCommissionQueryByTimeType($this->userId(), $timeType);
+        $managerOrderCount = $managerQuery->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
+        $managerSalesVolume = $managerQuery->whereIn('status', [1, 2, 3])->sum('payment_amount');
+        $managerPendingAmount = $managerQuery->where('status', 1)->sum('commission_amount');
+        $managerSettledAmount = $managerQuery->where('status', 3)->sum('commission_amount');
 
         return $this->success([
-            'orderCount' => $orderCount,
-            'salesVolume' => $salesVolume,
-            'pendingAmount' => $pendingAmount,
-            'settledAmount' => $settledAmount
+            'orderCount' => $promoterOrderCount + $managerOrderCount,
+            'salesVolume' => bcadd($promoterSalesVolume, $managerSalesVolume, 2),
+            'pendingAmount' => bcadd($promoterPendingAmount, $managerPendingAmount, 2),
+            'settledAmount' => bcadd($promoterSettledAmount, $managerSettledAmount, 2)
         ]);
     }
 

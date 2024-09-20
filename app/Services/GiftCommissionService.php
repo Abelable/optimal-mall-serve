@@ -181,34 +181,55 @@ class GiftCommissionService extends BaseService
             ->where('status', $status);
     }
 
-    public function getUserCommissionListByTimeType($userId, $timeType, $scene, $columns = ['*'])
+    public function getPromoterCommissionListByTimeType($userId, $timeType, $columns = ['*'])
     {
-        $query = $this->getUserCommissionQueryByTimeType($userId, $timeType);
+        $query = $this->getPromoterCommissionQueryByTimeType($userId, $timeType);
         return $query->whereIn('status', [1, 2, 3])->get($columns);
     }
 
-    public function getUserCommissionQueryByTimeType($userId, $timeType, $scene = null)
+    public function getPromoterCommissionQueryByTimeType($userId, $timeType)
     {
-        $query = GiftCommission::query()
-            ->where('user_id', $userId)
-            ->orWhere('superior_id', $userId);
-
-        if (!is_null($scene)) {
-            $query = $query->where('scene', $scene);
-        }
+        $query = GiftCommission::query()->where('promoter_id', $userId);
 
         switch ($timeType) {
             case 1:
-                $query = $query->whereDate('created_at', Carbon::today());
+                $query = $query->whereDate('updated_at', Carbon::today());
                 break;
             case 2:
-                $query = $query->whereDate('created_at', Carbon::yesterday());
+                $query = $query->whereDate('updated_at', Carbon::yesterday());
                 break;
             case 3:
-                $query = $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()]);
+                $query = $query->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()]);
                 break;
             case 4:
-                $query = $query->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
+                $query = $query->whereBetween('updated_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
+                break;
+        }
+        return $query;
+    }
+
+    public function getManagerCommissionListByTimeType($userId, $timeType, $columns = ['*'])
+    {
+        $query = $this->getManagerCommissionQueryByTimeType($userId, $timeType);
+        return $query->whereIn('status', [1, 2, 3])->get($columns);
+    }
+
+    public function getManagerCommissionQueryByTimeType($userId, $timeType)
+    {
+        $query = GiftCommission::query()->where('manager_id', $userId);
+
+        switch ($timeType) {
+            case 1:
+                $query = $query->whereDate('updated_at', Carbon::today());
+                break;
+            case 2:
+                $query = $query->whereDate('updated_at', Carbon::yesterday());
+                break;
+            case 3:
+                $query = $query->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()]);
+                break;
+            case 4:
+                $query = $query->whereBetween('updated_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
                 break;
         }
         return $query;
