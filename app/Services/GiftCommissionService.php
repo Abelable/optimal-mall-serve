@@ -177,7 +177,7 @@ class GiftCommissionService extends BaseService
     public function getManagerCommissionQuery($userId, $status)
     {
         return GiftCommission::query()
-            ->where('promoter', $userId)
+            ->where('manager_id', $userId)
             ->where('status', $status);
     }
 
