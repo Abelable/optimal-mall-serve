@@ -90,15 +90,15 @@ class GiftCommissionController extends Controller
 
         $promoterQuery = GiftCommissionService::getInstance()->getPromoterCommissionQueryByTimeType($this->userId(), $timeType);
         $promoterOrderCount = $promoterQuery->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
-        $promoterSalesVolume = $promoterQuery->whereIn('status', [1, 2, 3])->sum('payment_amount');
-        $promoterPendingAmount = $promoterQuery->where('status', 1)->sum('commission_amount');
-        $promoterSettledAmount = $promoterQuery->where('status', 3)->sum('commission_amount');
+        $promoterSalesVolume = $promoterQuery->whereIn('status', [1, 2, 3])->sum('goods_price');
+        $promoterPendingAmount = $promoterQuery->where('status', 1)->sum('promoter_commission');
+        $promoterSettledAmount = $promoterQuery->where('status', 3)->sum('promoter_commission');
 
         $managerQuery = GiftCommissionService::getInstance()->getManagerCommissionQueryByTimeType($this->userId(), $timeType);
         $managerOrderCount = $managerQuery->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
-        $managerSalesVolume = $managerQuery->whereIn('status', [1, 2, 3])->sum('payment_amount');
-        $managerPendingAmount = $managerQuery->where('status', 1)->sum('commission_amount');
-        $managerSettledAmount = $managerQuery->where('status', 3)->sum('commission_amount');
+        $managerSalesVolume = $managerQuery->whereIn('status', [1, 2, 3])->sum('goods_price');
+        $managerPendingAmount = $managerQuery->where('status', 1)->sum('manager_commission');
+        $managerSettledAmount = $managerQuery->where('status', 3)->sum('manager_commission');
 
         return $this->success([
             'orderCount' => $promoterOrderCount + $managerOrderCount,
