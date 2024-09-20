@@ -100,4 +100,14 @@ class PromoterService extends BaseService
     {
         return Promoter::query()->get($columns);
     }
+
+    public function getPromoterCountByUserIds(array $userIds)
+    {
+        return Promoter::query()->whereIn('user_id', $userIds)->count();
+    }
+
+    public function getPromoterListByUserIds(array $userIds, $columns = ['*'])
+    {
+        return Promoter::query()->whereIn('user_id', $userIds)->get($columns);
+    }
 }

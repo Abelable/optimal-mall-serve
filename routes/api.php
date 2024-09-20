@@ -28,6 +28,7 @@ Route::prefix('user')->group(function () {
     Route::get('tim_login_info', 'UserController@timLoginInfo');
     Route::get('superior_info', 'UserController@superiorInfo');
     Route::get('customer_data', 'UserController@customerData');
+    Route::get('promoter_data', 'UserController@promoterData');
 });
 
 Route::prefix('auth_info')->group(function () {
@@ -127,6 +128,12 @@ Route::prefix('commission')->group(function () {
     Route::get('sum', 'CommissionController@sum');
     Route::get('time_data', 'CommissionController@timeData');
     Route::get('cash', 'CommissionController@cash');
+});
+
+Route::prefix('gift_commission')->group(function () {
+    Route::get('sum', 'GiftCommissionController@sum');
+    Route::get('time_data', 'GiftCommissionController@timeData');
+    Route::get('cash', 'GiftCommissionController@cash');
 });
 
 /*

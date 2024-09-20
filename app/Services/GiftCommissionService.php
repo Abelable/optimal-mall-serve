@@ -141,6 +141,46 @@ class GiftCommissionService extends BaseService
         return GiftCommission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
     }
 
+    public function getPromoterCashCommission($userId)
+    {
+        $query = $this->getPromoterCommissionQuery($userId, 2);
+        return $query
+            ->whereMonth('updated_at', '!=', Carbon::now()->month)
+            ->sum('promoter_commission');
+    }
+
+    public function getManagerCashCommission($userId)
+    {
+        $query = $this->getManagerCommissionQuery($userId, 2);
+        return $query
+            ->whereMonth('updated_at', '!=', Carbon::now()->month)
+            ->sum('manager_commission');
+    }
+
+    public function getPromoterCommissionSum($userId, $status)
+    {
+        return $this->getPromoterCommissionQuery($userId, $status)->sum('promoter_commission');
+    }
+
+    public function getManagerCommissionSum($userId, $status)
+    {
+        return $this->getManagerCommissionQuery($userId, $status)->sum('manager_commission');
+    }
+
+    public function getPromoterCommissionQuery($userId, $status)
+    {
+        return GiftCommission::query()
+            ->where('promoter_id', $userId)
+            ->where('status', $status);
+    }
+
+    public function getManagerCommissionQuery($userId, $status)
+    {
+        return GiftCommission::query()
+            ->where('promoter', $userId)
+            ->where('status', $status);
+    }
+
     public function getUserCommissionQuery($userId, $status)
     {
         return GiftCommission::query()
