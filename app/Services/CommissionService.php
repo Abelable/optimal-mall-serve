@@ -129,6 +129,11 @@ class CommissionService extends BaseService
         return $this->getUserCommissionQuery($userId, $status)->sum('commission_amount');
     }
 
+    public function getUserGMV($userId, $status)
+    {
+        return $this->getUserCommissionQuery($userId, $status)->sum('commission_base');
+    }
+
     public function getUserCommissionQuery($userId, $status)
     {
         return Commission::query()

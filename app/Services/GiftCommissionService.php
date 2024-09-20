@@ -181,14 +181,6 @@ class GiftCommissionService extends BaseService
             ->where('status', $status);
     }
 
-    public function getUserCommissionQuery($userId, $status)
-    {
-        return GiftCommission::query()
-            ->where('user_id', $userId)
-            ->orWhere('superior_id', $userId)
-            ->where('status', $status);
-    }
-
     public function getUserCommissionListByTimeType($userId, $timeType, $scene, $columns = ['*'])
     {
         $query = $this->getUserCommissionQueryByTimeType($userId, $timeType);
