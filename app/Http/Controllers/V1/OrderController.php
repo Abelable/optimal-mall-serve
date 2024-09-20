@@ -8,6 +8,7 @@ use App\Models\CartGoods;
 use App\Models\Commission;
 use App\Models\Coupon;
 use App\Models\FreightTemplate;
+use App\Models\GiftCommission;
 use App\Models\Order;
 use App\Models\OrderGoods;
 use App\Services\AddressService;
@@ -441,6 +442,97 @@ class OrderController extends Controller
                 'commission' => $commissionSum,
                 'scene' => $firstCommission->scene,
                 'goodsList' => $goodsList
+            ];
+        });
+
+        return $this->success($this->paginate($page, $list));
+    }
+
+    public function teamCommissionOrderList()
+    {
+        $timeType = $this->verifyRequiredInteger('timeType');
+        /** @var PageInput $input */
+        $input = PageInput::new();
+
+        $commissionList = CommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType);
+        $orderIds = $commissionList->pluck('order_id')->toArray();
+
+        $goodsIds = $commissionList->pluck('goods_id')->toArray();
+        $goodsColumns = ['order_id', 'goods_id', 'cover', 'name', 'selected_sku_name', 'price', 'number'];
+        $goodsList = OrderGoodsService::getInstance()->getListByGoodsIds($goodsIds, $goodsColumns)->groupBy('order_id');
+
+        $page = OrderService::getInstance()->getOrderPageByIds($orderIds, $input);
+        $list = collect($page->items())->map(function (Order $order) use ($commissionList, $goodsList) {
+            $commissionList = $commissionList->groupBy('order_id')->get($order->id);
+
+            $commissionSum = 0;
+            if (!is_null($this->user()->promoterInfo)) {
+                $GMV = $commissionList->sum('commission_base');
+                switch ($this->user()->promoterInfo->level) {
+                    case 1:
+                        $commissionSum = bcmul($GMV, 0.01, 2);
+                        break;
+                    case 2:
+                        $commissionSum = bcmul($GMV, 0.02, 2);
+                        break;
+                    case 3:
+                        $commissionSum = bcmul($GMV, 0.03, 2);
+                        break;
+                }
+            }
+
+            /** @var Commission $firstCommission */
+            $firstCommission = $commissionList->first();
+
+            $goodsList = $goodsList->get($order->id);
+            $goodsList->map(function (OrderGoods $goods) use ($commissionList) {
+                /** @var Commission $commission */
+                $commission = $commissionList->keyBy('goods_id')->get($goods->id);
+                $goods['commission'] = $commission->commission_amount;
+                unset($goods->order_id);
+                return $goods;
+            });
+
+            return [
+                'id' => $order->id,
+                'orderSn' => $order->order_sn,
+                'status' => $firstCommission->status,
+                'createdAt' => $order->created_at,
+                'commission' => $commissionSum,
+                'goodsList' => $goodsList
+            ];
+        });
+
+        return $this->success($this->paginate($page, $list));
+    }
+
+    public function giftCommissionOrderList()
+    {
+        $timeType = $this->verifyRequiredInteger('timeType');
+        /** @var PageInput $input */
+        $input = PageInput::new();
+
+        $commissionList = GiftCommissionService::getInstance()->getListByTimeType($this->userId(), $timeType);
+        $orderIds = $commissionList->pluck('order_id')->toArray();
+
+        $goodsIds = $commissionList->pluck('goods_id')->toArray();
+        $goodsColumns = ['order_id', 'goods_id', 'cover', 'name', 'selected_sku_name', 'price', 'number'];
+        $goodsList = OrderGoodsService::getInstance()->getListByGoodsIds($goodsIds, $goodsColumns)->keyBy('order_id');
+
+        $page = OrderService::getInstance()->getOrderPageByIds($orderIds, $input);
+        $list = collect($page->items())->map(function (Order $order) use ($commissionList, $goodsList) {
+            /** @var GiftCommission $commission */
+            $commission = $commissionList->keyBy('order_id')->get($order->id);
+            $commissionSum = $commission->promoter_id == $this->user() ? $commission->promoter_commission : $commission->manager_commission;
+            $goods = $goodsList->get($order->id);
+
+            return [
+                'id' => $order->id,
+                'orderSn' => $order->order_sn,
+                'status' => $commission->status,
+                'createdAt' => $order->created_at,
+                'commission' => $commissionSum,
+                '$goods' => $goods
             ];
         });
 

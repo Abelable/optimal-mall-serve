@@ -234,4 +234,26 @@ class GiftCommissionService extends BaseService
         }
         return $query;
     }
+
+    public function getListByTimeType($userId, $timeType, $columns = ['*'])
+    {
+        $query = GiftCommission::query()
+            ->where('promoter_id', $userId)
+            ->orWhere('manager_id', $userId);
+        switch ($timeType) {
+            case 1:
+                $query = $query->whereDate('updated_at', Carbon::today());
+                break;
+            case 2:
+                $query = $query->whereDate('updated_at', Carbon::yesterday());
+                break;
+            case 3:
+                $query = $query->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()]);
+                break;
+            case 4:
+                $query = $query->whereBetween('updated_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
+                break;
+        }
+        return $query->get($columns);
+    }
 }

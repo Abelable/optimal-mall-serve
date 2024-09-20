@@ -97,6 +97,8 @@ Route::prefix('order')->group(function () {
     Route::post('cancel', 'OrderController@cancel');
     Route::post('delete', 'OrderController@delete');
     Route::get('commission_list', 'OrderController@commissionOrderList');
+    Route::get('gift_commission_list', 'OrderController@giftCommissionOrderList');
+    Route::get('team_commission_list', 'OrderController@teamCommissionOrderList');
 });
 
 Route::prefix('mall')->group(function () {
