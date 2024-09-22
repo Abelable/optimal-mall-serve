@@ -29,6 +29,9 @@ Route::prefix('user')->group(function () {
     Route::get('superior_info', 'UserController@superiorInfo');
     Route::get('customer_data', 'UserController@customerData');
     Route::get('promoter_data', 'UserController@promoterData');
+    Route::get('today_new_promoter_list', 'UserController@todayNewPromoterList');
+    Route::get('today_ordering_promoter_list', 'UserController@todayOrderingPromoterList');
+    Route::get('promoter_list', 'UserController@promoterList');
 });
 
 Route::prefix('auth_info')->group(function () {
