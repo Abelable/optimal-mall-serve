@@ -150,7 +150,7 @@ class CommissionService extends BaseService
 
     /**
      * @param $userId
-     * @param $timeType: 1-今日数据，2-昨日数据，3-本月数据，4-上月数据
+     * @param $timeType: 1-今日数据，2-昨日数据，3-本月数据，4-上月数据，5-上上月数据
      * @param $scene
      * @return Commission|\Illuminate\Database\Eloquent\Builder
      */
@@ -177,6 +177,9 @@ class CommissionService extends BaseService
             case 4:
                 $query = $query->whereBetween('updated_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
                 break;
+            case 5:
+                $query = $query->whereBetween('updated_at', [Carbon::now()->subMonths(2)->startOfMonth(), Carbon::now()->subMonths(2)->endOfMonth()]);
+                break;
         }
         return $query;
     }
@@ -195,5 +198,10 @@ class CommissionService extends BaseService
             ->whereIn('superior_id', $superiorIds)
             ->whereIn('status', [2, 3])
             ->get($columns);
+    }
+
+    public function getUserGMVByTimeType($userId, $timeType)
+    {
+        return $this->getUserCommissionQueryByTimeType($userId, $timeType)->whereIn('status', [2, 3])->sum('commission_base');
     }
 }
