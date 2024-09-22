@@ -177,6 +177,10 @@ class UserController extends Controller
         $input = SearchPageInput::new();
 
         $totalCustomerIds = RelationService::getInstance()->getListBySuperiorId($this->userId())->pluck('fan_id')->toArray();
+        if (!empty($input->keywords)) {
+            $userList = UserService::getInstance()->searchListByUserIds($totalCustomerIds, $input->keywords);
+            $totalCustomerIds = $userList->pluck('id')->toArray();
+        }
         $page = PromoterService::getInstance()->getPromoterPageByUserIds($totalCustomerIds, $input);
         $promoterList = collect($page->items());
 
