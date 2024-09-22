@@ -421,7 +421,8 @@ class OrderController extends Controller
         $list = collect($page->items())->map(function (Order $order) use ($commissionList, $goodsList) {
             $commissionList = $commissionList->groupBy('order_id')->get($order->id);
 
-            $commissionSum = $commissionList->sum('commission_amount');
+            $commissionBaseSum = $commissionList->sum('commission_base');
+            $commissionAmountSum = $commissionList->sum('commission_amount');
             /** @var Commission $firstCommission */
             $firstCommission = $commissionList->first();
 
@@ -439,7 +440,8 @@ class OrderController extends Controller
                 'orderSn' => $order->order_sn,
                 'status' => $firstCommission->status,
                 'createdAt' => $order->created_at,
-                'commission' => $commissionSum,
+                'commissionBase' => $commissionBaseSum,
+                'commissionAmount' => $commissionAmountSum,
                 'scene' => $firstCommission->scene,
                 'goodsList' => $goodsList
             ];
