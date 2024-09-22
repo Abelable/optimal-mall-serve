@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\CouponExpire;
 use App\Models\Coupon;
 use App\Services\GoodsService;
 use App\Services\CouponService;
@@ -60,6 +61,10 @@ class CouponController extends Controller
                 $coupon->expiration_time = $input->expirationTime;
             }
             $coupon->save();
+
+            if (!is_null($input->expirationTime)) {
+                $this->dispatch(new CouponExpire($coupon->id, $input->expirationTime));
+            }
         }
 
         return $this->success();

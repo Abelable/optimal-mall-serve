@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Coupon;
+use App\Utils\CodeResponse;
 use App\Utils\Inputs\CouponPageInput;
 
 class CouponService extends BaseService
@@ -58,5 +59,16 @@ class CouponService extends BaseService
     public function getAvailableCouponListByIds(array $ids, $columns = ['*'])
     {
         return Coupon::query()->where('status', 1)->whereIn('id', $ids)->get($columns);
+    }
+
+    public function expireCoupon($id)
+    {
+        $coupon = $this->getCouponById($id);
+        if (is_null($coupon)) {
+            $this->throwBusinessException(CodeResponse::NOT_FOUND, '优惠券不存在');
+        }
+        $coupon->status = 2;
+        $coupon->save();
+        return $coupon;
     }
 }
