@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ActivityEnd;
+use App\Jobs\ActivityStart;
 use App\Models\Activity;
 use App\Services\GoodsService;
 use App\Services\ActivityService;
@@ -59,6 +61,13 @@ class ActivityController extends Controller
             $activity->goods_cover = $goods->cover;
             $activity->goods_name = $goods->name;
             $activity->save();
+
+            if (!is_null($input->startTime)) {
+                $this->dispatch(new ActivityStart($activity->id, $input->startTime));
+            }
+            if (!is_null($input->endTime)) {
+                $this->dispatch(new ActivityEnd($activity->id, $input->endTime));
+            }
         }
 
         return $this->success();

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Activity;
+use App\Utils\CodeResponse;
 use App\Utils\Inputs\ActivityPageInput;
 
 class ActivityService extends BaseService
@@ -43,5 +44,29 @@ class ActivityService extends BaseService
     public function getActivityById($id, $columns = ['*'])
     {
         return Activity::query()->find($id, $columns);
+    }
+
+    public function startActivity($id)
+    {
+        $activity = $this->getActivityById($id);
+        if (is_null($activity)) {
+            $this->throwBusinessException(CodeResponse::NOT_FOUND, '活动不存在');
+        }
+        $activity->status = 1;
+        $activity->tag = 0;
+        $activity->save();
+        return $activity;
+    }
+
+    public function endActivity($id)
+    {
+        $activity = $this->getActivityById($id);
+        if (is_null($activity)) {
+            $this->throwBusinessException(CodeResponse::NOT_FOUND, '活动不存在');
+        }
+        $activity->status = 2;
+        $activity->tag = 0;
+        $activity->save();
+        return $activity;
     }
 }
