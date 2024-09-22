@@ -9,7 +9,7 @@ class SearchPageInput extends PageInput
     public function rules()
     {
         return array_merge(parent::rules(), [
-            'keywords' => 'required|string',
+            'keywords' => 'string',
         ]);
     }
 }

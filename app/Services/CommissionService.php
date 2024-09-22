@@ -180,4 +180,20 @@ class CommissionService extends BaseService
         }
         return $query;
     }
+
+    public function getSettledCommissionListByUserIds(array $userIds, $columns = ['*'])
+    {
+        return Commission::query()
+            ->whereIn('user_id', $userIds)
+            ->whereIn('status', [2, 3])
+            ->get($columns);
+    }
+
+    public function getSettledCommissionListBySuperiorIds(array $superiorIds, $columns = ['*'])
+    {
+        return Commission::query()
+            ->whereIn('superior_id', $superiorIds)
+            ->whereIn('status', [2, 3])
+            ->get($columns);
+    }
 }

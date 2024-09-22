@@ -6,6 +6,7 @@ use App\Models\Promoter;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\PromoterScene;
 use App\Utils\Inputs\PromoterPageInput;
+use App\Utils\Inputs\SearchPageInput;
 
 class PromoterService extends BaseService
 {
@@ -109,5 +110,10 @@ class PromoterService extends BaseService
     public function getPromoterListByUserIds(array $userIds, $columns = ['*'])
     {
         return Promoter::query()->whereIn('user_id', $userIds)->get($columns);
+    }
+
+    public function getPromoterPageByUserIds(array $userIds, SearchPageInput $input, $columns = ['*'])
+    {
+        return Promoter::query()->whereIn('user_id', $userIds)->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 }

@@ -491,4 +491,13 @@ class OrderService extends BaseService
             ->whereIn('status', [201, 301, 401, 402, 403, 501])
             ->count();
     }
+
+    public function getTodayOrderListByUserIds(array $userIds, $columns = ['*'])
+    {
+        return Order::query()
+            ->whereIn('user_id', $userIds)
+            ->whereDate('created_at', Carbon::today())
+            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->get($columns);
+    }
 }
