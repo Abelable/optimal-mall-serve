@@ -87,9 +87,11 @@ class ActivityController extends Controller
         $activity->status = $input->status;
         if (!is_null($input->startTime)) {
             $activity->start_time = $input->startTime;
+            $this->dispatch(new ActivityStart($activity->id, $input->startTime));
         }
         if (!is_null($input->endTime)) {
             $activity->end_time = $input->endTime;
+            $this->dispatch(new ActivityEnd($activity->id, $input->endTime));
         }
         $activity->save();
 
