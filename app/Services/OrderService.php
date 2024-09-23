@@ -447,7 +447,7 @@ class OrderService extends BaseService
                 $result = Pay::wechat()->refund($refundParams);
                 Log::info('order_wx_refund', $result->toArray());
 
-                $order->status = OrderEnums::STATUS_REFUNDED;
+                $order->status = OrderEnums::STATUS_REFUND_CONFIRM;
                 $order->refund_id = $result['refund_id'];
                 $order->refund_time = now()->toDateTimeString();
                 if ($order->cas() == 0) {
