@@ -24,6 +24,7 @@ use App\Services\RelationService;
 use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
+use App\Utils\ExpressServe;
 use App\Utils\Inputs\CreateOrderInput;
 use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\Cache;
@@ -539,5 +540,15 @@ class OrderController extends Controller
         });
 
         return $this->success($this->paginate($page, $list));
+    }
+
+    public function express()
+    {
+        $shipperCode = $this->verifyRequiredString('shipperCode');
+        $logisticCode = $this->verifyRequiredString('logisticCode');
+        $mobile = $this->verifyString('mobile');
+
+        $result = ExpressServe::new()->track($shipperCode, $logisticCode, $mobile);
+        return $this->success($result);
     }
 }
