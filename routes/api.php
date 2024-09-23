@@ -102,7 +102,7 @@ Route::prefix('order')->group(function () {
     Route::get('commission_list', 'OrderController@commissionOrderList');
     Route::get('gift_commission_list', 'OrderController@giftCommissionOrderList');
     Route::get('team_commission_list', 'OrderController@teamCommissionOrderList');
-    Route::get('shipping_track', 'OrderController@shippingTrack');
+    Route::get('shipping_info', 'OrderController@shippingInfo');
 });
 
 Route::prefix('mall')->group(function () {

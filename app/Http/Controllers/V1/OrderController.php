@@ -542,7 +542,7 @@ class OrderController extends Controller
         return $this->success($this->paginate($page, $list));
     }
 
-    public function shippingTrack()
+    public function shippingInfo()
     {
         $orderId = $this->verifyRequiredId('orderId');
         $order = OrderService::getInstance()->getUserOrderById($this->userId(), $orderId);
