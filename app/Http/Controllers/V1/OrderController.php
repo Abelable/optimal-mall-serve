@@ -382,6 +382,7 @@ class OrderController extends Controller
             'order_sn',
             'status',
             'remarks',
+            'user_id',
             'consignee',
             'mobile',
             'address',
