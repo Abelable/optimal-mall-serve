@@ -30,8 +30,9 @@ class CreateOrdersTable extends Migration
             $table->float('payment_amount')->comment('支付金额');
             $table->string('pay_id')->default('')->comment('支付id');
             $table->string('pay_time')->default('')->comment('支付时间');
-            $table->string('ship_sn')->default('')->comment('发货编号');
             $table->string('ship_channel')->default('')->comment('快递公司');
+            $table->string('ship_code')->default('')->comment('快递公司编号');
+            $table->string('ship_sn')->default('')->comment('快递编号');
             $table->string('ship_time')->default('')->comment('发货时间');
             $table->string('confirm_time')->default('')->comment('用户确认收货时间');
             $table->string('finish_time')->default('')->comment('订单关闭时间');

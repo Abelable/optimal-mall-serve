@@ -23,8 +23,9 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property float $payment_amount 支付金额
  * @property string $pay_id 支付id
  * @property string $pay_time 支付时间
- * @property string $ship_sn 发货编号
  * @property string $ship_channel 快递公司
+ * @property string $ship_code 快递公司编号
+ * @property string $ship_sn 快递编号
  * @property string $ship_time 发货时间
  * @property string $confirm_time 用户确认收货时间
  * @property string $finish_time 订单关闭时间
@@ -64,6 +65,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereRefundType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereRemarks($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereShipChannel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereShipCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereShipSn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereShipTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereStatus($value)
