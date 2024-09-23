@@ -25,6 +25,7 @@ class UserController extends Controller
         $user['superiorId'] = $user->superiorId();
         $user['authInfoId'] = $user->authInfo->id ?? 0;
         unset($user->openid);
+        unset($user->promoterInfo);
         unset($user->created_at);
         unset($user->updated_at);
         return $this->success($user);
