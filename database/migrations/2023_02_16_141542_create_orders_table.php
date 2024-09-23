@@ -36,6 +36,7 @@ class CreateOrdersTable extends Migration
             $table->string('confirm_time')->default('')->comment('用户确认收货时间');
             $table->string('finish_time')->default('')->comment('订单关闭时间');
             $table->float('refund_amount')->comment('退款金额');
+            $table->string('refund_id')->default('')->comment('退款id');
             $table->string('refund_type')->default('')->comment('退款方式');
             $table->string('refund_remarks')->default('')->comment('退款备注');
             $table->string('refund_time')->default('')->comment('退款时间');

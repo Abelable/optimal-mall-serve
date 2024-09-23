@@ -16,6 +16,8 @@ use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Yansongda\LaravelPay\Facades\Pay;
+use Yansongda\Pay\Exceptions\GatewayException;
 
 class OrderService extends BaseService
 {
@@ -186,7 +188,7 @@ class OrderService extends BaseService
 
         return [
             'out_trade_no' => time(),
-            'body' => 'body',
+            'body' => '订单编号：' . implode("','", $orderSnList),
             'attach' => json_encode($orderSnList),
             'total_fee' => bcmul($paymentAmount, 100),
             'openid' => $openid
@@ -432,18 +434,37 @@ class OrderService extends BaseService
         }
 
         return DB::transaction(function () use ($order) {
-            $order->status = OrderEnums::STATUS_REFUND;
-            if ($order->cas() == 0) {
-                $this->throwUpdateFail();
+            try {
+                $refundParams = [
+                    'transaction_id' => $order->pay_id,
+                    'out_refund_no' => time(),
+                    'total_fee' => bcmul($order->payment_amount, 100),
+                    'refund_fee' => bcmul($order->payment_amount, 100),
+                    'refund_desc' => '商品退款',
+                    'type' => 'miniapp'
+                ];
+
+                $result = Pay::wechat()->refund($refundParams);
+                Log::info('order_wx_refund', json_decode($result));
+
+                $order->status = OrderEnums::STATUS_REFUND;
+                $order->refund_id = $result['refund_id'];
+                $order->refund_time = now()->toDateTimeString();
+                if ($order->cas() == 0) {
+                    $this->throwUpdateFail();
+                }
+
+                // todo 通知商家
+                // todo 开启自动退款定时任务
+
+                // 删除佣金记录
+                CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+                GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+
+                return $order;
+            } catch (GatewayException $exception) {
+                Log::error('wx_refund_fail', [$exception]);
             }
-            // todo 通知商家
-            // todo 开启自动退款定时任务
-
-            // 删除佣金记录
-            CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
-            GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
-
-            return $order;
         });
     }
 

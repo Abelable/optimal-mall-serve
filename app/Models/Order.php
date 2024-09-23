@@ -29,6 +29,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property string $confirm_time 用户确认收货时间
  * @property string $finish_time 订单关闭时间
  * @property float $refund_amount 退款金额
+ * @property string $refund_id 退款id
  * @property string $refund_type 退款方式
  * @property string $refund_remarks 退款备注
  * @property string $refund_time 退款时间
@@ -57,6 +58,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Order wherePayTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order wherePaymentAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereRefundAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereRefundId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereRefundRemarks($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereRefundTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereRefundType($value)
