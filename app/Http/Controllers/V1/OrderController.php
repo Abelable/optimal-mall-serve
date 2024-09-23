@@ -544,8 +544,8 @@ class OrderController extends Controller
 
     public function shippingTrack()
     {
-        $id = $this->verifyRequiredId('id');
-        $order = OrderService::getInstance()->getUserOrderById($this->userId(), $id);
+        $orderId = $this->verifyRequiredId('orderId');
+        $order = OrderService::getInstance()->getUserOrderById($this->userId(), $orderId);
         if (is_null($order)) {
             return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
         }
