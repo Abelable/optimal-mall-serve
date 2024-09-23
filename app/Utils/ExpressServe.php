@@ -41,7 +41,6 @@ class ExpressServe
 
     protected function formatResData($result)
     {
-        dd($result);
         $result = json_decode($result, true);
         if ($result['Success'] == false) {
             return $result['ResponseData'];

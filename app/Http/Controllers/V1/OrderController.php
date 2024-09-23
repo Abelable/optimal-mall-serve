@@ -542,13 +542,14 @@ class OrderController extends Controller
         return $this->success($this->paginate($page, $list));
     }
 
-    public function express()
+    public function shippingTrack()
     {
-        $shipperCode = $this->verifyRequiredString('shipperCode');
-        $logisticCode = $this->verifyRequiredString('logisticCode');
-        $mobile = $this->verifyString('mobile');
-
-        $result = ExpressServe::new()->track($shipperCode, $logisticCode, $mobile);
+        $id = $this->verifyRequiredId('id');
+        $order = OrderService::getInstance()->getUserOrderById($this->userId(), $id);
+        if (is_null($order)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
+        }
+        $result = ExpressServe::new()->track($order->ship_channel, $order->ship_sn, $order->mobile);
         return $this->success($result);
     }
 }
