@@ -27,7 +27,7 @@ class ActivityStart implements ShouldQueue
     {
         $this->activityId = $activityId;
         $startTime = Carbon::parse($startTime);
-        $delayInSeconds = $startTime->diffInSeconds(now());
+        $delayInSeconds = $startTime->diffInSeconds(Carbon::now());
         $this->delay($delayInSeconds);
     }
 

@@ -27,7 +27,9 @@ class ActivityEnd implements ShouldQueue
     public function __construct($activityId, $endTime)
     {
         $this->activityId = $activityId;
-        $this->delay(Carbon::createFromFormat('Y-m-d\TH:i:s.u\Z', $endTime)->setTimezone('UTC')->toDateTimeString());
+        $endTime = Carbon::parse($endTime);
+        $delayInSeconds = $endTime->diffInSeconds(Carbon::now());
+        $this->delay($delayInSeconds);
     }
 
     /**

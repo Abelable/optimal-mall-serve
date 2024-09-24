@@ -63,10 +63,10 @@ class ActivityService extends BaseService
         $activity->save();
 
         $openidList = ActivitySubscriptionService::getInstance()->getListByActivityId($activity->id)->pluck('openid')->toArray();
-
         foreach ($openidList as $openid) {
             WxMpServe::new()->sendActivityStartMsg($openid, $activity);
         }
+        ActivitySubscriptionService::getInstance()->deleteList($activity->id);
 
         return $activity;
     }
