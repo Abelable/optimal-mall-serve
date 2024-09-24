@@ -45,10 +45,8 @@ class MallController extends Controller
         $list = $goodsList->map(function (Goods $goods) use ($subscribedActivityIds, $activityKeyList, $groupedCouponList) {
             /** @var Activity $activity */
             $activity = $activityKeyList->get($goods->id);
+            $activity['isSubscribed'] = in_array($activity->id, $subscribedActivityIds) ? 1 : 0;
             $goods['activityInfo'] = $activity;
-            if (in_array($activity->id, $subscribedActivityIds)) {
-                $activity['isSubscribed'] = 1;
-            }
 
             $couponList = $groupedCouponList->get($goods->id);
             $goods['couponList'] = $couponList ?: [];
