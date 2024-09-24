@@ -137,13 +137,15 @@ class GoodsController extends Controller
 
         $activityColumns = ['id', 'status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'];
         $activity = ActivityService::getInstance()->getActivityByGoodsId($goods->id, $activityColumns);
-        if ($this->isLogin()) {
-            $subscription = ActivitySubscriptionService::getInstance()->getUserSubscription($this->userId(), $activity->id);
-            if (!is_null($subscription)) {
-                $activity['isSubscribed'] = 1;
+        if (!is_null($activity)) {
+            if ($this->isLogin()) {
+                $subscription = ActivitySubscriptionService::getInstance()->getUserSubscription($this->userId(), $activity->id);
+                if (!is_null($subscription)) {
+                    $activity['isSubscribed'] = 1;
+                }
             }
+            $goods['activityInfo'] = $activity;
         }
-        $goods['activityInfo'] = $activity;
 
         $couponList = CouponService::getInstance()->getCouponListByGoodsId($goods->id);
         if ($this->isLogin()) {
