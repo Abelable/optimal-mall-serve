@@ -15,7 +15,7 @@ use Illuminate\Support\Carbon;
 
 class MallController extends Controller
 {
-    protected $only = [];
+    protected $only = ['subscribeActivity'];
 
     public function bannerList()
     {
@@ -26,7 +26,7 @@ class MallController extends Controller
     public function activityList()
     {
         $tag = $this->verifyRequiredInteger('tag');
-        $columns = ['status', 'name', 'tag', 'goods_tag', 'goods_id', 'start_time', 'end_time', 'followers', 'sales'];
+        $columns = ['id', 'status', 'name', 'tag', 'goods_tag', 'goods_id', 'start_time', 'end_time', 'followers', 'sales'];
         $activityList = ActivityService::getInstance()->getActivityList($tag, $columns);
         $activityKeyList = $activityList->keyBy('goods_id');
 
@@ -62,7 +62,7 @@ class MallController extends Controller
         }
 
         $templateId = env('ADVANCE_ACTIVITY_TEMPLATE_ID');
-        $page = '/pages/home/subpages/goods-detail/index?id' . $activity->goods_id;
+        $page = '/pages/home/subpages/goods-detail/index?id=' . $activity->goods_id;
         $openid = $this->user()->openid;
         $endTime = Carbon::parse($activity->end_time)->format('Y-m-d H:i:s');
         $data = "{'thing7': {'value': '{$activity->name}'}, 'thing8': {'value': '{$activity->goods_name}'}, 'date5': {'value': '{$endTime}'}}";
