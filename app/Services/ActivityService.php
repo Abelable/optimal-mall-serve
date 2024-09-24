@@ -62,8 +62,11 @@ class ActivityService extends BaseService
         $activity->tag = 0;
         $activity->save();
 
-        ActivitySubscriptionService::getInstance()->getListByActivityId($activity->id)->pluck('');
-        WxMpServe::new()->sendActivityStartMsg();
+        $openidList = ActivitySubscriptionService::getInstance()->getListByActivityId($activity->id)->pluck('openid')->toArray();
+
+        foreach ($openidList as $openid) {
+            WxMpServe::new()->sendActivityStartMsg($openid, $activity);
+        }
 
         return $activity;
     }

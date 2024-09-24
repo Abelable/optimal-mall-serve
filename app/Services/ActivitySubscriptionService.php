@@ -7,7 +7,7 @@ use App\Utils\CodeResponse;
 
 class ActivitySubscriptionService extends BaseService
 {
-    public function create($userId,  $activityId)
+    public function create($userId, $openid, $activityId)
     {
         $subscription = $this->getUserSubscription($userId, $activityId);
         if (!is_null($subscription)) {
@@ -16,6 +16,7 @@ class ActivitySubscriptionService extends BaseService
 
         $subscription = ActivitySubscription::new();
         $subscription->user_id = $userId;
+        $subscription->openid = $openid;
         $subscription->activity_id = $activityId;
         $subscription->save();
         return $subscription;
