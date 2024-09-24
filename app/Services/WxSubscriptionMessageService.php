@@ -17,6 +17,11 @@ class WxSubscriptionMessageService extends BaseService
         return $message;
     }
 
+    public function getListByTemplateId($templateId, $columns = ['*'])
+    {
+        return WxSubscriptionMessage::query()->where('template_id', $templateId)->get($columns);
+    }
+
     public function deleteList($templateId)
     {
         return WxSubscriptionMessage::query()->where('template_id', $templateId)->delete();
