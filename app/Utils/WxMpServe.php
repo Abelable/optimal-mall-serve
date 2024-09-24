@@ -14,6 +14,7 @@ class WxMpServe
     const GET_PHONE_NUMBER_URL = 'https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=%s';
     const GET_OPENID_URL = 'https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code';
     const GET_QRCODE_URL = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s';
+    const SEND_MSG_URL = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=%s';
 
     protected $accessToken;
 
@@ -59,5 +60,13 @@ class WxMpServe
     public function getQRCode($scene, $page)
     {
         return  $this->httpPost(sprintf(self::GET_QRCODE_URL, $this->accessToken), ['scene' => $scene, 'page' => $page], false, false);
+    }
+
+    public function sendMsg($templateId, $page, $touser, $data)
+    {
+        return  $this->httpPost(
+            sprintf(self::SEND_MSG_URL, $this->accessToken),
+            ['template_id' => $templateId, 'page' => $page, 'touser' => $touser, 'data' => $data]
+        );
     }
 }

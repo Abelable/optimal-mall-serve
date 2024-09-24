@@ -46,6 +46,11 @@ class ActivityService extends BaseService
         return Activity::query()->find($id, $columns);
     }
 
+    public function getAdvanceActivityById($id, $columns = ['*'])
+    {
+        return Activity::query()->where('status', 0)->find($id, $columns);
+    }
+
     public function startActivity($id)
     {
         $activity = $this->getActivityById($id);

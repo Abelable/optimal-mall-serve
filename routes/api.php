@@ -108,6 +108,7 @@ Route::prefix('order')->group(function () {
 Route::prefix('mall')->group(function () {
     Route::get('banner_list', 'MallController@bannerList');
     Route::get('activity_list', 'MallController@activityList');
+    Route::post('activity_subscribe', 'MallController@subscribeActivity');
 });
 
 Route::prefix('coupon')->group(function () {
