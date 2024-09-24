@@ -4,14 +4,14 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
+use App\Models\ActivitySubscription;
 use App\Models\Goods;
 use App\Services\ActivityService;
+use App\Services\ActivitySubscriptionService;
 use App\Services\CouponService;
 use App\Services\GoodsService;
 use App\Services\BannerService;
-use App\Services\WxSubscriptionMessageService;
 use App\Utils\CodeResponse;
-use Illuminate\Support\Carbon;
 
 class MallController extends Controller
 {
@@ -61,12 +61,7 @@ class MallController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '活动预告不存在');
         }
 
-        $templateId = env('ADVANCE_ACTIVITY_TEMPLATE_ID');
-        $page = '/pages/home/subpages/goods-detail/index?id=' . $activity->goods_id;
-        $openid = $this->user()->openid;
-        $endTime = Carbon::parse($activity->end_time)->format('Y-m-d H:i:s');
-        $data = "{'thing7': {'value': '{$activity->name}'}, 'thing8': {'value': '{$activity->goods_name}'}, 'date5': {'value': '{$endTime}'}}";
-        WxSubscriptionMessageService::getInstance()->create($templateId, $page, $openid, $data);
+        ActivitySubscriptionService::getInstance()->create($this->userId(), $activityId);
 
         return $this->success();
     }

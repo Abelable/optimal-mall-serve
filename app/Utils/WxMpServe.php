@@ -2,7 +2,9 @@
 
 namespace App\Utils;
 
+use App\Models\Activity;
 use App\Utils\Traits\HttpClient;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class WxMpServe
@@ -62,11 +64,22 @@ class WxMpServe
         return  $this->httpPost(sprintf(self::GET_QRCODE_URL, $this->accessToken), ['scene' => $scene, 'page' => $page], false, false);
     }
 
-    public function sendMsg($templateId, $page, $touser, $data)
+    public function sendActivityStartMsg($openid, Activity $activity)
     {
+        $endTime = Carbon::parse($activity->end_time)->format('Y-m-d H:i:s');
+        $data = [
+            'thing7' => ['value' => $activity->name],
+            'thing8' => ['value' => $activity->goods_name],
+            'date5' => ['value' => $endTime]
+        ];
         return  $this->httpPost(
             sprintf(self::SEND_MSG_URL, $this->accessToken),
-            ['template_id' => $templateId, 'page' => $page, 'touser' => $touser, 'data' => $data]
+            [
+                'template_id' => env('ACTIVITY_TEMPLATE_ID'),
+                'page' => env('ACTIVITY_PAGE') . $activity->goods_id,
+                'touser' => $openid,
+                'data' => $data
+            ]
         );
     }
 }
