@@ -96,7 +96,6 @@ class WxMpServe
                 'data' => $data
             ]
         );
-        dd($result);
         return $result;
     }
 }

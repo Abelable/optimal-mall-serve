@@ -59,7 +59,11 @@ class ActivityService extends BaseService
             $this->throwBusinessException(CodeResponse::NOT_FOUND, '活动不存在');
         }
         $activity->status = 1;
-        $activity->tag = 0;
+        $activity->start_time = '';
+        if ($activity->tag == 2) {
+            $activity->tag = 1;
+        }
+
         $activity->save();
 
         $openidList = ActivitySubscriptionService::getInstance()->getListByActivityId($activity->id)->pluck('openid')->toArray();
