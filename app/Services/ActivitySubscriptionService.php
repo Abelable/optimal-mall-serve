@@ -21,6 +21,11 @@ class ActivitySubscriptionService extends BaseService
         return $subscription;
     }
 
+    public function getUserList($userId, $columns = ['*'])
+    {
+        return ActivitySubscription::query()->where('user_id', $userId)->get($columns);
+    }
+
     public function getUserSubscription($userId, $activityId, $columns = ['*'])
     {
         return ActivitySubscription::query()->where('user_id', $userId)->where('activity_id', $activityId)->first($columns);
