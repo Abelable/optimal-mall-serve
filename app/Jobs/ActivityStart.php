@@ -26,7 +26,9 @@ class ActivityStart implements ShouldQueue
     public function __construct($activityId, $startTime)
     {
         $this->activityId = $activityId;
-        $this->delay(Carbon::createFromFormat('Y-m-d\TH:i:s.u\Z', $startTime)->setTimezone('UTC')->toDateTimeString());
+        $startTime = Carbon::parse($startTime);
+        $delayInSeconds = $startTime->diffInSeconds(now());
+        $this->delay($delayInSeconds);
     }
 
     /**
