@@ -7,7 +7,7 @@ use App\Utils\CodeResponse;
 
 class ActivitySubscriptionService extends BaseService
 {
-    public function create($userId, $activityId)
+    public function create($userId,  $activityId)
     {
         $subscription = $this->getUserSubscription($userId, $activityId);
         if (!is_null($subscription)) {
@@ -19,6 +19,11 @@ class ActivitySubscriptionService extends BaseService
         $subscription->activity_id = $activityId;
         $subscription->save();
         return $subscription;
+    }
+
+    public function getListByActivityId($activityId, $columns = ['*'])
+    {
+        return ActivitySubscription::query()->where('activity_id', $activityId)->get($columns);
     }
 
     public function getUserList($userId, $columns = ['*'])

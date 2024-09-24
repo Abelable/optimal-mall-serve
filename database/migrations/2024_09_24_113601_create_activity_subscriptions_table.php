@@ -16,6 +16,7 @@ class CreateActivitySubscriptionsTable extends Migration
         Schema::create('activity_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->comment('用户id');
+            $table->string('openid')->comment('小程序openid');
             $table->integer('activity_id')->comment('用户id');
             $table->timestamps();
             $table->softDeletes();

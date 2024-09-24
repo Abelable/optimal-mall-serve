@@ -285,15 +285,6 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         });
     });
 
-    Route::prefix('express')->group(function () {
-        Route::post('list', 'ExpressController@list');
-        Route::get('detail', 'ExpressController@detail');
-        Route::post('add', 'ExpressController@add');
-        Route::post('edit', 'ExpressController@edit');
-        Route::post('delete', 'ExpressController@delete');
-        Route::get('options', 'ExpressController@options');
-    });
-
     Route::prefix('merchant')->group(function () {
         Route::post('list', 'MerchantController@list');
         Route::get('detail', 'MerchantController@detail');

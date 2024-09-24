@@ -67,7 +67,7 @@ class MallController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '活动预告不存在');
         }
 
-        ActivitySubscriptionService::getInstance()->create($this->userId(), $activityId);
+        ActivitySubscriptionService::getInstance()->create($this->userId(), $this->user()->openid, $activityId);
 
         return $this->success();
     }

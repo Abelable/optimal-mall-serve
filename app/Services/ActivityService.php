@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Activity;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\ActivityPageInput;
+use App\Utils\WxMpServe;
 
 class ActivityService extends BaseService
 {
@@ -60,6 +61,10 @@ class ActivityService extends BaseService
         $activity->status = 1;
         $activity->tag = 0;
         $activity->save();
+
+        ActivitySubscriptionService::getInstance()->getListByActivityId($activity->id)->pluck('');
+        WxMpServe::new()->sendActivityStartMsg();
+
         return $activity;
     }
 
