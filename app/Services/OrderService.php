@@ -396,6 +396,26 @@ class OrderService extends BaseService
         return $orderList;
     }
 
+    public function ship($orderId, $shipChannel, $shipCode, $shipSn)
+    {
+        $order = $this->getOrderById($orderId);
+        if (is_null($order)) {
+            $this->throwBadArgumentValue();
+        }
+        if (!$order->canShipHandle()) {
+            $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单未付款，无法发货');
+        }
+        $order->status = OrderEnums::STATUS_SHIP;
+        $order->ship_channel = $shipChannel;
+        $order->ship_code = $shipCode;
+        $order->ship_sn = $shipSn;
+        $order->ship_time = now()->toDateTimeString();
+        if ($order->cas() == 0) {
+            $this->throwUpdateFail();
+        }
+        return $order;
+    }
+
     public function finish($userId, $orderId)
     {
         $order = $this->getUserOrderById($userId, $orderId);

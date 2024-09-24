@@ -34,6 +34,20 @@ class OrderController extends Controller
         return $this->success($order);
     }
 
+    public function delivery()
+    {
+        $id = $this->verifyRequiredInteger('id');
+        $shipChannel = $this->verifyRequiredString('shipChannel');
+        $shipCode = $this->verifyRequiredString('shipCode');
+        $shipSn = $this->verifyRequiredString('shipSn');
+
+        OrderService::getInstance()->ship($id, $shipChannel, $shipCode, $shipSn);
+
+        // todo: 管理员操组记录
+
+        return $this->success();
+    }
+
     public function cancel()
     {
         $ids = $this->verifyArrayNotEmpty('ids');
