@@ -7,6 +7,7 @@ use App\Models\Address;
 use App\Models\Coupon;
 use App\Models\Goods;
 use App\Services\ActivityService;
+use App\Services\ActivitySubscriptionService;
 use App\Services\AddressService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
@@ -134,8 +135,14 @@ class GoodsController extends Controller
             $goods['addressInfo'] = $address;
         }
 
-        $activityColumns = ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'];
+        $activityColumns = ['id', 'status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'];
         $activity = ActivityService::getInstance()->getActivityByGoodsId($goods->id, $activityColumns);
+        if ($this->isLogin()) {
+            $subscription = ActivitySubscriptionService::getInstance()->getUserSubscription($this->userId(), $activity->id);
+            if (!is_null($subscription)) {
+                $activity['isSubscribed'] = 1;
+            }
+        }
         $goods['activityInfo'] = $activity;
 
         $couponList = CouponService::getInstance()->getCouponListByGoodsId($goods->id);
