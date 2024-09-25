@@ -550,11 +550,11 @@ class OrderController extends Controller
         if (is_null($order)) {
             return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
         }
-        $result = ExpressServe::new()->track($order->ship_code, $order->ship_sn, $order->mobile);
+        $traces = ExpressServe::new()->track($order->ship_code, $order->ship_sn, $order->mobile);
         return $this->success([
             'shipChannel' => $order->ship_channel,
             'shipSn' => $order->ship_sn,
-            'traces' => $result['Traces']
+            'traces' => $traces
         ]);
     }
 }

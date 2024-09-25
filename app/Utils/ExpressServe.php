@@ -44,7 +44,7 @@ class ExpressServe
         if ($result['Success'] == false) {
             throw new \Exception('物流信息获取异常：' . $result['Reason']);
         }
-        return $result;
+        return array_reverse($result['Traces']);
     }
 
     protected function encrypt($data)
