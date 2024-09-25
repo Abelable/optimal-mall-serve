@@ -26,9 +26,8 @@ class MallController extends Controller
     public function activityList()
     {
         $tag = $this->verifyRequiredInteger('tag');
-        $columns = ['id', 'status', 'name', 'tag', 'goods_tag', 'goods_id', 'start_time', 'end_time', 'followers', 'sales'];
+        $columns = ['id', 'status', 'name', 'tag', 'goods_tag', 'goods_id', 'start_time', 'end_time', 'followers', 'sales', 'sort'];
         $activityList = ActivityService::getInstance()->getActivityList($tag, $columns);
-        $activityKeyList = $activityList->keyBy('goods_id');
 
         $subscribedActivityIds = [];
         if ($this->isLogin()) {
@@ -36,15 +35,17 @@ class MallController extends Controller
         }
 
         $goodsIds = $activityList->pluck('goods_id')->toArray();
-        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
+        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
 
         $groupedCouponList = CouponService::getInstance()
             ->getCouponListByGoodsIds($goodsIds, ['goods_id', 'name', 'denomination', 'type', 'num_limit', 'price_limit'])
             ->groupBy('goods_id');
 
-        $list = $goodsList->map(function (Goods $goods) use ($subscribedActivityIds, $activityKeyList, $groupedCouponList) {
-            /** @var Activity $activity */
-            $activity = $activityKeyList->get($goods->id);
+        $list = $activityList->map(function (Activity $activity) use ($groupedCouponList, $subscribedActivityIds, $goodsList) {
+            /** @var Goods $goods */
+            $goods = $goodsList->get($activity->goods_id);
+            unset($activity->goods_id);
+
             $activity['isSubscribed'] = in_array($activity->id, $subscribedActivityIds) ? 1 : 0;
             $goods['activityInfo'] = $activity;
 
