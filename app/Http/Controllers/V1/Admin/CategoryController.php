@@ -108,11 +108,4 @@ class CategoryController extends Controller
         $options = CategoryService::getInstance()->getCategoryOptions();
         return $this->success($options);
     }
-
-    public function filterOptions()
-    {
-        $shopCategoryId = $this->verifyRequiredId('shopCategoryId');
-        $options = CategoryService::getInstance()->getOptionsByShopCategoryId($shopCategoryId, ['id', 'name']);
-        return $this->success($options);
-    }
 }

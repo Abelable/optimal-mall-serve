@@ -223,6 +223,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('edit_goods_tag', 'ActivityController@editGoodsTag');
             Route::post('edit_followers', 'ActivityController@editFollowers');
             Route::post('edit_sales', 'ActivityController@editSales');
+            Route::post('edit_sort', 'ActivityController@editSort');
             Route::post('end', 'ActivityController@end');
             Route::post('delete', 'ActivityController@delete');
         });
@@ -312,7 +313,6 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('edit_status', 'CategoryController@editStatus');
         Route::post('delete', 'CategoryController@delete');
         Route::get('options', 'CategoryController@options');
-        Route::get('filter_options', 'CategoryController@filterOptions');
     });
 
     Route::prefix('goods')->group(function () {

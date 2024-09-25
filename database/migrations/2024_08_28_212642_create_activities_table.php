@@ -26,6 +26,7 @@ class CreateActivitiesTable extends Migration
             $table->string('goods_name')->comment('商品名称');
             $table->integer('followers')->default(0)->comment('活动关注数');
             $table->integer('sales')->default(0)->comment('活动销量');
+            $table->integer('sort')->default(1)->comment('排序');
             $table->timestamps();
             $table->softDeletes();
         });

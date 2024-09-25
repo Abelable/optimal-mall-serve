@@ -162,6 +162,21 @@ class ActivityController extends Controller
         return $this->success();
     }
 
+    public function editSort() {
+        $id = $this->verifyRequiredId('id');
+        $sort = $this->verifyRequiredInteger('sort');
+
+        $activity = ActivityService::getInstance()->getActivityById($id);
+        if (is_null($activity)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前活动不存在');
+        }
+
+        $activity->sort = $sort;
+        $activity->save();
+
+        return $this->success();
+    }
+
     public function end()
     {
         $id = $this->verifyRequiredId('id');

@@ -29,7 +29,7 @@ class ActivityService extends BaseService
 
     public function getActivityList($tag, $columns = ['*'])
     {
-        return Activity::query()->whereIn('status', [0, 1])->where('tag', $tag)->get($columns);
+        return Activity::query()->whereIn('status', [0, 1])->where('tag', $tag)->orderBy('sort', 'desc')->get($columns);
     }
 
     public function getActivityListByGoodsIds(array $goodsIds, $columns = ['*'])

@@ -17,6 +17,7 @@ namespace App\Models;
  * @property string $goods_name 商品名称
  * @property int $followers 活动关注数
  * @property int $sales 活动销量
+ * @property int $sort 排序
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -35,6 +36,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereSales($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Activity whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereStartTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity whereTag($value)
