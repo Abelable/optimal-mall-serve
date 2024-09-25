@@ -163,6 +163,7 @@ class GoodsService extends BaseService
             }
         }
         $goods->stock = $goods->stock - $number;
+        $goods->sales_volume = $goods->sales_volume + $number;
 
         return $goods->cas();
     }

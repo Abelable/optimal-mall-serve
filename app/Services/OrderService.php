@@ -116,11 +116,14 @@ class OrderService extends BaseService
                 $couponDenomination = $coupon->denomination;
             }
 
-            // 商品减库存
+            // 商品减库存加销量
             $row = GoodsService::getInstance()->reduceStock($cartGoods->goods_id, $cartGoods->number, $cartGoods->selected_sku_index);
             if ($row == 0) {
                 $this->throwBusinessException(CodeResponse::GOODS_NO_STOCK);
             }
+
+            // 活动商品增加活动销量
+            ActivityService::getInstance()->addActivitySales($cartGoods->goods_id, $cartGoods->number);
         }
 
         $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);

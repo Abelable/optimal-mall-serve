@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
-use App\Models\ActivitySubscription;
 use App\Models\Goods;
 use App\Services\ActivityService;
 use App\Services\ActivitySubscriptionService;
@@ -12,6 +11,7 @@ use App\Services\CouponService;
 use App\Services\GoodsService;
 use App\Services\BannerService;
 use App\Utils\CodeResponse;
+use Illuminate\Support\Facades\DB;
 
 class MallController extends Controller
 {
@@ -67,7 +67,12 @@ class MallController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '活动预告不存在');
         }
 
-        ActivitySubscriptionService::getInstance()->create($this->userId(), $this->user()->openid, $activityId);
+        DB::transaction(function () use ($activity) {
+            $activity->followers = $activity->followers + 1;
+            $activity->save();
+
+            ActivitySubscriptionService::getInstance()->create($this->userId(), $this->user()->openid, $activity->id);
+        });
 
         return $this->success();
     }
