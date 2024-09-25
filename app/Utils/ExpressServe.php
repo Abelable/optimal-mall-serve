@@ -41,16 +41,10 @@ class ExpressServe
 
     protected function formatResData($result)
     {
-        $result = json_decode($result, true);
         if ($result['Success'] == false) {
-            return $result['ResponseData'];
+            throw new \Exception('物流信息获取异常：' . $result['Reason']);
         }
-        $result2 = json_decode($result['ResponseData'], true);
-
-        if ($result2['Success'] == false) {
-            return $result2['Reason'];
-        }
-        return $result2;
+        return $result;
     }
 
     protected function encrypt($data)
