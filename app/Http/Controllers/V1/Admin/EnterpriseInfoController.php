@@ -3,29 +3,29 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\AuthInfoService;
+use App\Services\EnterpriseInfoService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\AuthInfoPageInput;
+use App\Utils\Inputs\EnterpriseInfoPageInput;
 
-class AuthInfoController extends Controller
+class EnterpriseInfoController extends Controller
 {
     protected $guard = 'Admin';
 
     public function list()
     {
-        /** @var AuthInfoPageInput $input */
-        $input = AuthInfoPageInput::new();
-        $columns = ['id', 'user_id', 'status', 'failure_reason', 'name', 'mobile', 'created_at', 'updated_at'];
-        $page = AuthInfoService::getInstance()->getAuthInfoList($input, $columns);
+        /** @var EnterpriseInfoPageInput $input */
+        $input = EnterpriseInfoPageInput::new();
+        $columns = ['id', 'user_id', 'status', 'failure_reason', 'name', 'created_at', 'updated_at'];
+        $page = EnterpriseInfoService::getInstance()->getEnterpriseInfoList($input, $columns);
         return $this->successPaginate($page);
     }
 
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
-        $authInfo = AuthInfoService::getInstance()->getAuthInfoById($id);
+        $authInfo = EnterpriseInfoService::getInstance()->getEnterpriseInfoById($id);
         if (is_null($authInfo)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前实名认证信息不存在');
+            return $this->fail(CodeResponse::NOT_FOUND, '当前企业认证信息不存在');
         }
         return $this->success($authInfo);
     }
@@ -34,9 +34,9 @@ class AuthInfoController extends Controller
     {
         $id = $this->verifyRequiredId('id');
 
-        $authInfo = AuthInfoService::getInstance()->getAuthInfoById($id);
+        $authInfo = EnterpriseInfoService::getInstance()->getEnterpriseInfoById($id);
         if (is_null($authInfo)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前实名认证信息不存在');
+            return $this->fail(CodeResponse::NOT_FOUND, '当前企业认证信息不存在');
         }
 
         $authInfo->status = 1;
@@ -50,9 +50,9 @@ class AuthInfoController extends Controller
         $id = $this->verifyRequiredId('id');
         $reason = $this->verifyRequiredString('failureReason');
 
-        $authInfo = AuthInfoService::getInstance()->getAuthInfoById($id);
+        $authInfo = EnterpriseInfoService::getInstance()->getEnterpriseInfoById($id);
         if (is_null($authInfo)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前实名认证信息不存在');
+            return $this->fail(CodeResponse::NOT_FOUND, '当前企业认证信息不存在');
         }
 
         $authInfo->status = 2;
@@ -65,9 +65,9 @@ class AuthInfoController extends Controller
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
-        $authInfo = AuthInfoService::getInstance()->getAuthInfoById($id);
+        $authInfo = EnterpriseInfoService::getInstance()->getEnterpriseInfoById($id);
         if (is_null($authInfo)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前实名认证信息不存在');
+            return $this->fail(CodeResponse::NOT_FOUND, '当前企业认证信息不存在');
         }
         $authInfo->delete();
         return $this->success();

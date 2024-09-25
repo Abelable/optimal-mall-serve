@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\AuthInfo;
 use App\Utils\Inputs\AuthInfoInput;
-use App\Utils\Inputs\AuthInfoListInput;
+use App\Utils\Inputs\AuthInfoPageInput;
 
 class AuthInfoService extends BaseService
 {
@@ -32,7 +32,7 @@ class AuthInfoService extends BaseService
         return $authInfo;
     }
 
-    public function getAuthInfoList(AuthInfoListInput $input, $columns = ['*'])
+    public function getAuthInfoList(AuthInfoPageInput $input, $columns = ['*'])
     {
         $query = AuthInfo::query();
         if (!is_null($input->status)) {

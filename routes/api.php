@@ -191,6 +191,14 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('delete', 'AuthInfoController@delete');
     });
 
+    Route::prefix('enterprise_info')->group(function () {
+        Route::post('list', 'EnterpriseInfoController@list');
+        Route::get('detail', 'EnterpriseInfoController@detail');
+        Route::post('approved', 'EnterpriseInfoController@approved');
+        Route::post('reject', 'EnterpriseInfoController@reject');
+        Route::post('delete', 'EnterpriseInfoController@delete');
+    });
+
     Route::prefix('team')->group(function () {
         Route::prefix('promoter')->group(function () {
             Route::post('list', 'PromoterController@list');

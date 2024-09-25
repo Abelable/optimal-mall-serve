@@ -2,7 +2,7 @@
 
 namespace App\Utils\Inputs;
 
-class AuthInfoListInput extends PageInput
+class AuthInfoPageInput extends PageInput
 {
     public $status;
     public $name;
