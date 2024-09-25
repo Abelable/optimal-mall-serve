@@ -50,6 +50,16 @@ class UserController extends Controller
         return $this->success($user);
     }
 
+    public function bindSuperior()
+    {
+        $userId = $this->verifyRequiredId('userId');
+        $superiorId = $this->verifyRequiredId('superiorId');
+
+        RelationService::getInstance()->banding($superiorId, $userId);
+
+        return $this->success();
+    }
+
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
