@@ -301,10 +301,10 @@ class OrderController extends Controller
                 $statusList = [OrderEnums::STATUS_PAY];
                 break;
             case 3:
-                $statusList = [OrderEnums::STATUS_CONFIRM, OrderEnums::STATUS_AUTO_CONFIRM];
+                $statusList = [OrderEnums::STATUS_SHIP];
                 break;
             case 4:
-                $statusList = [OrderEnums::STATUS_FINISHED];
+                $statusList = [OrderEnums::STATUS_CONFIRM, OrderEnums::STATUS_AUTO_CONFIRM, OrderEnums::STATUS_ADMIN_CONFIRM];
                 break;
             case 5:
                 $statusList = [OrderEnums::STATUS_REFUND, OrderEnums::STATUS_REFUND_CONFIRM];
