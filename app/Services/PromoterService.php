@@ -10,6 +10,16 @@ use App\Utils\Inputs\SearchPageInput;
 
 class PromoterService extends BaseService
 {
+    public function create($userId, $level, $scene)
+    {
+        $promoter = Promoter::new();
+        $promoter->user_id = $userId;
+        $promoter->level = $level;
+        $promoter->scene = $scene;
+        $promoter->save();
+        return $promoter;
+    }
+
     public function toBePromoter($userId)
     {
         $promoter = $this->getExactPromoter($userId, PromoterScene::LEVEL_PROMOTER, PromoterScene::SCENE_PROMOTER);

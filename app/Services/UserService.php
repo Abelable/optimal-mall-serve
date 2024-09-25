@@ -58,6 +58,11 @@ class UserService extends BaseService
             ->paginate($input->limit, 'page', $input->page);
     }
 
+    public function getNormalList($promoterIds, $columns = ['*'])
+    {
+        return User::query()->whereNotIn('id', $promoterIds)->get($columns);
+    }
+
     public function searchList($keywords)
     {
         return User::search($keywords)->get();

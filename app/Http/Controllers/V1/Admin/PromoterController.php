@@ -35,6 +35,15 @@ class PromoterController extends Controller
         return $this->success($this->paginate($page, $list));
     }
 
+    public function add()
+    {
+        $userId = $this->verifyRequiredId('userId');
+        $level = $this->verifyRequiredInteger('level');
+        $scene = $this->verifyRequiredInteger('scene');
+        PromoterService::getInstance()->create($userId, $level, $scene);
+        return $this->success();
+    }
+
     public function delete()
     {
         $id = $this->verifyRequiredId('id');

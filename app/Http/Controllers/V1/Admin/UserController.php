@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Relation;
 use App\Models\User;
+use App\Services\PromoterService;
 use App\Services\RelationService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
@@ -69,5 +70,12 @@ class UserController extends Controller
         }
         $user->delete();
         return $this->success();
+    }
+
+    public function normalOptions()
+    {
+        $promoterIds = PromoterService::getInstance()->getOptions()->pluck('user_id')->toArray();
+        $normalUserList = UserService::getInstance()->getNormalList($promoterIds, ['id', 'avatar', 'nickname']);
+        return $this->success($normalUserList);
     }
 }
