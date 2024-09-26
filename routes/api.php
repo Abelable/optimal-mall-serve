@@ -41,6 +41,13 @@ Route::prefix('auth_info')->group(function () {
     Route::post('delete', 'AuthInfoController@delete');
 });
 
+Route::prefix('enterprise_info')->group(function () {
+    Route::get('detail', 'EnterpriseInfoController@detail');
+    Route::post('add', 'EnterpriseInfoController@add');
+    Route::post('edit', 'EnterpriseInfoController@edit');
+    Route::post('delete', 'EnterpriseInfoController@delete');
+});
+
 Route::get('oss_config', 'CommonController@ossConfig');
 
 Route::prefix('wx')->group(function () {
