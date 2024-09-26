@@ -26,6 +26,7 @@ use Illuminate\Notifications\Notifiable;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\AuthInfo|null $authInfo
+ * @property-read \App\Models\EnterpriseInfo|null $enterpriseInfo
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \App\Models\Promoter|null $promoterInfo
@@ -107,5 +108,10 @@ class User extends BaseModel implements JWTSubject, AuthenticatableContract, Aut
     public function authInfo()
     {
         return $this->hasOne(AuthInfo::class, 'user_id')->where('status', 1);
+    }
+
+    public function enterpriseInfo()
+    {
+        return $this->hasOne(EnterpriseInfo::class, 'user_id')->where('status', 1);
     }
 }
