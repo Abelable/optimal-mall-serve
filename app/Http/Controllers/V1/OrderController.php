@@ -275,7 +275,8 @@ class OrderController extends Controller
             OrderService::getInstance()->getListTotal($this->userId(), $this->statusList(1)),
             OrderService::getInstance()->getListTotal($this->userId(), $this->statusList(2)),
             OrderService::getInstance()->getListTotal($this->userId(), $this->statusList(3)),
-            OrderService::getInstance()->getListTotal($this->userId(), $this->statusList([OrderEnums::STATUS_REFUND])),
+            OrderService::getInstance()->getListTotal($this->userId(), $this->statusList(4)),
+            OrderService::getInstance()->getListTotal($this->userId(), $this->statusList(5)),
         ]);
     }
 
