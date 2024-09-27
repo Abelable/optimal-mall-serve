@@ -223,4 +223,15 @@ class GoodsService extends BaseService
 
         return $goods;
     }
+
+    public function updateAvgScore($id, $avgScore)
+    {
+        $goods = $this->getGoodsById($id);
+        if (is_null($goods)) {
+            $this->throwBusinessException(CodeResponse::NOT_FOUND, '商品不存在');
+        }
+        $goods->avg_score = $avgScore;
+        $goods->save();
+        return $goods;
+    }
 }

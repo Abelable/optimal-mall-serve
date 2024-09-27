@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\GoodsEvaluation;
 use App\Services\GoodsEvaluationService;
+use App\Services\GoodsService;
 use App\Services\OrderService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
@@ -20,15 +21,13 @@ class GoodsEvaluationController extends Controller
     {
         $goodsId = $this->verifyRequiredId('goodsId');
 
-        $evaluationList = GoodsEvaluationService::getInstance()->evaluationList($goodsId, 5);
-        $userIds = $evaluationList->pluck('user_id')->toArray();
-        $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname']);
-
+        $evaluationList = GoodsEvaluationService::getInstance()->evaluationList($goodsId, 1);
+        $list = $this->handelEvaluationList($evaluationList);
         $total = GoodsEvaluationService::getInstance()->getTotalNum($goodsId);
         $avgScore = GoodsEvaluationService::getInstance()->getAverageScore($goodsId);
 
         return $this->success([
-            'userList' => $userList,
+            'list' => $list,
             'total' => $total,
             'avgScore' => $avgScore ?: 0,
         ]);
@@ -39,23 +38,25 @@ class GoodsEvaluationController extends Controller
         $goodsId = $this->verifyRequiredId('goodsId');
         /** @var PageInput $input */
         $input = PageInput::new();
-
         $page = GoodsEvaluationService::getInstance()->evaluationPage($goodsId, $input);
         $evaluationList = collect($page->items());
+        $list = $this->handelEvaluationList($evaluationList);
+        return $this->success($this->paginate($page, $list));
+    }
 
+    private function handelEvaluationList($evaluationList)
+    {
         $userIds = $evaluationList->pluck('user_id')->toArray();
         $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname'])->keyBy('id');
 
-        $list = $evaluationList->map(function (GoodsEvaluation $evaluation) use ($userList) {
-            $userInfo = $userList->get($evaluation->user_id);
-            $evaluation['userInfo'] = $userInfo;
+        return $evaluationList->map(function (GoodsEvaluation $evaluation) use ($userList) {
+            $user = $userList->get($evaluation->user_id);
+            $evaluation['userInfo'] = $user;
             $evaluation->image_list = json_decode($evaluation->image_list);
             unset($evaluation->user_id);
             unset($evaluation->goods_id);
             return $evaluation;
         });
-
-        return $this->success($this->paginate($page, $list));
     }
 
     public function add()
@@ -65,6 +66,12 @@ class GoodsEvaluationController extends Controller
 
         DB::transaction(function () use ($input) {
             GoodsEvaluationService::getInstance()->createEvaluation($this->userId(), $input);
+
+            foreach ($input->goodsIds as $goodsId) {
+                $avgScore = GoodsEvaluationService::getInstance()->getAverageScore($goodsId);
+                GoodsService::getInstance()->updateAvgScore($goodsId, $avgScore);
+            }
+
             OrderService::getInstance()->finish($this->userId(), $input->orderId);
         });
 
