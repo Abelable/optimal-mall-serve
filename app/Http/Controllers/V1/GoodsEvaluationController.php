@@ -29,7 +29,7 @@ class GoodsEvaluationController extends Controller
         return $this->success([
             'list' => $list,
             'total' => $total,
-            'avgScore' => $avgScore ?: 0,
+            'avgScore' => round($avgScore, 1),
         ]);
     }
 
@@ -69,7 +69,7 @@ class GoodsEvaluationController extends Controller
 
             foreach ($input->goodsIds as $goodsId) {
                 $avgScore = GoodsEvaluationService::getInstance()->getAverageScore($goodsId);
-                GoodsService::getInstance()->updateAvgScore($goodsId, $avgScore);
+                GoodsService::getInstance()->updateAvgScore($goodsId, round($avgScore, 1));
             }
 
             OrderService::getInstance()->finish($this->userId(), $input->orderId);
