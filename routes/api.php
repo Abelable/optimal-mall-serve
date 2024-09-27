@@ -112,6 +112,15 @@ Route::prefix('order')->group(function () {
     Route::get('shipping_info', 'OrderController@shippingInfo');
 });
 
+Route::prefix('refund_application')->group(function () {
+    Route::get('refund_amount', 'RefundApplicationController@refundAmount');
+    Route::get('detail', 'RefundApplicationController@detail');
+    Route::post('add', 'RefundApplicationController@add');
+    Route::post('edit', 'RefundApplicationController@edit');
+    Route::post('submit_shipping_info', 'RefundApplicationController@submitShippingInfo');
+    Route::post('delete', 'RefundApplicationController@delete');
+});
+
 Route::prefix('mall')->group(function () {
     Route::get('banner_list', 'MallController@bannerList');
     Route::get('activity_list', 'MallController@activityList');

@@ -478,7 +478,6 @@ class OrderService extends BaseService
                 }
 
                 // todo 通知商家
-                // todo 开启自动退款定时任务
 
                 // 删除佣金记录
                 CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
@@ -489,6 +488,66 @@ class OrderService extends BaseService
                 Log::error('wx_refund_fail', [$exception]);
             }
         });
+    }
+
+    public function afterSaleRefund($orderId, $goodsId, $couponId, $refundAmount)
+    {
+        $order = $this->getOrderById($orderId);
+        if (is_null($order)) {
+            $this->throwBadArgumentValue();
+        }
+        if (!$order->canRefundHandle()) {
+            $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '该订单不支持退款');
+        }
+
+        /** @var OrderGoods $orderGoods */
+        $orderGoods = OrderGoodsService::getInstance()->getOrderGoods($orderId, $goodsId);
+        $totalPrice = bcmul($orderGoods->price, $orderGoods->number, 2);
+        $couponDenomination = 0;
+        if ($couponId != 0) {
+            $coupon = CouponService::getInstance()->getGoodsCoupon($couponId, $goodsId);
+            if (!is_null($coupon)) {
+                $couponDenomination = $coupon->denomination;
+            }
+        }
+        $actualRefundAmount = bcsub($totalPrice, $couponDenomination, 2);
+
+        if (bccomp($actualRefundAmount, $refundAmount, 2) != 0) {
+            $errMsg = "退款申请，订单id为{$orderId}商品id为{$goodsId}，退款金额（{$refundAmount}）与实际可退款金额（{$actualRefundAmount}）不一致";
+            Log::error($errMsg);
+            $this->throwBusinessException(CodeResponse::FAIL, $errMsg);
+        }
+
+        try {
+            $refundParams = [
+                'transaction_id' => $orderId,
+                'out_refund_no' => time(),
+                'total_fee' => bcmul($actualRefundAmount, 100),
+                'refund_fee' => bcmul($actualRefundAmount, 100),
+                'refund_desc' => '商品退款',
+                'type' => 'miniapp'
+            ];
+
+            $result = Pay::wechat()->refund($refundParams);
+            Log::info('order_wx_refund', $result->toArray());
+
+            $order->status = OrderEnums::STATUS_REFUND_CONFIRM;
+            $order->refund_id = $result['refund_id'];
+            $order->refund_time = now()->toDateTimeString();
+            if ($order->cas() == 0) {
+                $this->throwUpdateFail();
+            }
+
+            // todo 通知商家
+
+            // 删除佣金记录
+            CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+            GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+
+            return $order;
+        } catch (GatewayException $exception) {
+            Log::error('wx_refund_fail', [$exception]);
+        }
     }
 
     public function getOrderById($id, $columns = ['*'])

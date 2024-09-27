@@ -322,7 +322,7 @@ class OrderController extends Controller
     {
         $orderList = collect($page->items());
         $orderIds = $orderList->pluck('id')->toArray();
-        $goodsListColumns = ['order_id', 'goods_id', 'cover', 'name', 'selected_sku_name', 'price', 'number'];
+        $goodsListColumns = ['order_id', 'goods_id', 'merchant_id', 'is_gift', 'refund_status', 'cover', 'name', 'selected_sku_name', 'price', 'number'];
         $groupedGoodsList = OrderGoodsService::getInstance()->getListByOrderIds($orderIds, $goodsListColumns)->groupBy('order_id');
         return $orderList->map(function (Order $order) use ($groupedGoodsList) {
             $goodsList = $groupedGoodsList->get($order->id);
@@ -389,6 +389,7 @@ class OrderController extends Controller
             'address',
             'goods_price',
             'freight_price',
+            'coupon_id',
             'coupon_denomination',
             'payment_amount',
             'pay_time',

@@ -72,8 +72,6 @@ class CommissionController extends Controller
             }
         }
 
-
-
         return $this->success([
             'orderCount' => $orderCount,
             'salesVolume' => $salesVolume,
