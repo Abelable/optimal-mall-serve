@@ -32,6 +32,9 @@ class GoodsEvaluationService extends BaseService
             $evaluation->content = $input->content;
             $evaluation->image_list = json_encode($input->imageList);
             $evaluation->save();
+
+            $avgScore = $this->getAverageScore($goodsId);
+            GoodsService::getInstance()->updateAvgScore($goodsId, round($avgScore, 1));
         }
     }
 

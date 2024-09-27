@@ -66,12 +66,6 @@ class GoodsEvaluationController extends Controller
 
         DB::transaction(function () use ($input) {
             GoodsEvaluationService::getInstance()->createEvaluation($this->userId(), $input);
-
-            foreach ($input->goodsIds as $goodsId) {
-                $avgScore = GoodsEvaluationService::getInstance()->getAverageScore($goodsId);
-                GoodsService::getInstance()->updateAvgScore($goodsId, round($avgScore, 1));
-            }
-
             OrderService::getInstance()->finish($this->userId(), $input->orderId);
         });
 
