@@ -27,7 +27,7 @@ use Laravel\Scout\Searchable;
  * @property string $spec_list 商品规格列表
  * @property string $sku_list 商品sku
  * @property int $sales_volume 商品销量
- * @property int $avg_score 综合评分
+ * @property float $avg_score 综合评分
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
