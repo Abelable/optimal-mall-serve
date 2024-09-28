@@ -65,17 +65,20 @@ trait OrderStatusTrait
         'agreerefund' => [OrderEnums::STATUS_REFUND],
         'comment' => [
             OrderEnums::STATUS_CONFIRM,
-            OrderEnums::STATUS_AUTO_CONFIRM
+            OrderEnums::STATUS_AUTO_CONFIRM,
+            OrderEnums::STATUS_ADMIN_CONFIRM
         ],
         // 售后
         'aftersale' => [
             OrderEnums::STATUS_CONFIRM,
-            OrderEnums::STATUS_AUTO_CONFIRM
+            OrderEnums::STATUS_AUTO_CONFIRM,
+            OrderEnums::STATUS_ADMIN_CONFIRM
         ],
         // 回购
         'rebuy' => [
             OrderEnums::STATUS_CONFIRM,
-            OrderEnums::STATUS_AUTO_CONFIRM
+            OrderEnums::STATUS_AUTO_CONFIRM,
+            OrderEnums::STATUS_ADMIN_CONFIRM
         ],
         'delete' => [
             OrderEnums::STATUS_CANCEL,
@@ -83,11 +86,13 @@ trait OrderStatusTrait
             OrderEnums::STATUS_ADMIN_CANCEL,
             OrderEnums::STATUS_REFUND_CONFIRM,
             OrderEnums::STATUS_CONFIRM,
-            OrderEnums::STATUS_AUTO_CONFIRM
+            OrderEnums::STATUS_AUTO_CONFIRM,
+            OrderEnums::STATUS_ADMIN_CONFIRM
         ],
         'finish' => [
             OrderEnums::STATUS_CONFIRM,
             OrderEnums::STATUS_AUTO_CONFIRM,
+            OrderEnums::STATUS_ADMIN_CONFIRM
         ]
     ];
 

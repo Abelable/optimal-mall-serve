@@ -450,6 +450,22 @@ class OrderService extends BaseService
         }
     }
 
+    public function afterSale($userId, $orderId)
+    {
+        $order = $this->getUserOrderById($userId, $orderId);
+        if (is_null($order)) {
+            $this->throwBadArgumentValue();
+        }
+        if (!$order->canAftersaleHandle()) {
+            $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '该订单无法申请售后');
+        }
+        $order->status = OrderEnums::STATUS_REFUND;
+        if ($order->cas() == 0) {
+            $this->throwUpdateFail();
+        }
+        return $order;
+    }
+
     public function refund($userId, $orderId)
     {
         $order = $this->getUserOrderById($userId, $orderId);

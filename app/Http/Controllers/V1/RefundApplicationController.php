@@ -7,9 +7,11 @@ use App\Models\OrderGoods;
 use App\Models\RefundApplication;
 use App\Services\CouponService;
 use App\Services\OrderGoodsService;
+use App\Services\OrderService;
 use App\Services\RefundApplicationService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\RefundApplicationInput;
+use Illuminate\Support\Facades\DB;
 
 class RefundApplicationController extends Controller
 {
@@ -35,13 +37,16 @@ class RefundApplicationController extends Controller
         $orderId = $this->verifyRequiredId('orderId');
         $goodsId = $this->verifyRequiredId('goodsId');
         $couponId = $this->verifyId('couponId');
-
         /** @var RefundApplicationInput $input */
         $input = RefundApplicationInput::new();
 
-        $refundAmount = $this->calcRefundAmount($orderId, $goodsId, $couponId);
+        DB::transaction(function () use ($input, $couponId, $goodsId, $orderId) {
+            $refundAmount = $this->calcRefundAmount($orderId, $goodsId, $couponId);
+            RefundApplicationService::getInstance()->createRefundApplication($this->userId(), $orderId, $goodsId, $couponId, $refundAmount, $input);
 
-        RefundApplicationService::getInstance()->createRefundApplication($this->userId(), $orderId, $goodsId, $couponId, $refundAmount, $input);
+            OrderService::getInstance()->afterSale($this->userId(), $orderId);
+        });
+
         return $this->success();
     }
 
