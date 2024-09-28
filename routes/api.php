@@ -49,6 +49,7 @@ Route::prefix('enterprise_info')->group(function () {
 });
 
 Route::get('oss_config', 'CommonController@ossConfig');
+Route::get('shipping_info', 'CommonController@shippingInfo');
 
 Route::prefix('wx')->group(function () {
     Route::post('pay_notify', 'CommonController@wxPayNotify');
@@ -110,7 +111,6 @@ Route::prefix('order')->group(function () {
     Route::get('commission_list', 'OrderController@commissionOrderList');
     Route::get('gift_commission_list', 'OrderController@giftCommissionOrderList');
     Route::get('team_commission_list', 'OrderController@teamCommissionOrderList');
-    Route::get('shipping_info', 'OrderController@shippingInfo');
 });
 
 Route::prefix('refund_application')->group(function () {

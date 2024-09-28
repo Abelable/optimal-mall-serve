@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Services\OrderService;
 use App\Utils\AliOssServe;
+use App\Utils\ExpressServe;
 use App\Utils\WxMpServe;
 use Illuminate\Support\Facades\Log;
 use Yansongda\LaravelPay\Facades\Pay;
@@ -59,5 +60,15 @@ class CommonController extends Controller
             Log::error('wx_pay_notify_fail', [$exception]);
         }
         return Pay::wechat()->success();
+    }
+
+    public function shippingInfo()
+    {
+        $shipCode = $this->verifyRequiredString('shipCode');
+        $shipSn = $this->verifyRequiredString('shipSn');
+        $mobile = $this->verifyString('mobile');
+
+        $traces = ExpressServe::new()->track($shipCode, $shipSn, $mobile);
+        return $this->success($traces);
     }
 }

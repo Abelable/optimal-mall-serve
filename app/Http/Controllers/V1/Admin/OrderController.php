@@ -59,16 +59,6 @@ class OrderController extends Controller
         return $this->success();
     }
 
-    public function shippingInfo()
-    {
-        $shipCode = $this->verifyRequiredString('shipCode');
-        $shipSn = $this->verifyRequiredString('shipSn');
-        $mobile = $this->verifyString('mobile');
-
-        $traces = ExpressServe::new()->track($shipCode, $shipSn, $mobile);
-        return $this->success($traces);
-    }
-
     public function confirm()
     {
         $ids = $this->verifyArrayNotEmpty('ids');
