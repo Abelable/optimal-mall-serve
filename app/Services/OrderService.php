@@ -123,7 +123,11 @@ class OrderService extends BaseService
             }
 
             // 活动商品增加活动销量
-            ActivityService::getInstance()->addActivitySales($cartGoods->goods_id, $cartGoods->number);
+            $activity = ActivityService::getInstance()->getActivityByGoodsId($cartGoods->goods_id, 1);
+            if (!is_null($activity)) {
+                $activity->sales = $activity->sales + $cartGoods->number;
+                $activity->save();
+            }
         }
 
         $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);
