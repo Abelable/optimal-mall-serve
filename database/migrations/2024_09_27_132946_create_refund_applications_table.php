@@ -19,7 +19,7 @@ class CreateRefundApplicationsTable extends Migration
             $table->string('failure_reason')->default('')->comment('审核失败原因');
             $table->integer('user_id')->comment('用户id');
             $table->integer('order_id')->comment('订单id');
-            $table->integer('order_sn')->comment('订单编号');
+            $table->string('order_sn')->comment('订单编号');
             $table->integer('goods_id')->comment('商品id');
             $table->integer('coupon_id')->default(0)->comment('优惠券id');
             $table->float('refund_amount')->comment('退款金额');

@@ -10,7 +10,7 @@ namespace App\Models;
  * @property string $failure_reason 审核失败原因
  * @property int $user_id 用户id
  * @property int $order_id 订单id
- * @property int $order_sn 订单编号
+ * @property string $order_sn 订单编号
  * @property int $goods_id 商品id
  * @property int $coupon_id 优惠券id
  * @property float $refund_amount 退款金额
