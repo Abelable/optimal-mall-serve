@@ -41,8 +41,8 @@ class RefundController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前售后信息不存在');
         }
 
-        if (($refund->status == 0 && $refund->refund_type === 1)
-            || ($refund->status == 2 && $refund->refund_type === 2)) {
+        if (($refund->status == 0 && $refund->refund_type == 1)
+            || ($refund->status == 2 && $refund->refund_type == 2)) {
             DB::transaction(function () use ($refund) {
                 $refund->status = 3;
                 $refund->save();
