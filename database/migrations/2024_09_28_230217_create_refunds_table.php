@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRefundApplicationsTable extends Migration
+class CreateRefundsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateRefundApplicationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('refund_applications', function (Blueprint $table) {
+        Schema::create('refunds', function (Blueprint $table) {
             $table->id();
             $table->integer('status')->default(0)->comment('申请状态：0-待审核，1-审核通过，等待买家寄回，2-买家已寄出，待确认，3-退款成功，4-审核失败');
             $table->string('failure_reason')->default('')->comment('审核失败原因');
@@ -40,6 +40,6 @@ class CreateRefundApplicationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('refund_applications');
+        Schema::dropIfExists('refunds');
     }
 }

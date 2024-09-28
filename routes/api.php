@@ -113,13 +113,13 @@ Route::prefix('order')->group(function () {
     Route::get('team_commission_list', 'OrderController@teamCommissionOrderList');
 });
 
-Route::prefix('refund_application')->group(function () {
-    Route::get('refund_amount', 'RefundApplicationController@refundAmount');
-    Route::get('detail', 'RefundApplicationController@detail');
-    Route::post('add', 'RefundApplicationController@add');
-    Route::post('edit', 'RefundApplicationController@edit');
-    Route::post('submit_shipping_info', 'RefundApplicationController@submitShippingInfo');
-    Route::post('delete', 'RefundApplicationController@delete');
+Route::prefix('refund')->group(function () {
+    Route::get('amount', 'RefundController@refundAmount');
+    Route::get('detail', 'RefundController@detail');
+    Route::post('add', 'RefundController@add');
+    Route::post('edit', 'RefundController@edit');
+    Route::post('submit_shipping_info', 'RefundController@submitShippingInfo');
+    Route::post('delete', 'RefundController@delete');
 });
 
 Route::prefix('mall')->group(function () {
@@ -366,5 +366,13 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('confirm', 'OrderController@confirm');
         Route::post('cancel', 'OrderController@cancel');
         Route::post('delete', 'OrderController@delete');
+    });
+
+    Route::prefix('refund')->group(function () {
+        Route::post('list', 'RefundController@list');
+        Route::get('detail', 'RefundController@detail');
+        Route::post('approved', 'RefundController@approved');
+        Route::post('reject', 'RefundController@reject');
+        Route::post('delete', 'RefundController@delete');
     });
 });

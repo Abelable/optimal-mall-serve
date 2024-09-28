@@ -4,16 +4,16 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\OrderGoods;
-use App\Models\RefundApplication;
+use App\Models\Refund;
 use App\Services\CouponService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
-use App\Services\RefundApplicationService;
+use App\Services\RefundService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\RefundApplicationInput;
+use App\Utils\Inputs\RefundInput;
 use Illuminate\Support\Facades\DB;
 
-class RefundApplicationController extends Controller
+class RefundController extends Controller
 {
     public function refundAmount()
     {
@@ -29,11 +29,11 @@ class RefundApplicationController extends Controller
         $orderId = $this->verifyRequiredId('orderId');
         $goodsId = $this->verifyRequiredId('goodsId');
         $columns = ['id', 'status', 'failure_reason',  'refund_amount', 'refund_type', 'refund_reason', 'image_list', 'ship_code', 'ship_sn'];
-        $refundApplication = RefundApplicationService::getInstance()->getRefundApplicationByUserId($this->userId(), $orderId, $goodsId, $columns);
-        if (!is_null($refundApplication)) {
-            $refundApplication->image_list = json_decode($refundApplication->image_list);
+        $refund = RefundService::getInstance()->getRefundByUserId($this->userId(), $orderId, $goodsId, $columns);
+        if (!is_null($refund)) {
+            $refund->image_list = json_decode($refund->image_list);
         }
-        return $this->success($refundApplication);
+        return $this->success($refund);
     }
 
     public function add()
@@ -42,12 +42,12 @@ class RefundApplicationController extends Controller
         $orderSn = $this->verifyRequiredString('orderSn');
         $goodsId = $this->verifyRequiredId('goodsId');
         $couponId = $this->verifyId('couponId');
-        /** @var RefundApplicationInput $input */
-        $input = RefundApplicationInput::new();
+        /** @var RefundInput $input */
+        $input = RefundInput::new();
 
         DB::transaction(function () use ($orderSn, $input, $couponId, $goodsId, $orderId) {
             $refundAmount = $this->calcRefundAmount($orderId, $goodsId, $couponId);
-            RefundApplicationService::getInstance()->createRefundApplication($this->userId(), $orderId, $orderSn, $goodsId, $couponId, $refundAmount, $input);
+            RefundService::getInstance()->createRefund($this->userId(), $orderId, $orderSn, $goodsId, $couponId, $refundAmount, $input);
 
             OrderService::getInstance()->afterSale($this->userId(), $orderId);
         });
@@ -58,15 +58,15 @@ class RefundApplicationController extends Controller
     public function edit()
     {
         $id = $this->verifyRequiredId('id');
-        /** @var RefundApplicationInput $input */
-        $input = RefundApplicationInput::new();
+        /** @var RefundInput $input */
+        $input = RefundInput::new();
 
-        /** @var RefundApplication $refundApplication */
-        $refundApplication = RefundApplicationService::getInstance()->getRefundApplicationById($id);
-        if (is_null($refundApplication)) {
+        /** @var Refund $refund */
+        $refund = RefundService::getInstance()->getRefundById($id);
+        if (is_null($refund)) {
             return $this->fail(CodeResponse::NOT_FOUND, '退款信息不存在');
         }
-        RefundApplicationService::getInstance()->updateRefundApplication($refundApplication, $input);
+        RefundService::getInstance()->updateRefund($refund, $input);
 
         return $this->success();
     }
@@ -77,17 +77,17 @@ class RefundApplicationController extends Controller
         $shipCode = $this->verifyRequiredString('shipCode');
         $shipSn = $this->verifyRequiredString('shipSn');
 
-        $refundApplication = RefundApplicationService::getInstance()->getUserRefundApplication($this->userId(), $id);
-        if (is_null($refundApplication)) {
+        $refund = RefundService::getInstance()->getUserRefund($this->userId(), $id);
+        if (is_null($refund)) {
             return $this->fail(CodeResponse::NOT_FOUND, '退款信息不存在');
         }
-        if ($refundApplication->status != 1) {
+        if ($refund->status != 1) {
             return $this->fail(CodeResponse::INVALID_OPERATION, '后台未审核通过，无法上传物流信息');
         }
-        $refundApplication->status = 2;
-        $refundApplication->ship_code = $shipCode;
-        $refundApplication->ship_sn = $shipSn;
-        $refundApplication->save();
+        $refund->status = 2;
+        $refund->ship_code = $shipCode;
+        $refund->ship_sn = $shipSn;
+        $refund->save();
 
         return $this->success();
     }
@@ -95,11 +95,11 @@ class RefundApplicationController extends Controller
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
-        $refundApplication = RefundApplicationService::getInstance()->getUserRefundApplication($this->userId(), $id);
-        if (is_null($refundApplication)) {
+        $refund = RefundService::getInstance()->getUserRefund($this->userId(), $id);
+        if (is_null($refund)) {
             return $this->fail(CodeResponse::NOT_FOUND, '退款信息不存在');
         }
-        $refundApplication->delete();
+        $refund->delete();
         return $this->success();
     }
 

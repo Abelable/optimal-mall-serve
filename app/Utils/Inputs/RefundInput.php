@@ -2,7 +2,7 @@
 
 namespace App\Utils\Inputs;
 
-class RefundApplicationInput extends BaseInput
+class RefundInput extends BaseInput
 {
     public $type;
     public $reason;
