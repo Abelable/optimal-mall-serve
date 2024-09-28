@@ -8,11 +8,12 @@ use App\Utils\Inputs\StatusPageInput;
 
 class RefundApplicationService extends BaseService
 {
-    public function createRefundApplication($userId, $orderId, $goodsId, $couponId, $refundAmount, RefundApplicationInput $input)
+    public function createRefundApplication($userId, $orderId, $orderSn, $goodsId, $couponId, $refundAmount, RefundApplicationInput $input)
     {
         $refundApplication = RefundApplication::new();
         $refundApplication->user_id = $userId;
         $refundApplication->order_id = $orderId;
+        $refundApplication->order_sn = $orderSn;
         $refundApplication->goods_id = $goodsId;
         $refundApplication->coupon_id = $couponId;
         $refundApplication->refund_amount = $refundAmount;

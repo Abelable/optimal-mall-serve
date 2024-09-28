@@ -21,9 +21,7 @@ class RefundApplicationController extends Controller
         $goodsId = $this->verifyRequiredId('goodsId');
         $couponId = $this->verifyId('couponId');
         $refundAmount = $this->calcRefundAmount($orderId, $goodsId, $couponId);
-        return $this->success([
-            'amount' => $refundAmount
-        ]);
+        return $this->success($refundAmount);
     }
 
     public function detail()
@@ -41,14 +39,15 @@ class RefundApplicationController extends Controller
     public function add()
     {
         $orderId = $this->verifyRequiredId('orderId');
+        $orderSn = $this->verifyRequiredString('orderSn');
         $goodsId = $this->verifyRequiredId('goodsId');
         $couponId = $this->verifyId('couponId');
         /** @var RefundApplicationInput $input */
         $input = RefundApplicationInput::new();
 
-        DB::transaction(function () use ($input, $couponId, $goodsId, $orderId) {
+        DB::transaction(function () use ($orderSn, $input, $couponId, $goodsId, $orderId) {
             $refundAmount = $this->calcRefundAmount($orderId, $goodsId, $couponId);
-            RefundApplicationService::getInstance()->createRefundApplication($this->userId(), $orderId, $goodsId, $couponId, $refundAmount, $input);
+            RefundApplicationService::getInstance()->createRefundApplication($this->userId(), $orderId, $orderSn, $goodsId, $couponId, $refundAmount, $input);
 
             OrderService::getInstance()->afterSale($this->userId(), $orderId);
         });

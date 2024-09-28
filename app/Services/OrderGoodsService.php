@@ -35,7 +35,7 @@ class OrderGoodsService extends BaseService
 
     public function getOrderGoods($orderId, $goodsId, $columns = ['*'])
     {
-        return OrderGoods::query()->where('order_id', $orderId)->where('goods_id', $goodsId)->get($columns);
+        return OrderGoods::query()->where('order_id', $orderId)->where('goods_id', $goodsId)->first($columns);
     }
 
     public function getListByOrderIds(array $orderIds, $columns = ['*'])
