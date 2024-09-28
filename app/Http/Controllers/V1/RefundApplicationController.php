@@ -32,7 +32,9 @@ class RefundApplicationController extends Controller
         $goodsId = $this->verifyRequiredId('goodsId');
         $columns = ['status', 'failure_reason',  'refund_amount', 'refund_type', 'refund_reason', 'image_list'];
         $refundApplication = RefundApplicationService::getInstance()->getRefundApplicationByUserId($this->userId(), $orderId, $goodsId, $columns);
-        $refundApplication->image_list = json_decode($refundApplication->image_list);
+        if (!is_null($refundApplication)) {
+            $refundApplication->image_list = json_decode($refundApplication->image_list);
+        }
         return $this->success($refundApplication);
     }
 
