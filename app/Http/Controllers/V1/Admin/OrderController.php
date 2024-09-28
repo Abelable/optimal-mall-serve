@@ -61,17 +61,12 @@ class OrderController extends Controller
 
     public function shippingInfo()
     {
-        $id = $this->verifyRequiredId('id');
-        $order = OrderService::getInstance()->getOrderById($id);
-        if (is_null($order)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
-        }
-        $traces = ExpressServe::new()->track($order->ship_code, $order->ship_sn, $order->mobile);
-        return $this->success([
-            'shipChannel' => $order->ship_channel,
-            'shipSn' => $order->ship_sn,
-            'traces' => $traces
-        ]);
+        $shipCode = $this->verifyRequiredString('shipCode');
+        $shipSn = $this->verifyRequiredString('shipSn');
+        $mobile = $this->verifyString('mobile');
+
+        $traces = ExpressServe::new()->track($shipCode, $shipSn, $mobile);
+        return $this->success($traces);
     }
 
     public function confirm()
