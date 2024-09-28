@@ -28,7 +28,7 @@ class RefundApplicationController extends Controller
     {
         $orderId = $this->verifyRequiredId('orderId');
         $goodsId = $this->verifyRequiredId('goodsId');
-        $columns = ['id', 'status', 'failure_reason',  'refund_amount', 'refund_type', 'refund_reason', 'image_list'];
+        $columns = ['id', 'status', 'failure_reason',  'refund_amount', 'refund_type', 'refund_reason', 'image_list', 'ship_code', 'ship_sn'];
         $refundApplication = RefundApplicationService::getInstance()->getRefundApplicationByUserId($this->userId(), $orderId, $goodsId, $columns);
         if (!is_null($refundApplication)) {
             $refundApplication->image_list = json_decode($refundApplication->image_list);
@@ -84,6 +84,7 @@ class RefundApplicationController extends Controller
         if ($refundApplication->status != 1) {
             return $this->fail(CodeResponse::INVALID_OPERATION, '后台未审核通过，无法上传物流信息');
         }
+        $refundApplication->status = 2;
         $refundApplication->ship_code = $shipCode;
         $refundApplication->ship_sn = $shipSn;
         $refundApplication->save();
