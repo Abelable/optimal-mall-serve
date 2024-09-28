@@ -174,4 +174,14 @@ class GoodsController extends Controller
 
         return $this->success($goods);
     }
+
+    public function getMerchantInfo()
+    {
+        $merchantId = $this->verifyRequiredId('merchantId');
+        $merchant = MerchantService::getInstance()->getMerchantById($merchantId);
+        if (is_null($merchant)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '商家不存在');
+        }
+        return $this->success($merchant);
+    }
 }

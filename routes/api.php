@@ -68,6 +68,7 @@ Route::prefix('goods')->group(function () {
     Route::post('recommend_list', 'GoodsController@recommendList');
     Route::get('search', 'GoodsController@search');
     Route::get('detail', 'GoodsController@detail');
+    Route::get('merchant_info', 'GoodsController@getMerchantInfo');
 
     Route::prefix('evaluation')->group(function () {
         Route::get('summary', 'GoodsEvaluationController@summary');
