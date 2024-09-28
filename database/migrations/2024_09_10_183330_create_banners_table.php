@@ -18,7 +18,7 @@ class CreateBannersTable extends Migration
             $table->integer('status')->default(1)->comment('活动状态：1-活动中，2-活动结束');
             $table->string('cover')->comment('活动封面');
             $table->string('desc')->default('')->comment('活动描述');
-            $table->string('scene')->default('')->comment('链接跳转场景值：1-h5活动，2-商品详情');
+            $table->string('scene')->default(0)->comment('链接跳转场景值：1-h5活动，2-商品详情');
             $table->string('param')->default('')->comment('链接参数值');
             $table->timestamps();
             $table->softDeletes();

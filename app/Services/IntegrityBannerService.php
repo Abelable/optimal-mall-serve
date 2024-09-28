@@ -14,8 +14,10 @@ class IntegrityBannerService extends BaseService
         if (!is_null($input->desc)) {
             $banner->desc = $input->desc;
         }
-        $banner->scene = $input->scene;
-        $banner->param = $input->param;
+        if (!is_null($input->scene)) {
+            $banner->scene = $input->scene;
+            $banner->param = $input->param;
+        }
         $banner->save();
         return $banner;
     }
