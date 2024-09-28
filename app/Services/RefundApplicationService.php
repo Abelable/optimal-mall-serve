@@ -12,8 +12,8 @@ class RefundApplicationService extends BaseService
     {
         $refundApplication = RefundApplication::new();
         $refundApplication->user_id = $userId;
-        $refundApplication->$orderId = $orderId;
-        $refundApplication->$goodsId = $goodsId;
+        $refundApplication->order_id = $orderId;
+        $refundApplication->goods_id = $goodsId;
         $refundApplication->coupon_id = $couponId;
         $refundApplication->refund_amount = $refundAmount;
         return $this->updateRefundApplication($refundApplication, $input);
@@ -47,9 +47,13 @@ class RefundApplicationService extends BaseService
         return RefundApplication::query()->find($id, $columns);
     }
 
-    public function getRefundApplicationByUserId($userId, $columns = ['*'])
+    public function getRefundApplicationByUserId($userId, $orderId, $goodsId, $columns = ['*'])
     {
-        return RefundApplication::query()->where('user_id', $userId)->first($columns);
+        return RefundApplication::query()
+            ->where('user_id', $userId)
+            ->where('order_id', $orderId)
+            ->where('goods_id', $goodsId)
+            ->first($columns);
     }
 
     public function getUserRefundApplication($userId, $id, $columns = ['*'])

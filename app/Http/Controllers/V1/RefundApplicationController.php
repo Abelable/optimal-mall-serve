@@ -28,7 +28,11 @@ class RefundApplicationController extends Controller
 
     public function detail()
     {
-        $refundApplication = RefundApplicationService::getInstance()->getRefundApplicationByUserId($this->userId());
+        $orderId = $this->verifyRequiredId('orderId');
+        $goodsId = $this->verifyRequiredId('goodsId');
+        $columns = ['status', 'failure_reason',  'refund_amount', 'refund_type', 'refund_reason', 'image_list'];
+        $refundApplication = RefundApplicationService::getInstance()->getRefundApplicationByUserId($this->userId(), $orderId, $goodsId, $columns);
+        $refundApplication->image_list = json_decode($refundApplication->image_list);
         return $this->success($refundApplication);
     }
 
