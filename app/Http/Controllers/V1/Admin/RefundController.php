@@ -17,7 +17,7 @@ class RefundController extends Controller
     {
         /** @var StatusPageInput $input */
         $input = StatusPageInput::new();
-        $columns = ['id', 'user_id', 'status', 'failure_reason', 'order_sn', 'created_at', 'updated_at'];
+        $columns = ['id', 'user_id', 'status', 'failure_reason', 'order_sn', 'refund_type', 'refund_amount', 'created_at', 'updated_at'];
         $page = RefundService::getInstance()->getRefundList($input, $columns);
         return $this->successPaginate($page);
     }

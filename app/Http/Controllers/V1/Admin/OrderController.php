@@ -17,7 +17,7 @@ class OrderController extends Controller
     {
         /** @var OrderPageInput $input */
         $input = OrderPageInput::new();
-        $columns = ['id', 'order_sn', 'status', 'payment_amount', 'consignee', 'mobile', 'address', 'created_at'];
+        $columns = ['id', 'order_sn', 'status', 'payment_amount', 'consignee', 'mobile', 'address', 'created_at', 'updated_at'];
         $list = OrderService::getInstance()->getOrderList($input, $columns);
         return $this->successPaginate($list);
     }
