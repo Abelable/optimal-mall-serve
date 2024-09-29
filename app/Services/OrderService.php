@@ -319,13 +319,11 @@ class OrderService extends BaseService
     public function returnStock($orderId)
     {
         $goodsList = OrderGoodsService::getInstance()->getListByOrderId($orderId);
+
         /** @var OrderGoods $goods */
         foreach ($goodsList as $goods)
         {
-            $row = GoodsService::getInstance()->addStock($goods->goods_id, $goods->number, $goods->selected_sku_index);
-            if ($row == 0) {
-                $this->throwUpdateFail();
-            }
+            GoodsService::getInstance()->returnStock($goods->goods_id, $goods->number, $goods->selected_sku_index);
         }
     }
 

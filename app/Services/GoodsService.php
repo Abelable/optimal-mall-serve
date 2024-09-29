@@ -90,6 +90,11 @@ class GoodsService extends BaseService
         return Goods::query()->where('status', 1)->find($id, $columns);
     }
 
+    public function getOnSaleGoodsList($ids, $columns=['*'])
+    {
+        return Goods::query()->where('status', 1)->whereIn('id', $ids)->get($columns);
+    }
+
     public function getGoodsListByIds($ids, $columns=['*'])
     {
         return Goods::query()
@@ -184,6 +189,22 @@ class GoodsService extends BaseService
         $goods->stock = $goods->stock + $number;
 
         return $goods->cas();
+    }
+
+    public function returnStock($id, $number, $selectedSkuIndex = -1)
+    {
+        $goods = $this->getGoodsById($id);
+        if (!is_null($goods)) {
+            $skuList = json_decode($goods->sku_list);
+
+            if (count($skuList) != 0 && $selectedSkuIndex != -1) {
+                $skuList[$selectedSkuIndex]->stock = $skuList[$selectedSkuIndex]->stock + $number;
+                $goods->sku_list = json_encode($skuList);
+            }
+            $goods->stock = $goods->stock + $number;
+            $goods->cas();
+        }
+        return $goods;
     }
 
     public function createGoods(GoodsInput $input)
