@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Utils\CodeResponse;
+use App\Utils\ExpressServe;
 use App\Utils\Inputs\Admin\OrderPageInput;
 use Illuminate\Support\Facades\DB;
 
@@ -46,6 +47,21 @@ class OrderController extends Controller
         // todo: 管理员操组记录
 
         return $this->success();
+    }
+
+    public function shippingInfo()
+    {
+        $id = $this->verifyRequiredId('id');
+        $order = OrderService::getInstance()->getOrderById($id);
+        if (is_null($order)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
+        }
+        $traces = ExpressServe::new()->track($order->ship_code, $order->ship_sn, $order->mobile);
+        return $this->success([
+            'shipChannel' => $order->ship_channel,
+            'shipSn' => $order->ship_sn,
+            'traces' => $traces
+        ]);
     }
 
     public function cancel()

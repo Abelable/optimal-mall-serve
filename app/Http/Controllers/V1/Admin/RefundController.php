@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\RefundService;
 use App\Utils\CodeResponse;
@@ -29,6 +30,9 @@ class RefundController extends Controller
         if (is_null($refund)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前售后信息不存在');
         }
+        $refund->image_list = json_decode($refund->image_list);
+        $goods = OrderGoodsService::getInstance()->getOrderGoods($refund->order_id, $refund->goods_id);
+        $refund['goodsInfo'] = $goods;
         return $this->success($refund);
     }
 

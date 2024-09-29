@@ -544,19 +544,4 @@ class OrderController extends Controller
 
         return $this->success($this->paginate($page, $list));
     }
-
-    public function shippingInfo()
-    {
-        $orderId = $this->verifyRequiredId('orderId');
-        $order = OrderService::getInstance()->getUserOrderById($this->userId(), $orderId);
-        if (is_null($order)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
-        }
-        $traces = ExpressServe::new()->track($order->ship_code, $order->ship_sn, $order->mobile);
-        return $this->success([
-            'shipChannel' => $order->ship_channel,
-            'shipSn' => $order->ship_sn,
-            'traces' => $traces
-        ]);
-    }
 }
