@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\MerchantService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\RefundService;
 use App\Utils\CodeResponse;
+use App\Utils\ExpressServe;
 use App\Utils\Inputs\StatusPageInput;
 use Illuminate\Support\Facades\DB;
 
@@ -28,7 +30,7 @@ class RefundController extends Controller
         $id = $this->verifyRequiredId('id');
         $refund = RefundService::getInstance()->getRefundById($id);
         if (is_null($refund)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前售后信息不存在');
+            return $this->fail(CodeResponse::NOT_FOUND, '售后信息不存在');
         }
         $refund->image_list = json_decode($refund->image_list);
         $goods = OrderGoodsService::getInstance()->getOrderGoods($refund->order_id, $refund->goods_id);
@@ -42,7 +44,7 @@ class RefundController extends Controller
 
         $refund = RefundService::getInstance()->getRefundById($id);
         if (is_null($refund)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前售后信息不存在');
+            return $this->fail(CodeResponse::NOT_FOUND, '售后信息不存在');
         }
 
         if (($refund->status == 0 && $refund->refund_type == 1)
@@ -66,6 +68,23 @@ class RefundController extends Controller
         return $this->success();
     }
 
+    public function shippingInfo()
+    {
+        $id = $this->verifyRequiredId('id');
+        $refund = RefundService::getInstance()->getRefundById($id);
+        if (is_null($refund)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '售后信息不存在');
+        }
+        $goods = OrderGoodsService::getInstance()->getOrderGoods($refund->order_id, $refund->goods_id);
+        $merchant = MerchantService::getInstance()->getMerchantById($goods->merchant_id);
+        $traces = ExpressServe::new()->track($refund->ship_code, $refund->ship_sn, $merchant->mobile);
+        return $this->success([
+            'shipCode' => $refund->ship_code,
+            'shipSn' => $refund->ship_sn,
+            'traces' => $traces
+        ]);
+    }
+
     public function reject()
     {
         $id = $this->verifyRequiredId('id');
@@ -73,7 +92,7 @@ class RefundController extends Controller
 
         $refund = RefundService::getInstance()->getRefundById($id);
         if (is_null($refund)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前售后信息不存在');
+            return $this->fail(CodeResponse::NOT_FOUND, '售后信息不存在');
         }
 
         $refund->status = 4;
@@ -88,7 +107,7 @@ class RefundController extends Controller
         $id = $this->verifyRequiredId('id');
         $refund = RefundService::getInstance()->getRefundById($id);
         if (is_null($refund)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前售后信息不存在');
+            return $this->fail(CodeResponse::NOT_FOUND, '售后信息不存在');
         }
         $refund->delete();
         return $this->success();

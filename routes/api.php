@@ -372,6 +372,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('list', 'RefundController@list');
         Route::get('detail', 'RefundController@detail');
         Route::post('approved', 'RefundController@approved');
+        Route::get('shipping_info', 'RefundController@shippingInfo');
         Route::post('reject', 'RefundController@reject');
         Route::post('delete', 'RefundController@delete');
     });
