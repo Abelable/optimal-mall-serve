@@ -46,6 +46,9 @@ class OrderService extends BaseService
         if (!empty($input->orderSn)) {
             $query = $query->where('order_sn', $input->orderSn);
         }
+        if (!empty($input->merchantId)) {
+            $query = $query->where('merchant_id', $input->merchantId);
+        }
         if (!empty($input->consignee)) {
             $query = $query->where('consignee', $input->consignee);
         }

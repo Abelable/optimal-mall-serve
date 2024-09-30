@@ -8,6 +8,7 @@ class OrderPageInput extends PageInput
 {
     public $orderSn;
     public $status;
+    public $merchantId;
     public $consignee;
     public $mobile;
 
@@ -16,6 +17,7 @@ class OrderPageInput extends PageInput
         return array_merge([
             'orderSn' => 'string',
             'status' => 'integer',
+            'merchantId' => 'integer',
             'consignee' => 'string',
             'mobile' => 'regex:/^1[345789][0-9]{9}$/',
         ], parent::rules());
