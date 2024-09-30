@@ -447,8 +447,7 @@ class OrderController extends Controller
                 'commissionBase' => $commissionBaseSum,
                 'commissionAmount' => $commissionAmountSum,
                 'scene' => $firstCommission->scene,
-                'goodsList' => $orderGoodsList,
-                'createdAt' => $order->created_at
+                'goodsList' => $orderGoodsList
             ];
         });
 
