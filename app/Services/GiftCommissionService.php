@@ -238,8 +238,10 @@ class GiftCommissionService extends BaseService
     public function getListByTimeType($userId, $timeType, $columns = ['*'])
     {
         $query = GiftCommission::query()
-            ->where('promoter_id', $userId)
-            ->orWhere('manager_id', $userId);
+            ->where(function($query) use ($userId) {
+                $query->where('promoter_id', $userId)
+                    ->orWhere('manager_id', $userId);
+            });
         switch ($timeType) {
             case 1:
                 $query = $query->whereDate('updated_at', Carbon::today());

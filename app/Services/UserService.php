@@ -76,6 +76,12 @@ class UserService extends BaseService
 
     public function searchListByUserIds(array $userIds, $keywords, $columns = ['*'])
     {
-        return User::query()->whereIn('user_id', $userIds)->where('nickname', 'like', "%$keywords%")->orWhere('mobile', $keywords)->get($columns);
+        return User::query()
+            ->where(function($query) use ($userIds, $keywords) {
+                $query->whereIn('user_id', $userIds)
+                    ->where('nickname', 'like', "%$keywords%");
+            })
+            ->orWhere('mobile', $keywords)
+            ->get($columns);
     }
 }

@@ -137,9 +137,10 @@ class CommissionService extends BaseService
     public function getUserCommissionQuery($userId, $status)
     {
         return Commission::query()
-            ->where('user_id', $userId)
-            ->orWhere('superior_id', $userId)
-            ->where('status', $status);
+            ->where(function($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhere('superior_id', $userId);
+            })->where('status', $status);
     }
 
     public function getUserCommissionListByTimeType($userId, $timeType, $scene = null, $columns = ['*'])
@@ -157,8 +158,10 @@ class CommissionService extends BaseService
     public function getUserCommissionQueryByTimeType($userId, $timeType, $scene = null)
     {
         $query = Commission::query()
-            ->where('user_id', $userId)
-            ->orWhere('superior_id', $userId);
+            ->where(function($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhere('superior_id', $userId);
+            });
 
         if (!is_null($scene)) {
             $query = $query->where('scene', $scene);
