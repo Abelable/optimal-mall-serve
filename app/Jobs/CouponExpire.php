@@ -26,7 +26,9 @@ class CouponExpire implements ShouldQueue
     public function __construct($couponId, $expirationTime)
     {
         $this->couponId = $couponId;
-        $this->delay(Carbon::createFromFormat('Y-m-d\TH:i:s.u\Z', $expirationTime)->setTimezone('UTC')->toDateTimeString());
+        $expirationTime = Carbon::parse($expirationTime);
+        $delayInSeconds = $expirationTime->diffInSeconds(Carbon::now());
+        $this->delay($delayInSeconds);
     }
 
     /**

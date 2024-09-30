@@ -18,8 +18,8 @@ class CouponInput extends BaseInput
     public function rules()
     {
         return [
-            'denomination' => 'required|numeric',
             'name' => 'required|string',
+            'denomination' => 'required|numeric',
             'description' => 'required|string',
             'goodsIds' => 'required|array',
             'type' => 'required|integer|in:1,2,3',
