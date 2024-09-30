@@ -13,7 +13,7 @@ use Yansongda\Pay\Exceptions\GatewayException;
 
 class CommonController extends Controller
 {
-    protected $except = ['ossConfig', 'wxPayNotify'];
+    protected $only = [];
 
     public function ossConfig()
     {
