@@ -20,15 +20,15 @@ class GiftCommissionController extends Controller
                 ->whereMonth('updated_at', '!=', Carbon::now()->month)
                 ->sum('commission_base');
             switch ($this->user()->promoterInfo->level) {
-                case 1:
+                case 2:
                     $teamCashCommission = bcmul($cashGMV, 0.01, 2);
                     $cashAmount = bcadd($cashAmount, $teamCashCommission, 2);
                     break;
-                case 2:
+                case 3:
                     $teamCashCommission = bcmul($cashGMV, 0.02, 2);
                     $cashAmount = bcadd($cashAmount, $teamCashCommission, 2);
                     break;
-                case 3:
+                case 4:
                     $teamCashCommission = bcmul($cashGMV, 0.03, 2);
                     $cashAmount = bcadd($cashAmount, $teamCashCommission, 2);
                     break;
@@ -41,15 +41,15 @@ class GiftCommissionController extends Controller
         if (!is_null($this->user()->promoterInfo)) {
             $pendingGMV = CommissionService::getInstance()->getUserGMV($this->userId(), 1);
             switch ($this->user()->promoterInfo->level) {
-                case 1:
+                case 2:
                     $teamPendingCommission = bcmul($pendingGMV, 0.01, 2);
                     $pendingAmount = bcadd($pendingAmount, $teamPendingCommission, 2);
                     break;
-                case 2:
+                case 3:
                     $teamPendingCommission = bcmul($pendingGMV, 0.02, 2);
                     $pendingAmount = bcadd($pendingAmount, $teamPendingCommission, 2);
                     break;
-                case 3:
+                case 4:
                     $teamPendingCommission = bcmul($pendingGMV, 0.03, 2);
                     $pendingAmount = bcadd($pendingAmount, $teamPendingCommission, 2);
                     break;
@@ -62,15 +62,15 @@ class GiftCommissionController extends Controller
         if (!is_null($this->user()->promoterInfo)) {
             $settledGMV = CommissionService::getInstance()->getUserGMV($this->userId(), 3);
             switch ($this->user()->promoterInfo->level) {
-                case 1:
+                case 2:
                     $teamSettledCommission = bcmul($settledGMV, 0.01, 2);
                     $settledAmount = bcadd($settledAmount, $teamSettledCommission, 2);
                     break;
-                case 2:
+                case 3:
                     $teamSettledCommission = bcmul($settledGMV, 0.02, 2);
                     $settledAmount = bcadd($settledAmount, $teamSettledCommission, 2);
                     break;
-                case 3:
+                case 4:
                     $teamSettledCommission = bcmul($settledGMV, 0.03, 2);
                     $settledAmount = bcadd($settledAmount, $teamSettledCommission, 2);
                     break;
@@ -121,13 +121,13 @@ class GiftCommissionController extends Controller
                 ->whereMonth('updated_at', '!=', Carbon::now()->month)
                 ->sum('commission_base');
             switch ($this->user()->promoterInfo->level) {
-                case 1:
+                case 2:
                     $cashTeamCommission = bcmul($cashGMV, 0.01, 2);
                     break;
-                case 2:
+                case 3:
                     $cashTeamCommission = bcmul($cashGMV, 0.02, 2);
                     break;
-                case 3:
+                case 4:
                     $cashTeamCommission = bcmul($cashGMV, 0.03, 2);
                     break;
             }
