@@ -30,10 +30,12 @@ class CommissionController extends Controller
         $scene = $this->verifyInteger('scene');
 
         $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType($this->userId(), $timeType, $scene);
+        $queryCopy = clone $query;
+
         $orderCount = $query->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
-        $salesVolume = $query->whereIn('status', [1, 2, 3])->sum('commission_base');
-        $pendingAmount = $query->where('status', 1)->sum('commission_amount');
-        $settledAmount = $query->where('status', 3)->sum('commission_amount');
+        $salesVolume = $queryCopy->whereIn('status', [1, 2, 3])->sum('commission_base');
+        $pendingAmount = $queryCopy->where('status', 1)->sum('commission_amount');
+        $settledAmount = $queryCopy->where('status', 3)->sum('commission_amount');
 
         return $this->success([
             'orderCount' => $orderCount,
