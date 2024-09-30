@@ -414,25 +414,26 @@ class OrderController extends Controller
         $input = PageInput::new();
 
         $commissionList = CommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType, $scene);
+        $groupCommissionList = $commissionList->groupBy('order_id');
+        $keyCommissionList = $commissionList->keyBy('goods_id');
         $orderIds = $commissionList->pluck('order_id')->toArray();
 
         $goodsIds = $commissionList->pluck('goods_id')->toArray();
         $goodsColumns = ['order_id', 'goods_id', 'cover', 'name', 'selected_sku_name', 'price', 'number'];
-        $goodsList = OrderGoodsService::getInstance()->getListByGoodsIds($goodsIds, $goodsColumns)->groupBy('order_id');
+        $groupGoodsList = OrderGoodsService::getInstance()->getListByGoodsIds($goodsIds, $goodsColumns)->groupBy('order_id');
 
         $page = OrderService::getInstance()->getOrderPageByIds($orderIds, $input);
-        $list = collect($page->items())->map(function (Order $order) use ($commissionList, $goodsList) {
-            $commissionList = $commissionList->groupBy('order_id')->get($order->id);
-
-            $commissionBaseSum = $commissionList->sum('commission_base');
-            $commissionAmountSum = $commissionList->sum('commission_amount');
+        $list = collect($page->items())->map(function (Order $order) use ($groupGoodsList, $keyCommissionList, $groupCommissionList) {
+            $orderCommissionList = $groupCommissionList->get($order->id);
+            $commissionBaseSum = $orderCommissionList->sum('commission_base');
+            $commissionAmountSum = $orderCommissionList->sum('commission_amount');
             /** @var Commission $firstCommission */
-            $firstCommission = $commissionList->first();
+            $firstCommission = $orderCommissionList->first();
 
-            $goodsList = $goodsList->get($order->id);
-            $goodsList->map(function (OrderGoods $goods) use ($commissionList) {
+            $orderGoodsList = $groupGoodsList->get($order->id);
+            $orderGoodsList->map(function (OrderGoods $goods) use ($keyCommissionList) {
                 /** @var Commission $commission */
-                $commission = $commissionList->keyBy('goods_id')->get($goods->id);
+                $commission = $keyCommissionList->get($goods->goods_id);
                 $goods['commission'] = $commission->commission_amount;
                 unset($goods->order_id);
                 return $goods;
@@ -446,7 +447,7 @@ class OrderController extends Controller
                 'commissionBase' => $commissionBaseSum,
                 'commissionAmount' => $commissionAmountSum,
                 'scene' => $firstCommission->scene,
-                'goodsList' => $goodsList
+                'goodsList' => $orderGoodsList
             ];
         });
 
