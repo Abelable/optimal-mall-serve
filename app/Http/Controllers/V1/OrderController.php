@@ -335,6 +335,7 @@ class OrderController extends Controller
                 'mobile' => $order->mobile,
                 'address' => $order->address,
                 'orderSn' => $order->order_sn,
+                'payTime' => $order->pay_time,
                 'createdAt' => $order->created_at
             ];
         });
