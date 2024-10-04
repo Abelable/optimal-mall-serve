@@ -17,6 +17,8 @@ use App\Utils\TimServe;
 
 class UserController extends Controller
 {
+    protected $except = ['superiorInfo'];
+
     public function userInfo()
     {
         $user = $this->user();
@@ -67,7 +69,7 @@ class UserController extends Controller
 
         $superiorInfo = UserService::getInstance()->getUserById($superiorId, ['id', 'mobile', 'avatar', 'nickname', 'gender', 'wx_qrcode', 'signature']);
         if (is_null($superiorInfo)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前上级用户不存在');
+            return $this->fail(CodeResponse::NOT_FOUND, '用户上级不存在');
         }
 
         return $this->success($superiorInfo);
