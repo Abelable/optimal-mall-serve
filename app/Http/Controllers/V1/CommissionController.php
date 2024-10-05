@@ -13,7 +13,7 @@ class CommissionController extends Controller
     {
         $cashAmount = CommissionService::getInstance()
             ->getUserCommissionQuery($this->userId(), 2)
-            ->whereMonth('updated_at', '!=', Carbon::now()->month)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->sum('commission_amount');
         $pendingAmount = CommissionService::getInstance()->getUserCommissionSum($this->userId(), 1);
         $settledAmount = CommissionService::getInstance()->getUserCommissionSum($this->userId(), 3);
@@ -86,12 +86,12 @@ class CommissionController extends Controller
     {
         $selfPurchase = CommissionService::getInstance()
             ->getUserCommissionQuery($this->userId(), 2)
-            ->whereMonth('updated_at', '!=', Carbon::now()->month)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->where('scene', 1)
             ->sum('commission_amount');
         $share = CommissionService::getInstance()
             ->getUserCommissionQuery($this->userId(), 2)
-            ->whereMonth('updated_at', '!=', Carbon::now()->month)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->where('scene', 2)
             ->sum('commission_amount');
 

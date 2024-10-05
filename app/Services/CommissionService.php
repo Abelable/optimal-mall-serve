@@ -169,19 +169,19 @@ class CommissionService extends BaseService
 
         switch ($timeType) {
             case 1:
-                $query = $query->whereDate('updated_at', Carbon::today());
+                $query = $query->whereDate('created_at', Carbon::today());
                 break;
             case 2:
-                $query = $query->whereDate('updated_at', Carbon::yesterday());
+                $query = $query->whereDate('created_at', Carbon::yesterday());
                 break;
             case 3:
-                $query = $query->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()]);
+                $query = $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()]);
                 break;
             case 4:
-                $query = $query->whereBetween('updated_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
+                $query = $query->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()]);
                 break;
             case 5:
-                $query = $query->whereBetween('updated_at', [Carbon::now()->subMonths(2)->startOfMonth(), Carbon::now()->subMonths(2)->endOfMonth()]);
+                $query = $query->whereBetween('created_at', [Carbon::now()->subMonths(2)->startOfMonth(), Carbon::now()->subMonths(2)->endOfMonth()]);
                 break;
         }
         return $query;

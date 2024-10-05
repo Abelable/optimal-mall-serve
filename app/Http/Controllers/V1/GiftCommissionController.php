@@ -17,7 +17,7 @@ class GiftCommissionController extends Controller
         if (!is_null($this->user()->promoterInfo)) {
             $cashGMV = CommissionService::getInstance()
                 ->getUserCommissionQuery($this->userId(), 2)
-                ->whereMonth('updated_at', '!=', Carbon::now()->month)
+                ->whereMonth('created_at', '!=', Carbon::now()->month)
                 ->sum('commission_base');
             switch ($this->user()->promoterInfo->level) {
                 case 2:
@@ -118,7 +118,7 @@ class GiftCommissionController extends Controller
         if (!is_null($this->user()->promoterInfo)) {
             $cashGMV = CommissionService::getInstance()
                 ->getUserCommissionQuery($this->userId(), 2)
-                ->whereMonth('updated_at', '!=', Carbon::now()->month)
+                ->whereMonth('created_at', '!=', Carbon::now()->month)
                 ->sum('commission_base');
             switch ($this->user()->promoterInfo->level) {
                 case 2:
