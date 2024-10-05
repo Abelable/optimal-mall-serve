@@ -20,11 +20,11 @@ class BankCardController extends Controller
     {
         $name = $this->verifyRequiredString('name');
         $code = $this->verifyRequiredString('code');
-        $bank = $this->verifyRequiredString('bank');
+        $bankName = $this->verifyRequiredString('bankName');
 
         $card = BankCard::new();
         $card->user_id = $this->userId();
-        $this->updateBankCard($card, $name, $code, $bank);
+        $this->updateBankCard($card, $name, $code, $bankName);
 
         return $this->success();
     }
@@ -33,13 +33,13 @@ class BankCardController extends Controller
     {
         $name = $this->verifyRequiredString('name');
         $code = $this->verifyRequiredString('code');
-        $bank = $this->verifyRequiredString('bank');
+        $bankName = $this->verifyRequiredString('bankName');
 
         $card = BankCardService::getInstance()->getUserBankCard($this->userId());
         if (is_null($card)) {
             return $this->fail(CodeResponse::NOT_FOUND, '银行卡不存在');
         }
-        $this->updateBankCard($card, $name, $code, $bank);
+        $this->updateBankCard($card, $name, $code, $bankName);
 
         return $this->success();
     }

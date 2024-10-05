@@ -164,8 +164,8 @@ Route::prefix('gift_commission')->group(function () {
 
 Route::prefix('bank_card')->group(function () {
     Route::get('detail', 'BankCardController@detail');
-    Route::post('add', 'AuthInfoController@add');
-    Route::post('edit', 'AuthInfoController@edit');
+    Route::post('add', 'BankCardController@add');
+    Route::post('edit', 'BankCardController@edit');
 });
 
 /*
