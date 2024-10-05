@@ -92,6 +92,7 @@ class GoodsController extends Controller
 
         $columns = [
             'id',
+            'status',
             'merchant_id',
             'name',
             'introduction',
