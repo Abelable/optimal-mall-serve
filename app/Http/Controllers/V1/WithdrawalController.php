@@ -9,6 +9,7 @@ use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\WithdrawalInput;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class WithdrawalController extends Controller
 {
@@ -21,6 +22,9 @@ class WithdrawalController extends Controller
 
         /** @var WithdrawalInput $input */
         $input = WithdrawalInput::new();
+        if ($input->withdrawAmount == 0) {
+            return $this->fail(CodeResponse::INVALID_OPERATION, '提现金额不能为0');
+        }
 
         $withdrawAmount = 0;
         $commissionQuery = CommissionService::getInstance()
@@ -41,8 +45,10 @@ class WithdrawalController extends Controller
                 break;
         }
 
-        if ($withdrawAmount == 0) {
-            return $this->fail(CodeResponse::INVALID_OPERATION, '提现金额不能为0');
+        if (bccomp($withdrawAmount, $input->withdrawAmount, 2) != 0) {
+            $errMsg = "用户（ID：{$this->userId()}）提现金额（{$input->withdrawAmount}）与实际可提现金额（{$withdrawAmount}）不一致，请检查";
+            Log::error($errMsg);
+            return $this->fail(CodeResponse::INVALID_OPERATION, $errMsg);
         }
 
         WithdrawalService::getInstance()->addWithdrawal($this->userId(), $withdrawAmount, $input);
