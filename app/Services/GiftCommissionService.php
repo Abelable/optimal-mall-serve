@@ -258,4 +258,32 @@ class GiftCommissionService extends BaseService
         }
         return $query->get($columns);
     }
+
+    public function cash($userId)
+    {
+        $promoterCashGiftCommission = $this->getPromoterCashCommission($userId);
+        $managerCashGiftCommission =  $this->getManagerCashCommission($userId);
+        $cashGiftCommission = bcadd($promoterCashGiftCommission, $managerCashGiftCommission, 2);
+
+        $cashTeamCommission = 0;
+        if (!is_null($this->user()->promoterInfo)) {
+            $cashGMV = CommissionService::getInstance()
+                ->getUserCommissionQuery($userId, 2)
+                ->whereMonth('created_at', '!=', Carbon::now()->month)
+                ->sum('commission_base');
+            switch ($this->user()->promoterInfo->level) {
+                case 2:
+                    $cashTeamCommission = bcmul($cashGMV, 0.01, 2);
+                    break;
+                case 3:
+                    $cashTeamCommission = bcmul($cashGMV, 0.02, 2);
+                    break;
+                case 4:
+                    $cashTeamCommission = bcmul($cashGMV, 0.03, 2);
+                    break;
+            }
+        }
+
+        return [$cashGiftCommission, $cashTeamCommission];
+    }
 }
