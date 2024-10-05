@@ -23,21 +23,16 @@ class WithdrawalController extends Controller
         $input = WithdrawalInput::new();
 
         $withdrawAmount = 0;
+        $commissionQuery = CommissionService::getInstance()
+            ->getUserCommissionQuery($this->userId(), 2)
+            ->whereMonth('created_at', '!=', Carbon::now()->month);
         switch ($input->scene) {
             case 1:
-                $withdrawAmount = CommissionService::getInstance()
-                    ->getUserCommissionQuery($this->userId(), 2)
-                    ->whereMonth('created_at', '!=', Carbon::now()->month)
-                    ->where('scene', 1)
-                    ->sum('commission_amount');
+                $withdrawAmount = $commissionQuery->where('scene', 1)->sum('commission_amount');
                 break;
 
             case 2:
-                $withdrawAmount = CommissionService::getInstance()
-                    ->getUserCommissionQuery($this->userId(), 2)
-                    ->whereMonth('created_at', '!=', Carbon::now()->month)
-                    ->where('scene', 2)
-                    ->sum('commission_amount');
+                $withdrawAmount = $commissionQuery->where('scene', 2)->sum('commission_amount');;
                 break;
 
             case 3:
