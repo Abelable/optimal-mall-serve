@@ -11,7 +11,7 @@ class BankCardController extends Controller
 {
     public function detail()
     {
-        $card = BankCardService::getInstance()->getUserBankCard($this->userId());
+        $card = BankCardService::getInstance()->getUserBankCard($this->userId(), ['id', 'name', 'code', 'bank_name']);
         unset($card->user_id);
         return $this->success($card);
     }
