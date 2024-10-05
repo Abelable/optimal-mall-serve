@@ -162,6 +162,12 @@ Route::prefix('gift_commission')->group(function () {
     Route::get('cash', 'GiftCommissionController@cash');
 });
 
+Route::prefix('bank_card')->group(function () {
+    Route::get('detail', 'BankCardController@detail');
+    Route::post('add', 'AuthInfoController@add');
+    Route::post('edit', 'AuthInfoController@edit');
+});
+
 /*
 |--------------------------------------------------------------------------
 | 管理后台接口
