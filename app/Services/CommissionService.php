@@ -138,8 +138,13 @@ class CommissionService extends BaseService
     {
         return Commission::query()
             ->where(function($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->orWhere('superior_id', $userId);
+                $query->where(function($query) use ($userId) {
+                    $query->where('scene', 1)
+                        ->where('user_id', $userId);
+                })->orWhere(function($query) use ($userId) {
+                    $query->where('scene', 2)
+                        ->where('superior_id', $userId);
+                });
             })->where('status', $status);
     }
 
@@ -157,14 +162,25 @@ class CommissionService extends BaseService
      */
     public function getUserCommissionQueryByTimeType($userId, $timeType, $scene = null)
     {
-        $query = Commission::query()
-            ->where(function($query) use ($userId) {
-                $query->where('user_id', $userId)
-                    ->orWhere('superior_id', $userId);
-            });
+        $query = Commission::query();
 
         if (!is_null($scene)) {
+            if ($scene == 1) {
+                $query = $query->where('user_id', $userId);
+            } else {
+                $query = $query->where('superior_id', $userId);
+            }
             $query = $query->where('scene', $scene);
+        } else {
+            $query = $query->where(function($query) use ($userId) {
+                $query->where(function($query) use ($userId) {
+                    $query->where('scene', 1)
+                        ->where('user_id', $userId);
+                })->orWhere(function($query) use ($userId) {
+                    $query->where('scene', 2)
+                        ->where('superior_id', $userId);
+                });
+            });
         }
 
         switch ($timeType) {
