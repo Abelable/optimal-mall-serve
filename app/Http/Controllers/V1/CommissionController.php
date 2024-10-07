@@ -35,7 +35,7 @@ class CommissionController extends Controller
         $orderCount = $query->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
         $salesVolume = $queryCopy->whereIn('status', [1, 2, 3])->sum('commission_base');
         $pendingAmount = $queryCopy->where('status', 1)->sum('commission_amount');
-        $settledAmount = $queryCopy->where('status', 3)->sum('commission_amount');
+        $settledAmount = $queryCopy->whereIn('status', [2, 3])->sum('commission_amount');
 
         return $this->success([
             'orderCount' => $orderCount,
@@ -57,7 +57,7 @@ class CommissionController extends Controller
         $settledAmount = 0;
         if (!is_null($this->user()->promoterInfo)) {
             $pendingGMV = $query->where('status', 1)->sum('commission_base');
-            $settledGMV = $query->where('status', 3)->sum('commission_base');
+            $settledGMV = $query->whereIn('status', [2, 3])->sum('commission_base');
             switch ($this->user()->promoterInfo->level) {
                 case 1:
                     $pendingAmount = bcmul($pendingGMV, 0.01, 2);

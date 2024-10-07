@@ -93,14 +93,14 @@ class GiftCommissionController extends Controller
         $promoterOrderCount = $promoterQuery->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
         $promoterSalesVolume = $promoterQueryCopy->whereIn('status', [1, 2, 3])->sum('goods_price');
         $promoterPendingAmount = $promoterQueryCopy->where('status', 1)->sum('promoter_commission');
-        $promoterSettledAmount = $promoterQueryCopy->where('status', 3)->sum('promoter_commission');
+        $promoterSettledAmount = $promoterQueryCopy->whereIn('status', [2, 3])->sum('promoter_commission');
 
         $managerQuery = GiftCommissionService::getInstance()->getManagerCommissionQueryByTimeType($this->userId(), $timeType);
         $managerQueryCopy = clone $managerQuery;
         $managerOrderCount = $managerQuery->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
         $managerSalesVolume = $managerQueryCopy->whereIn('status', [1, 2, 3])->sum('goods_price');
         $managerPendingAmount = $managerQueryCopy->where('status', 1)->sum('manager_commission');
-        $managerSettledAmount = $managerQueryCopy->where('status', 3)->sum('manager_commission');
+        $managerSettledAmount = $managerQueryCopy->whereIn('status', [2, 3])->sum('manager_commission');
 
         return $this->success([
             'orderCount' => $promoterOrderCount + $managerOrderCount,
