@@ -530,7 +530,7 @@ class OrderController extends Controller
         $list = collect($page->items())->map(function (Order $order) use ($commissionList, $goodsList) {
             /** @var GiftCommission $commission */
             $commission = $commissionList->keyBy('order_id')->get($order->id);
-            $commissionSum = $commission->promoter_id == $this->user() ? $commission->promoter_commission : $commission->manager_commission;
+            $commissionSum = $commission->promoter_id == $this->userId() ? $commission->promoter_commission : $commission->manager_commission;
             $goods = $goodsList->get($order->id);
 
             return [
@@ -539,7 +539,7 @@ class OrderController extends Controller
                 'status' => $commission->status,
                 'createdAt' => $order->created_at,
                 'commission' => $commissionSum,
-                '$goods' => $goods
+                'goods' => $goods
             ];
         });
 
