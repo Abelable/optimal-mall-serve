@@ -114,32 +114,9 @@ class UserController extends Controller
     {
         $todayNewCustomerIds = RelationService::getInstance()->getTodayListBySuperiorId($this->userId())->pluck('fan_id')->toArray();
         $todayNewPromoterList = PromoterService::getInstance()->getPromoterListByUserIds($todayNewCustomerIds);
-
         $promoterIds = $todayNewPromoterList->pluck('user_id')->toArray();
-        $userList = UserService::getInstance()->getListByIds($promoterIds);
-
-        $userCommissionList = CommissionService::getInstance()->getSettledCommissionListByUserIds($promoterIds)->groupBy('user_id');
-        $superiorCommissionList = CommissionService::getInstance()->getSettledCommissionListBySuperiorIds($promoterIds)->groupBy('superior_id');
-
-        $todayNewPromoterList = $todayNewPromoterList->map(function (Promoter $promoter) use ($userList, $userCommissionList, $superiorCommissionList) {
-            /** @var User $userInfo */
-            $userInfo = $userList->get($promoter->user_id);
-
-            $userCommission = $userCommissionList->get($promoter->user_id)->sum('commission_base');
-            $superiorCommission = $superiorCommissionList->get($promoter->user_id)->sum('commission_base');
-
-            return [
-                'id' => $promoter->id,
-                'avatar' => $userInfo->avatar,
-                'nickname' => $userInfo->nickname,
-                'mobile' => $userInfo->mobile,
-                'level' => $promoter->level,
-                'GMV' => bcadd($userCommission, $superiorCommission, 2),
-                'createdAt' => $promoter->created_at
-            ];
-        });
-
-        return $this->success($todayNewPromoterList);
+        $list = $this->handlePromoterList($promoterIds, $todayNewPromoterList);
+        return $this->success($list);
     }
 
     public function todayOrderingPromoterList()
@@ -147,32 +124,9 @@ class UserController extends Controller
         $totalCustomerIds = RelationService::getInstance()->getListBySuperiorId($this->userId())->pluck('fan_id')->toArray();
         $totalPromoterIds = PromoterService::getInstance()->getPromoterListByUserIds($totalCustomerIds)->pluck('user_id')->toArray();
         $todayOrderingUserIds= OrderService::getInstance()->getTodayOrderListByUserIds($totalPromoterIds)->pluck('user_id')->toArray();
-
         $todayOrderingPromoterList = PromoterService::getInstance()->getPromoterListByUserIds($todayOrderingUserIds);
-        $userList = UserService::getInstance()->getListByIds($todayOrderingUserIds);
-
-        $userCommissionList = CommissionService::getInstance()->getSettledCommissionListByUserIds($todayOrderingUserIds)->groupBy('user_id');
-        $superiorCommissionList = CommissionService::getInstance()->getSettledCommissionListBySuperiorIds($todayOrderingUserIds)->groupBy('superior_id');
-
-        $todayOrderingPromoterList = $todayOrderingPromoterList->map(function (Promoter $promoter) use ($userList, $userCommissionList, $superiorCommissionList) {
-            /** @var User $userInfo */
-            $userInfo = $userList->get($promoter->user_id);
-
-            $userCommission = $userCommissionList->get($promoter->user_id)->sum('commission_base');
-            $superiorCommission = $superiorCommissionList->get($promoter->user_id)->sum('commission_base');
-
-            return [
-                'id' => $promoter->id,
-                'avatar' => $userInfo->avatar,
-                'nickname' => $userInfo->nickname,
-                'mobile' => $userInfo->mobile,
-                'level' => $promoter->level,
-                'GMV' => bcadd($userCommission, $superiorCommission, 2),
-                'createdAt' => $promoter->created_at
-            ];
-        });
-
-        return $this->success($todayOrderingPromoterList);
+        $list = $this->handlePromoterList($todayOrderingUserIds, $todayOrderingPromoterList);
+        return $this->success($list);
     }
 
     public function promoterList()
@@ -189,17 +143,27 @@ class UserController extends Controller
         $promoterList = collect($page->items());
 
         $promoterIds = $promoterList->pluck('user_id')->toArray();
-        $userList = UserService::getInstance()->getListByIds($promoterIds);
+        $list = $this->handlePromoterList($promoterIds, $promoterList);
+
+        return $this->success($this->paginate($page, $list));
+    }
+
+    private function handlePromoterList($promoterIds, $promoterList)
+    {
+        $userList = UserService::getInstance()->getListByIds($promoterIds)->keyBy('id');
 
         $userCommissionList = CommissionService::getInstance()->getSettledCommissionListByUserIds($promoterIds)->groupBy('user_id');
         $superiorCommissionList = CommissionService::getInstance()->getSettledCommissionListBySuperiorIds($promoterIds)->groupBy('superior_id');
 
-        $list = $promoterList->map(function (Promoter $promoter) use ($userList, $userCommissionList, $superiorCommissionList) {
+        return $promoterList->map(function (Promoter $promoter) use ($userList, $userCommissionList, $superiorCommissionList) {
             /** @var User $userInfo */
             $userInfo = $userList->get($promoter->user_id);
 
-            $userCommission = $userCommissionList->get($promoter->user_id)->sum('commission_base');
-            $superiorCommission = $superiorCommissionList->get($promoter->user_id)->sum('commission_base');
+            $userCommission = $userCommissionList->get($promoter->user_id);
+            $userCommissionSum = $userCommission ? $userCommission->sum('commission_base') : 0;
+
+            $superiorCommission = $superiorCommissionList->get($promoter->user_id);
+            $superiorCommissionSum = $superiorCommission ? $superiorCommission->sum('commission_base') : 0;
 
             return [
                 'id' => $promoter->id,
@@ -207,11 +171,9 @@ class UserController extends Controller
                 'nickname' => $userInfo->nickname,
                 'mobile' => $userInfo->mobile,
                 'level' => $promoter->level,
-                'GMV' => bcadd($userCommission, $superiorCommission, 2),
+                'GMV' => bcadd($userCommissionSum, $superiorCommissionSum, 2),
                 'createdAt' => $promoter->created_at
             ];
         });
-
-        return $this->success($this->paginate($page, $list));
     }
 }
