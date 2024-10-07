@@ -83,4 +83,9 @@ class UserService extends BaseService
                     ->orWhere('mobile', $keywords);
             })->get($columns);
     }
+
+    public function getPageByUserIds(array $userIds, SearchPageInput $input, $columns = ['*'])
+    {
+        return User::query()->whereIn('id', $userIds)->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+    }
 }

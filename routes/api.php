@@ -28,6 +28,9 @@ Route::prefix('user')->group(function () {
     Route::get('tim_login_info', 'UserController@timLoginInfo');
     Route::get('superior_info', 'UserController@superiorInfo');
     Route::get('customer_data', 'UserController@customerData');
+    Route::get('today_new_customer_list', 'UserController@todayNewCustomerList');
+    Route::get('today_ordering_customer_list', 'UserController@todayOrderingCustomerList');
+    Route::get('customer_list', 'UserController@customerList');
     Route::get('promoter_data', 'UserController@promoterData');
     Route::get('today_new_promoter_list', 'UserController@todayNewPromoterList');
     Route::get('today_ordering_promoter_list', 'UserController@todayOrderingPromoterList');
