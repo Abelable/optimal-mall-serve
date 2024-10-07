@@ -166,10 +166,11 @@ class UserController extends Controller
             $superiorCommissionSum = $superiorCommission ? $superiorCommission->sum('commission_base') : 0;
 
             return [
-                'id' => $promoter->id,
+                'id' => $userInfo->id,
                 'avatar' => $userInfo->avatar,
                 'nickname' => $userInfo->nickname,
                 'mobile' => $userInfo->mobile,
+                'promoterId' => $promoter->id,
                 'level' => $promoter->level,
                 'GMV' => bcadd($userCommissionSum, $superiorCommissionSum, 2),
                 'createdAt' => $promoter->created_at
