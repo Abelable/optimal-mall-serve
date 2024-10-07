@@ -476,13 +476,13 @@ class OrderController extends Controller
             if (!is_null($this->user()->promoterInfo)) {
                 $GMV = $commissionList->sum('commission_base');
                 switch ($this->user()->promoterInfo->level) {
-                    case 1:
+                    case 2:
                         $commissionSum = bcmul($GMV, 0.01, 2);
                         break;
-                    case 2:
+                    case 3:
                         $commissionSum = bcmul($GMV, 0.02, 2);
                         break;
-                    case 3:
+                    case 4:
                         $commissionSum = bcmul($GMV, 0.03, 2);
                         break;
                 }

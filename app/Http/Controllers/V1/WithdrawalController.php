@@ -40,7 +40,7 @@ class WithdrawalController extends Controller
                 break;
 
             case 3:
-                [$cashGiftCommission, $cashTeamCommission] = GiftCommissionService::getInstance()->cash($this->userId());
+                [$cashGiftCommission, $cashTeamCommission] = GiftCommissionService::getInstance()->cash($this->userId(), $this->user()->promoterInfo ?: null);
                 $withdrawAmount = bcadd($cashGiftCommission, $cashTeamCommission, 2);
                 break;
         }

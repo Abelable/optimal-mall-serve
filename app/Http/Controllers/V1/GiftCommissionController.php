@@ -110,7 +110,7 @@ class GiftCommissionController extends Controller
 
     public function cash()
     {
-        [$cashGiftCommission, $cashTeamCommission] = GiftCommissionService::getInstance()->cash($this->userId());
+        [$cashGiftCommission, $cashTeamCommission] = GiftCommissionService::getInstance()->cash($this->userId(), $this->user()->promoterInfo ?: null);
         return $this->success([
             'share' => $cashGiftCommission,
             'team' => $cashTeamCommission
