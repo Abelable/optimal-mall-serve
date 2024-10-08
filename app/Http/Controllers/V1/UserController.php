@@ -80,7 +80,7 @@ class UserController extends Controller
         $todayNewCustomerCount = RelationService::getInstance()->getTodayCountBySuperiorId($this->userId());
 
         $customerIds = RelationService::getInstance()->getListBySuperiorId($this->userId())->pluck('fan_id')->toArray();
-        $todayOrderingCustomerCount = OrderService::getInstance()->getTodayOrderCountByUserIds($customerIds);
+        $todayOrderingCustomerCount = OrderService::getInstance()->getTodayOrderingUserCountByUserIds($customerIds);
 
         $customerTotalCount = RelationService::getInstance()->getCountBySuperiorId($this->userId());
 
@@ -163,7 +163,7 @@ class UserController extends Controller
         $totalCustomerIds = RelationService::getInstance()->getListBySuperiorId($this->userId())->pluck('fan_id')->toArray();
         $totalPromoterIds = PromoterService::getInstance()->getPromoterListByUserIds($totalCustomerIds)->pluck('user_id')->toArray();
 
-        $todayOrderingPromoterCount = OrderService::getInstance()->getTodayOrderCountByUserIds($totalPromoterIds);
+        $todayOrderingPromoterCount = OrderService::getInstance()->getTodayOrderingUserCountByUserIds($totalPromoterIds);
 
         $totalPromoterCount = PromoterService::getInstance()->getPromoterCountByUserIds($totalCustomerIds);
 

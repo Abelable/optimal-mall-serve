@@ -607,13 +607,14 @@ class OrderService extends BaseService
             ->get($columns);
     }
 
-    public function getTodayOrderCountByUserIds(array $userIds)
+    public function getTodayOrderingUserCountByUserIds(array $userIds)
     {
         return Order::query()
             ->whereIn('user_id', $userIds)
             ->whereDate('created_at', Carbon::today())
             ->whereIn('status', [201, 301, 401, 402, 403, 501])
-            ->count();
+            ->distinct('user_id')
+            ->count('user_id');
     }
 
     public function getTodayOrderListByUserIds(array $userIds, $columns = ['*'])
