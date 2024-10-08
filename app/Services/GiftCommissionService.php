@@ -259,7 +259,7 @@ class GiftCommissionService extends BaseService
         return $query->get($columns);
     }
 
-    public function cash($userId, $promoterInfo = null)
+    public function cash($userId)
     {
         $promoterCashGiftCommission = $this->getPromoterCashCommission($userId);
         $managerCashGiftCommission =  $this->getManagerCashCommission($userId);
