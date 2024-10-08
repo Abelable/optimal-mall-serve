@@ -465,7 +465,7 @@ class OrderController extends Controller
                 'status' => $firstCommission->status,
                 'createdAt' => $order->created_at,
                 'commissionBase' => $commissionBaseSum,
-                'commissionAmount' => $commissionAmountSum,
+                'commissionAmount' => bcadd($commissionAmountSum, 0, 2) ,
                 'scene' => $firstCommission->scene,
                 'goodsList' => $orderGoodsList
             ];
