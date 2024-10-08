@@ -512,7 +512,6 @@ class OrderController extends Controller
                 'createdAt' => $order->created_at,
                 'commissionBase' => $commissionBaseSum,
                 'commissionAmount' => $commissionAmountSum,
-                'scene' => $firstCommission->scene,
                 'goodsList' => $orderGoodsList
             ];
         });
