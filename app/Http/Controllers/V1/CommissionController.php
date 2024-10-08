@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\CommissionService;
 use App\Services\PromoterService;
 use App\Services\RelationService;
+use App\Services\TeamCommissionService;
 use App\Utils\CodeResponse;
 use Illuminate\Support\Carbon;
 
@@ -108,6 +109,18 @@ class CommissionController extends Controller
         $beforeLastMonthGMV = CommissionService::getInstance()->getUserGMVByTimeType($this->userId(), 5);
         $lastMonthGMV = CommissionService::getInstance()->getUserGMVByTimeType($this->userId(), 4);
         $curMonthGMV = CommissionService::getInstance()->getUserGMVByTimeType($this->userId(), 3);
+
+        if ($this->user()->promoterInfo->level > 1) {
+            $beforeLastMonthTeamGMV = TeamCommissionService::getInstance()->getUserGMVByTimeType($this->userId(), 5);
+            $beforeLastMonthGMV = bcadd($beforeLastMonthGMV, $beforeLastMonthTeamGMV, 2);
+
+            $lastMonthTeamGMV = TeamCommissionService::getInstance()->getUserGMVByTimeType($this->userId(), 4);
+            $lastMonthGMV = bcadd($lastMonthGMV, $lastMonthTeamGMV, 2);
+
+            $curMonthTeamGMV = TeamCommissionService::getInstance()->getUserGMVByTimeType($this->userId(), 3);
+            $curMonthGMV = bcadd($curMonthGMV, $curMonthTeamGMV, 2);
+        }
+
         $percent = 0;
 
         // 推广员升C1：3个月累计超3w
