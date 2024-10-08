@@ -150,35 +150,35 @@ class CommissionService extends BaseService
 
     public function getUserCommissionListByTimeType($userId, $timeType, $scene = null, $columns = ['*'])
     {
-        $query = $this->getUserCommissionQueryByTimeType($userId, $timeType, $scene);
+        $query = $this->getUserCommissionQueryByTimeType([$userId], $timeType, $scene);
         return $query->whereIn('status', [1, 2, 3])->get($columns);
     }
 
     /**
-     * @param $userId
-     * @param $timeType: 1-今日数据，2-昨日数据，3-本月数据，4-上月数据，5-上上月数据，
+     * @param array $userIds
+     * @param $timeType
      * @param $scene
      * @return Commission|\Illuminate\Database\Eloquent\Builder
      */
-    public function getUserCommissionQueryByTimeType($userId, $timeType, $scene = null)
+    public function getUserCommissionQueryByTimeType(array $userIds, $timeType, $scene = null)
     {
         $query = Commission::query();
 
         if (!is_null($scene)) {
             if ($scene == 1) {
-                $query = $query->where('user_id', $userId);
+                $query = $query->whereIn('user_id', $userIds);
             } else {
-                $query = $query->where('superior_id', $userId);
+                $query = $query->whereIn('superior_id', $userIds);
             }
             $query = $query->where('scene', $scene);
         } else {
-            $query = $query->where(function($query) use ($userId) {
-                $query->where(function($query) use ($userId) {
+            $query = $query->where(function($query) use ($userIds) {
+                $query->where(function($query) use ($userIds) {
                     $query->where('scene', 1)
-                        ->where('user_id', $userId);
-                })->orWhere(function($query) use ($userId) {
+                        ->whereIn('user_id', $userIds);
+                })->orWhere(function($query) use ($userIds) {
                     $query->where('scene', 2)
-                        ->where('superior_id', $userId);
+                        ->whereIn('superior_id', $userIds);
                 });
             });
         }
@@ -221,6 +221,6 @@ class CommissionService extends BaseService
 
     public function getUserGMVByTimeType($userId, $timeType)
     {
-        return $this->getUserCommissionQueryByTimeType($userId, $timeType)->whereIn('status', [2, 3])->sum('commission_base');
+        return $this->getUserCommissionQueryByTimeType([$userId], $timeType)->whereIn('status', [2, 3])->sum('commission_base');
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Services\CommissionService;
+use App\Services\PromoterService;
+use App\Services\RelationService;
 use App\Utils\CodeResponse;
 use Illuminate\Support\Carbon;
 
@@ -29,7 +31,7 @@ class CommissionController extends Controller
         $timeType = $this->verifyRequiredInteger('timeType');
         $scene = $this->verifyInteger('scene');
 
-        $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType($this->userId(), $timeType, $scene);
+        $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType([$this->userId()], $timeType, $scene);
 
         $orderCount = (clone $query)->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
         $salesVolume = (clone $query)->whereIn('status', [1, 2, 3])->sum('commission_base');
@@ -48,7 +50,10 @@ class CommissionController extends Controller
     {
         $timeType = $this->verifyRequiredInteger('timeType');
 
-        $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType($this->userId(), $timeType);
+        $customerIds = RelationService::getInstance()->getListBySuperiorId($this->userId())->pluck('fan_id')->toArray();
+        $promoterIds = PromoterService::getInstance()->getPromoterListByUserIds($customerIds)->pluck('user_id')->toArray();
+
+        $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType($promoterIds, $timeType);
         $orderCount = $query->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
         $salesVolume = $query->whereIn('status', [1, 2, 3])->sum('commission_base');
 
@@ -58,15 +63,15 @@ class CommissionController extends Controller
             $pendingGMV = $query->where('status', 1)->sum('commission_base');
             $settledGMV = $query->whereIn('status', [2, 3])->sum('commission_base');
             switch ($this->user()->promoterInfo->level) {
-                case 1:
+                case 2:
                     $pendingAmount = bcmul($pendingGMV, 0.01, 2);
                     $settledAmount = bcmul($settledGMV, 0.01, 2);
                     break;
-                case 2:
+                case 3:
                     $pendingAmount = bcmul($pendingGMV, 0.02, 2);
                     $settledAmount = bcmul($settledGMV, 0.02, 2);
                     break;
-                case 3:
+                case 4:
                     $pendingAmount = bcmul($pendingGMV, 0.03, 2);
                     $settledAmount = bcmul($settledGMV, 0.03, 2);
                     break;
