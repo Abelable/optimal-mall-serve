@@ -159,28 +159,9 @@ class TeamCommissionService extends BaseService
      * @param $scene
      * @return TeamCommission|\Illuminate\Database\Eloquent\Builder
      */
-    public function getUserCommissionQueryByTimeType(array $userIds, $timeType, $scene = null)
+    public function getUserCommissionQueryByTimeType(array $userIds, $timeType)
     {
-        $query = TeamCommission::query();
-
-        if (!is_null($scene)) {
-            if ($scene == 1) {
-                $query = $query->whereIn('user_id', $userIds);
-            } else {
-                $query = $query->whereIn('superior_id', $userIds);
-            }
-            $query = $query->where('scene', $scene);
-        } else {
-            $query = $query->where(function($query) use ($userIds) {
-                $query->where(function($query) use ($userIds) {
-                    $query->where('scene', 1)
-                        ->whereIn('user_id', $userIds);
-                })->orWhere(function($query) use ($userIds) {
-                    $query->where('scene', 2)
-                        ->whereIn('superior_id', $userIds);
-                });
-            });
-        }
+        $query = TeamCommission::query()->whereIn('manager_id', $userIds);
 
         switch ($timeType) {
             case 1:

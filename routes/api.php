@@ -154,7 +154,6 @@ Route::prefix('gift')->group(function () {
 Route::prefix('commission')->group(function () {
     Route::get('sum', 'CommissionController@sum');
     Route::get('time_data', 'CommissionController@timeData');
-    Route::get('team_time_data', 'CommissionController@teamTimeData');
     Route::get('cash', 'CommissionController@cash');
     Route::get('achievement', 'CommissionController@achievement');
 });
@@ -163,6 +162,13 @@ Route::prefix('gift_commission')->group(function () {
     Route::get('sum', 'GiftCommissionController@sum');
     Route::get('time_data', 'GiftCommissionController@timeData');
     Route::get('cash', 'GiftCommissionController@cash');
+});
+
+Route::prefix('team_commission')->group(function () {
+    Route::get('sum', 'TeamCommissionController@sum');
+    Route::get('time_data', 'TeamCommissionController@timeData');
+    Route::get('cash', 'TeamCommissionController@cash');
+    Route::get('achievement', 'TeamCommissionController@achievement');
 });
 
 Route::prefix('bank_card')->group(function () {
