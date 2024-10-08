@@ -265,10 +265,12 @@ class GiftCommissionService extends BaseService
         $managerCashGiftCommission =  $this->getManagerCashCommission($userId);
         $cashGiftCommission = bcadd($promoterCashGiftCommission, $managerCashGiftCommission, 2);
 
+        $customerIds = RelationService::getInstance()->getListBySuperiorId($userId)->pluck('fan_id')->toArray();
+        $promoterIds = PromoterService::getInstance()->getPromoterListByUserIds($customerIds)->pluck('user_id')->toArray();
         $cashTeamCommission = 0;
         if (!is_null($promoterInfo)) {
             $cashGMV = CommissionService::getInstance()
-                ->getUserCommissionQuery($userId, [2])
+                ->getUserCommissionQuery($promoterIds, [2])
                 ->whereMonth('created_at', '!=', Carbon::now()->month)
                 ->sum('commission_base');
             switch ($promoterInfo->level) {
