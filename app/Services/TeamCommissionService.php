@@ -222,4 +222,23 @@ class TeamCommissionService extends BaseService
     {
         return $this->getUserCommissionQueryByTimeType([$userId], $timeType)->whereIn('status', [2, 3])->sum('commission_base');
     }
+
+
+    public function getUserCashCommission($userId)
+    {
+        return TeamCommission::query()
+            ->where('manager_id', $userId)
+            ->where('status', 2)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
+            ->sum('commission_amount');
+    }
+
+    public function getUserCommission($userId, array $statusList)
+    {
+        return TeamCommission::query()
+            ->where('manager_id', $userId)
+            ->whereIn('status', $statusList)
+            ->sum('commission_amount');
+    }
+
 }

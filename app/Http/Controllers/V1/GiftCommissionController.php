@@ -3,83 +3,34 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\CommissionService;
 use App\Services\GiftCommissionService;
-use App\Services\PromoterService;
-use App\Services\RelationService;
-use Illuminate\Support\Carbon;
+use App\Services\TeamCommissionService;
 
 class GiftCommissionController extends Controller
 {
     public function sum()
     {
-        $customerIds = RelationService::getInstance()->getListBySuperiorId($this->userId())->pluck('fan_id')->toArray();
-        $promoterIds = PromoterService::getInstance()->getPromoterListByUserIds($customerIds)->pluck('user_id')->toArray();
-
         $promoterCashCommission = GiftCommissionService::getInstance()->getPromoterCashCommission($this->userId());
         $managerCashCommission = GiftCommissionService::getInstance()->getManagerCashCommission($this->userId());
         $cashAmount = bcadd($promoterCashCommission, $managerCashCommission, 2);
-        if (!is_null($this->user()->promoterInfo)) {
-            $cashGMV = CommissionService::getInstance()
-                ->getUserCommissionQuery($promoterIds, [2])
-                ->whereMonth('created_at', '!=', Carbon::now()->month)
-                ->sum('commission_base');
-            switch ($this->user()->promoterInfo->level) {
-                case 2:
-                    $teamCashCommission = bcmul($cashGMV, 0.01, 2);
-                    $cashAmount = bcadd($cashAmount, $teamCashCommission, 2);
-                    break;
-                case 3:
-                    $teamCashCommission = bcmul($cashGMV, 0.02, 2);
-                    $cashAmount = bcadd($cashAmount, $teamCashCommission, 2);
-                    break;
-                case 4:
-                    $teamCashCommission = bcmul($cashGMV, 0.03, 2);
-                    $cashAmount = bcadd($cashAmount, $teamCashCommission, 2);
-                    break;
-            }
-        }
 
         $promoterPendingAmount = GiftCommissionService::getInstance()->getPromoterCommissionSum($this->userId(), [1]);
         $managerPendingAmount = GiftCommissionService::getInstance()->getManagerCommissionSum($this->userId(), [1]);
         $pendingAmount = bcadd($promoterPendingAmount, $managerPendingAmount, 2);
-        if (!is_null($this->user()->promoterInfo)) {
-            $pendingGMV = CommissionService::getInstance()->getUserGMV($promoterIds, [1]);
-            switch ($this->user()->promoterInfo->level) {
-                case 2:
-                    $teamPendingCommission = bcmul($pendingGMV, 0.01, 2);
-                    $pendingAmount = bcadd($pendingAmount, $teamPendingCommission, 2);
-                    break;
-                case 3:
-                    $teamPendingCommission = bcmul($pendingGMV, 0.02, 2);
-                    $pendingAmount = bcadd($pendingAmount, $teamPendingCommission, 2);
-                    break;
-                case 4:
-                    $teamPendingCommission = bcmul($pendingGMV, 0.03, 2);
-                    $pendingAmount = bcadd($pendingAmount, $teamPendingCommission, 2);
-                    break;
-            }
-        }
 
         $promoterSettledAmount = GiftCommissionService::getInstance()->getPromoterCommissionSum($this->userId(), [2, 3]);
         $managerSettledAmount = GiftCommissionService::getInstance()->getManagerCommissionSum($this->userId(), [2, 3]);
         $settledAmount = bcadd($promoterSettledAmount, $managerSettledAmount, 2);
-        if (!is_null($this->user()->promoterInfo)) {
-            $settledGMV = CommissionService::getInstance()->getUserGMV($promoterIds, [2, 3]);
-            switch ($this->user()->promoterInfo->level) {
-                case 2:
-                    $teamSettledCommission = bcmul($settledGMV, 0.01, 2);
-                    $settledAmount = bcadd($settledAmount, $teamSettledCommission, 2);
-                    break;
-                case 3:
-                    $teamSettledCommission = bcmul($settledGMV, 0.02, 2);
-                    $settledAmount = bcadd($settledAmount, $teamSettledCommission, 2);
-                    break;
-                case 4:
-                    $teamSettledCommission = bcmul($settledGMV, 0.03, 2);
-                    $settledAmount = bcadd($settledAmount, $teamSettledCommission, 2);
-                    break;
-            }
+
+        if (!is_null($this->user()->promoterInfo) && $this->user()->promoterInfo->level > 1) {
+            $teamCashCommission = TeamCommissionService::getInstance()->getUserCashCommission($this->userId());
+            $cashAmount = bcadd($cashAmount, $teamCashCommission, 2);
+
+            $teamPendingCommission = TeamCommissionService::getInstance()->getUserCommission($this->userId(), [1]);
+            $pendingAmount = bcadd($pendingAmount, $teamPendingCommission, 2);
+
+            $teamSettledCommission = TeamCommissionService::getInstance()->getUserCommission($this->userId(), [2, 3]);
+            $settledAmount = bcadd($settledAmount, $teamSettledCommission, 2);
         }
 
         return $this->success([
