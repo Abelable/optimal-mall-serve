@@ -14,7 +14,7 @@ class CommissionController extends Controller
     public function sum()
     {
         $cashAmount = CommissionService::getInstance()
-            ->getUserCommissionQuery($this->userId(), [2])
+            ->getUserCommissionQuery([$this->userId()], [2])
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->sum('commission_amount');
         $pendingAmount = CommissionService::getInstance()->getUserCommissionSum($this->userId(), [1]);
@@ -89,7 +89,7 @@ class CommissionController extends Controller
     public function cash()
     {
         $commissionQuery = CommissionService::getInstance()
-            ->getUserCommissionQuery($this->userId(), [2])
+            ->getUserCommissionQuery([$this->userId()], [2])
             ->whereMonth('created_at', '!=', Carbon::now()->month);
         $selfPurchase = $commissionQuery->where('scene', 1)->sum('commission_amount');
         $share = $commissionQuery->where('scene', 2)->sum('commission_amount');

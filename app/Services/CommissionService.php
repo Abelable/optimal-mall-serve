@@ -126,24 +126,24 @@ class CommissionService extends BaseService
 
     public function getUserCommissionSum($userId, $statusList)
     {
-        return $this->getUserCommissionQuery($userId, $statusList)->sum('commission_amount');
+        return $this->getUserCommissionQuery([$userId], $statusList)->sum('commission_amount');
     }
 
-    public function getUserGMV($userId, $statusList)
+    public function getUserGMV(array $userIds, $statusList)
     {
-        return $this->getUserCommissionQuery($userId, $statusList)->sum('commission_base');
+        return $this->getUserCommissionQuery($userIds, $statusList)->sum('commission_base');
     }
 
-    public function getUserCommissionQuery($userId, array $statusList)
+    public function getUserCommissionQuery(array $userIds, array $statusList)
     {
         return Commission::query()
-            ->where(function($query) use ($userId) {
-                $query->where(function($query) use ($userId) {
+            ->where(function($query) use ($userIds) {
+                $query->where(function($query) use ($userIds) {
                     $query->where('scene', 1)
-                        ->where('user_id', $userId);
-                })->orWhere(function($query) use ($userId) {
+                        ->whereIn('user_id', $userIds);
+                })->orWhere(function($query) use ($userIds) {
                     $query->where('scene', 2)
-                        ->where('superior_id', $userId);
+                        ->whereIn('superior_id', $userIds);
                 });
             })->whereIn('status', $statusList);
     }

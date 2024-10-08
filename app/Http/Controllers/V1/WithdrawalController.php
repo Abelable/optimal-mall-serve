@@ -28,7 +28,7 @@ class WithdrawalController extends Controller
 
         $withdrawAmount = 0;
         $commissionQuery = CommissionService::getInstance()
-            ->getUserCommissionQuery($this->userId(), [2])
+            ->getUserCommissionQuery([$this->userId()], [2])
             ->whereMonth('created_at', '!=', Carbon::now()->month);
         switch ($input->scene) {
             case 1:

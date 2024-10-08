@@ -5,18 +5,23 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Services\CommissionService;
 use App\Services\GiftCommissionService;
+use App\Services\PromoterService;
+use App\Services\RelationService;
 use Illuminate\Support\Carbon;
 
 class GiftCommissionController extends Controller
 {
     public function sum()
     {
+        $customerIds = RelationService::getInstance()->getListBySuperiorId($this->userId())->pluck('fan_id')->toArray();
+        $promoterIds = PromoterService::getInstance()->getPromoterListByUserIds($customerIds)->pluck('user_id')->toArray();
+
         $promoterCashCommission = GiftCommissionService::getInstance()->getPromoterCashCommission($this->userId());
         $managerCashCommission = GiftCommissionService::getInstance()->getManagerCashCommission($this->userId());
         $cashAmount = bcadd($promoterCashCommission, $managerCashCommission, 2);
         if (!is_null($this->user()->promoterInfo)) {
             $cashGMV = CommissionService::getInstance()
-                ->getUserCommissionQuery($this->userId(), [2])
+                ->getUserCommissionQuery($promoterIds, [2])
                 ->whereMonth('created_at', '!=', Carbon::now()->month)
                 ->sum('commission_base');
             switch ($this->user()->promoterInfo->level) {
@@ -39,7 +44,7 @@ class GiftCommissionController extends Controller
         $managerPendingAmount = GiftCommissionService::getInstance()->getManagerCommissionSum($this->userId(), [1]);
         $pendingAmount = bcadd($promoterPendingAmount, $managerPendingAmount, 2);
         if (!is_null($this->user()->promoterInfo)) {
-            $pendingGMV = CommissionService::getInstance()->getUserGMV($this->userId(), [1]);
+            $pendingGMV = CommissionService::getInstance()->getUserGMV($promoterIds, [1]);
             switch ($this->user()->promoterInfo->level) {
                 case 2:
                     $teamPendingCommission = bcmul($pendingGMV, 0.01, 2);
@@ -60,7 +65,7 @@ class GiftCommissionController extends Controller
         $managerSettledAmount = GiftCommissionService::getInstance()->getManagerCommissionSum($this->userId(), [2, 3]);
         $settledAmount = bcadd($promoterSettledAmount, $managerSettledAmount, 2);
         if (!is_null($this->user()->promoterInfo)) {
-            $settledGMV = CommissionService::getInstance()->getUserGMV($this->userId(), [2, 3]);
+            $settledGMV = CommissionService::getInstance()->getUserGMV($promoterIds, [2, 3]);
             switch ($this->user()->promoterInfo->level) {
                 case 2:
                     $teamSettledCommission = bcmul($settledGMV, 0.01, 2);
