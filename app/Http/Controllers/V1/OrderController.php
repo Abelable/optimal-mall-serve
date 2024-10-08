@@ -250,13 +250,14 @@ class OrderController extends Controller
                         }
 
                         // 9.生成团队佣金记录（前提：非礼包商品）
-                        // 场景1：组织者 -> 推广员 -> 普通用户下单
-                        // 场景2：组织者 -> 推广员下单
-                        if (is_null($promoterInfo) && !is_null($superiorPromoterInfo) && !is_null($managerPromoterInfo) && $managerPromoterInfo->level > 1) {
-                            TeamCommissionService::getInstance()->createCommission($managerPromoterInfo->user_id, $managerPromoterInfo->level, $userId, $orderId, $cartGoods, $coupon);
-                        }
-                        if (!is_null($promoterInfo) && !is_null($superiorPromoterInfo) && $superiorPromoterInfo->level > 1) {
-                            TeamCommissionService::getInstance()->createCommission($superiorPromoterInfo->user_id, $superiorPromoterInfo->level, $userId, $orderId, $cartGoods, $coupon);
+                        // 场景1：推广员 -> 推广员 -> 普通用户下单
+                        // 场景2：推广员 -> 推广员下单
+                        if (!is_null($superiorPromoterInfo)) {
+                            if (!is_null($managerPromoterInfo)) {
+                                TeamCommissionService::getInstance()->createCommission($managerPromoterInfo->user_id, $managerPromoterInfo->level, $userId, $orderId, $cartGoods, $coupon);
+                            } else {
+                                TeamCommissionService::getInstance()->createCommission($superiorPromoterInfo->user_id, $superiorPromoterInfo->level, $userId, $orderId, $cartGoods, $coupon);
+                            }
                         }
                     }
                 }
