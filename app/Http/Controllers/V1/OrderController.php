@@ -427,12 +427,12 @@ class OrderController extends Controller
 
     public function commissionOrderList()
     {
-        $scene = $this->verifyRequiredInteger('scene');
+        $scene = $this->verifyInteger('scene');
         $timeType = $this->verifyRequiredInteger('timeType');
         /** @var PageInput $input */
         $input = PageInput::new();
 
-        $commissionList = CommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType, $scene);
+        $commissionList = CommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType, $scene ?: null);
         $groupCommissionList = $commissionList->groupBy('order_id');
         $keyCommissionList = $commissionList->keyBy('goods_id');
         $orderIds = $commissionList->pluck('order_id')->toArray();
