@@ -150,7 +150,7 @@ class TeamCommissionService extends BaseService
     public function getUserCommissionListByTimeType($userId, $timeType, $columns = ['*'])
     {
         $query = $this->getUserCommissionQueryByTimeType([$userId], $timeType);
-        return $query->whereIn('status', [1, 2, 3])->get($columns);
+        return $query->whereIn('status', [2, 3])->get($columns);
     }
 
     /**
