@@ -54,14 +54,14 @@ class CommissionController extends Controller
         $promoterIds = PromoterService::getInstance()->getPromoterListByUserIds($customerIds)->pluck('user_id')->toArray();
 
         $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType($promoterIds, $timeType);
-        $orderCount = $query->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
-        $salesVolume = $query->whereIn('status', [1, 2, 3])->sum('commission_base');
+        $orderCount = (clone $query)->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
+        $salesVolume = (clone $query)->whereIn('status', [1, 2, 3])->sum('commission_base');
 
         $pendingAmount = 0;
         $settledAmount = 0;
         if (!is_null($this->user()->promoterInfo)) {
-            $pendingGMV = $query->where('status', 1)->sum('commission_base');
-            $settledGMV = $query->whereIn('status', [2, 3])->sum('commission_base');
+            $pendingGMV = (clone $query)->where('status', 1)->sum('commission_base');
+            $settledGMV = (clone $query)->whereIn('status', [2, 3])->sum('commission_base');
             switch ($this->user()->promoterInfo->level) {
                 case 2:
                     $pendingAmount = bcmul($pendingGMV, 0.01, 2);
