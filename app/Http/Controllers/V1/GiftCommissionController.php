@@ -35,8 +35,8 @@ class GiftCommissionController extends Controller
             }
         }
 
-        $promoterPendingAmount = GiftCommissionService::getInstance()->getPromoterCommissionSum($this->userId(), 1);
-        $managerPendingAmount = GiftCommissionService::getInstance()->getManagerCommissionSum($this->userId(), 1);
+        $promoterPendingAmount = GiftCommissionService::getInstance()->getPromoterCommissionSum($this->userId(), [1]);
+        $managerPendingAmount = GiftCommissionService::getInstance()->getManagerCommissionSum($this->userId(), [1]);
         $pendingAmount = bcadd($promoterPendingAmount, $managerPendingAmount, 2);
         if (!is_null($this->user()->promoterInfo)) {
             $pendingGMV = CommissionService::getInstance()->getUserGMV($this->userId(), [1]);
@@ -56,8 +56,8 @@ class GiftCommissionController extends Controller
             }
         }
 
-        $promoterSettledAmount = GiftCommissionService::getInstance()->getPromoterCommissionSum($this->userId(), 3);
-        $managerSettledAmount = GiftCommissionService::getInstance()->getManagerCommissionSum($this->userId(), 3);
+        $promoterSettledAmount = GiftCommissionService::getInstance()->getPromoterCommissionSum($this->userId(), [2, 3]);
+        $managerSettledAmount = GiftCommissionService::getInstance()->getManagerCommissionSum($this->userId(), [2, 3]);
         $settledAmount = bcadd($promoterSettledAmount, $managerSettledAmount, 2);
         if (!is_null($this->user()->promoterInfo)) {
             $settledGMV = CommissionService::getInstance()->getUserGMV($this->userId(), [2, 3]);

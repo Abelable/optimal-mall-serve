@@ -143,7 +143,7 @@ class GiftCommissionService extends BaseService
 
     public function getPromoterCashCommission($userId)
     {
-        $query = $this->getPromoterCommissionQuery($userId, 2);
+        $query = $this->getPromoterCommissionQuery($userId, [2]);
         return $query
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->sum('promoter_commission');
@@ -151,34 +151,34 @@ class GiftCommissionService extends BaseService
 
     public function getManagerCashCommission($userId)
     {
-        $query = $this->getManagerCommissionQuery($userId, 2);
+        $query = $this->getManagerCommissionQuery($userId, [2]);
         return $query
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->sum('manager_commission');
     }
 
-    public function getPromoterCommissionSum($userId, $status)
+    public function getPromoterCommissionSum($userId, $statusList)
     {
-        return $this->getPromoterCommissionQuery($userId, $status)->sum('promoter_commission');
+        return $this->getPromoterCommissionQuery($userId, $statusList)->sum('promoter_commission');
     }
 
-    public function getManagerCommissionSum($userId, $status)
+    public function getManagerCommissionSum($userId, $statusList)
     {
-        return $this->getManagerCommissionQuery($userId, $status)->sum('manager_commission');
+        return $this->getManagerCommissionQuery($userId, $statusList)->sum('manager_commission');
     }
 
-    public function getPromoterCommissionQuery($userId, $status)
+    public function getPromoterCommissionQuery($userId, array $statusList)
     {
         return GiftCommission::query()
             ->where('promoter_id', $userId)
-            ->where('status', $status);
+            ->whereIn('status', $statusList);
     }
 
-    public function getManagerCommissionQuery($userId, $status)
+    public function getManagerCommissionQuery($userId, array $statusList)
     {
         return GiftCommission::query()
             ->where('manager_id', $userId)
-            ->where('status', $status);
+            ->whereIn('status', $statusList);
     }
 
     public function getPromoterCommissionListByTimeType($userId, $timeType, $columns = ['*'])
