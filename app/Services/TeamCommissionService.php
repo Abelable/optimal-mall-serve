@@ -5,13 +5,13 @@ namespace App\Services;
 use App\Jobs\CommissionConfirm;
 use App\Models\CartGoods;
 use App\Models\Coupon;
-use App\Models\Commission;
+use App\Models\TeamCommission;
 use App\Utils\CodeResponse;
 use Illuminate\Support\Carbon;
 
-class CommissionService extends BaseService
+class TeamCommissionService extends BaseService
 {
-    public function createCommission($scene, $userId, $orderId, CartGoods $cartGoods, $superiorId = null, Coupon $coupon = null)
+    public function createCommission($managerId, $managerLevel, $userId, $orderId, CartGoods $cartGoods, Coupon $coupon = null)
     {
         $couponDenomination = 0;
         if (!is_null($coupon) && $coupon->goods_id == $cartGoods->goods_id) {
@@ -19,15 +19,13 @@ class CommissionService extends BaseService
         }
         $totalPrice = bcmul($cartGoods->price, $cartGoods->number, 2);
         $commissionBase = bcsub($totalPrice, $couponDenomination, 2);
-        $commissionRate = bcdiv($cartGoods->commission_rate, 100, 2);
+        $commissionRate = bcdiv($managerLevel - 1, 100, 2);
         $commissionAmount = bcmul($commissionBase, $commissionRate, 2);
 
-        $commission = Commission::new();
-        $commission->scene = $scene;
+        $commission = TeamCommission::new();
+        $commission->manager_id = $managerId;
+        $commission->manager_level = $managerLevel;
         $commission->user_id = $userId;
-        if (!is_null($superiorId)) {
-            $commission->superior_id = $superiorId;
-        }
         $commission->order_id = $orderId;
         $commission->goods_id = $cartGoods->goods_id;
         $commission->refund_status = $cartGoods->refund_status;
@@ -37,7 +35,7 @@ class CommissionService extends BaseService
         $commission->total_price = $totalPrice;
         $commission->coupon_denomination = $couponDenomination;
         $commission->commission_base = $commissionBase;
-        $commission->commission_rate = $cartGoods->commission_rate;
+        $commission->commission_rate = $managerLevel - 1;
         $commission->commission_amount = $commissionAmount;
         $commission->save();
 
@@ -47,7 +45,7 @@ class CommissionService extends BaseService
     public function updateListToOrderPaidStatus(array $orderIds)
     {
         $commissionList = $this->getUnpaidListByOrderIds($orderIds);
-        return $commissionList->map(function (Commission $commission) {
+        return $commissionList->map(function (TeamCommission $commission) {
             $commission->status = 1;
             $commission->save();
             return $commission;
@@ -56,12 +54,12 @@ class CommissionService extends BaseService
 
     public function deleteUnpaidListByOrderIds(array $orderIds)
     {
-        return Commission::query()->where('status', 0)->whereIn('order_id', $orderIds)->delete();
+        return TeamCommission::query()->where('status', 0)->whereIn('order_id', $orderIds)->delete();
     }
 
     public function getUnpaidListByOrderIds(array $orderIds, $columns = ['*'])
     {
-        return Commission::query()
+        return TeamCommission::query()
             ->where('status', 0)
             ->whereIn('order_id', $orderIds)
             ->get($columns);
@@ -70,7 +68,7 @@ class CommissionService extends BaseService
     public function updateListToOrderConfirmStatus($orderIds)
     {
         $commissionList = $this->getPaidListByOrderIds($orderIds);
-        return $commissionList->map(function (Commission $commission) {
+        return $commissionList->map(function (TeamCommission $commission) {
             if ($commission->refund_status == 1) {
                 // 7天无理由商品：确认收货7天后更新佣金状态
                 dispatch(new CommissionConfirm($commission->id));
@@ -95,12 +93,12 @@ class CommissionService extends BaseService
 
     public function deletePaidListByOrderIds(array $orderIds)
     {
-        return Commission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
+        return TeamCommission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
     }
 
     public function getPaidListByOrderIds(array $orderIds, $columns = ['*'])
     {
-        return Commission::query()
+        return TeamCommission::query()
             ->where('status', 1)
             ->whereIn('order_id', $orderIds)
             ->get($columns);
@@ -108,21 +106,21 @@ class CommissionService extends BaseService
 
     public function getCommissionById($id, $columns = ['*'])
     {
-        return Commission::query()->find($id, $columns);
+        return TeamCommission::query()->find($id, $columns);
     }
     public function getCommissionListByIds(array $ids, $columns = ['*'])
     {
-        return Commission::query()->whereIn('id', $ids)->get($columns);
+        return TeamCommission::query()->whereIn('id', $ids)->get($columns);
     }
 
     public function getUserCommissionById($userId, $id, $columns = ['*'])
     {
-        return Commission::query()->where('user_id', $userId)->find($id, $columns);
+        return TeamCommission::query()->where('user_id', $userId)->find($id, $columns);
     }
 
     public function getUserCommissionList($userId, $ids, $columns = ['*'])
     {
-        return Commission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
+        return TeamCommission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
     }
 
     public function getUserCommissionSum($userId, $statusList)
@@ -137,7 +135,7 @@ class CommissionService extends BaseService
 
     public function getUserCommissionQuery(array $userIds, array $statusList)
     {
-        return Commission::query()
+        return TeamCommission::query()
             ->where(function($query) use ($userIds) {
                 $query->where(function($query) use ($userIds) {
                     $query->where('scene', 1)
@@ -159,11 +157,11 @@ class CommissionService extends BaseService
      * @param array $userIds
      * @param $timeType
      * @param $scene
-     * @return Commission|\Illuminate\Database\Eloquent\Builder
+     * @return TeamCommission|\Illuminate\Database\Eloquent\Builder
      */
     public function getUserCommissionQueryByTimeType(array $userIds, $timeType, $scene = null)
     {
-        $query = Commission::query();
+        $query = TeamCommission::query();
 
         if (!is_null($scene)) {
             if ($scene == 1) {
@@ -206,7 +204,7 @@ class CommissionService extends BaseService
 
     public function getSettledCommissionListByUserIds(array $userIds, $columns = ['*'])
     {
-        return Commission::query()
+        return TeamCommission::query()
             ->whereIn('user_id', $userIds)
             ->whereIn('status', [2, 3])
             ->get($columns);
@@ -214,7 +212,7 @@ class CommissionService extends BaseService
 
     public function getSettledCommissionListBySuperiorIds(array $superiorIds, $columns = ['*'])
     {
-        return Commission::query()
+        return TeamCommission::query()
             ->whereIn('superior_id', $superiorIds)
             ->whereIn('status', [2, 3])
             ->get($columns);

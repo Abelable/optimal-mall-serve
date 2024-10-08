@@ -240,6 +240,7 @@ class OrderService extends BaseService
             $orderIds = $orderList->pluck('id')->toArray();
             CommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
             GiftCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
+            TeamCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
 
             return $orderList;
         });
@@ -315,6 +316,7 @@ class OrderService extends BaseService
         $orderIds = $orderList->pluck('id')->toArray();
         CommissionService::getInstance()->deleteUnpaidListByOrderIds($orderIds);
         GiftCommissionService::getInstance()->deleteUnpaidListByOrderIds($orderIds);
+        TeamCommissionService::getInstance()->deleteUnpaidListByOrderIds($orderIds);
 
         return $orderList;
     }
@@ -400,6 +402,7 @@ class OrderService extends BaseService
         $orderIds = $orderList->pluck('id')->toArray();
         CommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
         GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
+        TeamCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
 
         return $orderList;
     }
@@ -477,7 +480,7 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '该订单不能申请退款');
         }
 
-        return DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order) {
             try {
                 $refundParams = [
                     'transaction_id' => $order->pay_id,
@@ -503,8 +506,7 @@ class OrderService extends BaseService
                 // 删除佣金记录
                 CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
                 GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
-
-                return $order;
+                TeamCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
             } catch (GatewayException $exception) {
                 Log::error('wx_refund_fail', [$exception]);
             }
@@ -564,6 +566,7 @@ class OrderService extends BaseService
             // 删除佣金记录
             CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
             GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+            TeamCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
 
             return $order;
         } catch (GatewayException $exception) {

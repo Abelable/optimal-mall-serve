@@ -20,7 +20,9 @@ use App\Services\GiftCommissionService;
 use App\Services\GiftGoodsService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
+use App\Services\PromoterService;
 use App\Services\RelationService;
+use App\Services\TeamCommissionService;
 use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
@@ -209,12 +211,18 @@ class OrderController extends Controller
             $superiorId = $this->user()->superiorId();
             $userId = $this->userId();
 
+            $superiorPromoterInfo = null;
             $managerId = null;
+            $managerPromoterInfo = null;
             if (!is_null($superiorId)) {
+                $superiorPromoterInfo = PromoterService::getInstance()->getPromoterByUserId($superiorId);
                 $managerId = RelationService::getInstance()->getSuperiorId($superiorId);
+                if (!is_null($managerId)) {
+                    $managerPromoterInfo = PromoterService::getInstance()->getPromoterByUserId($superiorId);
+                }
             }
 
-            $orderIds = $merchantIds->map(function ($merchantId) use ($managerId, $superiorId, $promoterInfo, $userId, $coupon, $address, $cartGoodsList, $freightTemplateList) {
+            $orderIds = $merchantIds->map(function ($merchantId) use ($managerId, $superiorId, $promoterInfo, $superiorPromoterInfo, $managerPromoterInfo, $userId, $coupon, $address, $cartGoodsList, $freightTemplateList) {
                 $filterCartGoodsList = $cartGoodsList->groupBy('merchant_id')->get($merchantId);
                 $orderId = OrderService::getInstance()->createOrder($userId, $merchantId, $filterCartGoodsList, $freightTemplateList, $address, $coupon);
 
@@ -240,16 +248,26 @@ class OrderController extends Controller
                             $superiorId = !is_null($promoterInfo) ? null : $superiorId;
                             CommissionService::getInstance()->createCommission($scene, $userId, $orderId, $cartGoods, $superiorId, $coupon);
                         }
+
+                        // 9.生成团队佣金记录（前提：非礼包商品）
+                        // 场景1：组织者 -> 推广员 -> 普通用户下单
+                        // 场景2：组织者 -> 推广员下单
+                        if (is_null($promoterInfo) && !is_null($superiorPromoterInfo) && !is_null($managerPromoterInfo) && $managerPromoterInfo->level > 1) {
+                            TeamCommissionService::getInstance()->createCommission($managerPromoterInfo->user_id, $managerPromoterInfo->level, $userId, $orderId, $cartGoods, $coupon);
+                        }
+                        if (!is_null($promoterInfo) && !is_null($superiorPromoterInfo) && $superiorPromoterInfo->level > 1) {
+                            TeamCommissionService::getInstance()->createCommission($superiorPromoterInfo->user_id, $superiorPromoterInfo->level, $userId, $orderId, $cartGoods, $coupon);
+                        }
                     }
                 }
 
                 return $orderId;
             });
 
-            // 9.清空购物车
+            // 10.清空购物车
             CartGoodsService::getInstance()->deleteCartGoodsList($this->userId(), $input->cartGoodsIds);
 
-            // 10.优惠券已使用
+            // 11.优惠券已使用
             if (!is_null($input->couponId)) {
                 UserCouponService::getInstance()->useCoupon($this->userId(), $input->couponId);
             }
