@@ -124,17 +124,17 @@ class CommissionService extends BaseService
         return Commission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
     }
 
-    public function getUserCommissionSum($userId, $status)
+    public function getUserCommissionSum($userId, $statusList)
     {
-        return $this->getUserCommissionQuery($userId, $status)->sum('commission_amount');
+        return $this->getUserCommissionQuery($userId, $statusList)->sum('commission_amount');
     }
 
-    public function getUserGMV($userId, $status)
+    public function getUserGMV($userId, $statusList)
     {
-        return $this->getUserCommissionQuery($userId, $status)->sum('commission_base');
+        return $this->getUserCommissionQuery($userId, $statusList)->sum('commission_base');
     }
 
-    public function getUserCommissionQuery($userId, $status)
+    public function getUserCommissionQuery($userId, array $statusList)
     {
         return Commission::query()
             ->where(function($query) use ($userId) {
@@ -145,7 +145,7 @@ class CommissionService extends BaseService
                     $query->where('scene', 2)
                         ->where('superior_id', $userId);
                 });
-            })->where('status', $status);
+            })->whereIn('status', $statusList);
     }
 
     public function getUserCommissionListByTimeType($userId, $timeType, $scene = null, $columns = ['*'])

@@ -268,7 +268,7 @@ class GiftCommissionService extends BaseService
         $cashTeamCommission = 0;
         if (!is_null($promoterInfo)) {
             $cashGMV = CommissionService::getInstance()
-                ->getUserCommissionQuery($userId, 2)
+                ->getUserCommissionQuery($userId, [2])
                 ->whereMonth('created_at', '!=', Carbon::now()->month)
                 ->sum('commission_base');
             switch ($promoterInfo->level) {
