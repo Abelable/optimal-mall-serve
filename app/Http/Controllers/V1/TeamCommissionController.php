@@ -29,7 +29,7 @@ class TeamCommissionController extends Controller
         $timeType = $this->verifyRequiredInteger('timeType');
         $scene = $this->verifyInteger('scene');
 
-        $query = TeamCommissionService::getInstance()->getUserCommissionQueryByTimeType([$this->userId()], $timeType, $scene);
+        $query = TeamCommissionService::getInstance()->getUserCommissionQueryByTimeType($this->userId(), $timeType, $scene);
 
         $orderCount = (clone $query)->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
         $salesVolume = (clone $query)->whereIn('status', [1, 2, 3])->sum('commission_base');

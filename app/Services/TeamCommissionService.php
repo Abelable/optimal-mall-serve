@@ -147,9 +147,9 @@ class TeamCommissionService extends BaseService
             })->whereIn('status', $statusList);
     }
 
-    public function getUserCommissionListByTimeType($userId, $timeType, $scene = null, $columns = ['*'])
+    public function getUserCommissionListByTimeType($userId, $timeType, $columns = ['*'])
     {
-        $query = $this->getUserCommissionQueryByTimeType([$userId], $timeType, $scene);
+        $query = $this->getUserCommissionQueryByTimeType([$userId], $timeType);
         return $query->whereIn('status', [1, 2, 3])->get($columns);
     }
 
@@ -159,9 +159,9 @@ class TeamCommissionService extends BaseService
      * @param $scene
      * @return TeamCommission|\Illuminate\Database\Eloquent\Builder
      */
-    public function getUserCommissionQueryByTimeType(array $userIds, $timeType)
+    public function getUserCommissionQueryByTimeType($userId, $timeType)
     {
-        $query = TeamCommission::query()->whereIn('manager_id', $userIds);
+        $query = TeamCommission::query()->where('manager_id', $userId);
 
         switch ($timeType) {
             case 1:
@@ -201,7 +201,7 @@ class TeamCommissionService extends BaseService
 
     public function getUserGMVByTimeType($userId, $timeType)
     {
-        return $this->getUserCommissionQueryByTimeType([$userId], $timeType)->whereIn('status', [2, 3])->sum('commission_base');
+        return $this->getUserCommissionQueryByTimeType($userId, $timeType)->whereIn('status', [2, 3])->sum('commission_base');
     }
 
 
