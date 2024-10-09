@@ -71,12 +71,24 @@ trait VerifyRequestInput
         return $this->verifyData('mobile', null, 'required|regex:/^1[345789][0-9]{9}$/');
     }
 
-    public function verifyData($key, $default, $rule)
+    public function verifyExcel()
     {
-        $value = request()->input($key, $default);
+        return $this->verifyFile('excel', null, 'required|file|mimes:xlsx,xls|max:2048', 'file');
+    }
+
+    /**
+     * @throws BusinessException
+     */
+    public function verifyData($key, $default, $rule, $type = 'data')
+    {
+        if ($type == 'file') {
+            $value = request()->file($key, $default);
+        } else {
+            $value = request()->input($key, $default);
+        }
         $validator = Validator::make([$key => $value], [$key => $rule]);
         if (is_null($default) && is_null($value)) {
-            return $value;
+            return null;
         }
         if ($validator->fails()) {
             throw new BusinessException(CodeResponse::PARAM_VALUE_INVALID);

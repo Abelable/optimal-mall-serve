@@ -16,6 +16,7 @@ use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Yansongda\LaravelPay\Facades\Pay;
 use Yansongda\Pay\Exceptions\GatewayException;
 
@@ -627,5 +628,21 @@ class OrderService extends BaseService
             ->whereDate('created_at', Carbon::today())
             ->whereIn('status', [201, 301, 401, 402, 403, 501])
             ->get($columns);
+    }
+
+    public function importOrders(array $rows)
+    {
+        foreach ($rows as $row) {
+            $validator = Validator::make($row, [
+                'order_id' => 'required|integer',
+                'ship_channel' => 'required|string',
+                'ship_code' => 'required|string',
+                'ship_sn' => 'required|string',
+            ]);
+            if ($validator->fails()) {
+                $this->throwBusinessException(CodeResponse::PARAM_VALUE_INVALID, $validator->errors());
+            }
+            $this->ship($row['order_id'], $row['ship_channel'], $row['ship_code'], $row['ship_sn']);
+        }
     }
 }

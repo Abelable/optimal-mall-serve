@@ -34,6 +34,7 @@ class OrdersExport implements FromCollection, WithHeadings
                 'goods_sku_name' => $order->goodsList->pluck('selected_sku_name')->implode(', '),
                 'goods_number' => $order->goodsList->pluck('number')->implode(', '),
                 'ship_channel' => $order->ship_channel,
+                'ship_code' => $order->ship_code,
                 'ship_sn' => $order->ship_sn,
             ];
         });
@@ -51,6 +52,7 @@ class OrdersExport implements FromCollection, WithHeadings
             '商品规格',
             '商品数量',
             '快递公司',
+            '快递编码',
             '物流单号'
         ];
     }

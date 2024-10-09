@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\V1\Admin;
 
+use App\Exceptions\BusinessException;
 use App\Exports\OrdersExport;
 use App\Http\Controllers\Controller;
+use App\Imports\OrdersImport;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Utils\CodeResponse;
@@ -105,5 +107,18 @@ class OrderController extends Controller
             ->header('Content-Disposition', 'attachment; filename="orders.xlsx"')
             ->header('X-File-Name', 'orders.xlsx')
             ->header('Access-Control-Expose-Headers', 'X-File-Name');
+    }
+
+    public function import()
+    {
+        $excel = $this->verifyExcel();
+
+        try {
+            Excel::import(new OrdersImport(OrderService::getInstance()), $excel);
+        } catch (\Exception $e) {
+            throw new BusinessException(CodeResponse::INVALID_OPERATION, '订单导入失败');
+        }
+
+        return $this->success();
     }
 }
