@@ -99,6 +99,11 @@ class OrderController extends Controller
     public function exportOrder()
     {
         $ids = $this->verifyArrayNotEmpty('ids', []);
-        return Excel::raw(new OrdersExport($ids), 'orders.xlsx');
+        $excelFile =  Excel::raw(new OrdersExport($ids), \Maatwebsite\Excel\Excel::XLSX);
+        return response($excelFile)
+            ->header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            ->header('Content-Disposition', 'attachment; filename="orders.xlsx"')
+            ->header('X-File-Name', 'orders.xlsx')
+            ->header('Access-Control-Expose-Headers', 'X-File-Name');
     }
 }
