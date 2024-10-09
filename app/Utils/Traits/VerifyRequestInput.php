@@ -73,7 +73,7 @@ trait VerifyRequestInput
 
     public function verifyExcel()
     {
-        return $this->verifyFile('excel', null, 'required|file|mimes:xlsx,xls|max:2048', 'file');
+        return $this->verifyData('excel', null, 'required|file|mimes:xlsx,xls|max:2048', 'file');
     }
 
     /**
