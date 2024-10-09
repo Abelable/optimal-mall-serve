@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.4|^8.0",
+        "ext-bcmath": "*",
         "ext-curl": "*",
         "ext-json": "*",
         "ext-openssl": "*",
@@ -14,11 +15,11 @@
         "guzzlehttp/guzzle": "^7.5",
         "laravel/framework": "^8.75",
         "laravel/tinker": "^2.5",
+        "maatwebsite/excel": "^3.1",
         "tencentcloud/tencentcloud-sdk-php": "^3.0",
         "tymon/jwt-auth": "^1.0",
         "vanry/laravel-scout-tntsearch": "^2.4",
-        "yansongda/laravel-pay": "^2.3.0",
-        "ext-bcmath": "*"
+        "yansongda/laravel-pay": "^2.3.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.12",

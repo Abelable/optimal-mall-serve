@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V1\Admin;
 
+use App\Exports\OrdersExport;
 use App\Http\Controllers\Controller;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
@@ -9,6 +10,7 @@ use App\Utils\CodeResponse;
 use App\Utils\ExpressServe;
 use App\Utils\Inputs\Admin\OrderPageInput;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
@@ -92,5 +94,11 @@ class OrderController extends Controller
             OrderService::getInstance()->delete($orderList);
         });
         return $this->success();
+    }
+
+    public function exportOrder()
+    {
+        $ids = $this->verifyArrayNotEmpty('ids', []);
+        return Excel::raw(new OrdersExport($ids), 'orders.xlsx');
     }
 }

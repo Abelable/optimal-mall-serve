@@ -37,6 +37,8 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OrderGoods[] $goodsList
+ * @property-read int|null $goods_list_count
  * @method static \Illuminate\Database\Eloquent\Builder|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Order newQuery()
  * @method static \Illuminate\Database\Query\Builder|Order onlyTrashed()
@@ -78,4 +80,9 @@ use App\Utils\Traits\OrderStatusTrait;
 class Order extends BaseModel
 {
     use OrderStatusTrait;
+
+    public function goodsList()
+    {
+        return $this->hasMany(OrderGoods::class);
+    }
 }

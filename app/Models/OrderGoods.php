@@ -21,6 +21,7 @@ namespace App\Models;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Order|null $order
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods newQuery()
  * @method static \Illuminate\Database\Query\Builder|OrderGoods onlyTrashed()
@@ -47,4 +48,8 @@ namespace App\Models;
  */
 class OrderGoods extends BaseModel
 {
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }
