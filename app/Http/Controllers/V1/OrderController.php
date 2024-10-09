@@ -477,10 +477,11 @@ class OrderController extends Controller
     public function teamCommissionOrderList()
     {
         $timeType = $this->verifyRequiredInteger('timeType');
+        $statusList = $this->verifyArray('statusList');
         /** @var PageInput $input */
         $input = PageInput::new();
 
-        $commissionList = TeamCommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType);
+        $commissionList = TeamCommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType, $statusList);
         $groupCommissionList = $commissionList->groupBy('order_id');
         $keyCommissionList = $commissionList->keyBy('goods_id');
         $orderIds = $commissionList->pluck('order_id')->toArray();

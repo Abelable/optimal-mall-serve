@@ -147,10 +147,10 @@ class TeamCommissionService extends BaseService
             })->whereIn('status', $statusList);
     }
 
-    public function getUserCommissionListByTimeType($userId, $timeType, $columns = ['*'])
+    public function getUserCommissionListByTimeType($userId, $timeType, array $statusList, $columns = ['*'])
     {
         $query = $this->getUserCommissionQueryByTimeType([$userId], $timeType);
-        return $query->whereIn('status', [2, 3])->get($columns);
+        return $query->whereIn('status', $statusList)->get($columns);
     }
 
     /**
