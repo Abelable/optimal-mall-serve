@@ -96,7 +96,7 @@ class OrderController extends Controller
         return $this->success();
     }
 
-    public function exportOrder()
+    public function export()
     {
         $ids = $this->verifyArrayNotEmpty('ids', []);
         $excelFile =  Excel::raw(new OrdersExport($ids), \Maatwebsite\Excel\Excel::XLSX);

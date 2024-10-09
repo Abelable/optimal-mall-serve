@@ -381,7 +381,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('confirm', 'OrderController@confirm');
         Route::post('cancel', 'OrderController@cancel');
         Route::post('delete', 'OrderController@delete');
-        Route::post('export', 'OrderController@exportOrder');
+        Route::post('export', 'OrderController@export');
     });
 
     Route::prefix('refund')->group(function () {
