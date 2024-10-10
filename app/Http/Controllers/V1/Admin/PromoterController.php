@@ -47,7 +47,7 @@ class PromoterController extends Controller
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
-        $promoter = PromoterService::getInstance()->getPromoterByUserId($id);
+        $promoter = PromoterService::getInstance()->getPromoterById($id);
         if (is_null($promoter)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前推广员不存在');
         }

@@ -88,6 +88,11 @@ class PromoterService extends BaseService
         return Promoter::query()->where('user_id', $userId)->first($columns);
     }
 
+    public function getPromoterById($id, $columns = ['*'])
+    {
+        return Promoter::query()->find($id, $columns);
+    }
+
     public function getExactPromoter($userId, $level, $scene, $columns = ['*'])
     {
         return Promoter::query()->where('user_id', $userId)->where('level', $level)->where('scene', $scene)->first($columns);

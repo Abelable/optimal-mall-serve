@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\Activity;
+use App\Models\Order;
 use App\Utils\Traits\HttpClient;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -19,6 +20,7 @@ class WxMpServe
     const GET_OPENID_URL = 'https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code';
     const GET_QRCODE_URL = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s';
     const SEND_MSG_URL = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=%s';
+    const UPLOAD_SHIPPING_INFO_URL = 'https://api.weixin.qq.com/wxa/sec/order/upload_shipping_info?access_token=%s';
 
     protected $accessToken;
     protected $stableAccessToken;
@@ -87,7 +89,7 @@ class WxMpServe
             'thing8' => ['value' => $activity->goods_name],
             'date5' => ['value' => $endTime]
         ];
-        $result = $this->httpPost(
+        return $this->httpPost(
             sprintf(self::SEND_MSG_URL, $this->stableAccessToken),
             [
                 'template_id' => env('ACTIVITY_TEMPLATE_ID'),
@@ -96,6 +98,34 @@ class WxMpServe
                 'data' => $data
             ]
         );
-        return $result;
+    }
+
+    public function uploadShippingInfo($openid, Order $order)
+    {
+        return $this->httpPost(
+            sprintf(self::UPLOAD_SHIPPING_INFO_URL, $this->stableAccessToken),
+            [
+                'order_key' => [
+                    'order_number_type' => 2,
+                    'transaction_id' => $order->pay_id
+                ],
+                'logistics_type' => 1,
+                'delivery_mode' => 2,
+                'shipping_list' => [
+                    [
+                        'tracking_no' => '',
+                        'express_company' => '',
+                        'item_desc' => '',
+                        'contact' => [
+                            'consignor_contact' => ''
+                        ]
+                    ]
+                ],
+                'upload_time' => '',
+                'payer' => [
+                    'openid' => $openid
+                ]
+            ]
+        );
     }
 }
