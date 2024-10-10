@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Jobs\CommissionConfirm;
+use App\Jobs\TeamCommissionConfirm;
 use App\Models\CartGoods;
 use App\Models\Coupon;
 use App\Models\TeamCommission;
@@ -71,7 +71,7 @@ class TeamCommissionService extends BaseService
         return $commissionList->map(function (TeamCommission $commission) {
             if ($commission->refund_status == 1) {
                 // 7天无理由商品：确认收货7天后更新佣金状态
-                dispatch(new CommissionConfirm($commission->id));
+                dispatch(new TeamCommissionConfirm($commission->id));
             } else {
                 $commission->status = 2;
                 $commission->save();
@@ -108,6 +108,7 @@ class TeamCommissionService extends BaseService
     {
         return TeamCommission::query()->find($id, $columns);
     }
+
     public function getCommissionListByIds(array $ids, $columns = ['*'])
     {
         return TeamCommission::query()->whereIn('id', $ids)->get($columns);
@@ -115,41 +116,32 @@ class TeamCommissionService extends BaseService
 
     public function getUserCommissionById($userId, $id, $columns = ['*'])
     {
-        return TeamCommission::query()->where('user_id', $userId)->find($id, $columns);
+        return TeamCommission::query()->where('manager_id', $userId)->find($id, $columns);
     }
 
     public function getUserCommissionList($userId, $ids, $columns = ['*'])
     {
-        return TeamCommission::query()->where('user_id', $userId)->whereIn('id', $ids)->get($columns);
+        return TeamCommission::query()->where('manager_id', $userId)->whereIn('id', $ids)->get($columns);
     }
 
     public function getUserCommissionSum($userId, $statusList)
     {
-        return $this->getUserCommissionQuery([$userId], $statusList)->sum('commission_amount');
+        return $this->getUserCommissionQuery($userId, $statusList)->sum('commission_amount');
     }
 
-    public function getUserGMV(array $userIds, $statusList)
+    public function getUserGMV($userId, $statusList)
     {
-        return $this->getUserCommissionQuery($userIds, $statusList)->sum('commission_base');
+        return $this->getUserCommissionQuery($userId, $statusList)->sum('commission_base');
     }
 
-    public function getUserCommissionQuery(array $userIds, array $statusList)
+    public function getUserCommissionQuery($userId, array $statusList)
     {
-        return TeamCommission::query()
-            ->where(function($query) use ($userIds) {
-                $query->where(function($query) use ($userIds) {
-                    $query->where('scene', 1)
-                        ->whereIn('user_id', $userIds);
-                })->orWhere(function($query) use ($userIds) {
-                    $query->where('scene', 2)
-                        ->whereIn('superior_id', $userIds);
-                });
-            })->whereIn('status', $statusList);
+        return TeamCommission::query()->where('manager_id', $userId)->whereIn('status', $statusList);
     }
 
     public function getUserCommissionListByTimeType($userId, $timeType, array $statusList, $columns = ['*'])
     {
-        $query = $this->getUserCommissionQueryByTimeType([$userId], $timeType);
+        $query = $this->getUserCommissionQueryByTimeType($userId, $timeType);
         return $query->whereIn('status', $statusList)->get($columns);
     }
 
@@ -183,22 +175,6 @@ class TeamCommissionService extends BaseService
         return $query;
     }
 
-    public function getSettledCommissionListByUserIds(array $userIds, $columns = ['*'])
-    {
-        return TeamCommission::query()
-            ->whereIn('user_id', $userIds)
-            ->whereIn('status', [2, 3])
-            ->get($columns);
-    }
-
-    public function getSettledCommissionListBySuperiorIds(array $superiorIds, $columns = ['*'])
-    {
-        return TeamCommission::query()
-            ->whereIn('superior_id', $superiorIds)
-            ->whereIn('status', [2, 3])
-            ->get($columns);
-    }
-
     public function getUserGMVByTimeType($userId, $timeType)
     {
         return $this->getUserCommissionQueryByTimeType($userId, $timeType)->whereIn('status', [2, 3])->sum('commission_base');
@@ -221,5 +197,4 @@ class TeamCommissionService extends BaseService
             ->whereIn('status', $statusList)
             ->sum('commission_amount');
     }
-
 }
