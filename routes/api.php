@@ -114,6 +114,7 @@ Route::prefix('order')->group(function () {
     Route::post('commission_list', 'OrderController@commissionOrderList');
     Route::post('team_commission_list', 'OrderController@teamCommissionOrderList');
     Route::get('gift_commission_list', 'OrderController@giftCommissionOrderList');
+    Route::get('waybill_token', 'OrderController@waybillToken');
 });
 
 Route::prefix('refund')->group(function () {

@@ -22,6 +22,7 @@ class WxMpServe
     const GET_QRCODE_URL = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s';
     const SEND_MSG_URL = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=%s';
     const UPLOAD_SHIPPING_INFO_URL = 'https://api.weixin.qq.com/wxa/sec/order/upload_shipping_info?access_token=%s';
+    const TRACE_WAYBILL_URL = 'https://api.weixin.qq.com/cgi-bin/express/delivery/open_msg/trace_waybill?access_token=%s';
 
     protected $accessToken;
     protected $stableAccessToken;
@@ -127,6 +128,32 @@ class WxMpServe
                 'payer' => [
                     'openid' => $openid
                 ]
+            ],
+            3
+        );
+    }
+
+    public function getWaybillToken($openid, Order $order)
+    {
+        $goodsArray = [];
+        foreach ($order->goodsList as $goods) {
+            $goodsArray[] = [
+                'goods_img_url' => $goods->cover,
+                'goods_name' => $goods->name,
+            ];
+        }
+        return $this->httpPost(
+            sprintf(self::TRACE_WAYBILL_URL, $this->stableAccessToken),
+            [
+                'openid' => $openid,
+                'delivery_id' => $order->ship_code,
+                'waybill_id' => $order->ship_sn,
+                'receiver_phone' => $order->mobile,
+                'goods_info' => [
+                    'detail_list' => $goodsArray
+                ],
+                'trans_id' =>  $order->pay_id,
+                'order_detail_path' => 'pages/mine/subpages/order-center/subpages/order-detail/index?id=' . $order->id,
             ],
             3
         );

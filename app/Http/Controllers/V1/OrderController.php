@@ -28,6 +28,7 @@ use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\CreateOrderInput;
 use App\Utils\Inputs\PageInput;
+use App\Utils\WxMpServe;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Yansongda\LaravelPay\Facades\Pay;
@@ -553,5 +554,18 @@ class OrderController extends Controller
         });
 
         return $this->success($this->paginate($page, $list));
+    }
+
+    public function waybillToken()
+    {
+        $id = $this->verifyRequiredId('id');
+        $order = OrderService::getInstance()->getOrderById($id);
+        if (is_null($order)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
+        }
+
+        $token = WxMpServe::new()->getWaybillToken($this->user()->openid, $order);
+
+        return $this->success($token);
     }
 }
