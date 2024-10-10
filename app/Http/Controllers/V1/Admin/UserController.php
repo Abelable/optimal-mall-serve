@@ -52,22 +52,6 @@ class UserController extends Controller
         return $this->success($user);
     }
 
-    public function bindSuperior()
-    {
-        $userId = $this->verifyRequiredId('userId');
-        $superiorId = $this->verifyRequiredId('superiorId');
-
-        $relation = RelationService::getInstance()->getRelationByFanId($userId);
-        if (!is_null($relation)) {
-            $relation->superior_id = $superiorId;
-            $relation->save();
-        } else {
-            RelationService::getInstance()->banding($superiorId, $userId);
-        }
-
-        return $this->success();
-    }
-
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
@@ -84,5 +68,33 @@ class UserController extends Controller
         $promoterIds = PromoterService::getInstance()->getOptions()->pluck('user_id')->toArray();
         $normalUserList = UserService::getInstance()->getNormalList($promoterIds, ['id', 'avatar', 'nickname']);
         return $this->success($normalUserList);
+    }
+
+    public function bindSuperior()
+    {
+        $userId = $this->verifyRequiredId('userId');
+        $superiorId = $this->verifyRequiredId('superiorId');
+
+        $relation = RelationService::getInstance()->getRelationByFanId($userId);
+        if (!is_null($relation)) {
+            $relation->superior_id = $superiorId;
+            $relation->save();
+        } else {
+            RelationService::getInstance()->banding($superiorId, $userId);
+        }
+
+        return $this->success();
+    }
+
+    public function deleteSuperior()
+    {
+        $userId = $this->verifyRequiredId('userId');
+
+        $relation = RelationService::getInstance()->getRelationByFanId($userId);
+        if (is_null($relation)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前上级不存在');
+        }
+        $relation->delete();
+        return $this->success();
     }
 }
