@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\GoodsCategory;
 use App\Services\CategoryService;
 use App\Utils\CodeResponse;
@@ -39,7 +40,7 @@ class CategoryController extends Controller
             return $this->fail(CodeResponse::DATA_EXISTED, '当前商品分类已存在');
         }
 
-        $category = GoodsCategory::new();
+        $category = Category::new();
         $category->name = $name;
         $category->save();
 
