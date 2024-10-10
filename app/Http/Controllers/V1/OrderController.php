@@ -434,7 +434,7 @@ class OrderController extends Controller
         /** @var PageInput $input */
         $input = PageInput::new();
 
-        $commissionList = CommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType, $scene ?: null);
+        $commissionList = CommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType, $statusList,$scene ?: null);
         $groupCommissionList = $commissionList->groupBy('order_id');
         $keyCommissionList = $commissionList->keyBy('goods_id');
         $orderIds = $commissionList->pluck('order_id')->toArray();
