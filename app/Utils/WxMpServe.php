@@ -116,7 +116,7 @@ class WxMpServe
                     [
                         'tracking_no' => $order->ship_sn,
                         'express_company' => $order->ship_code,
-                        'item_desc' => $order->goodsList->pluck('name')->implode('，'),
+                        'item_desc' => mb_convert_encoding($order->goodsList->pluck('name')->implode('，'), 'UTF-8', 'auto'),
                         'contact' => [
                             'receiver_contact' => substr($order->mobile,0, 3) . '****' .substr($order->mobile,-4)
                         ]
