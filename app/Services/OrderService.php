@@ -630,19 +630,17 @@ class OrderService extends BaseService
             ->get($columns);
     }
 
-    public function importOrders(array $rows)
+    public function importOrders(array $row)
     {
-        foreach ($rows as $row) {
-            $validator = Validator::make($row, [
-                'order_id' => 'required|integer',
-                'ship_channel' => 'required|string',
-                'ship_code' => 'required|string',
-                'ship_sn' => 'required|string',
-            ]);
-            if ($validator->fails()) {
-                $this->throwBusinessException(CodeResponse::PARAM_VALUE_INVALID, $validator->errors());
-            }
-            $this->ship($row['order_id'], $row['ship_channel'], $row['ship_code'], $row['ship_sn']);
+        $validator = Validator::make($row, [
+            'order_id' => 'required|integer',
+            'ship_channel' => 'required|string',
+            'ship_code' => 'required|string',
+            'ship_sn' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            $this->throwBusinessException(CodeResponse::PARAM_VALUE_INVALID, $validator->errors());
         }
+        $this->ship($row['order_id'], $row['ship_channel'], $row['ship_code'], $row['ship_sn']);
     }
 }

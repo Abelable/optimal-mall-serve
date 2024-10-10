@@ -114,7 +114,7 @@ class OrderController extends Controller
         $excel = $this->verifyExcel();
 
         try {
-            Excel::import(new OrdersImport(OrderService::getInstance()), $excel);
+            Excel::import(new OrdersImport(), $excel);
         } catch (\Exception $e) {
             throw new BusinessException(CodeResponse::INVALID_OPERATION, '订单导入失败');
         }
