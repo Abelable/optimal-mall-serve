@@ -27,6 +27,11 @@ class RelationService extends BaseService
         return Relation::query()->where('superior_id', $superiorId)->where('fan_id', $fanId)->first($columns);
     }
 
+    public function getRelationByFanId($fanId, $columns = ['*'])
+    {
+        return Relation::query()->where('fan_id', $fanId)->first($columns);
+    }
+
     public function getListByFanIds(array $fanIds, $columns = ['*'])
     {
         return Relation::query()->whereIn('fan_id', $fanIds)->get($columns);
@@ -61,5 +66,10 @@ class RelationService extends BaseService
     {
         $relation = Relation::query()->where('fan_id', $fanId)->first($columns);
         return $relation->superior_id ?? null;
+    }
+
+    public function deleteBySuperiorId($superiorId)
+    {
+        return Relation::query()->where('superior_id', $superiorId)->delete();
     }
 }

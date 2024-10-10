@@ -4,11 +4,14 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Promoter;
+use App\Models\Relation;
 use App\Models\User;
 use App\Services\PromoterService;
+use App\Services\RelationService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\PromoterPageInput;
+use Illuminate\Support\Facades\DB;
 
 class PromoterController extends Controller
 {
@@ -51,7 +54,13 @@ class PromoterController extends Controller
         if (is_null($promoter)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前推广员不存在');
         }
-        $promoter->delete();
+        DB::transaction(function () use ($promoter) {
+            $promoter->delete();
+
+            // 删除上下级关系
+            RelationService::getInstance()->deleteBySuperiorId($promoter->user_id);
+        });
+
         return $this->success();
     }
 

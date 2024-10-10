@@ -56,7 +56,13 @@ class UserController extends Controller
         $userId = $this->verifyRequiredId('userId');
         $superiorId = $this->verifyRequiredId('superiorId');
 
-        RelationService::getInstance()->banding($superiorId, $userId);
+        $relation = RelationService::getInstance()->getRelationByFanId($userId);
+        if (!is_null($relation)) {
+            $relation->superior_id = $superiorId;
+            $relation->save();
+        } else {
+            RelationService::getInstance()->banding($superiorId, $userId);
+        }
 
         return $this->success();
     }
