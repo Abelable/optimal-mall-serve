@@ -48,6 +48,7 @@ class UserController extends Controller
         if (is_null($user)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前用户不存在');
         }
+        $user['superiorId'] = $user->superiorId();
         return $this->success($user);
     }
 
