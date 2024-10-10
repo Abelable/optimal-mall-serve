@@ -142,7 +142,7 @@ class WxMpServe
                 'goods_name' => $goods->name,
             ];
         }
-        return $this->httpPost(
+        $result = $this->httpPost(
             sprintf(self::TRACE_WAYBILL_URL, $this->stableAccessToken),
             [
                 'openid' => $openid,
@@ -157,5 +157,11 @@ class WxMpServe
             ],
             3
         );
+
+        if ($result['errcode'] != 0) {
+            throw new \Exception('获取微信小程序waybillToken异常：' . $result['errcode'] . $result['errmsg']);
+        }
+
+        return $result['waybill_token'];
     }
 }
