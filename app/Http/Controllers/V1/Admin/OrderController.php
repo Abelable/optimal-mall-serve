@@ -109,7 +109,7 @@ class OrderController extends Controller
             ->header('Access-Control-Expose-Headers', 'X-File-Name');
     }
 
-    public function upload()
+    public function import()
     {
         $excel = $this->verifyExcel();
 
