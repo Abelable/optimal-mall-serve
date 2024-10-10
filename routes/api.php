@@ -111,9 +111,9 @@ Route::prefix('order')->group(function () {
     Route::post('refund', 'OrderController@refund');
     Route::post('cancel', 'OrderController@cancel');
     Route::post('delete', 'OrderController@delete');
-    Route::get('commission_list', 'OrderController@commissionOrderList');
-    Route::get('gift_commission_list', 'OrderController@giftCommissionOrderList');
+    Route::post('commission_list', 'OrderController@commissionOrderList');
     Route::post('team_commission_list', 'OrderController@teamCommissionOrderList');
+    Route::get('gift_commission_list', 'OrderController@giftCommissionOrderList');
 });
 
 Route::prefix('refund')->group(function () {

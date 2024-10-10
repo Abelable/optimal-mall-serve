@@ -430,6 +430,7 @@ class OrderController extends Controller
     {
         $scene = $this->verifyInteger('scene');
         $timeType = $this->verifyRequiredInteger('timeType');
+        $statusList = $this->verifyArray('statusList');
         /** @var PageInput $input */
         $input = PageInput::new();
 
