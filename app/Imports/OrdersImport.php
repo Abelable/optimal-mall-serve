@@ -2,9 +2,6 @@
 
 namespace App\Imports;
 
-use App\Models\Order;
-use App\Services\OrderService;
-use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class OrdersImport implements ToModel
@@ -18,7 +15,6 @@ class OrdersImport implements ToModel
 
     public function model(array $row)
     {
-        // TODO: Implement model() method.
     }
 
     public function onRow($row)
