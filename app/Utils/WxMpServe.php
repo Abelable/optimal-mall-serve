@@ -111,17 +111,18 @@ class WxMpServe
                 ],
                 'logistics_type' => 1,
                 'delivery_mode' => 2,
+                'is_all_delivered' => true,
                 'shipping_list' => [
                     [
-                        'tracking_no' => '',
-                        'express_company' => '',
-                        'item_desc' => '',
+                        'tracking_no' => $order->ship_sn,
+                        'express_company' => $order->ship_code,
+                        'item_desc' => $order->goodsList->pluck('name')->implode('，'),
                         'contact' => [
-                            'consignor_contact' => ''
+                            'receiver_contact' => substr($order->mobile,0, 3) . '****' .substr($order->mobile,-4)
                         ]
                     ]
                 ],
-                'upload_time' => '',
+                'upload_time' => Carbon::now()->format('Y-m-d\TH:i:s.uP'),
                 'payer' => [
                     'openid' => $openid
                 ]

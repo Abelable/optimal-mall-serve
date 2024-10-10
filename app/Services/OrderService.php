@@ -13,6 +13,7 @@ use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\Admin\OrderPageInput;
 use App\Utils\Inputs\PageInput;
+use App\Utils\WxMpServe;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -425,6 +426,11 @@ class OrderService extends BaseService
         if ($order->cas() == 0) {
             $this->throwUpdateFail();
         }
+
+        // 发货同步小程序后台
+        $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
+        WxMpServe::new()->uploadShippingInfo($openid, $order);
+
         return $order;
     }
 
