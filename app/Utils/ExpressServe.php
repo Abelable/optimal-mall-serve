@@ -23,7 +23,7 @@ class ExpressServe
         } else {
             $requestData = "{'OrderCode':'', 'ShipperCode':'{$shipperCode}', 'LogisticCode':'{$logisticCode}'}";
         }
-        $result = $this->httpPost(self::URL, $this->formatReqData($requestData, '1002'), true);
+        $result = $this->httpPost(self::URL, $this->formatReqData($requestData, '1002'), 2);
         return $this->formatResData($result);
     }
 

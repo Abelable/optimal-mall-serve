@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Utils\Traits\HttpClient;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class WxMpServe
 {
@@ -78,7 +79,7 @@ class WxMpServe
 
     public function getQRCode($scene, $page)
     {
-        return $this->httpPost(sprintf(self::GET_QRCODE_URL, $this->accessToken), ['scene' => $scene, 'page' => $page], false, false);
+        return $this->httpPost(sprintf(self::GET_QRCODE_URL, $this->accessToken), ['scene' => $scene, 'page' => $page], 1, false);
     }
 
     public function sendActivityStartMsg($openid, Activity $activity)
@@ -116,7 +117,7 @@ class WxMpServe
                     [
                         'tracking_no' => $order->ship_sn,
                         'express_company' => $order->ship_code,
-                        'item_desc' => mb_convert_encoding($order->goodsList->pluck('name')->implode('，'), 'UTF-8', 'auto'),
+                        'item_desc' => $order->goodsList->pluck('name')->implode('，'),
                         'contact' => [
                             'receiver_contact' => substr($order->mobile,0, 3) . '****' .substr($order->mobile,-4)
                         ]
@@ -126,7 +127,8 @@ class WxMpServe
                 'payer' => [
                     'openid' => $openid
                 ]
-            ]
+            ],
+            3
         );
     }
 }
