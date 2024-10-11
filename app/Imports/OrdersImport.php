@@ -18,9 +18,9 @@ class OrdersImport implements ToModel
 
         $formattedRow = [
             'order_id' => (int)$row[0],
-            'ship_channel' => (string)$row[8],
-            'ship_code' => (string)$row[9],
-            'ship_sn' => (string)$row[10],
+            'ship_channel' => (string)$row[9],
+            'ship_code' => (string)$row[10],
+            'ship_sn' => (string)$row[11],
         ];
         OrderService::getInstance()->importOrders($formattedRow);
     }

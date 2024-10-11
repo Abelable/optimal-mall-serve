@@ -39,6 +39,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OrderGoods[] $goodsList
  * @property-read int|null $goods_list_count
+ * @property-read \App\Models\Merchant|null $merchantInfo
  * @method static \Illuminate\Database\Eloquent\Builder|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Order newQuery()
  * @method static \Illuminate\Database\Query\Builder|Order onlyTrashed()
@@ -84,5 +85,10 @@ class Order extends BaseModel
     public function goodsList()
     {
         return $this->hasMany(OrderGoods::class);
+    }
+
+    public function merchantInfo()
+    {
+        return $this->hasOne(Merchant::class, 'merchant_id');
     }
 }
