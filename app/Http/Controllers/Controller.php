@@ -41,12 +41,20 @@ class Controller extends BaseController
 
     public function userId()
     {
-        return $this->user()->getAuthIdentifier();
+        $userId = null;
+        if (auth()->check()) {
+            $userId = auth()->user()->getAuthIdentifier();
+        }
+        return $userId;
     }
 
     public function adminId()
     {
-        return $this->admin()->getAuthIdentifier();
+        $adminId = null;
+        if (auth()->check()) {
+            $adminId = $this->admin()->getAuthIdentifier();
+        }
+        return $adminId;
     }
 
     /**

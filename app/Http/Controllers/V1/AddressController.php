@@ -10,8 +10,6 @@ use App\Utils\Inputs\AddressInput;
 
 class AddressController extends Controller
 {
-    protected $only = ['defaultAddress'];
-
     public function defaultAddress()
     {
         $columns = ['id', 'region_desc', 'address_detail'];
