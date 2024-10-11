@@ -65,6 +65,9 @@ class CartController extends Controller
                 }
                 return $cartGoods;
             }
+            if ($cartGoods->selected_sku_index == -1) {
+                return $cartGoods;
+            }
             $sku = $skuList[$cartGoods->selected_sku_index];
             if (is_null($sku) || $cartGoods->selected_sku_name != $sku->name) {
                 $cartGoods->status = 2;
