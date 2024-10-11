@@ -16,7 +16,7 @@ class CartGoodsService extends BaseService
 
     public function cartGoodsList($userId, $columns = ['*'])
     {
-        return CartGoods::query()->where('user_id', $userId)->where('scene', '1')->get($columns);
+        return CartGoods::query()->where('user_id', $userId)->where('scene', '1')->orderBy('updated_at', 'desc')->get($columns);
     }
 
     public function getCartGoodsListByIds($userId, array $ids, $columns = ['*'])
