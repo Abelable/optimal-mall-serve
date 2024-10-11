@@ -89,6 +89,6 @@ class Order extends BaseModel
 
     public function merchantInfo()
     {
-        return $this->hasOne(Merchant::class, 'merchant_id');
+        return $this->belongsTo(Merchant::class, 'merchant_id');
     }
 }
