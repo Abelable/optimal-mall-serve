@@ -48,7 +48,6 @@ class CartController extends Controller
                 $cartGoods->save();
                 return $cartGoods;
             }
-            $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
             $skuList = json_decode($goods->sku_list);
             if (count($skuList) == 0) {
                 if ($cartGoods->number > $goods->stock) {
@@ -90,6 +89,7 @@ class CartController extends Controller
             } else {
                 $cartGoods['stock'] = $sku->stock;
             }
+            $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
             return $cartGoods;
         });
 
