@@ -42,13 +42,13 @@ class CartController extends Controller
         $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList) {
             /** @var Goods $goods */
             $goods = $goodsList->get($cartGoods->goods_id);
-            $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
             if (is_null($goods) || $goods->status != 1) {
                 $cartGoods->status = 3;
                 $cartGoods->status_desc = '商品已下架';
                 $cartGoods->save();
                 return $cartGoods;
             }
+            $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
             $skuList = json_decode($goods->sku_list);
             if (count($skuList) == 0) {
                 if ($cartGoods->number > $goods->stock) {
