@@ -27,7 +27,7 @@ class OrdersExport implements FromCollection, WithHeadings
             return [
                 'order_id' => $order->id,
                 'order_sn' => $order->order_sn,
-                'merchant' => $order->merchantInfo->name,
+                'merchant' => $order->merchantInfo ? $order->merchantInfo->name : '自营',
                 'goods_name' => $order->goodsList->pluck('name')->implode(', '),
                 'goods_sku_name' => $order->goodsList->pluck('selected_sku_name')->implode(', '),
                 'goods_number' => $order->goodsList->pluck('number')->implode(', '),
