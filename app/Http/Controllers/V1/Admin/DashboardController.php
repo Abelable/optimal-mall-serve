@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $weeklyGrowthRate = OrderService::getInstance()->weeklySalesGrowthRate();
 
         return $this->success([
-            'totalSales' => $totalSales,
+            'totalSales' => number_format($totalSales, 2),
             'dailySalesList' => $dailySalesList,
             'dailyGrowthRate' => $dailyGrowthRate,
             'weeklyGrowthRate' => $weeklyGrowthRate

@@ -657,9 +657,12 @@ class OrderService extends BaseService
 
     public function dailySalesList()
     {
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subDays(17);
+
         return Order::query()
             ->whereIn('status', [201, 301, 401, 402, 403, 501])
-            ->where('created_at', '>=', Carbon::now()->subDays(17))
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('SUM(payment_amount) as sum'))
             ->groupBy(DB::raw('DATE(created_at)'))
             ->get();
@@ -676,7 +679,7 @@ class OrderService extends BaseService
         $yesterdayPaymentAmount = (clone $query)->whereDate('created_at', $yesterday)->sum('payment_amount');
 
         if ($yesterdayPaymentAmount > 0) {
-            $dailyGrowthRate = (($todayPaymentAmount - $yesterdayPaymentAmount) / $yesterdayPaymentAmount) * 100;
+            $dailyGrowthRate = round((($todayPaymentAmount - $yesterdayPaymentAmount) / $yesterdayPaymentAmount) * 100);
         } else {
             $dailyGrowthRate = 0;
         }
@@ -696,7 +699,7 @@ class OrderService extends BaseService
         $lastWeekPaymentAmount = (clone $query)->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])->sum('payment_amount');
 
         if ($lastWeekPaymentAmount > 0) {
-            $weeklyGrowthRate = (($thisWeekPaymentAmount - $lastWeekPaymentAmount) / $lastWeekPaymentAmount) * 100;
+            $weeklyGrowthRate = round((($thisWeekPaymentAmount - $lastWeekPaymentAmount) / $lastWeekPaymentAmount) * 100);
         } else {
             $weeklyGrowthRate = 0; // 防止除以零
         }
