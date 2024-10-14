@@ -649,4 +649,58 @@ class OrderService extends BaseService
         }
         $this->ship($row['order_id'], $row['ship_channel'], $row['ship_code'], $row['ship_sn']);
     }
+
+    public function salesSum()
+    {
+        return Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501])->sum('payment_amount');
+    }
+
+    public function dailySalesList()
+    {
+        return Order::query()
+            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->where('created_at', '>=', Carbon::now()->subDays(17))
+            ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('SUM(payment_amount) as sum'))
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+    }
+
+    public function dailySalesGrowthRate()
+    {
+        $query = Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501]);
+
+        $today = Carbon::today();
+        $yesterday = Carbon::yesterday();
+
+        $todayPaymentAmount = (clone $query)->whereDate('created_at', $today)->sum('payment_amount');
+        $yesterdayPaymentAmount = (clone $query)->whereDate('created_at', $yesterday)->sum('payment_amount');
+
+        if ($yesterdayPaymentAmount > 0) {
+            $dailyGrowthRate = (($todayPaymentAmount - $yesterdayPaymentAmount) / $yesterdayPaymentAmount) * 100;
+        } else {
+            $dailyGrowthRate = 0;
+        }
+
+        return $dailyGrowthRate;
+    }
+
+    public function weeklySalesGrowthRate()
+    {
+        $query = Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501]);
+
+        $startOfThisWeek = Carbon::now()->startOfWeek();
+        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
+
+        $thisWeekPaymentAmount = (clone $query)->whereBetween('created_at', [$startOfThisWeek, now()])->sum('payment_amount');
+        $lastWeekPaymentAmount = (clone $query)->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])->sum('payment_amount');
+
+        if ($lastWeekPaymentAmount > 0) {
+            $weeklyGrowthRate = (($thisWeekPaymentAmount - $lastWeekPaymentAmount) / $lastWeekPaymentAmount) * 100;
+        } else {
+            $weeklyGrowthRate = 0; // 防止除以零
+        }
+
+        return $weeklyGrowthRate;
+    }
 }

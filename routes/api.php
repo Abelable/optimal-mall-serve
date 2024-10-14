@@ -193,6 +193,10 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::get('token_refresh', 'AuthController@refreshToken');
     });
 
+    Route::prefix('dashboard')->group(function () {
+        Route::get('sales_data', 'DashboardController@salesData');
+    });
+
     Route::post('list', 'AdminController@list');
     Route::get('detail', 'AdminController@detail');
     Route::post('add', 'AdminController@add');
