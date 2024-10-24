@@ -50,6 +50,10 @@ class CartController extends Controller
             }
             $skuList = json_decode($goods->sku_list);
             if (count($skuList) == 0) {
+                if ($cartGoods->price != $goods->price) {
+                    $cartGoods->price = $goods->price;
+                    $cartGoods->save();
+                }
                 if ($cartGoods->number > $goods->stock) {
                     if ($goods->stock != 0) {
                         $cartGoods->number = $goods->stock;
@@ -69,6 +73,10 @@ class CartController extends Controller
                 return $cartGoods;
             }
             $sku = $skuList[$cartGoods->selected_sku_index];
+            if ($cartGoods->price != $sku->price) {
+                $cartGoods->price = $sku->price;
+                $cartGoods->save();
+            }
             if (is_null($sku) || $cartGoods->selected_sku_name != $sku->name) {
                 $cartGoods->status = 2;
                 $cartGoods->status_desc = '商品规格不存在';
