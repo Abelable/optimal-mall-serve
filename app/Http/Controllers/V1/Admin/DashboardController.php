@@ -26,14 +26,14 @@ class DashboardController extends Controller
 
     public function orderCountData()
     {
-        $totalSales = OrderService::getInstance()->orderCountSum();
-        $dailySalesList = OrderService::getInstance()->dailyOrderCountList();
+        $totalCount = OrderService::getInstance()->orderCountSum();
+        $dailyCountList = OrderService::getInstance()->dailyOrderCountList();
         $dailyGrowthRate = OrderService::getInstance()->dailyOrderCountGrowthRate();
         $weeklyGrowthRate = OrderService::getInstance()->weeklyOrderCountGrowthRate();
 
         return $this->success([
-            'totalSales' => number_format($totalSales, 2),
-            'dailySalesList' => $dailySalesList,
+            'totalCount' => number_format($totalCount, 2),
+            'dailyCountList' => $dailyCountList,
             'dailyGrowthRate' => $dailyGrowthRate,
             'weeklyGrowthRate' => $weeklyGrowthRate
         ]);
