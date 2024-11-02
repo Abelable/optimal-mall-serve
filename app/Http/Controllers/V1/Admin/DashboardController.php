@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\OrderService;
+use App\Services\UserService;
 
 class DashboardController extends Controller
 {
@@ -30,6 +31,21 @@ class DashboardController extends Controller
         $dailyCountList = OrderService::getInstance()->dailyOrderCountList();
         $dailyGrowthRate = OrderService::getInstance()->dailyOrderCountGrowthRate();
         $weeklyGrowthRate = OrderService::getInstance()->weeklyOrderCountGrowthRate();
+
+        return $this->success([
+            'totalCount' => $totalCount,
+            'dailyCountList' => $dailyCountList,
+            'dailyGrowthRate' => $dailyGrowthRate,
+            'weeklyGrowthRate' => $weeklyGrowthRate
+        ]);
+    }
+
+    public function userCountData()
+    {
+        $totalCount = UserService::getInstance()->userCountSum();
+        $dailyCountList = UserService::getInstance()->dailyUserCountList();
+        $dailyGrowthRate = UserService::getInstance()->dailyUserCountGrowthRate();
+        $weeklyGrowthRate = UserService::getInstance()->weeklyUserCountGrowthRate();
 
         return $this->success([
             'totalCount' => $totalCount,

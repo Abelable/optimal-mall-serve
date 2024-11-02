@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Utils\Inputs\Admin\UserPageInput;
 use App\Utils\Inputs\SearchPageInput;
 use App\Utils\Inputs\WxMpRegisterInput;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class UserService extends BaseService
 {
@@ -87,5 +89,61 @@ class UserService extends BaseService
     public function getPageByUserIds(array $userIds, SearchPageInput $input, $columns = ['*'])
     {
         return User::query()->whereIn('id', $userIds)->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
+    public function userCountSum()
+    {
+        return User::query()->count();
+    }
+
+    public function dailyUserCountList()
+    {
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subDays(17);
+
+        return User::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('COUNT(*) as count'))
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+    }
+
+    public function dailyUserCountGrowthRate()
+    {
+        $query = User::query();
+
+        $today = Carbon::today();
+        $yesterday = Carbon::yesterday();
+
+        $todayUserCount = (clone $query)->whereDate('created_at', $today)->count();
+        $yesterdayUserCount = (clone $query)->whereDate('created_at', $yesterday)->count();
+
+        if ($yesterdayUserCount > 0) {
+            $dailyGrowthRate = round((($todayUserCount - $yesterdayUserCount) / $yesterdayUserCount) * 100);
+        } else {
+            $dailyGrowthRate = 0;
+        }
+
+        return $dailyGrowthRate;
+    }
+
+    public function weeklyUserCountGrowthRate()
+    {
+        $query = User::query();
+
+        $startOfThisWeek = Carbon::now()->startOfWeek();
+        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
+
+        $thisWeekUserCount = (clone $query)->whereBetween('created_at', [$startOfThisWeek, now()])->count();
+        $lastWeekUserCount = (clone $query)->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])->count();
+
+        if ($lastWeekUserCount > 0) {
+            $weeklyGrowthRate = round((($thisWeekUserCount - $lastWeekUserCount) / $lastWeekUserCount) * 100);
+        } else {
+            $weeklyGrowthRate = 0; // 防止除以零
+        }
+
+        return $weeklyGrowthRate;
     }
 }
