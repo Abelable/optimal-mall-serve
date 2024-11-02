@@ -23,4 +23,19 @@ class DashboardController extends Controller
             'weeklyGrowthRate' => $weeklyGrowthRate
         ]);
     }
+
+    public function orderCountData()
+    {
+        $totalSales = OrderService::getInstance()->orderCountSum();
+        $dailySalesList = OrderService::getInstance()->dailyOrderCountList();
+        $dailyGrowthRate = OrderService::getInstance()->dailyOrderCountGrowthRate();
+        $weeklyGrowthRate = OrderService::getInstance()->weeklyOrderCountGrowthRate();
+
+        return $this->success([
+            'totalSales' => number_format($totalSales, 2),
+            'dailySalesList' => $dailySalesList,
+            'dailyGrowthRate' => $dailyGrowthRate,
+            'weeklyGrowthRate' => $weeklyGrowthRate
+        ]);
+    }
 }

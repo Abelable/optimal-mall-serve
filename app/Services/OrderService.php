@@ -706,4 +706,61 @@ class OrderService extends BaseService
 
         return $weeklyGrowthRate;
     }
+
+    public function orderCountSum()
+    {
+        return Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501])->count();
+    }
+
+    public function dailyOrderCountList()
+    {
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subDays(17);
+
+        return Order::query()
+            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('COUNT(*) as count'))
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+    }
+
+    public function dailyOrderCountGrowthRate()
+    {
+        $query = Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501]);
+
+        $today = Carbon::today();
+        $yesterday = Carbon::yesterday();
+
+        $todayOrderCount = (clone $query)->whereDate('created_at', $today)->count();
+        $yesterdayOrderCount = (clone $query)->whereDate('created_at', $yesterday)->count();
+
+        if ($yesterdayOrderCount > 0) {
+            $dailyGrowthRate = round((($todayOrderCount - $yesterdayOrderCount) / $yesterdayOrderCount) * 100);
+        } else {
+            $dailyGrowthRate = 0;
+        }
+
+        return $dailyGrowthRate;
+    }
+
+    public function weeklyOrderCountGrowthRate()
+    {
+        $query = Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501]);
+
+        $startOfThisWeek = Carbon::now()->startOfWeek();
+        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
+
+        $thisWeekOrderCount = (clone $query)->whereBetween('created_at', [$startOfThisWeek, now()])->count();
+        $lastWeekOrderCount = (clone $query)->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])->count();
+
+        if ($lastWeekOrderCount > 0) {
+            $weeklyGrowthRate = round((($thisWeekOrderCount - $lastWeekOrderCount) / $lastWeekOrderCount) * 100);
+        } else {
+            $weeklyGrowthRate = 0; // 防止除以零
+        }
+
+        return $weeklyGrowthRate;
+    }
 }
