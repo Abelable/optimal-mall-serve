@@ -54,6 +54,10 @@ class CartController extends Controller
                     $cartGoods->price = $goods->price;
                     $cartGoods->save();
                 }
+                if ($cartGoods->commission_rate != $goods->commission_rate) {
+                    $cartGoods->commission_rate = $goods->commission_rate;
+                    $cartGoods->save();
+                }
                 if ($cartGoods->number > $goods->stock) {
                     if ($goods->stock != 0) {
                         $cartGoods->number = $goods->stock;
@@ -75,6 +79,10 @@ class CartController extends Controller
             $sku = $skuList[$cartGoods->selected_sku_index];
             if ($cartGoods->price != $sku->price) {
                 $cartGoods->price = $sku->price;
+                $cartGoods->save();
+            }
+            if ($sku->commissionRate && $cartGoods->commission_rate != $sku->commissionRate) {
+                $cartGoods->commission_rate = $sku->commissionRate;
                 $cartGoods->save();
             }
             if (is_null($sku) || $cartGoods->selected_sku_name != $sku->name) {
