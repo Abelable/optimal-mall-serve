@@ -7,6 +7,8 @@ use App\Utils\CodeResponse;
 use App\Utils\Enums\PromoterScene;
 use App\Utils\Inputs\PromoterPageInput;
 use App\Utils\Inputs\SearchPageInput;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PromoterService extends BaseService
 {
@@ -130,5 +132,61 @@ class PromoterService extends BaseService
     public function getPromoterPageByUserIds(array $userIds, SearchPageInput $input, $columns = ['*'])
     {
         return Promoter::query()->whereIn('user_id', $userIds)->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
+    public function promoterCountSum()
+    {
+        return Promoter::query()->count();
+    }
+
+    public function dailyPromoterCountList()
+    {
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subDays(17);
+
+        return Promoter::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('COUNT(*) as count'))
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+    }
+
+    public function dailyPromoterCountGrowthRate()
+    {
+        $query = Promoter::query();
+
+        $today = Carbon::today();
+        $yesterday = Carbon::yesterday();
+
+        $todayPromoterCount = (clone $query)->whereDate('created_at', $today)->count();
+        $yesterdayPromoterCount = (clone $query)->whereDate('created_at', $yesterday)->count();
+
+        if ($yesterdayPromoterCount > 0) {
+            $dailyGrowthRate = round((($todayPromoterCount - $yesterdayPromoterCount) / $yesterdayPromoterCount) * 100);
+        } else {
+            $dailyGrowthRate = 0;
+        }
+
+        return $dailyGrowthRate;
+    }
+
+    public function weeklyPromoterCountGrowthRate()
+    {
+        $query = Promoter::query();
+
+        $startOfThisWeek = Carbon::now()->startOfWeek();
+        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
+
+        $thisWeekPromoterCount = (clone $query)->whereBetween('created_at', [$startOfThisWeek, now()])->count();
+        $lastWeekPromoterCount = (clone $query)->whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])->count();
+
+        if ($lastWeekPromoterCount > 0) {
+            $weeklyGrowthRate = round((($thisWeekPromoterCount - $lastWeekPromoterCount) / $lastWeekPromoterCount) * 100);
+        } else {
+            $weeklyGrowthRate = 0; // 防止除以零
+        }
+
+        return $weeklyGrowthRate;
     }
 }
