@@ -41,7 +41,7 @@ class OrderService extends BaseService
 
     public function getOrderList(OrderPageInput $input, $columns = ['*'])
     {
-        $query = Order::query()->whereIn('status', [101, 102, 103, 104, 201, 301, 401, 402]);
+        $query = Order::query()->whereIn('status', [101, 102, 103, 104, 201, 301, 401, 402, 403, 501]);
         if (!empty($input->status)) {
             $query = $query->where('status', $input->status);
         }
