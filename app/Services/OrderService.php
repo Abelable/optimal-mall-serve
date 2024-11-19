@@ -241,8 +241,11 @@ class OrderService extends BaseService
             // 佣金记录状态更新为：已支付待结算
             $orderIds = $orderList->pluck('id')->toArray();
             CommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
-            GiftCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
             TeamCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
+
+            // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+            // GiftCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
+            GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
 
             return $orderList;
         });
@@ -403,8 +406,10 @@ class OrderService extends BaseService
         // 佣金记录变更为待提现
         $orderIds = $orderList->pluck('id')->toArray();
         CommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
-        GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
         TeamCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
+
+        // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+        // GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
 
         return $orderList;
     }
