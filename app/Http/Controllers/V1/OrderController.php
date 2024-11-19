@@ -50,7 +50,7 @@ class OrderController extends Controller
             $address = AddressService::getInstance()->getById($this->userId(), $addressId, $addressColumns);
         }
 
-        $cartGoodsListColumns = ['goods_id', 'cover', 'name', 'freight_template_id', 'selected_sku_name', 'price', 'number'];
+        $cartGoodsListColumns = ['goods_id', 'cover', 'name', 'is_gift', 'freight_template_id', 'selected_sku_name', 'price', 'number'];
         $cartGoodsList = CartGoodsService::getInstance()->getCartGoodsListByIds($this->userId(), $cartGoodsIds, $cartGoodsListColumns);
 
         $freightTemplateIds = $cartGoodsList->pluck('freight_template_id')->toArray();
