@@ -93,7 +93,10 @@ class UserService extends BaseService
 
     public function getPageByUserIds(array $userIds, SearchPageInput $input, $columns = ['*'])
     {
-        return User::query()->whereIn('id', $userIds)->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+        return User::query()
+            ->whereIn('id', $userIds)
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function userCountSum()

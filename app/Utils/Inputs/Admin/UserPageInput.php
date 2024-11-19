@@ -13,11 +13,11 @@ class UserPageInput extends PageInput
 
     public function rules()
     {
-        return array_merge([
+        return array_merge(parent::rules(), [
             'nickname' => 'string',
             'mobile' => 'regex:/^1[345789][0-9]{9}$/',
             'level' => 'integer',
             'superiorId' => 'integer',
-        ], parent::rules());
+        ]);
     }
 }

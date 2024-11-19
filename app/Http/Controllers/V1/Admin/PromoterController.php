@@ -4,13 +4,12 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Promoter;
-use App\Models\Relation;
 use App\Models\User;
 use App\Services\PromoterService;
 use App\Services\RelationService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\PromoterPageInput;
+use App\Utils\Inputs\Admin\UserPageInput;
 use Illuminate\Support\Facades\DB;
 
 class PromoterController extends Controller
@@ -19,22 +18,40 @@ class PromoterController extends Controller
 
     public function list()
     {
-        /** @var PromoterPageInput $input */
-        $input = PromoterPageInput::new();
+        /** @var UserPageInput $input */
+        $input = UserPageInput::new();
 
-        $page = PromoterService::getInstance()->getPromoterPage($input);
-        $promoterList = collect($page->items());
+        if (!empty($input->nickname) || !empty($input->mobile)) {
+            $page = UserService::getInstance()->getUserPage($input);
+            $userList = collect($page->items());
+            $userIds = $userList->pluck('id')->toArray();
+            $promoterList = PromoterService::getInstance()->getPromoterListByUserIds($userIds)->keyBy('user_id');
+            $list = $userList->map(function (User $user) use ($promoterList) {
+                $promoter = $promoterList->get($user->id);
+                if (!is_null($promoter)) {
+                    $promoter['avatar'] = $user->avatar;
+                    $promoter['nickname'] = $user->nickname;
+                    $promoter['mobile'] = $user->mobile;
+                }
+                return $promoter;
+            });
+        } else {
+            $page = PromoterService::getInstance()->getPromoterPage($input);
+            $promoterList = collect($page->items());
 
-        $userIds = $promoterList->pluck('user_id')->toArray();
-        $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname'])->keyBy('id');
+            $userIds = $promoterList->pluck('user_id')->toArray();
+            $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname', 'mobile'])->keyBy('id');
 
-        $list = $promoterList->map(function (Promoter $promoter) use ($userList) {
-            /** @var User $user */
-            $user = $userList->get($promoter->user_id);
-            $promoter['avatar'] = $user->avatar;
-            $promoter['nickname'] = $user->nickname;
-            return $promoter;
-        });
+            $list = $promoterList->map(function (Promoter $promoter) use ($userList) {
+                /** @var User $user */
+                $user = $userList->get($promoter->user_id);
+                $promoter['avatar'] = $user->avatar;
+                $promoter['nickname'] = $user->nickname;
+                $promoter['mobile'] = $user->mobile;
+                return $promoter;
+            });
+        }
+
         return $this->success($this->paginate($page, $list));
     }
 

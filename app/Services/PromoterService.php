@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Promoter;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\PromoterScene;
-use App\Utils\Inputs\PromoterPageInput;
+use App\Utils\Inputs\Admin\UserPageInput;
 use App\Utils\Inputs\SearchPageInput;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -105,7 +105,7 @@ class PromoterService extends BaseService
         return Promoter::query()->whereIn('user_id', $userIds)->get($columns);
     }
 
-    public function getPromoterPage(PromoterPageInput $input, $columns = ['*'])
+    public function getPromoterPage(UserPageInput $input, $columns = ['*'])
     {
         $query = Promoter::query();
         if (!empty($input->level)) {
