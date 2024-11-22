@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Services\OrderService;
+use App\Utils\AddressAnalyzeServe;
 use App\Utils\AliOssServe;
 use App\Utils\ExpressServe;
 use App\Utils\WxMpServe;
@@ -70,5 +71,12 @@ class CommonController extends Controller
 
         $traces = ExpressServe::new()->track($shipCode, $shipSn, $mobile);
         return $this->success($traces);
+    }
+
+    public function analyzeAddress()
+    {
+        $text = $this->verifyRequiredString('text');
+        $result = AddressAnalyzeServe::new()->analyze($text);
+        return $this->success($result);
     }
 }

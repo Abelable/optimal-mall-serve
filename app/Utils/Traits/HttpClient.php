@@ -6,10 +6,10 @@ use GuzzleHttp\Client;
 
 trait HttpClient
 {
-    public function httpGet($url, $needDecode = true)
+    public function httpGet($url, $needDecode = true, $headers = null)
     {
         $client = new Client();
-        $response = $client->request('GET', $url);
+        $response = !is_null($headers) ?  $client->request('GET', $url, ['headers' => $headers]) : $client->request('GET', $url);
         return $needDecode ? json_decode((string) $response->getBody(), true) : $response->getBody();
     }
 

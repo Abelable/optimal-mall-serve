@@ -98,6 +98,7 @@ Route::prefix('address')->group(function () {
     Route::post('add', 'AddressController@add');
     Route::post('edit', 'AddressController@edit');
     Route::post('delete', 'AddressController@delete');
+    Route::post('analyze', 'CommonController@analyzeAddress');
 });
 
 Route::prefix('order')->group(function () {
