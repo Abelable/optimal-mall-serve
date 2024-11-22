@@ -17,6 +17,10 @@ class AddressAnalyzeServe
 
     public function analyze($text)
     {
-        return $this->httpGet(self::URL . $text, true, ['Authorization:APPCODE' => env('ADDRESS_ANALYZE_CODE')]);
+        $result = $this->httpGet(self::URL . $text, true, ['Authorization' => 'APPCODE ' . env('ADDRESS_ANALYZE_CODE')]);
+        if ($result['code'] != 1) {
+            throw new \Exception('解析地址「' . $result['text'] . '」异常：' . $result['msg']);
+        }
+        return $result['data'];
     }
 }
