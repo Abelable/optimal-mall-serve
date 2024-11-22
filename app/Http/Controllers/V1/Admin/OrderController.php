@@ -6,8 +6,10 @@ use App\Exceptions\BusinessException;
 use App\Exports\OrdersExport;
 use App\Http\Controllers\Controller;
 use App\Imports\OrdersImport;
+use App\Models\Order;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
+use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\ExpressServe;
 use App\Utils\Inputs\Admin\OrderPageInput;
@@ -22,9 +24,21 @@ class OrderController extends Controller
     {
         /** @var OrderPageInput $input */
         $input = OrderPageInput::new();
-        $columns = ['id', 'order_sn', 'status', 'merchant_id', 'payment_amount', 'consignee', 'mobile', 'address', 'created_at', 'updated_at'];
-        $list = OrderService::getInstance()->getOrderList($input, $columns);
-        return $this->successPaginate($list);
+        $columns = ['id', 'user_id', 'order_sn', 'status', 'merchant_id', 'payment_amount', 'consignee', 'mobile', 'address', 'created_at', 'updated_at'];
+        $page = OrderService::getInstance()->getOrderList($input, $columns);
+        $orderList = collect($page->items());
+
+        $userIds = $orderList->pluck('user_id')->toArray();
+        $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname'])->keyBy('id');
+
+        $list = $orderList->map(function (Order $order) use ($userList) {
+            $user = $userList->get($order->user_id);
+            $order['userInfo'] = $user;
+            unset($order->user_id);
+            return $order;
+        });
+
+        return $this->success($this->paginate($page, $list));
     }
 
     public function detail()
