@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
  * @method bool canCancelHandle()
  * @method bool canDeleteHandle()
  * @method bool canPayHandle()
+ * @method bool canExportHandle()
  * @method bool canShipHandle()
  * @method bool canCommentHandle()
  * @method bool canConfirmHandle()
@@ -58,6 +59,7 @@ trait OrderStatusTrait
     private $canHandleMap = [
         'cancel' => [OrderEnums::STATUS_CREATE],
         'pay' => [OrderEnums::STATUS_CREATE],
+        'export' => [OrderEnums::STATUS_PAY],
         'ship' => [OrderEnums::STATUS_PAY],
         'confirm' => [OrderEnums::STATUS_SHIP],
         'refund' => [OrderEnums::STATUS_PAY, OrderEnums::STATUS_REFUND],
@@ -112,6 +114,8 @@ trait OrderStatusTrait
             'cancel' => $this->canCancelHandle(),
             'delete' => $this->canDeleteHandle(),
             'pay' => $this->canPayHandle(),
+            'export' => $this->canExportHandle(),
+            'ship' => $this->canShipHandle(),
             'comment' => $this->canCommentHandle(),
             'confirm' => $this->canConfirmHandle(),
             'refund' => $this->canRefundHandle(),

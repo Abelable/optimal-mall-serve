@@ -768,4 +768,17 @@ class OrderService extends BaseService
 
         return $weeklyGrowthRate;
     }
+
+    public function exportOrderList(array $ids)
+    {
+        foreach ($ids as $id) {
+            $order = $this->getOrderById($id);
+            if ($order->canExportHandle()) {
+                $order->status = OrderEnums::STATUS_EXPORTED;
+                if ($order->cas() == 0) {
+                    $this->throwUpdateFail();
+                }
+            }
+        }
+    }
 }

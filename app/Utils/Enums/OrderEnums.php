@@ -11,6 +11,7 @@ class OrderEnums
     const STATUS_PAY = 201;
     const STATUS_REFUND = 202;
     const STATUS_REFUND_CONFIRM = 203;
+    const STATUS_EXPORTED = 204;
     const STATUS_SHIP = 301;
     const STATUS_CONFIRM = 401;
     const STATUS_AUTO_CONFIRM = 402;
@@ -25,6 +26,7 @@ class OrderEnums
         self::STATUS_PAY => '已付款',
         self::STATUS_REFUND => '订单取消，退款中',
         self::STATUS_REFUND_CONFIRM => '已退款',
+        self::STATUS_EXPORTED => '已付款，订单已导出',
         self::STATUS_SHIP => '已发货',
         self::STATUS_CONFIRM => '已收货',
         self::STATUS_AUTO_CONFIRM => '已收货(系统)',
