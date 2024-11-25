@@ -179,6 +179,11 @@ Route::prefix('bank_card')->group(function () {
     Route::post('edit', 'BankCardController@edit');
 });
 
+Route::prefix('withdraw')->group(function () {
+    Route::get('submit', 'WithdrawalController@submit');
+    Route::get('record_list', 'WithdrawalController@recordList');
+});
+
 /*
 |--------------------------------------------------------------------------
 | 管理后台接口

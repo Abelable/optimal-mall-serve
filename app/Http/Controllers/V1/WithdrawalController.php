@@ -7,6 +7,7 @@ use App\Services\CommissionService;
 use App\Services\GiftCommissionService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
+use App\Utils\Inputs\PageInput;
 use App\Utils\Inputs\WithdrawalInput;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -58,6 +59,9 @@ class WithdrawalController extends Controller
 
     public function recordList()
     {
-
+        /** @var PageInput $input */
+        $input = PageInput::new();
+        $page = WithdrawalService::getInstance()->userRecordList($this->userId(), $input);
+        return $this->successPaginate($page);
     }
 }
