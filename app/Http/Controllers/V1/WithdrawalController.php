@@ -55,4 +55,9 @@ class WithdrawalController extends Controller
 
         return $this->success();
     }
+
+    public function recordList()
+    {
+
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Withdrawal;
+use App\Utils\Inputs\PageInput;
 use App\Utils\Inputs\WithdrawalInput;
 
 class WithdrawalService extends BaseService
@@ -26,5 +27,13 @@ class WithdrawalService extends BaseService
         $withdrawal->save();
 
         return $withdrawal;
+    }
+
+    public function userRecordList($userId, PageInput $input, $columns = ['*'])
+    {
+        return Withdrawal::query()
+            ->where('user_id', $userId)
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 }

@@ -15,7 +15,7 @@ class CreateWithdrawalsTable extends Migration
     {
         Schema::create('withdrawals', function (Blueprint $table) {
             $table->id();
-            $table->integer('status')->default(0)->comment('状态：0-待审核；1-审核通过');
+            $table->integer('status')->default(0)->comment('状态：0-待审核；1-提现成功; 2-提现失败;');
             $table->integer('user_id')->comment('用户id');
             $table->integer('scene')->comment('佣金类型：1-商品自购佣金；2-商品分享佣金；3-礼包佣金');
             $table->float('withdraw_amount')->comment('提现金额');
