@@ -13,6 +13,6 @@ class BankCardService extends BaseService
 
     public function getListByUserIds(array $userIds, $columns = ['*'])
     {
-        return BankCard::query()->where('user_id', $userIds)->get($columns);
+        return BankCard::query()->whereIn('user_id', $userIds)->get($columns);
     }
 }

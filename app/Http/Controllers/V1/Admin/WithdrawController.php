@@ -30,7 +30,7 @@ class WithdrawController extends Controller
             $withdrawal['userInfo'] = $userInfo;
             unset($withdrawal->user_id);
 
-            if ($withdrawal->scene == 2) {
+            if ($withdrawal->path == 2) {
                 $bankCard = $bankCardList->get($withdrawal->user_id);
                 unset($bankCard->user_id);
                 $withdrawal['bankCardInfo'] = $bankCard;
