@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Withdrawal;
 use App\Utils\Inputs\PageInput;
+use App\Utils\Inputs\StatusPageInput;
 use App\Utils\Inputs\WithdrawalInput;
 
 class WithdrawalService extends BaseService
@@ -29,11 +30,25 @@ class WithdrawalService extends BaseService
         return $withdrawal;
     }
 
-    public function userRecordList($userId, PageInput $input, $columns = ['*'])
+    public function getUserRecordList($userId, PageInput $input, $columns = ['*'])
     {
         return Withdrawal::query()
             ->where('user_id', $userId)
             ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
+    public function getList(StatusPageInput $input, $columns = ['*'])
+    {
+        $query = Withdrawal::query();
+        if (!is_null($input->status)) {
+            $query = $query->where('status', $input->status);
+        }
+        return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
+    public function getRecordById($id, $columns = ['*'])
+    {
+        return Withdrawal::query()->find($id, $columns);
     }
 }

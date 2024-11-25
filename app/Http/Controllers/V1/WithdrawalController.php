@@ -61,7 +61,7 @@ class WithdrawalController extends Controller
     {
         /** @var PageInput $input */
         $input = PageInput::new();
-        $page = WithdrawalService::getInstance()->userRecordList($this->userId(), $input);
+        $page = WithdrawalService::getInstance()->getUserRecordList($this->userId(), $input);
         return $this->successPaginate($page);
     }
 }

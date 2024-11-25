@@ -261,6 +261,14 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         });
     });
 
+    Route::prefix('withdraw')->group(function () {
+        Route::post('list', 'WithdrawController@list');
+        Route::get('detail', 'WithdrawController@detail');
+        Route::post('approved', 'WithdrawController@approved');
+        Route::post('reject', 'WithdrawController@reject');
+        Route::post('delete', 'WithdrawController@delete');
+    });
+
     Route::prefix('mall')->group(function () {
         Route::prefix('banner')->group(function () {
             Route::post('list', 'BannerController@list');

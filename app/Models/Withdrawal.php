@@ -6,7 +6,8 @@ namespace App\Models;
  * App\Models\Withdrawal
  *
  * @property int $id
- * @property int $status 状态：0-待审核；1-审核通过
+ * @property int $status 状态：0-待审核；1-提现成功; 2-提现失败;
+ * @property string $failure_reason 提现失败原因
  * @property int $user_id 用户id
  * @property int $scene 佣金类型：1-商品自购佣金；2-商品分享佣金；3-礼包佣金
  * @property float $withdraw_amount 提现金额
@@ -25,6 +26,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Withdrawal whereActualAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Withdrawal whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Withdrawal whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Withdrawal whereFailureReason($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Withdrawal whereHandlingFee($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Withdrawal whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Withdrawal wherePath($value)
