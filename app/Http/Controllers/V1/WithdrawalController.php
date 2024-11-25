@@ -27,6 +27,11 @@ class WithdrawalController extends Controller
             return $this->fail(CodeResponse::INVALID_OPERATION, '提现金额不能为0');
         }
 
+        $application = WithdrawalService::getInstance()->getUserApplication($this->userId());
+        if (!is_null($application) && $application->withdraw_amount == $input->withdrawAmount) {
+            return $this->fail(CodeResponse::INVALID_OPERATION, '已提交申请，请勿重复提交');
+        }
+
         $withdrawAmount = 0;
         $commissionQuery = CommissionService::getInstance()
             ->getUserCommissionQuery([$this->userId()], [2])
