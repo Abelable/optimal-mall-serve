@@ -55,8 +55,12 @@ class WithdrawalService extends BaseService
         return Withdrawal::query()->find($id, $columns);
     }
 
-    public function getUserApplication($userId, $columns = ['*'])
+    public function getUserApplication($userId, $scene, $columns = ['*'])
     {
-        return Withdrawal::query()->where('user_id', $userId)->where('status', 0)->first($columns);
+        return Withdrawal::query()
+            ->where('user_id', $userId)
+            ->where('scene', $scene)
+            ->where('status', 0)
+            ->first($columns);
     }
 }

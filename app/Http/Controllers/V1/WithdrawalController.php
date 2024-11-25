@@ -27,8 +27,8 @@ class WithdrawalController extends Controller
             return $this->fail(CodeResponse::INVALID_OPERATION, '提现金额不能为0');
         }
 
-        $application = WithdrawalService::getInstance()->getUserApplication($this->userId());
-        if (!is_null($application) && $application->withdraw_amount == $input->withdrawAmount && $application->scene == $input->scene) {
+        $application = WithdrawalService::getInstance()->getUserApplication($this->userId(), $input->scene);
+        if (!is_null($application) && $application->withdraw_amount == $input->withdrawAmount) {
             return $this->fail(CodeResponse::INVALID_OPERATION, '已提交申请，请勿重复提交');
         }
 
