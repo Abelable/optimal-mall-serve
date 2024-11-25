@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Withdrawal;
+use App\Services\BankCardService;
 use App\Services\UserService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
@@ -78,5 +79,12 @@ class WithdrawController extends Controller
         }
         $record->delete();
         return $this->success();
+    }
+
+    public function bankCardInfo()
+    {
+        $userId = $this->verifyRequiredId('userId');
+        $bankCardInfo = BankCardService::getInstance()->getUserBankCard($userId);
+        return $this->success($bankCardInfo);
     }
 }
