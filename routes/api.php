@@ -180,7 +180,7 @@ Route::prefix('bank_card')->group(function () {
 });
 
 Route::prefix('withdraw')->group(function () {
-    Route::get('submit', 'WithdrawalController@submit');
+    Route::post('submit', 'WithdrawalController@submit');
     Route::get('record_list', 'WithdrawalController@recordList');
 });
 
