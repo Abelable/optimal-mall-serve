@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Withdrawal;
 use App\Utils\Inputs\PageInput;
-use App\Utils\Inputs\StatusPageInput;
+use App\Utils\Inputs\WithdrawPageInput;
 use App\Utils\Inputs\WithdrawalInput;
 
 class WithdrawalService extends BaseService
@@ -38,11 +38,14 @@ class WithdrawalService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getList(StatusPageInput $input, $columns = ['*'])
+    public function getList(WithdrawPageInput $input, $columns = ['*'])
     {
         $query = Withdrawal::query();
         if (!is_null($input->status)) {
             $query = $query->where('status', $input->status);
+        }
+        if (!is_null($input->scene)) {
+            $query = $query->where('scene', $input->scene);
         }
         return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }

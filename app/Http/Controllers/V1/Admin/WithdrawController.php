@@ -7,7 +7,7 @@ use App\Models\Withdrawal;
 use App\Services\UserService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\StatusPageInput;
+use App\Utils\Inputs\WithdrawPageInput;
 
 class WithdrawController extends Controller
 {
@@ -15,8 +15,8 @@ class WithdrawController extends Controller
 
     public function list()
     {
-        /** @var StatusPageInput $input */
-        $input = StatusPageInput::new();
+        /** @var WithdrawPageInput $input */
+        $input = WithdrawPageInput::new();
         $page = WithdrawalService::getInstance()->getList($input);
         $recordList = collect($page->items());
 
