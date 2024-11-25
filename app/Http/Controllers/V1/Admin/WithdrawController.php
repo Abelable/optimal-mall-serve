@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Withdrawal;
+use App\Services\UserService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\StatusPageInput;
@@ -16,7 +18,19 @@ class WithdrawController extends Controller
         /** @var StatusPageInput $input */
         $input = StatusPageInput::new();
         $page = WithdrawalService::getInstance()->getList($input);
-        return $this->successPaginate($page);
+        $recordList = collect($page->items());
+
+        $userIds = $recordList->pluck('user_id');
+        $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname'])->keyBy('id');
+
+        $list = $recordList->map(function (Withdrawal $withdrawal) use ($userList) {
+            $userInfo = $userList->get($withdrawal->user_id);
+            $withdrawal['userInfo'] = $userInfo;
+            unset($withdrawal->user_id);
+            return $withdrawal;
+        });
+
+        return $this->success($this->paginate($page, $list));
     }
 
     public function detail()
