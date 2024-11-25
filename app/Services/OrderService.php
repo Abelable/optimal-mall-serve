@@ -618,7 +618,7 @@ class OrderService extends BaseService
     {
         return Order::query()
             ->whereDate('created_at', Carbon::today())
-            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
             ->get($columns);
     }
 
@@ -627,7 +627,7 @@ class OrderService extends BaseService
         return Order::query()
             ->whereIn('user_id', $userIds)
             ->whereDate('created_at', Carbon::today())
-            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
             ->distinct('user_id')
             ->count('user_id');
     }
@@ -637,7 +637,7 @@ class OrderService extends BaseService
         return Order::query()
             ->whereIn('user_id', $userIds)
             ->whereDate('created_at', Carbon::today())
-            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
             ->get($columns);
     }
 
@@ -657,7 +657,7 @@ class OrderService extends BaseService
 
     public function salesSum()
     {
-        return Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501])->sum('payment_amount');
+        return Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501])->sum('payment_amount');
     }
 
     public function dailySalesList()
@@ -666,7 +666,7 @@ class OrderService extends BaseService
         $startDate = Carbon::now()->subDays(17);
 
         return Order::query()
-            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
             ->whereBetween('created_at', [$startDate, $endDate])
             ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('SUM(payment_amount) as sum'))
             ->groupBy(DB::raw('DATE(created_at)'))
@@ -675,7 +675,7 @@ class OrderService extends BaseService
 
     public function dailySalesGrowthRate()
     {
-        $query = Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501]);
+        $query = Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501]);
 
         $today = Carbon::today();
         $yesterday = Carbon::yesterday();
@@ -694,7 +694,7 @@ class OrderService extends BaseService
 
     public function weeklySalesGrowthRate()
     {
-        $query = Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501]);
+        $query = Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501]);
 
         $startOfThisWeek = Carbon::now()->startOfWeek();
         $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
@@ -714,7 +714,7 @@ class OrderService extends BaseService
 
     public function orderCountSum()
     {
-        return Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501])->count();
+        return Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501])->count();
     }
 
     public function dailyOrderCountList()
@@ -723,7 +723,7 @@ class OrderService extends BaseService
         $startDate = Carbon::now()->subDays(17);
 
         return Order::query()
-            ->whereIn('status', [201, 301, 401, 402, 403, 501])
+            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
             ->whereBetween('created_at', [$startDate, $endDate])
             ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('COUNT(*) as count'))
             ->groupBy(DB::raw('DATE(created_at)'))
@@ -732,7 +732,7 @@ class OrderService extends BaseService
 
     public function dailyOrderCountGrowthRate()
     {
-        $query = Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501]);
+        $query = Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501]);
 
         $today = Carbon::today();
         $yesterday = Carbon::yesterday();
@@ -751,7 +751,7 @@ class OrderService extends BaseService
 
     public function weeklyOrderCountGrowthRate()
     {
-        $query = Order::query()->whereIn('status', [201, 301, 401, 402, 403, 501]);
+        $query = Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501]);
 
         $startOfThisWeek = Carbon::now()->startOfWeek();
         $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
