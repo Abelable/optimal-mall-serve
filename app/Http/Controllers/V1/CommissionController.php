@@ -92,8 +92,8 @@ class CommissionController extends Controller
         $commissionQuery = CommissionService::getInstance()
             ->getUserCommissionQuery([$this->userId()], [2])
             ->whereMonth('created_at', '!=', Carbon::now()->month);
-        $selfPurchase = $commissionQuery->where('scene', 1)->sum('commission_amount');
-        $share = $commissionQuery->where('scene', 2)->sum('commission_amount');
+        $selfPurchase = (clone $commissionQuery)->where('scene', 1)->sum('commission_amount');
+        $share = (clone $commissionQuery)->where('scene', 2)->sum('commission_amount');
         return $this->success([
             'selfPurchase' => $selfPurchase,
             'share' => $share
