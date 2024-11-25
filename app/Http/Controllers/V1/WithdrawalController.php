@@ -28,7 +28,7 @@ class WithdrawalController extends Controller
         }
 
         $application = WithdrawalService::getInstance()->getUserApplication($this->userId());
-        if (!is_null($application) && $application->withdraw_amount == $input->withdrawAmount) {
+        if (!is_null($application) && $application->withdraw_amount == $input->withdrawAmount && $application->scene == $input->scene) {
             return $this->fail(CodeResponse::INVALID_OPERATION, '已提交申请，请勿重复提交');
         }
 
