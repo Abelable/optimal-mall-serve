@@ -21,13 +21,21 @@ class WithdrawController extends Controller
         $page = WithdrawalService::getInstance()->getList($input);
         $recordList = collect($page->items());
 
-        $userIds = $recordList->pluck('user_id');
+        $userIds = $recordList->pluck('user_id')->toArray();
         $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname'])->keyBy('id');
+        $bankCardList = BankCardService::getInstance()->getListByUserIds($userIds)->keyBy('user_id');
 
-        $list = $recordList->map(function (Withdrawal $withdrawal) use ($userList) {
+        $list = $recordList->map(function (Withdrawal $withdrawal) use ($bankCardList, $userList) {
             $userInfo = $userList->get($withdrawal->user_id);
             $withdrawal['userInfo'] = $userInfo;
             unset($withdrawal->user_id);
+
+            if ($withdrawal->scene == 2) {
+                $bankCard = $bankCardList->get($withdrawal->user_id);
+                unset($bankCard->user_id);
+                $withdrawal['bankCardInfo'] = $bankCard;
+            }
+
             return $withdrawal;
         });
 
@@ -79,12 +87,5 @@ class WithdrawController extends Controller
         }
         $record->delete();
         return $this->success();
-    }
-
-    public function bankCardInfo()
-    {
-        $userId = $this->verifyRequiredId('userId');
-        $bankCardInfo = BankCardService::getInstance()->getUserBankCard($userId);
-        return $this->success($bankCardInfo);
     }
 }

@@ -267,7 +267,6 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('approved', 'WithdrawController@approved');
         Route::post('reject', 'WithdrawController@reject');
         Route::post('delete', 'WithdrawController@delete');
-        Route::get('bank_card_info', 'WithdrawController@bankCardInfo');
     });
 
     Route::prefix('mall')->group(function () {
