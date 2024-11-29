@@ -318,7 +318,7 @@ class OrderController extends Controller
                 $statusList = [OrderEnums::STATUS_CREATE];
                 break;
             case 2:
-                $statusList = [OrderEnums::STATUS_PAY];
+                $statusList = [OrderEnums::STATUS_PAY, OrderEnums::STATUS_EXPORTED];
                 break;
             case 3:
                 $statusList = [OrderEnums::STATUS_SHIP];
