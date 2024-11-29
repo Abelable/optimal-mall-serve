@@ -224,4 +224,17 @@ class CommissionService extends BaseService
     {
         return $this->getUserCommissionQueryByTimeType([$userId], $timeType)->whereIn('status', [2, 3])->sum('commission_base');
     }
+
+    public function settleUserCommission($userId, $scene)
+    {
+        $commissionList = $this->getUserCommissionQuery([$userId], [2])
+            ->where('scene', $scene)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
+            ->get();
+        /** @var Commission $commission */
+        foreach ($commissionList as $commission) {
+            $commission->status = 3;
+            $commission->save();
+        }
+    }
 }

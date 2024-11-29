@@ -269,4 +269,18 @@ class GiftCommissionService extends BaseService
 
         return [$cashGiftCommission, $cashTeamCommission];
     }
+
+    public function settleUserCommission($userId)
+    {
+        $commissionList = GiftCommission::query()
+            ->where(function($query) use ($userId) {
+                $query->where('promoter_id', $userId)
+                    ->orWhere('manager_id', $userId);
+            })->where('status', 2)
+            ->get();
+        foreach ($commissionList as $commission) {
+            $commission->status = 3;
+            $commission->save();
+        }
+    }
 }

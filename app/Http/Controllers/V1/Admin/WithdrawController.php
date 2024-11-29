@@ -5,10 +5,15 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Withdrawal;
 use App\Services\BankCardService;
+use App\Services\CommissionService;
+use App\Services\GiftCommissionService;
 use App\Services\UserService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\WithdrawPageInput;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Yansongda\LaravelPay\Facades\Pay;
 
 class WithdrawController extends Controller
 {
@@ -57,8 +62,32 @@ class WithdrawController extends Controller
         if (is_null($record)) {
             return $this->fail(CodeResponse::NOT_FOUND, '提现申请不存在');
         }
-        $record->status = 1;
-        $record->save();
+
+        if ($record->path == 1) {
+            // todo 微信转账
+            $user = UserService::getInstance()->getUserById($record->user_id);
+            $params = [
+                'partner_trade_no' => time(),
+                'openid' => $user->openid,
+                'check_name' => 'NO_CHECK',
+                'amount' => bcmul($record->actual_amount, 100),
+                'desc' => '佣金提现',
+            ];
+            $result = Pay::wechat()->transfer($params);
+            Log::info('commission_wx_transfer', $result->toArray());
+        }
+
+        DB::transaction(function () use ($record) {
+            if ($record->scene == 1 || $record->scene == 2) {
+                CommissionService::getInstance()->settleUserCommission($record->user_id, $record->scene);
+            } else {
+                GiftCommissionService::getInstance()->settleUserCommission($record->user_id);
+            }
+
+            $record->status = 1;
+            $record->save();
+        });
+
         return $this->success();
     }
 
