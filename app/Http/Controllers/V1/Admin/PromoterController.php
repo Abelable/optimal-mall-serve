@@ -34,6 +34,8 @@ class PromoterController extends Controller
                     $promoter['mobile'] = $user->mobile;
                 }
                 return $promoter;
+            })->filter(function ($promoter) {
+                return !is_null($promoter);
             });
         } else {
             $page = PromoterService::getInstance()->getPromoterPage($input);
