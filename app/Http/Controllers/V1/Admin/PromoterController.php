@@ -36,7 +36,7 @@ class PromoterController extends Controller
                 return $promoter;
             })->filter(function ($promoter) {
                 return !is_null($promoter);
-            });
+            })->values();
         } else {
             $page = PromoterService::getInstance()->getPromoterPage($input);
             $promoterList = collect($page->items());
