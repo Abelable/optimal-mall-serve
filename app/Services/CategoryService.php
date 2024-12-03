@@ -15,7 +15,7 @@ class CategoryService extends BaseService
 
     public function getCategoryById($id, $columns = ['*'])
     {
-        return Category::query()->find($id, $columns = ['*']);
+        return Category::query()->find($id, $columns);
     }
 
     public function getCategoryByName($name, $columns = ['*'])
