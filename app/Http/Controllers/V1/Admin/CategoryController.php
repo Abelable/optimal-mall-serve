@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\GoodsCategory;
 use App\Services\CategoryService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\PageInput;
