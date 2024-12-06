@@ -75,7 +75,10 @@ class GiftCommissionService extends BaseService
 
     public function updateListToOrderConfirmStatus($orderIds)
     {
-        $commissionList = $this->getPaidListByOrderIds($orderIds);
+        // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+        // $commissionList = $this->getPaidListByOrderIds($orderIds);
+         $commissionList = $this->getListByOrderIds($orderIds);
+
         return $commissionList->map(function (GiftCommission $commission) {
             if ($commission->refund_status == 1) {
                 // 7天无理由商品：确认收货7天后更新佣金状态，并成为推官员
@@ -112,6 +115,15 @@ class GiftCommissionService extends BaseService
     public function deletePaidListByOrderIds(array $orderIds)
     {
         return GiftCommission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
+    }
+
+    // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+    public function getListByOrderIds(array $orderIds, $columns = ['*'])
+    {
+        return GiftCommission::query()
+            ->where('status', 0)
+            ->whereIn('order_id', $orderIds)
+            ->get($columns);
     }
 
     public function getPaidListByOrderIds(array $orderIds, $columns = ['*'])
