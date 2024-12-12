@@ -20,6 +20,7 @@ class CreateBannersTable extends Migration
             $table->string('desc')->default('')->comment('活动描述');
             $table->string('scene')->default(0)->comment('链接跳转场景值：1-h5活动，2-商品详情');
             $table->string('param')->default('')->comment('链接参数值');
+            $table->integer('sort')->default(1)->comment('排序');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -11,6 +11,7 @@ namespace App\Models;
  * @property string $desc 活动描述
  * @property string $scene 链接跳转场景值：1-h5活动，2-商品详情
  * @property string $param 链接参数值
+ * @property int $sort 排序
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -25,6 +26,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|RuralBanner whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RuralBanner whereParam($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RuralBanner whereScene($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RuralBanner whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RuralBanner whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RuralBanner whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|RuralBanner withTrashed()
