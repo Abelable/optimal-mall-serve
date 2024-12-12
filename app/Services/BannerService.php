@@ -43,6 +43,9 @@ class BannerService extends BaseService
 
     public function getBannerList($columns = ['*'])
     {
-        return Banner::query()->where('status', 1)->get($columns);
+        return Banner::query()
+            ->where('status', 1)
+            ->orderBy('created_at', 'desc')
+            ->get($columns);
     }
 }
