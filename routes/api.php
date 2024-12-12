@@ -275,6 +275,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::get('detail', 'BannerController@detail');
             Route::post('add', 'BannerController@add');
             Route::post('edit', 'BannerController@edit');
+            Route::post('edit_sort', 'BannerController@editSort');
             Route::post('up', 'BannerController@up');
             Route::post('down', 'BannerController@down');
             Route::post('delete', 'BannerController@delete');
@@ -311,6 +312,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::get('detail', 'RuralBannerController@detail');
             Route::post('add', 'RuralBannerController@add');
             Route::post('edit', 'RuralBannerController@edit');
+            Route::post('edit_sort', 'RuralBannerController@editSort');
             Route::post('up', 'RuralBannerController@up');
             Route::post('down', 'RuralBannerController@down');
             Route::post('delete', 'RuralBannerController@delete');
@@ -340,6 +342,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::get('detail', 'IntegrityBannerController@detail');
             Route::post('add', 'IntegrityBannerController@add');
             Route::post('edit', 'IntegrityBannerController@edit');
+            Route::post('edit_sort', 'IntegrityBannerController@editSort');
             Route::post('up', 'IntegrityBannerController@up');
             Route::post('down', 'IntegrityBannerController@down');
             Route::post('delete', 'IntegrityBannerController@delete');

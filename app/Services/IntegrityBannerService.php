@@ -43,6 +43,10 @@ class IntegrityBannerService extends BaseService
 
     public function getBannerList($columns = ['*'])
     {
-        return IntegrityBanner::query()->where('status', 1)->get($columns);
+        return IntegrityBanner::query()
+            ->where('status', 1)
+            ->orderBy('sort', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get($columns);
     }
 }

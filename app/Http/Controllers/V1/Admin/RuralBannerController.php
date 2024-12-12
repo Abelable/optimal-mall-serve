@@ -56,6 +56,21 @@ class RuralBannerController extends Controller
         return $this->success();
     }
 
+    public function editSort() {
+        $id = $this->verifyRequiredId('id');
+        $sort = $this->verifyRequiredInteger('sort');
+
+        $banner = RuralBannerService::getInstance()->getBannerById($id);
+        if (is_null($banner)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前活动banner不存在');
+        }
+
+        $banner->sort = $sort;
+        $banner->save();
+
+        return $this->success();
+    }
+
     public function up()
     {
         $id = $this->verifyRequiredId('id');

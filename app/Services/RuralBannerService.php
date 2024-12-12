@@ -43,6 +43,10 @@ class RuralBannerService extends BaseService
 
     public function getBannerList($columns = ['*'])
     {
-        return RuralBanner::query()->where('status', 1)->get($columns);
+        return RuralBanner::query()
+            ->where('status', 1)
+            ->orderBy('sort', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get($columns);
     }
 }
