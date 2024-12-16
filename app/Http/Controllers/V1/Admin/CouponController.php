@@ -92,6 +92,7 @@ class CouponController extends Controller
         }
         if (!is_null($input->expirationTime)) {
             $coupon->expiration_time = $input->expirationTime;
+            $this->dispatch(new CouponExpire($coupon->id, $input->expirationTime));
         }
         $coupon->save();
 
