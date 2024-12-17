@@ -177,7 +177,19 @@ class ActivityController extends Controller
         return $this->success();
     }
 
-    public function end()
+    public function up()
+    {
+        $id = $this->verifyRequiredId('id');
+        $activity = ActivityService::getInstance()->getActivityById($id);
+        if (is_null($activity)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前活动不存在');
+        }
+        $activity->status = 1;
+        $activity->save();
+        return $this->success();
+    }
+
+    public function down()
     {
         $id = $this->verifyRequiredId('id');
         $activity = ActivityService::getInstance()->getActivityById($id);

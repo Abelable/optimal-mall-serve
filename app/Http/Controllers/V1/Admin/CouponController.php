@@ -115,6 +115,17 @@ class CouponController extends Controller
         return $this->success();
     }
 
+    public function up()
+    {
+        $id = $this->verifyRequiredId('id');
+        $coupon = CouponService::getInstance()->getCouponById($id);
+        if (is_null($coupon)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
+        }
+        $coupon->status = 1;
+        $coupon->save();
+        return $this->success();
+    }
 
     public function down()
     {

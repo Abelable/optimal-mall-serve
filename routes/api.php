@@ -291,7 +291,8 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('edit_followers', 'ActivityController@editFollowers');
             Route::post('edit_sales', 'ActivityController@editSales');
             Route::post('edit_sort', 'ActivityController@editSort');
-            Route::post('end', 'ActivityController@end');
+            Route::post('up', 'ActivityController@up');
+            Route::post('down', 'ActivityController@down');
             Route::post('delete', 'ActivityController@delete');
         });
 
@@ -301,6 +302,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('add', 'CouponController@add');
             Route::post('edit', 'CouponController@edit');
             Route::post('edit_received_num', 'CouponController@editReceivedNum');
+            Route::post('up', 'CouponController@up');
             Route::post('down', 'CouponController@down');
             Route::post('delete', 'CouponController@delete');
         });
