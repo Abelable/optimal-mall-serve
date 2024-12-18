@@ -119,8 +119,8 @@ class CartGoodsService extends BaseService
             $cartGoods->selected_sku_index = $selectedSkuIndex;
             $cartGoods->selected_sku_name = $skuList[$selectedSkuIndex]->name;
             $cartGoods->price = $skuList[$selectedSkuIndex]->price;
-            $cartGoods->commission_rate = $skuList[$selectedSkuIndex]->commissionRate ?: $goods->commission_rate;
-            $cartGoods->number_limit = $skuList[$selectedSkuIndex]->limit ?: $goods->number_limit;
+            $cartGoods->commission_rate = $skuList[$selectedSkuIndex]->commissionRate ?? $goods->commission_rate;
+            $cartGoods->number_limit = $skuList[$selectedSkuIndex]->limit ?? $goods->number_limit;
         }
 
         $cartGoods->number = $number;
