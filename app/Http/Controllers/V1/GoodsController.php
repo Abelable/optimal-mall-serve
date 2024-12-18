@@ -179,7 +179,7 @@ class GoodsController extends Controller
         if ($this->isLogin()) {
             $columns = ['selected_sku_name', 'selected_sku_index', 'number'];
             $cartGoodsList = CartGoodsService::getInstance()->getListByGoodsId($this->userId(), $goods->id, $columns);
-            $orderGoodsList = OrderGoodsService::getInstance()->getListByGoodsId($this->userId(), $goods->id, $columns);
+            $orderGoodsList = OrderGoodsService::getInstance()->getUserListByGoodsIds($this->userId(), [$goods->id], $columns);
             $mergedList = collect($cartGoodsList)->merge(collect($orderGoodsList));
             $userPurchasedList = $mergedList->groupBy(function ($item) {
                 return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];

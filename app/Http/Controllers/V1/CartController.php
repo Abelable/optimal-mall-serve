@@ -7,6 +7,7 @@ use App\Models\CartGoods;
 use App\Models\Goods;
 use App\Services\CartGoodsService;
 use App\Services\GoodsService;
+use App\Services\OrderGoodsService;
 use App\Utils\Inputs\CartGoodsInput;
 use App\Utils\Inputs\CartGoodsEditInput;
 
@@ -39,7 +40,9 @@ class CartController extends Controller
         $goodsIds = array_unique($list->pluck('goods_id')->toArray());
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
-        $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList) {
+        $groupedOrderGoodsList = OrderGoodsService::getInstance()->getUserListByGoodsIds($this->userId(), $goodsIds)->groupBy('goods_id');
+
+        $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList, $groupedOrderGoodsList) {
             /** @var Goods $goods */
             $goods = $goodsList->get($cartGoods->goods_id);
             if (is_null($goods) || $goods->status != 1) {
@@ -109,6 +112,20 @@ class CartController extends Controller
                 $cartGoods['stock'] = $sku->stock;
             }
             $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
+
+            // 限购逻辑
+            $orderGoodsList = $groupedOrderGoodsList->get($cartGoods->goods_id);
+            $userPurchasedList = collect($orderGoodsList)->groupBy(function ($item) {
+                return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
+            })->map(function ($groupedItems) {
+                return [
+                    'skuName' => $groupedItems->first()['selected_sku_name'],
+                    'skuIndex' => $groupedItems->first()['selected_sku_index'],
+                    'number' => $groupedItems->sum('number'),
+                ];
+            })->values()->toArray();
+            $cartGoods['userPurchasedList'] = $userPurchasedList;
+
             return $cartGoods;
         });
 
