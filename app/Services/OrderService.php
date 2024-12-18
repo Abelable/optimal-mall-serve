@@ -128,7 +128,7 @@ class OrderService extends BaseService
             }
 
             // 活动商品增加活动销量
-            $activity = ActivityService::getInstance()->getActivityByGoodsId($cartGoods->goods_id, 1);
+            $activity = ActivityService::getInstance()->getActivityByGoodsId($cartGoods->goods_id, [1]);
             if (!is_null($activity)) {
                 $activity->sales = $activity->sales + $cartGoods->number;
                 $activity->save();

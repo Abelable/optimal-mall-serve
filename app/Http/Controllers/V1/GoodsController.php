@@ -137,7 +137,7 @@ class GoodsController extends Controller
         }
 
         $activityColumns = ['id', 'status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'];
-        $activity = ActivityService::getInstance()->getActivityByGoodsId($goods->id, 0, $activityColumns);
+        $activity = ActivityService::getInstance()->getActivityByGoodsId($goods->id, [0, 1], $activityColumns);
         if (!is_null($activity)) {
             if ($this->isLogin()) {
                 $subscription = ActivitySubscriptionService::getInstance()->getUserSubscription($this->userId(), $activity->id);

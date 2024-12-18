@@ -37,9 +37,9 @@ class ActivityService extends BaseService
         return Activity::query()->whereIn('status', [0, 1])->whereIn('goods_id', $goodsIds)->get($columns);
     }
 
-    public function getActivityByGoodsId($goodsId, $status, $columns = ['*'])
+    public function getActivityByGoodsId($goodsId, array $statusList, $columns = ['*'])
     {
-        return Activity::query()->where('goods_id', $goodsId)->where('status', $status)->first($columns);
+        return Activity::query()->where('goods_id', $goodsId)->whereIn('status', $statusList)->first($columns);
     }
 
     public function getActivityById($id, $columns = ['*'])
@@ -89,7 +89,7 @@ class ActivityService extends BaseService
 
     public function addActivitySales($goodsId, $goodsNumber)
     {
-        $activity = $this->getActivityByGoodsId($goodsId, 1);
+        $activity = $this->getActivityByGoodsId($goodsId, [1]);
         if (is_null($activity)) {
             $this->throwBusinessException(CodeResponse::NOT_FOUND, '活动不存在');
         }
