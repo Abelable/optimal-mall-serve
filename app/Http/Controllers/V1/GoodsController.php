@@ -190,7 +190,7 @@ class GoodsController extends Controller
                     'number' => $groupedItems->sum('number'),
                 ];
             })->values()->toArray();
-            $goods['userPurchasedList'] = $mergedList;
+            $goods['userPurchasedList'] = $userPurchasedList;
         }
 
         return $this->success($goods);
