@@ -77,7 +77,7 @@ class GiftCommissionService extends BaseService
     {
         // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
         // $commissionList = $this->getPaidListByOrderIds($orderIds);
-         $commissionList = $this->getListByOrderIds($orderIds);
+        $commissionList = $this->getListByOrderIds($orderIds);
 
         return $commissionList->map(function (GiftCommission $commission) {
             if ($commission->refund_status == 1) {
