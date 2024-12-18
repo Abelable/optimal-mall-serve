@@ -180,13 +180,13 @@ class GoodsController extends Controller
             $columns = ['selected_sku_name', 'selected_sku_index', 'number'];
             $cartGoodsList = CartGoodsService::getInstance()->getListByGoodsId($this->userId(), $goods->id, $columns);
             $orderGoodsList = OrderGoodsService::getInstance()->getListByGoodsId($this->userId(), $goods->id, $columns);
-            $mergedList = $cartGoodsList->merge($orderGoodsList);
+            $mergedList = collect($cartGoodsList)->merge(collect($orderGoodsList));
             $userPurchasedList = $mergedList->groupBy(function ($item) {
                 return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
             })->map(function ($groupedItems) {
                 return [
-                    'selected_sku_name' => $groupedItems->first()['selected_sku_name'],
-                    'selected_sku_index' => $groupedItems->first()['selected_sku_index'],
+                    'skuName' => $groupedItems->first()['selected_sku_name'],
+                    'skuIndex' => $groupedItems->first()['selected_sku_index'],
                     'number' => $groupedItems->sum('number'),
                 ];
             })->values()->toArray();
