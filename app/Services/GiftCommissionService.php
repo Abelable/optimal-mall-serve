@@ -80,16 +80,21 @@ class GiftCommissionService extends BaseService
         $commissionList = $this->getListByOrderIds($orderIds);
 
         return $commissionList->map(function (GiftCommission $commission) {
-            if ($commission->refund_status == 1) {
-                // 7天无理由商品：确认收货7天后更新佣金状态，并成为推官员
-                dispatch(new GiftCommissionConfirm($commission->id));
-            } else {
-                $commission->status = 2;
-                $commission->save();
+//            if ($commission->refund_status == 1) {
+//                // 7天无理由商品：确认收货7天后更新佣金状态，并成为推官员
+//                dispatch(new GiftCommissionConfirm($commission->id));
+//            } else {
+//                $commission->status = 2;
+//                $commission->save();
+//
+//                // 成为推官员
+//                PromoterService::getInstance()->toBePromoter($commission->user_id);
+//            }
+            $commission->status = 2;
+            $commission->save();
 
-                // 成为推官员
-                PromoterService::getInstance()->toBePromoter($commission->user_id);
-            }
+            // 成为推官员
+            PromoterService::getInstance()->toBePromoter($commission->user_id);
             return $commission;
         });
     }
