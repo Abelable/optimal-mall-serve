@@ -31,6 +31,7 @@ class CreateGoodsTable extends Migration
             $table->integer('stock')->comment('商品库存');
             $table->float('commission_rate')->default(0)->comment('佣金比例%');
             $table->integer('refund_status')->default(0)->comment('是否支持7天无理由：0-不支持，1-支持');
+            $table->integer('number_limit')->default(0)->comment('限购数量');
             $table->longText('spec_list')->comment('商品规格列表');
             $table->longText('sku_list')->comment('商品sku');
             $table->integer('sales_volume')->default(0)->comment('商品销量');
