@@ -154,4 +154,9 @@ class CartGoodsService extends BaseService
     {
         return CartGoods::query()->where('user_id', $userId)->whereIn('id', $ids)->delete();
     }
+
+    public function getListByGoodsId($userId, $goodsId, $columns = ['*'])
+    {
+        return CartGoods::query()->where('user_id', $userId)->where('scene', '1')->where('goods_id', $goodsId)->get($columns);
+    }
 }

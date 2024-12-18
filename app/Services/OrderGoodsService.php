@@ -7,11 +7,12 @@ use App\Models\OrderGoods;
 
 class OrderGoodsService extends BaseService
 {
-    public function createList($cartGoodsList, $orderId)
+    public function createList($cartGoodsList, $orderId, $userId)
     {
         /** @var CartGoods $cartGoods */
         foreach ($cartGoodsList as $cartGoods) {
             $goods = OrderGoods::new();
+            $goods->user_id = $userId;
             $goods->order_id = $orderId;
             $goods->goods_id = $cartGoods->goods_id;
             $goods->merchant_id = $cartGoods->merchant_id;
@@ -56,5 +57,10 @@ class OrderGoodsService extends BaseService
     public function batchDelete(array $orderIds)
     {
         return OrderGoods::query()->whereIn('order_id', $orderIds)->delete();
+    }
+
+    public function getListByGoodsId($userId, $goodsId, $columns = ['*'])
+    {
+        return OrderGoods::query()->where('user_id', $userId)->where('goods_id', $goodsId)->get($columns);
     }
 }

@@ -9,11 +9,13 @@ use App\Models\Goods;
 use App\Services\ActivityService;
 use App\Services\ActivitySubscriptionService;
 use App\Services\AddressService;
+use App\Services\CartGoodsService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\CategoryService;
 use App\Services\GoodsService;
 use App\Services\MerchantService;
+use App\Services\OrderGoodsService;
 use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsPageInput;
@@ -171,6 +173,24 @@ class GoodsController extends Controller
         if ($goods->freight_template_id != 0) {
             $goods['freightTemplateInfo'] = $goods->freightTemplateInfo;
             unset($goods->freight_template_id);
+        }
+
+        // 限购逻辑
+        if ($this->isLogin()) {
+            $columns = ['selected_sku_name', 'selected_sku_index', 'number'];
+            $cartGoodsList = CartGoodsService::getInstance()->getListByGoodsId($this->userId(), $goods->id, $columns);
+            $orderGoodsList = OrderGoodsService::getInstance()->getListByGoodsId($this->userId(), $goods->id, $columns);
+            $mergedList = $cartGoodsList->merge($orderGoodsList);
+            $userPurchasedList = $mergedList->groupBy(function ($item) {
+                return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
+            })->map(function ($groupedItems) {
+                return [
+                    'selected_sku_name' => $groupedItems->first()['selected_sku_name'],
+                    'selected_sku_index' => $groupedItems->first()['selected_sku_index'],
+                    'number' => $groupedItems->sum('number'),
+                ];
+            })->values()->toArray();
+            $goods['userPurchasedList'] = $mergedList;
         }
 
         return $this->success($goods);

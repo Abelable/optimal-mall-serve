@@ -228,7 +228,7 @@ class OrderController extends Controller
                 $orderId = OrderService::getInstance()->createOrder($userId, $merchantId, $filterCartGoodsList, $freightTemplateList, $address, $coupon);
 
                 // 6.生成订单商品快照
-                OrderGoodsService::getInstance()->createList($filterCartGoodsList, $orderId);
+                OrderGoodsService::getInstance()->createList($filterCartGoodsList, $orderId, $userId);
 
                 /** @var CartGoods $cartGoods */
                 foreach ($filterCartGoodsList as $cartGoods) {
