@@ -58,6 +58,16 @@ class PromoterController extends Controller
         return $this->success($this->paginate($page, $list));
     }
 
+    public function detail()
+    {
+        $id = $this->verifyRequiredId('id');
+        $promoter = PromoterService::getInstance()->getPromoterById($id);
+        if (is_null($promoter)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前推广员不存在');
+        }
+        return $this->success($promoter);
+    }
+
     public function add()
     {
         $userId = $this->verifyRequiredId('userId');
@@ -69,11 +79,11 @@ class PromoterController extends Controller
 
     public function changeLevel()
     {
-        $userId = $this->verifyRequiredId('userId');
+        $id = $this->verifyRequiredId('id');
         $level = $this->verifyRequiredInteger('level');
         $scene = $this->verifyRequiredInteger('scene');
 
-        $promoter = PromoterService::getInstance()->getPromoterByUserId($userId);
+        $promoter = PromoterService::getInstance()->getPromoterById($id);
         if (is_null($promoter)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前推广员不存在');
         }
