@@ -43,6 +43,10 @@ class CartController extends Controller
         $groupedOrderGoodsList = OrderGoodsService::getInstance()->getUserListByGoodsIds($this->userId(), $goodsIds)->groupBy('goods_id');
 
         $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList, $groupedOrderGoodsList) {
+            if ($cartGoods->status != 1) {
+                return $cartGoods;
+            }
+
             /** @var Goods $goods */
             $goods = $goodsList->get($cartGoods->goods_id);
             if (is_null($goods) || $goods->status != 1) {
@@ -51,10 +55,61 @@ class CartController extends Controller
                 $cartGoods->save();
                 return $cartGoods;
             }
+            if ($goods->stock == 0) {
+                $cartGoods->status = 3;
+                $cartGoods->status_desc = '商品暂无库存';
+                $cartGoods->save();
+                return $cartGoods;
+            }
+
             $skuList = json_decode($goods->sku_list);
-            if (count($skuList) == 0) {
+            if (count($skuList) != 0) {
+                $sku = $skuList[$cartGoods->selected_sku_index];
+                if (is_null($sku) || $cartGoods->selected_sku_name != $sku->name) {
+                    $cartGoods->status = 2;
+                    $cartGoods->status_desc = '商品规格不存在';
+                    $cartGoods->selected_sku_index = -1;
+                    $cartGoods->selected_sku_name = '';
+                    $cartGoods->save();
+                    return $cartGoods;
+                }
+                if ($sku->stock == 0) {
+                    $cartGoods->status = 2;
+                    $cartGoods->status_desc = '当前规格暂无库存';
+                    $cartGoods->selected_sku_index = -1;
+                    $cartGoods->selected_sku_name = '';
+                    $cartGoods->save();
+                    return $cartGoods;
+                }
+
+                if ($cartGoods->price != $sku->price) {
+                    $cartGoods->price = $sku->price;
+                    $cartGoods->save();
+                }
+                if (isset($sku->originalPrice) && $cartGoods->market_price != $sku->originalPrice) {
+                    $cartGoods->market_price = $sku->originalPrice;
+                    $cartGoods->save();
+                }
+                if (isset($sku->commissionRate) && $cartGoods->commission_rate != $sku->commissionRate) {
+                    $cartGoods->commission_rate = $sku->commissionRate;
+                    $cartGoods->save();
+                }
+                if (isset($sku->limit) && $cartGoods->number_limit != $sku->limit) {
+                    $cartGoods->number_limit = $sku->limit;
+                    $cartGoods->save();
+                }
+                if ($cartGoods->number > $sku->stock) {
+                    $cartGoods->number = $sku->stock;
+                    $cartGoods->save();
+                }
+                $cartGoods['stock'] = $sku->stock;
+            } else {
                 if ($cartGoods->price != $goods->price) {
                     $cartGoods->price = $goods->price;
+                    $cartGoods->save();
+                }
+                if ($cartGoods->market_price != $goods->market_price) {
+                    $cartGoods->market_price = $goods->market_price;
                     $cartGoods->save();
                 }
                 if ($cartGoods->commission_rate != $goods->commission_rate) {
@@ -66,58 +121,10 @@ class CartController extends Controller
                     $cartGoods->save();
                 }
                 if ($cartGoods->number > $goods->stock) {
-                    if ($goods->stock != 0) {
-                        $cartGoods->number = $goods->stock;
-                        $cartGoods->save();
-                        $cartGoods['stock'] = $goods->stock;
-                    } else {
-                        $cartGoods->status = 3;
-                        $cartGoods->status_desc = '商品暂无库存';
-                        $cartGoods->save();
-                    }
-                } else {
-                    $cartGoods['stock'] = $goods->stock;
-                }
-                return $cartGoods;
-            }
-            if ($cartGoods->selected_sku_index == -1) {
-                return $cartGoods;
-            }
-            $sku = $skuList[$cartGoods->selected_sku_index];
-            if (is_null($sku) || $cartGoods->selected_sku_name != $sku->name) {
-                $cartGoods->status = 2;
-                $cartGoods->status_desc = '商品规格不存在';
-                $cartGoods->selected_sku_index = -1;
-                $cartGoods->selected_sku_name = '';
-                $cartGoods->save();
-                return $cartGoods;
-            }
-            if ($cartGoods->price != $sku->price) {
-                $cartGoods->price = $sku->price;
-                $cartGoods->save();
-            }
-            if (isset($sku->commissionRate) && $cartGoods->commission_rate != $sku->commissionRate) {
-                $cartGoods->commission_rate = $sku->commissionRate;
-                $cartGoods->save();
-            }
-            if (isset($sku->limit) && $cartGoods->number_limit != $sku->limit) {
-                $cartGoods->number_limit = $sku->limit;
-                $cartGoods->save();
-            }
-            if ($cartGoods->number > $sku->stock) {
-                if ($sku->stock != 0) {
-                    $cartGoods->number = $sku->stock;
-                    $cartGoods->save();
-                    $cartGoods['stock'] = $sku->stock;
-                } else {
-                    $cartGoods->status = 2;
-                    $cartGoods->status_desc = '当前规格暂无库存';
-                    $cartGoods->selected_sku_index = -1;
-                    $cartGoods->selected_sku_name = '';
+                    $cartGoods->number = $goods->stock;
                     $cartGoods->save();
                 }
-            } else {
-                $cartGoods['stock'] = $sku->stock;
+                $cartGoods['stock'] = $goods->stock;
             }
 
             $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
