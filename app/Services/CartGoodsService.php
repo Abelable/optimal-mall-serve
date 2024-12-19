@@ -78,14 +78,14 @@ class CartGoodsService extends BaseService
         return $cartGoods;
     }
 
-    public function editCartGoods(CartGoodsEditInput $input)
+    public function editCartGoods($userId, CartGoodsEditInput $input)
     {
         $cartGoodsId = $input->id;
         $goodsId = $input->goodsId;
         $selectedSkuIndex = $input->selectedSkuIndex;
         $number = $input->number;
 
-        $cartGoods = $this->getExistCartGoods($goodsId, $selectedSkuIndex, 1, $cartGoodsId);
+        $cartGoods = $this->getExistCartGoods($userId, $goodsId, $selectedSkuIndex, 1, $cartGoodsId);
         if (!is_null($cartGoods)) {
             $this->throwBusinessException(CodeResponse::DATA_EXISTED, '购物车中已存在当前规格商品');
         }
@@ -94,6 +94,7 @@ class CartGoodsService extends BaseService
         if (is_null($goods)) {
             $this->throwBusinessException(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
+
         $skuList = json_decode($goods->sku_list);
         if (count($skuList) != 0 && $selectedSkuIndex != -1) {
             $stock = $skuList[$selectedSkuIndex]->stock;
@@ -127,7 +128,39 @@ class CartGoodsService extends BaseService
             $cartGoods->status_desc = '';
         }
         $cartGoods->save();
-        $cartGoods['stock'] = (count($skuList) != 0 && $selectedSkuIndex != -1) ? $skuList[$selectedSkuIndex]->stock : $goods->stock;
+
+        // 限购逻辑
+        $orderGoodsList = OrderGoodsService::getInstance()->getUserListByGoodsIds($userId, [$goodsId]);
+        $userPurchasedList = collect($orderGoodsList)->groupBy(function ($item) {
+            return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
+        })->map(function ($groupedItems) {
+            return [
+                'selected_sku_name' => $groupedItems->first()['selected_sku_name'],
+                'selected_sku_index' => $groupedItems->first()['selected_sku_index'],
+                'number' => $groupedItems->sum('number'),
+            ];
+        });
+        if (count($skuList) != 0 && $selectedSkuIndex != -1) {
+            $sku = $skuList[$selectedSkuIndex];
+            $numberLimit = $sku->limit ?? $goods->number_limit;
+            if ($numberLimit != 0) {
+                $userPurchasedNumber = $userPurchasedList->filter(function ($item) use ($cartGoods) {
+                    return $item['selected_sku_index'] == $cartGoods->selected_sku_index
+                        && $item['selected_sku_name'] == $cartGoods->selected_sku_name;
+                })->first()['number'];
+                $stock = $sku->stock ?? $goods->stock;
+                $cartGoods['numberLimit'] = min($numberLimit, $stock) - $userPurchasedNumber;
+            } else {
+                $cartGoods['numberLimit'] = $sku->stock ?? $goods->stock;
+            }
+        } else {
+            if ($goods->number_limit != 0) {
+                $userPurchasedNumber = $userPurchasedList->first()['number'];
+                $cartGoods['numberLimit'] = min($goods->number_limit, $goods->stock) - $userPurchasedNumber;
+            } else {
+                $cartGoods['numberLimit'] = $goods->stock;
+            }
+        }
 
         return $cartGoods;
     }

@@ -62,6 +62,7 @@ class CartController extends Controller
                 return $cartGoods;
             }
 
+            // 限购逻辑
             $orderGoodsList = $groupedOrderGoodsList->get($cartGoods->goods_id);
             $userPurchasedList = collect($orderGoodsList)->groupBy(function ($item) {
                 return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
@@ -178,15 +179,16 @@ class CartController extends Controller
     {
         /** @var CartGoodsEditInput $input */
         $input = CartGoodsEditInput::new();
-        $cartGoods = CartGoodsService::getInstance()->editCartGoods($input);
+        $cartGoods = CartGoodsService::getInstance()->editCartGoods($this->userId(), $input);
         return $this->success([
             'status' => $cartGoods->status,
             'statusDesc' => $cartGoods->status_desc,
             'selectedSkuIndex' => $cartGoods->selected_sku_index,
             'selectedSkuName' => $cartGoods->selected_sku_name,
             'price' => $cartGoods->price,
+            'marketPrice' => $cartGoods->market_price,
             'number' => $cartGoods->number,
-            'stock' => $cartGoods['stock'],
+            'numberLimit' => $cartGoods['numberLimit'],
         ]);
     }
 
