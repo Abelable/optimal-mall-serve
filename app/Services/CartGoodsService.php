@@ -143,15 +143,15 @@ class CartGoodsService extends BaseService
         if (count($skuList) != 0 && $selectedSkuIndex != -1) {
             $sku = $skuList[$selectedSkuIndex];
             $numberLimit = $sku->limit ?? $goods->number_limit;
+            $stock = $sku->stock ?? $goods->stock;
             if ($numberLimit != 0) {
                 $userPurchasedNumber = $userPurchasedList->filter(function ($item) use ($cartGoods) {
                     return $item['selected_sku_index'] == $cartGoods->selected_sku_index
                         && $item['selected_sku_name'] == $cartGoods->selected_sku_name;
                 })->first()['number'] ?? 0;
-                $stock = $sku->stock ?? $goods->stock;
                 $cartGoods['numberLimit'] = min($numberLimit, $stock) - $userPurchasedNumber;
             } else {
-                $cartGoods['numberLimit'] = $sku->stock ?? $goods->stock;
+                $cartGoods['numberLimit'] = $stock;
             }
         } else {
             if ($goods->number_limit != 0) {
