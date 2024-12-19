@@ -26,6 +26,7 @@ class CartController extends Controller
             'status',
             'status_desc',
             'goods_id',
+            'is_gift',
             'freight_template_id',
             'cover',
             'name',
