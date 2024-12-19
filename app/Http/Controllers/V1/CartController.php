@@ -118,7 +118,7 @@ class CartController extends Controller
                     $userPurchasedNumber = $userPurchasedList->filter(function ($item) use ($cartGoods) {
                         return $item['selected_sku_index'] == $cartGoods->selected_sku_index
                             && $item['selected_sku_name'] == $cartGoods->selected_sku_name;
-                    })->first()['number'];
+                    })->first()['number'] ?? 0;
                     $stock = $sku->stock ?? $goods->stock;
                     $cartGoods['numberLimit'] = min($numberLimit, $stock) - $userPurchasedNumber;
                 } else {
@@ -144,7 +144,7 @@ class CartController extends Controller
 
                 // 限购逻辑
                 if ($goods->number_limit != 0) {
-                    $userPurchasedNumber = $userPurchasedList->first()['number'];
+                    $userPurchasedNumber = $userPurchasedList->first()['number'] ?? 0;
                     $cartGoods['numberLimit'] = min($goods->number_limit, $goods->stock) - $userPurchasedNumber;
                 } else {
                     $cartGoods['numberLimit'] = $goods->stock;
