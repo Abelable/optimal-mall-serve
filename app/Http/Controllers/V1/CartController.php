@@ -94,10 +94,6 @@ class CartController extends Controller
                     $cartGoods->commission_rate = $sku->commissionRate;
                     $cartGoods->save();
                 }
-                if (isset($sku->limit) && $cartGoods->number_limit != $sku->limit) {
-                    $cartGoods->number_limit = $sku->limit;
-                    $cartGoods->save();
-                }
                 if ($cartGoods->number > $sku->stock) {
                     $cartGoods->number = $sku->stock;
                     $cartGoods->save();
@@ -116,18 +112,12 @@ class CartController extends Controller
                     $cartGoods->commission_rate = $goods->commission_rate;
                     $cartGoods->save();
                 }
-                if ($cartGoods->number_limit != $goods->number_limit) {
-                    $cartGoods->number_limit = $goods->number_limit;
-                    $cartGoods->save();
-                }
                 if ($cartGoods->number > $goods->stock) {
                     $cartGoods->number = $goods->stock;
                     $cartGoods->save();
                 }
                 $cartGoods['stock'] = $goods->stock;
             }
-
-            $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
 
             // 限购逻辑
             $orderGoodsList = $groupedOrderGoodsList->get($cartGoods->goods_id);
@@ -141,6 +131,8 @@ class CartController extends Controller
                 ];
             })->values()->toArray();
             $cartGoods['userPurchasedList'] = $userPurchasedList;
+
+            $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
 
             return $cartGoods;
         });

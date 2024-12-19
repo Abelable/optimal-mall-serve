@@ -32,7 +32,6 @@ class CreateCartGoodsTable extends Migration
             $table->float('price')->comment('商品价格');
             $table->float('market_price')->default(0)->comment('市场价格');
             $table->float('commission_rate')->comment('分享佣金比例%');
-            $table->integer('number_limit')->default(0)->comment('商品限购数量');
             $table->integer('number')->comment('商品数量');
             $table->timestamps();
             $table->softDeletes();

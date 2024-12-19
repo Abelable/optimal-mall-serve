@@ -22,7 +22,6 @@ namespace App\Models;
  * @property float $price 商品价格
  * @property float $market_price 市场价格
  * @property float $commission_rate 分享佣金比例%
- * @property int $number_limit 商品限购数量
  * @property int $number 商品数量
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -43,7 +42,6 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereMerchantId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereNumberLimit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereRefundStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CartGoods whereScene($value)
