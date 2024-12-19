@@ -11,6 +11,7 @@ use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\UserPageInput;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Input\Input;
 
 class PromoterController extends Controller
 {
@@ -63,6 +64,23 @@ class PromoterController extends Controller
         $level = $this->verifyRequiredInteger('level');
         $scene = $this->verifyRequiredInteger('scene');
         PromoterService::getInstance()->create($userId, $level, $scene);
+        return $this->success();
+    }
+
+    public function changeLevel()
+    {
+        $userId = $this->verifyRequiredId('userId');
+        $level = $this->verifyRequiredInteger('level');
+        $scene = $this->verifyRequiredInteger('scene');
+
+        $promoter = PromoterService::getInstance()->getPromoterByUserId($userId);
+        if (is_null($promoter)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前推广员不存在');
+        }
+        $promoter->level = $level;
+        $promoter->scene = $scene;
+        $promoter->save();
+
         return $this->success();
     }
 

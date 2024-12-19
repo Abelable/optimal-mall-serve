@@ -250,6 +250,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::prefix('promoter')->group(function () {
             Route::post('list', 'PromoterController@list');
             Route::post('add', 'PromoterController@add');
+            Route::post('change_level', 'PromoterController@changeLevel');
             Route::post('delete', 'PromoterController@delete');
             Route::get('options', 'PromoterController@options');
         });
