@@ -23,7 +23,7 @@ use App\Utils\Inputs\RecommendGoodsPageInput;
 
 class GoodsController extends Controller
 {
-    protected $only = [];
+    protected $only = ['getPurchasedList'];
 
     public function categoryOptions()
     {
@@ -105,6 +105,7 @@ class GoodsController extends Controller
             'freight_template_id',
             'commission_rate',
             'refund_status',
+            'number_limit',
             'image_list',
             'detail_image_list',
             'stock',
@@ -175,24 +176,6 @@ class GoodsController extends Controller
             unset($goods->freight_template_id);
         }
 
-        // 限购逻辑
-        if ($this->isLogin()) {
-            $columns = ['selected_sku_name', 'selected_sku_index', 'number'];
-            $cartGoodsList = CartGoodsService::getInstance()->getListByGoodsId($this->userId(), $goods->id, $columns);
-            $orderGoodsList = OrderGoodsService::getInstance()->getUserListByGoodsIds($this->userId(), [$goods->id], $columns);
-            $mergedList = collect($cartGoodsList)->merge(collect($orderGoodsList));
-            $userPurchasedList = $mergedList->groupBy(function ($item) {
-                return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
-            })->map(function ($groupedItems) {
-                return [
-                    'skuName' => $groupedItems->first()['selected_sku_name'],
-                    'skuIndex' => $groupedItems->first()['selected_sku_index'],
-                    'number' => $groupedItems->sum('number'),
-                ];
-            })->values()->toArray();
-            $goods['userPurchasedList'] = $userPurchasedList;
-        }
-
         return $this->success($goods);
     }
 
@@ -204,5 +187,30 @@ class GoodsController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '商家不存在');
         }
         return $this->success($merchant);
+    }
+
+    public function getPurchasedList()
+    {
+        $goodsId = $this->verifyRequiredId('goodsId');
+        $scene = $this->verifyRequiredInteger('scene');
+
+        $columns = ['selected_sku_name', 'selected_sku_index', 'number'];
+        $orderGoodsList = OrderGoodsService::getInstance()->getUserListByGoodsIds($this->userId(), [$goodsId], $columns);
+        $cartGoodsList = CartGoodsService::getInstance()->getListByGoodsId($this->userId(), $goodsId, $columns);
+        $purchasedList = collect($orderGoodsList);
+        if ($scene == 1) {
+            $purchasedList = $purchasedList->merge(collect($cartGoodsList));
+        }
+        $list = $purchasedList->groupBy(function ($item) {
+            return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
+        })->map(function ($groupedItems) {
+            return [
+                'skuName' => $groupedItems->first()['selected_sku_name'],
+                'skuIndex' => $groupedItems->first()['selected_sku_index'],
+                'number' => $groupedItems->sum('number'),
+            ];
+        })->values()->toArray();
+
+        return $this->success($list);
     }
 }

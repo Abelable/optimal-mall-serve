@@ -16,7 +16,7 @@ class CartController extends Controller
     public function goodsNumber()
     {
         $number = CartGoodsService::getInstance()->cartGoodsNumber($this->userId());
-        return $this->success((int) $number);
+        return $this->success((int)$number);
     }
 
     public function list()
@@ -62,6 +62,17 @@ class CartController extends Controller
                 return $cartGoods;
             }
 
+            $orderGoodsList = $groupedOrderGoodsList->get($cartGoods->goods_id);
+            $userPurchasedList = collect($orderGoodsList)->groupBy(function ($item) {
+                return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
+            })->map(function ($groupedItems) {
+                return [
+                    'selected_sku_name' => $groupedItems->first()['selected_sku_name'],
+                    'selected_sku_index' => $groupedItems->first()['selected_sku_index'],
+                    'number' => $groupedItems->sum('number'),
+                ];
+            });
+
             $skuList = json_decode($goods->sku_list);
             if (count($skuList) != 0) {
                 $sku = $skuList[$cartGoods->selected_sku_index];
@@ -98,7 +109,19 @@ class CartController extends Controller
                     $cartGoods->number = $sku->stock;
                     $cartGoods->save();
                 }
-                $cartGoods['stock'] = $sku->stock;
+
+                // 限购逻辑
+                $numberLimit = $sku->limit ?? $goods->number_limit;
+                if ($numberLimit != 0) {
+                    $userPurchasedNumber = $userPurchasedList->filter(function ($item) use ($cartGoods) {
+                        return $item['selected_sku_index'] == $cartGoods->selected_sku_index
+                            && $item['selected_sku_name'] == $cartGoods->selected_sku_name;
+                    })->first()['number'];
+                    $stock = $sku->stock ?? $goods->stock;
+                    $cartGoods['numberLimit'] = min($numberLimit, $stock) - $userPurchasedNumber;
+                } else {
+                    $cartGoods['numberLimit'] = $sku->stock ?? $goods->stock;
+                }
             } else {
                 if ($cartGoods->price != $goods->price) {
                     $cartGoods->price = $goods->price;
@@ -116,22 +139,17 @@ class CartController extends Controller
                     $cartGoods->number = $goods->stock;
                     $cartGoods->save();
                 }
-                $cartGoods['stock'] = $goods->stock;
+
+                // 限购逻辑
+                if ($goods->number_limit != 0) {
+                    $userPurchasedNumber = $userPurchasedList->first()['number'];
+                    $cartGoods['numberLimit'] = min($goods->number_limit, $goods->stock) - $userPurchasedNumber;
+                } else {
+                    $cartGoods['numberLimit'] = $goods->stock;
+                }
             }
 
-            // 限购逻辑
-            $orderGoodsList = $groupedOrderGoodsList->get($cartGoods->goods_id);
-            $userPurchasedList = collect($orderGoodsList)->groupBy(function ($item) {
-                return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
-            })->map(function ($groupedItems) {
-                return [
-                    'skuName' => $groupedItems->first()['selected_sku_name'],
-                    'skuIndex' => $groupedItems->first()['selected_sku_index'],
-                    'number' => $groupedItems->sum('number'),
-                ];
-            })->values()->toArray();
-            $cartGoods['userPurchasedList'] = $userPurchasedList;
-
+            $cartGoods['stock'] = $goods->stock;
             $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
 
             return $cartGoods;

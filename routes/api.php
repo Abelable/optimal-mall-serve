@@ -73,6 +73,7 @@ Route::prefix('goods')->group(function () {
     Route::get('search', 'GoodsController@search');
     Route::get('detail', 'GoodsController@detail');
     Route::get('merchant_info', 'GoodsController@getMerchantInfo');
+    Route::get('purchased_list', 'GoodsController@getPurchasedList');
 
     Route::prefix('evaluation')->group(function () {
         Route::get('summary', 'GoodsEvaluationController@summary');
