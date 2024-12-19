@@ -61,6 +61,10 @@ class CartController extends Controller
                     $cartGoods->commission_rate = $goods->commission_rate;
                     $cartGoods->save();
                 }
+                if ($cartGoods->number_limit != $goods->number_limit) {
+                    $cartGoods->number_limit = $goods->number_limit;
+                    $cartGoods->save();
+                }
                 if ($cartGoods->number > $goods->stock) {
                     if ($goods->stock != 0) {
                         $cartGoods->number = $goods->stock;
@@ -84,8 +88,12 @@ class CartController extends Controller
                 $cartGoods->price = $sku->price;
                 $cartGoods->save();
             }
-            if ($sku->commissionRate && $cartGoods->commission_rate != $sku->commissionRate) {
+            if (isset($sku->commissionRate) && $cartGoods->commission_rate != $sku->commissionRate) {
                 $cartGoods->commission_rate = $sku->commissionRate;
+                $cartGoods->save();
+            }
+            if (isset($sku->limit) && $cartGoods->number_limit != $sku->limit) {
+                $cartGoods->number_limit = $sku->limit;
                 $cartGoods->save();
             }
             if (is_null($sku) || $cartGoods->selected_sku_name != $sku->name) {
