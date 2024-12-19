@@ -7,10 +7,12 @@ use App\Jobs\CouponExpire;
 use App\Models\Coupon;
 use App\Services\GoodsService;
 use App\Services\CouponService;
+use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\CouponEditInput;
 use App\Utils\Inputs\CouponPageInput;
 use App\Utils\Inputs\Admin\CouponInput;
+use Illuminate\Support\Facades\DB;
 
 class CouponController extends Controller
 {
@@ -146,7 +148,12 @@ class CouponController extends Controller
         if (is_null($coupon)) {
             return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
         }
-        $coupon->delete();
+
+        DB::transaction(function () use ($coupon) {
+            $coupon->delete();
+            UserCouponService::getInstance()->deleteByCouponId($coupon->id);
+        });
+
         return $this->success();
     }
 }

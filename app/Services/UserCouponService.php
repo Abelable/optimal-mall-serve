@@ -54,4 +54,9 @@ class UserCouponService extends BaseService
         $userCoupon->save();
         return $userCoupon;
     }
+
+    public function deleteByCouponId($couponId)
+    {
+        return UserCoupon::query()->where('coupon_id', $couponId)->delete();
+    }
 }
