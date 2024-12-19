@@ -150,7 +150,9 @@ class CartController extends Controller
                 }
             }
 
+            // todo 小程序发版之后删除
             $cartGoods['stock'] = $goods->stock;
+
             $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
 
             return $cartGoods;
