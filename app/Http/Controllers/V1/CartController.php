@@ -84,6 +84,14 @@ class CartController extends Controller
                 return $cartGoods;
             }
             $sku = $skuList[$cartGoods->selected_sku_index];
+            if (is_null($sku) || $cartGoods->selected_sku_name != $sku->name) {
+                $cartGoods->status = 2;
+                $cartGoods->status_desc = '商品规格不存在';
+                $cartGoods->selected_sku_index = -1;
+                $cartGoods->selected_sku_name = '';
+                $cartGoods->save();
+                return $cartGoods;
+            }
             if ($cartGoods->price != $sku->price) {
                 $cartGoods->price = $sku->price;
                 $cartGoods->save();
@@ -95,14 +103,6 @@ class CartController extends Controller
             if (isset($sku->limit) && $cartGoods->number_limit != $sku->limit) {
                 $cartGoods->number_limit = $sku->limit;
                 $cartGoods->save();
-            }
-            if (is_null($sku) || $cartGoods->selected_sku_name != $sku->name) {
-                $cartGoods->status = 2;
-                $cartGoods->status_desc = '商品规格不存在';
-                $cartGoods->selected_sku_index = -1;
-                $cartGoods->selected_sku_name = '';
-                $cartGoods->save();
-                return $cartGoods;
             }
             if ($cartGoods->number > $sku->stock) {
                 if ($sku->stock != 0) {
@@ -119,6 +119,7 @@ class CartController extends Controller
             } else {
                 $cartGoods['stock'] = $sku->stock;
             }
+
             $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
 
             // 限购逻辑
