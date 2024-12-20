@@ -215,28 +215,20 @@ class GoodsService extends BaseService
 
     public function updateGoods(Goods $goods, GoodsInput $input)
     {
-        if (!empty($input->video)) {
-            $goods->video = $input->video;
-        }
+        $goods->video = $input->video ?? '';
         $goods->cover = $input->cover;
-        if (!empty($input->activityCover)) {
-            $goods->activity_cover = $input->activityCover;
-        }
+        $goods->activity_cover = $input->activityCover ?? '';
         $goods->image_list = json_encode($input->imageList);
         $goods->detail_image_list = json_encode($input->detailImageList);
         $goods->default_spec_image = $input->defaultSpecImage;
         $goods->name = $input->name;
-        if (!empty($input->introduction)) {
-            $goods->introduction = $input->introduction;
-        }
+        $goods->introduction = $input->introduction ?? '';
         $goods->freight_template_id = $input->freightTemplateId;
         $goods->merchant_id = $input->merchantId;
         $goods->price = $input->price;
-        $goods->market_price = $input->marketPrice ?: 0;
+        $goods->market_price = $input->marketPrice ?? 0;
         $goods->stock = $input->stock;
-        if (!empty($input->commissionRate)) {
-            $goods->commission_rate = $input->commissionRate;
-        }
+        $goods->commission_rate = $input->commissionRate ?? 0;
         $goods->number_limit = $input->numberLimit ?? 0;
         $goods->refund_status = $input->refundStatus;
         $goods->spec_list = json_encode($input->specList);
