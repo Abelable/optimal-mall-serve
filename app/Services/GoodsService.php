@@ -237,9 +237,7 @@ class GoodsService extends BaseService
         if (!empty($input->commissionRate)) {
             $goods->commission_rate = $input->commissionRate;
         }
-        if (!empty($input->numberLimit)) {
-            $goods->number_limit = $input->numberLimit;
-        }
+        $goods->number_limit = $input->numberLimit ?? 0;
         $goods->refund_status = $input->refundStatus;
         $goods->spec_list = json_encode($input->specList);
         $goods->sku_list = json_encode($input->skuList);
