@@ -153,7 +153,7 @@ class OrderService extends BaseService
             $order->coupon_denomination = $couponDenomination;
         }
         $order->payment_amount = $paymentAmount;
-        $order->refund_amount = $order->payment_amount;
+        $order->refund_amount = $paymentAmount;
         $order->save();
 
         // 设置订单支付超时任务
@@ -225,10 +225,12 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::FAIL, $errMsg);
         }
 
-        return DB::transaction(function () use ($payId, $orderList) {
-            $orderList = $orderList->map(function (Order $order) use ($payId) {
+        return DB::transaction(function () use ($actualPaymentAmount, $payId, $orderList) {
+            $orderList = $orderList->map(function (Order $order) use ($actualPaymentAmount, $payId) {
                 $order->pay_id = $payId;
                 $order->pay_time = now()->toDateTimeString();
+                // 重新赋值payment_amount，用于后续退款
+                $order->payment_amount = $actualPaymentAmount;
                 $order->status = OrderEnums::STATUS_PAY;
                 if ($order->cas() == 0) {
                     $this->throwUpdateFail();
@@ -498,7 +500,7 @@ class OrderService extends BaseService
                     'transaction_id' => $order->pay_id,
                     'out_refund_no' => time(),
                     'total_fee' => bcmul($order->payment_amount, 100),
-                    'refund_fee' => bcmul($order->payment_amount, 100),
+                    'refund_fee' => bcmul($order->refund_amount, 100),
                     'refund_desc' => '商品退款',
                     'type' => 'miniapp'
                 ];
@@ -557,7 +559,7 @@ class OrderService extends BaseService
             $refundParams = [
                 'transaction_id' => $orderId,
                 'out_refund_no' => time(),
-                'total_fee' => bcmul($actualRefundAmount, 100),
+                'total_fee' => bcmul($order->payment_amount, 100),
                 'refund_fee' => bcmul($actualRefundAmount, 100),
                 'refund_desc' => '商品退款',
                 'type' => 'miniapp'
