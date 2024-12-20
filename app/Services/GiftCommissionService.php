@@ -123,6 +123,21 @@ class GiftCommissionService extends BaseService
     }
 
     // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+    public function deleteListByOrderIds(array $orderIds)
+    {
+        return GiftCommission::query()->whereIn('order_id', $orderIds)->delete();
+    }
+
+    // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+    public function deleteByGoodsId($orderId, $goodsId)
+    {
+        return GiftCommission::query()
+            ->where('order_id', $orderId)
+            ->where('goods_id', $goodsId)
+            ->delete();
+    }
+
+    // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
     public function getListByOrderIds(array $orderIds, $columns = ['*'])
     {
         return GiftCommission::query()

@@ -515,12 +515,13 @@ class OrderService extends BaseService
                     $this->throwUpdateFail();
                 }
 
-                // todo 通知商家
-
                 // 删除佣金记录
                 CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
-                GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
                 TeamCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+
+                // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+                // GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+                GiftCommissionService::getInstance()->deleteListByOrderIds([$order->id]);
             } catch (GatewayException $exception) {
                 Log::error('wx_refund_fail', [$exception]);
             }
@@ -575,12 +576,13 @@ class OrderService extends BaseService
                 $this->throwUpdateFail();
             }
 
-            // todo 通知商家
-
             // 删除佣金记录
-            CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
-            GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
-            TeamCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+            CommissionService::getInstance()->deletePaidCommission($orderId, $goodsId);
+            TeamCommissionService::getInstance()->deletePaidCommission($orderId, $goodsId);
+
+            // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+            // GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
+            GiftCommissionService::getInstance()->deleteByGoodsId($orderId, $goodsId);
 
             return $order;
         } catch (GatewayException $exception) {

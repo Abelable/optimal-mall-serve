@@ -98,6 +98,15 @@ class CommissionService extends BaseService
         return Commission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
     }
 
+    public function deletePaidCommission($orderId, $goodsId)
+    {
+        return Commission::query()
+            ->where('status', 1)
+            ->where('order_id', $orderId)
+            ->where('goods_id', $goodsId)
+            ->delete();
+    }
+
     public function getPaidListByOrderIds(array $orderIds, $columns = ['*'])
     {
         return Commission::query()
