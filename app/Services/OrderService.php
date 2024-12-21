@@ -358,17 +358,6 @@ class OrderService extends BaseService
         });
     }
 
-    public function systemConfirm($userId, $orderId)
-    {
-        return DB::transaction(function () use ($userId, $orderId) {
-            $orderList = $this->getUserOrderList($userId, [$orderId]);
-            if (count($orderList) == 0) {
-                $this->throwBadArgumentValue();
-            }
-            return $this->confirm($orderList, 'system');
-        });
-    }
-
     public function adminConfirm($orderIds)
     {
         return DB::transaction(function () use ($orderIds) {
@@ -378,6 +367,23 @@ class OrderService extends BaseService
             }
             return $this->confirm($orderList, 'admin');
         });
+    }
+
+    public function getTimeoutUnConfirmOrders($columns = ['*'])
+    {
+        return Order::query()
+            ->where('status', OrderEnums::STATUS_SHIP)
+            ->where('ship_time', '<=', now()->subDays(15))
+            ->get($columns);
+    }
+
+    public function systemConfirm()
+    {
+        $orderList = $this->getTimeoutUnConfirmOrders();
+        if (count($orderList) == 0) {
+            $this->throwBadArgumentValue();
+        }
+        return $this->confirm($orderList, 'system');
     }
 
     public function confirm($orderList, $role = 'user')
