@@ -33,11 +33,20 @@ class DashboardController extends Controller
         $dailyGrowthRate = OrderService::getInstance()->dailyOrderCountGrowthRate();
         $weeklyGrowthRate = OrderService::getInstance()->weeklyOrderCountGrowthRate();
 
+        $repeatCustomersCount = OrderService::getInstance()->repeatCustomersCount();
+        $usersWithOrdersCount = OrderService::getInstance()->usersWithOrdersCount();
+
+        $repurchaseRate = 0;
+        if ($usersWithOrdersCount > 0) {
+            $repurchaseRate = ($repeatCustomersCount / $usersWithOrdersCount) * 100;
+        }
+
         return $this->success([
             'totalCount' => $totalCount,
             'dailyCountList' => $dailyCountList,
             'dailyGrowthRate' => $dailyGrowthRate,
-            'weeklyGrowthRate' => $weeklyGrowthRate
+            'weeklyGrowthRate' => $weeklyGrowthRate,
+            'repurchaseRate' => round($repurchaseRate, 2)
         ]);
     }
 
@@ -48,11 +57,18 @@ class DashboardController extends Controller
         $dailyGrowthRate = UserService::getInstance()->dailyUserCountGrowthRate();
         $weeklyGrowthRate = UserService::getInstance()->weeklyUserCountGrowthRate();
 
+        $usersWithOrdersCount = OrderService::getInstance()->usersWithOrdersCount();
+        $orderRate = 0;
+        if ($totalCount > 0) {
+            $orderRate = ($usersWithOrdersCount / $totalCount) * 100;
+        }
+
         return $this->success([
             'totalCount' => $totalCount,
             'dailyCountList' => $dailyCountList,
             'dailyGrowthRate' => $dailyGrowthRate,
-            'weeklyGrowthRate' => $weeklyGrowthRate
+            'weeklyGrowthRate' => $weeklyGrowthRate,
+            'orderRate' => round($orderRate, 2)
         ]);
     }
 
