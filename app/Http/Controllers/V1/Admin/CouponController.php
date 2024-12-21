@@ -59,14 +59,17 @@ class CouponController extends Controller
             if (!is_null($input->priceLimit)) {
                 $coupon->price_limit = $input->priceLimit;
             }
+            if (!is_null($input->priceLimit)) {
+                $coupon->price_limit = $input->priceLimit;
+            }
             if (!is_null($input->expirationTime)) {
                 $coupon->expiration_time = $input->expirationTime;
-            }
-            $coupon->save();
-
-            if (!is_null($input->expirationTime)) {
                 $this->dispatch(new CouponExpire($coupon->id, $input->expirationTime));
             }
+            if (!is_null($input->receiveNumLimit)) {
+                $coupon->receive_num_limit = $input->receiveNumLimit;
+            }
+            $coupon->save();
         }
 
         return $this->success();
@@ -86,12 +89,8 @@ class CouponController extends Controller
         $coupon->name = $input->name;
         $coupon->description = $input->description;
         $coupon->type = $input->type;
-        if (!is_null($input->numLimit)) {
-            $coupon->num_limit = $input->numLimit;
-        }
-        if (!is_null($input->priceLimit)) {
-            $coupon->price_limit = $input->priceLimit;
-        }
+        $coupon->num_limit = $input->numLimit ?? 0;
+        $coupon->price_limit = $input->priceLimit ?? 0;
         if (!is_null($input->expirationTime)) {
             $coupon->expiration_time = $input->expirationTime;
             $this->dispatch(new CouponExpire($coupon->id, $input->expirationTime));

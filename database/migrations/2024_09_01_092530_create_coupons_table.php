@@ -26,6 +26,7 @@ class CreateCouponsTable extends Migration
             $table->integer('goods_id')->default(0)->comment('商品id');
             $table->string('goods_cover')->default('')->comment('商品图片');
             $table->string('goods_name')->default('')->comment('商品名称');
+            $table->integer('receive_num_limit')->default(0)->comment('优惠券领取数量限制');
             $table->integer('received_num')->default(0)->comment('优惠券领取数量');
             $table->timestamps();
             $table->softDeletes();
