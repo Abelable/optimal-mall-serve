@@ -92,6 +92,16 @@ class OrderController extends Controller
         return $this->success();
     }
 
+    public function refund()
+    {
+        $ids = $this->verifyArrayNotEmpty('ids');
+        OrderService::getInstance()->adminRefund($ids);
+
+        // todo: 管理员操组记录
+
+        return $this->success();
+    }
+
     public function confirm()
     {
         $ids = $this->verifyArrayNotEmpty('ids');

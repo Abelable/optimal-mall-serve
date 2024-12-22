@@ -490,16 +490,31 @@ class OrderService extends BaseService
         return $order;
     }
 
-    public function refund($userId, $orderId)
+    public function userRefund($userId, $orderId)
     {
         $order = $this->getUserOrderById($userId, $orderId);
         if (is_null($order)) {
             $this->throwBadArgumentValue();
         }
+        $this->refund($order);
+    }
+
+    public function adminRefund($orderIds)
+    {
+        $orderList = $this->getOrderListByIds($orderIds);
+        if (count($orderList) == 0) {
+            $this->throwBadArgumentValue();
+        }
+        foreach ($orderList as $order) {
+            $this->refund($order);
+        }
+    }
+
+    public function refund($order)
+    {
         if (!$order->canRefundHandle()) {
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '该订单不能申请退款');
         }
-
         DB::transaction(function () use ($order) {
             try {
                 $refundParams = [

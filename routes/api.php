@@ -411,6 +411,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::get('shipping_info', 'OrderController@shippingInfo');
         Route::post('confirm', 'OrderController@confirm');
         Route::post('cancel', 'OrderController@cancel');
+        Route::post('refund', 'OrderController@refund');
         Route::post('delete', 'OrderController@delete');
         Route::post('export', 'OrderController@export');
         Route::post('import', 'OrderController@import');

@@ -391,7 +391,7 @@ class OrderController extends Controller
     public function refund()
     {
         $id = $this->verifyRequiredId('id');
-        OrderService::getInstance()->refund($this->userId(), $id);
+        OrderService::getInstance()->userRefund($this->userId(), $id);
         return $this->success();
     }
 
