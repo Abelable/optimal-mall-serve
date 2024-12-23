@@ -209,7 +209,7 @@ class GoodsController extends Controller
         $scene = $this->verifyRequiredInteger('scene');
 
         $columns = ['selected_sku_name', 'selected_sku_index', 'number'];
-        $orderGoodsList = OrderGoodsService::getInstance()->getUserListByGoodsIds($this->userId(), [$goodsId], $columns);
+        $orderGoodsList = OrderGoodsService::getInstance()->getRecentlyUserListByGoodsIds($this->userId(), [$goodsId], $columns);
         $cartGoodsList = CartGoodsService::getInstance()->getListByGoodsId($this->userId(), $goodsId, $columns);
         $purchasedList = collect($orderGoodsList);
         if ($scene == 1) {

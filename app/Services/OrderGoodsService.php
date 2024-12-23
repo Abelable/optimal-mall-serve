@@ -63,4 +63,13 @@ class OrderGoodsService extends BaseService
     {
         return OrderGoods::query()->where('user_id', $userId)->whereIn('goods_id', $goodsIds)->get($columns);
     }
+
+    public function getRecentlyUserListByGoodsIds($userId, array $goodsIds, $columns = ['*'])
+    {
+        return OrderGoods::query()
+            ->where('user_id', $userId)
+            ->whereIn('goods_id', $goodsIds)
+            ->where('created_at', '>=', now()->subDays(7))
+            ->get($columns);
+    }
 }

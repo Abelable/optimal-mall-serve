@@ -133,7 +133,7 @@ class CartGoodsService extends BaseService
         $cartGoods->save();
 
         // 限购逻辑
-        $orderGoodsList = OrderGoodsService::getInstance()->getUserListByGoodsIds($userId, [$goodsId]);
+        $orderGoodsList = OrderGoodsService::getInstance()->getRecentlyUserListByGoodsIds($userId, [$goodsId]);
         $userPurchasedList = collect($orderGoodsList)->groupBy(function ($item) {
             return $item['selected_sku_name'] . '|' . $item['selected_sku_index'];
         })->map(function ($groupedItems) {

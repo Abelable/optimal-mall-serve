@@ -41,7 +41,7 @@ class CartController extends Controller
         $goodsIds = array_unique($list->pluck('goods_id')->toArray());
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
-        $groupedOrderGoodsList = OrderGoodsService::getInstance()->getUserListByGoodsIds($this->userId(), $goodsIds)->groupBy('goods_id');
+        $groupedOrderGoodsList = OrderGoodsService::getInstance()->getRecentlyUserListByGoodsIds($this->userId(), $goodsIds)->groupBy('goods_id');
 
         $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList, $groupedOrderGoodsList) {
             if ($cartGoods->status != 1) {
