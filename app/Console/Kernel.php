@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
             OrderService::getInstance()->systemConfirm();
+            OrderService::getInstance()->confirmMissCommission();
         })->dailyAt('03:00')->runInBackground()->name('order_system_confirm')->onOneServer();
     }
 

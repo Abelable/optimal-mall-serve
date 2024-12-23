@@ -828,4 +828,22 @@ class OrderService extends BaseService
             ->distinct()
             ->count();
     }
+
+    public function confirmMissCommission()
+    {
+        $orderIds = $this->getRemoteUserConfirmList()->pluck('id')->toArray();
+        DB::transaction(function () use ($orderIds) {
+            CommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds, 'system');
+            TeamCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds, 'system');
+            GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
+        });
+    }
+
+    public function getRemoteUserConfirmList($columns = ['*'])
+    {
+        return Order::query()
+            ->whereIn('status', [401, 501])
+            ->where('updated_at', '<', now()->subDays(7))
+            ->get($columns);
+    }
 }
