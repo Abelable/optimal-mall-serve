@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Exceptions\BusinessException;
 use App\Services\CouponService;
+use App\Services\UserCouponService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -11,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CouponExpire implements ShouldQueue
@@ -39,7 +41,10 @@ class CouponExpire implements ShouldQueue
     public function handle()
     {
         try {
-            CouponService::getInstance()->expireCoupon($this->couponId);
+            DB::transaction(function () {
+                CouponService::getInstance()->expireCoupon($this->couponId);
+                UserCouponService::getInstance()->expireCoupon($this->couponId);
+            });
         } catch (BusinessException $e) {
             Log::error($e->getMessage());
         }

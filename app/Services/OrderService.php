@@ -313,7 +313,7 @@ class OrderService extends BaseService
 
             // 恢复优惠券
             if ($order->coupon_id != 0) {
-                $this->restoreCoupon($order->coupon_id);
+                $this->restoreCoupon($order->user_id, $order->coupon_id);
             }
 
             return $order;
@@ -339,9 +339,9 @@ class OrderService extends BaseService
         }
     }
 
-    public function restoreCoupon($couponId)
+    public function restoreCoupon($userId, $couponId)
     {
-        $userCoupon = UserCouponService::getInstance()->getUserCouponByCouponId($couponId);
+        $userCoupon = UserCouponService::getInstance()->getUserUsedCouponByCouponId($userId, $couponId);
         $userCoupon->status = 1;
         $userCoupon->save();
         return $userCoupon;
