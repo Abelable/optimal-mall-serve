@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Jobs\CouponExpire;
 use App\Models\Coupon;
+use App\Models\Goods;
 use App\Utils\CodeResponse;
+use App\Utils\Inputs\Admin\CouponInput;
 use App\Utils\Inputs\CouponPageInput;
 
 class CouponService extends BaseService
@@ -75,5 +78,24 @@ class CouponService extends BaseService
         $coupon->status = 2;
         $coupon->save();
         return $coupon;
+    }
+
+    public function updateCoupon(Coupon $coupon, CouponInput $input, Goods $goods)
+    {
+        $coupon->denomination = $input->denomination;
+        $coupon->name = $input->name;
+        $coupon->description = $input->description;
+        $coupon->goods_id = $goods->id;
+        $coupon->goods_cover = $goods->cover;
+        $coupon->goods_name = $goods->name;
+        $coupon->type = $input->type;
+        $coupon->num_limit = $input->numLimit ?? 0;
+        $coupon->price_limit = $input->priceLimit ?? 0;
+        $coupon->receive_num_limit = $input->receiveNumLimit ?? 0;
+        if (!is_null($input->expirationTime)) {
+            $coupon->expiration_time = $input->expirationTime;
+            dispatch(new CouponExpire($coupon->id, $input->expirationTime));
+        }
+        $coupon->save();
     }
 }

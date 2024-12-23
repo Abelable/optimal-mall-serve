@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\CouponExpire;
 use App\Models\Coupon;
 use App\Services\GoodsService;
 use App\Services\CouponService;
 use App\Services\UserCouponService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\Admin\CouponEditInput;
 use App\Utils\Inputs\CouponPageInput;
 use App\Utils\Inputs\Admin\CouponInput;
 use Illuminate\Support\Facades\DB;
@@ -43,33 +41,9 @@ class CouponController extends Controller
         $input = CouponInput::new();
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
-
         foreach ($goodsList as $goods) {
             $coupon = Coupon::new();
-            $coupon->denomination = $input->denomination;
-            $coupon->name = $input->name;
-            $coupon->description = $input->description;
-            $coupon->goods_id = $goods->id;
-            $coupon->goods_cover = $goods->cover;
-            $coupon->goods_name = $goods->name;
-            $coupon->type = $input->type;
-            if (!is_null($input->numLimit)) {
-                $coupon->num_limit = $input->numLimit;
-            }
-            if (!is_null($input->priceLimit)) {
-                $coupon->price_limit = $input->priceLimit;
-            }
-            if (!is_null($input->priceLimit)) {
-                $coupon->price_limit = $input->priceLimit;
-            }
-            if (!is_null($input->expirationTime)) {
-                $coupon->expiration_time = $input->expirationTime;
-                $this->dispatch(new CouponExpire($coupon->id, $input->expirationTime));
-            }
-            if (!is_null($input->receiveNumLimit)) {
-                $coupon->receive_num_limit = $input->receiveNumLimit;
-            }
-            $coupon->save();
+            CouponService::getInstance()->updateCoupon($coupon, $input, $goods);
         }
 
         return $this->success();
@@ -77,25 +51,18 @@ class CouponController extends Controller
 
     public function edit()
     {
-        /** @var CouponEditInput $input */
-        $input = CouponEditInput::new();
+        $id = $this->verifyRequiredId('id');
+        /** @var CouponInput $input */
+        $input = CouponInput::new();
 
-        $coupon = CouponService::getInstance()->getCouponById($input->id);
-        if (is_null($coupon)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
+        $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name'])->keyBy('id');
+        foreach ($input->goodsIds as $goodsId) {
+            $coupon = CouponService::getInstance()->getGoodsCoupon($id, $goodsId);
+            if (is_null($coupon)) {
+                $coupon = Coupon::new();
+            }
+            CouponService::getInstance()->updateCoupon($coupon, $input, $goodsList->get($goodsId));
         }
-
-        $coupon->denomination = $input->denomination;
-        $coupon->name = $input->name;
-        $coupon->description = $input->description;
-        $coupon->type = $input->type;
-        $coupon->num_limit = $input->numLimit ?? 0;
-        $coupon->price_limit = $input->priceLimit ?? 0;
-        if (!is_null($input->expirationTime)) {
-            $coupon->expiration_time = $input->expirationTime;
-            $this->dispatch(new CouponExpire($coupon->id, $input->expirationTime));
-        }
-        $coupon->save();
 
         return $this->success();
     }
