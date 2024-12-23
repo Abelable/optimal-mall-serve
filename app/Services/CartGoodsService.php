@@ -46,9 +46,12 @@ class CartGoodsService extends BaseService
         }
 
         $cartGoods = $this->getExistCartGoods($userId, $goodsId, $selectedSkuIndex, $scene);
-        if (!is_null($cartGoods)) {
-            $cartGoods->number = $scene == 1 ? ($cartGoods->number + $number) : $number;
+        if (!is_null($cartGoods) && $scene == 1) {
+            $cartGoods->number = $cartGoods->number + $number;
         } else {
+            if (!is_null($cartGoods) && $scene == 2) {
+                $cartGoods->delete();
+            }
             $giftGoodsIds = GiftGoodsService::getInstance()->getGoodsList([1, 2])->pluck('goods_id')->toArray();
 
             $cartGoods = CartGoods::new();
