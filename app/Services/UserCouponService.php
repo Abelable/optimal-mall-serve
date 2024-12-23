@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\UserCoupon;
 use App\Utils\Inputs\StatusPageInput;
+use Illuminate\Support\Facades\DB;
 
 class UserCouponService extends BaseService
 {
@@ -22,6 +23,17 @@ class UserCouponService extends BaseService
             ->where('status', 1)
             ->where('user_id', $userId)
             ->get($columns);
+    }
+
+    public function getReceiveCount($userId)
+    {
+        return UserCoupon::query()
+            ->where('user_id', $userId)
+            ->where('status', '!=', 1)
+            ->where('created_at', '>=', now()->subDays(7))
+            ->select('coupon_id', DB::raw('count(*) as receive_count'))
+            ->groupBy('coupon_id')
+            ->get();
     }
 
     public function getListByCouponIds($userId, array $couponIds, $columns = ['*'])
