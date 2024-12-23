@@ -379,11 +379,14 @@ class OrderService extends BaseService
 
     public function systemConfirm()
     {
-        $orderList = $this->getTimeoutUnConfirmOrders();
-        if (count($orderList) == 0) {
-            $this->throwBadArgumentValue();
-        }
-        return $this->confirm($orderList, 'system');
+        return DB::transaction(function () {
+            $orderList = $this->getTimeoutUnConfirmOrders();
+            if (count($orderList) == 0) {
+                $this->throwBadArgumentValue();
+            }
+            return $this->confirm($orderList, 'system');
+        });
+
     }
 
     public function confirm($orderList, $role = 'user')
@@ -413,8 +416,8 @@ class OrderService extends BaseService
 
         // 佣金记录变更为待提现
         $orderIds = $orderList->pluck('id')->toArray();
-        CommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
-        TeamCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
+        CommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds, $role);
+        TeamCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds, $role);
 
         // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
         // GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);

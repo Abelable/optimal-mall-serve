@@ -65,11 +65,11 @@ class TeamCommissionService extends BaseService
             ->get($columns);
     }
 
-    public function updateListToOrderConfirmStatus($orderIds)
+    public function updateListToOrderConfirmStatus($orderIds, $role = 'user')
     {
         $commissionList = $this->getPaidListByOrderIds($orderIds);
-        return $commissionList->map(function (TeamCommission $commission) {
-            if ($commission->refund_status == 1) {
+        return $commissionList->map(function (TeamCommission $commission) use ($role) {
+            if ($commission->refund_status == 1 && $role == 'user') {
                 // 7天无理由商品：确认收货7天后更新佣金状态
                 dispatch(new TeamCommissionConfirm($commission->id));
             } else {
