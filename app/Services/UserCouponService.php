@@ -26,11 +26,11 @@ class UserCouponService extends BaseService
             ->get($columns);
     }
 
-    public function getReceiveCount($userId)
+    public function getUsedCount($userId)
     {
         return UserCoupon::query()
             ->where('user_id', $userId)
-            ->where('status', '!=', 1)
+            ->where('status', 2)
             ->where('created_at', '>=', now()->subDays(7))
             ->select('coupon_id', DB::raw('count(*) as receive_count'))
             ->groupBy('coupon_id')

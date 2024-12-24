@@ -154,23 +154,19 @@ class GoodsController extends Controller
         $couponList = CouponService::getInstance()->getCouponListByGoodsId($goods->id);
         if ($this->isLogin()) {
             $receivedCouponIds = UserCouponService::getInstance()->getUserCouponList($this->userId())->pluck('coupon_id')->toArray();
-            $receiveCountList = UserCouponService::getInstance()
-                ->getReceiveCount($this->userId())
+            $usedCountList = UserCouponService::getInstance()
+                ->getUsedCount($this->userId())
                 ->keyBy('coupon_id')
                 ->map(function($item) {
                     return $item->receive_count;
                 });
-            $couponList = $couponList->map(function (Coupon $coupon) use ($receivedCouponIds, $receiveCountList) {
+            $couponList = $couponList->map(function (Coupon $coupon) use ($receivedCouponIds, $usedCountList) {
                 if (in_array($coupon->id, $receivedCouponIds)) {
                     $coupon['isReceived'] = 1;
-                    return $coupon;
-                }
-                if ($coupon->receive_num_limit != 0 && $receiveCountList->get($coupon->id) >= $coupon->receive_num_limit) {
-                    return null;
+                } elseif ($coupon->receive_num_limit != 0 && $usedCountList->get($coupon->id) >= $coupon->receive_num_limit) {
+                    $coupon['isUsed'] = 1;
                 }
                 return $coupon;
-            })->filter(function ($coupon) {
-                return $coupon != null;
             });
         }
         $goods['couponList'] = $couponList;
