@@ -437,7 +437,12 @@ class OrderService extends BaseService
         }
         $order->status = OrderEnums::STATUS_SHIP;
         $order->ship_channel = $shipChannel;
-        $order->ship_code = $shipCode;
+        if (empty($shipCode)) {
+            $express = ExpressService::getInstance()->getExpressByName($shipChannel);
+            $order->ship_code = $express->code;
+        } else {
+            $order->ship_code = $shipCode;
+        }
         $order->ship_sn = $shipSn;
         $order->ship_time = now()->toDateTimeString();
         if ($order->cas() == 0) {
@@ -675,7 +680,7 @@ class OrderService extends BaseService
         $validator = Validator::make($row, [
             'order_id' => 'required|integer',
             'ship_channel' => 'required|string',
-            'ship_code' => 'required|string',
+            'ship_code' => 'string',
             'ship_sn' => 'required|string',
         ]);
         if ($validator->fails()) {
