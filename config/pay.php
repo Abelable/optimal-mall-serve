@@ -38,7 +38,7 @@ return [
 
     'wechat' => [
         // 公众号 APPID
-        'app_id' => '',
+        'app_id' => env('WX_APPID', ''),
 
         // 小程序 APPID
         'miniapp_id' => env('WX_MP_APPID', ''),

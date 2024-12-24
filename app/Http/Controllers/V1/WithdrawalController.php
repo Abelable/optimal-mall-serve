@@ -18,21 +18,16 @@ class WithdrawalController extends Controller
 {
     public function submit()
     {
-//        $date = Carbon::now()->day;
-//        if ($date < 25) {
-//            return $this->fail(CodeResponse::INVALID_OPERATION, '每月25-31号才可提现');
-//        }
+        $date = Carbon::now()->day;
+        if ($date < 25) {
+            return $this->fail(CodeResponse::INVALID_OPERATION, '每月25-31号才可提现');
+        }
 
         /** @var WithdrawalInput $input */
         $input = WithdrawalInput::new();
         if ($input->withdrawAmount == 0) {
             return $this->fail(CodeResponse::INVALID_OPERATION, '提现金额不能为0');
         }
-
-//        $application = WithdrawalService::getInstance()->getUserApplication($this->userId(), $input->scene);
-//        if (!is_null($application) && $application->withdraw_amount == $input->withdrawAmount) {
-//            return $this->fail(CodeResponse::INVALID_OPERATION, '已提交申请，请勿重复提交');
-//        }
 
         $withdrawAmount = 0;
         $commissionQuery = CommissionService::getInstance()
