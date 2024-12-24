@@ -15,7 +15,7 @@ class CreateGiftCommissionsTable extends Migration
     {
         Schema::create('gift_commissions', function (Blueprint $table) {
             $table->id();
-            $table->integer('status')->default(0)->comment('佣金状态：0-订单待支付，1-待结算, 2-可提现，3-已结算');
+            $table->integer('status')->default(0)->comment('佣金状态：0-订单待支付，1-待结算, 2-可提现，3-提现中，4-已结算');
             $table->integer('user_id')->comment('用户id');
             $table->integer('promoter_id')->default(0)->comment('推广员id');
             $table->integer('manager_id')->default(0)->comment('组织者id');

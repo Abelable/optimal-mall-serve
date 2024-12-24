@@ -19,7 +19,7 @@ class CommissionController extends Controller
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->sum('commission_amount');
         $pendingAmount = CommissionService::getInstance()->getUserCommissionSum($this->userId(), [1]);
-        $settledAmount = CommissionService::getInstance()->getUserCommissionSum($this->userId(), [2, 3]);
+        $settledAmount = CommissionService::getInstance()->getUserCommissionSum($this->userId(), [2, 3, 4]);
         return $this->success([
             'cashAmount' => $cashAmount,
             'pendingAmount' => $pendingAmount,
@@ -34,10 +34,10 @@ class CommissionController extends Controller
 
         $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType([$this->userId()], $timeType, $scene);
 
-        $orderCount = (clone $query)->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
-        $salesVolume = (clone $query)->whereIn('status', [1, 2, 3])->sum('commission_base');
+        $orderCount = (clone $query)->whereIn('status', [1, 2, 3, 4])->distinct('order_id')->count('order_id');
+        $salesVolume = (clone $query)->whereIn('status', [1, 2, 3, 4])->sum('commission_base');
         $pendingAmount = (clone $query)->where('status', 1)->sum('commission_amount');
-        $settledAmount = (clone $query)->whereIn('status', [2, 3])->sum('commission_amount');
+        $settledAmount = (clone $query)->whereIn('status', [2, 3, 4])->sum('commission_amount');
 
         return $this->success([
             'orderCount' => $orderCount,
@@ -55,14 +55,14 @@ class CommissionController extends Controller
         $promoterIds = PromoterService::getInstance()->getPromoterListByUserIds($customerIds)->pluck('user_id')->toArray();
 
         $query = CommissionService::getInstance()->getUserCommissionQueryByTimeType($promoterIds, $timeType);
-        $orderCount = (clone $query)->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
-        $salesVolume = (clone $query)->whereIn('status', [1, 2, 3])->sum('commission_base');
+        $orderCount = (clone $query)->whereIn('status', [1, 2, 3, 4])->distinct('order_id')->count('order_id');
+        $salesVolume = (clone $query)->whereIn('status', [1, 2, 3, 4])->sum('commission_base');
 
         $pendingAmount = 0;
         $settledAmount = 0;
         if (!is_null($this->user()->promoterInfo)) {
             $pendingGMV = (clone $query)->where('status', 1)->sum('commission_base');
-            $settledGMV = (clone $query)->whereIn('status', [2, 3])->sum('commission_base');
+            $settledGMV = (clone $query)->whereIn('status', [2, 3, 4])->sum('commission_base');
             switch ($this->user()->promoterInfo->level) {
                 case 2:
                     $pendingAmount = bcmul($pendingGMV, 0.01, 2);

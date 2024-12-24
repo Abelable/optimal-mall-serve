@@ -7,6 +7,7 @@ use App\Models\Withdrawal;
 use App\Services\BankCardService;
 use App\Services\CommissionService;
 use App\Services\GiftCommissionService;
+use App\Services\TeamCommissionService;
 use App\Services\UserService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
@@ -63,9 +64,9 @@ class WithdrawController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '提现申请不存在');
         }
 
+        $user = UserService::getInstance()->getUserById($record->user_id);
         if ($record->path == 1) {
             // todo 微信转账
-            $user = UserService::getInstance()->getUserById($record->user_id);
             $params = [
                 'partner_trade_no' => time(),
                 'openid' => $user->openid,
@@ -77,11 +78,14 @@ class WithdrawController extends Controller
             Log::info('commission_wx_transfer', $result->toArray());
         }
 
-        DB::transaction(function () use ($record) {
-            if ($record->scene == 1 || $record->scene == 2) {
-                CommissionService::getInstance()->settleUserCommission($record->user_id, $record->scene);
-            } else {
+        DB::transaction(function () use ($user, $record) {
+            if ($record->scene == 3) {
                 GiftCommissionService::getInstance()->settleUserCommission($record->user_id);
+                if ($user->promoterInfo->level > 1) {
+                    TeamCommissionService::getInstance()->settleUserCommission($record->user_id);
+                }
+            } else {
+                CommissionService::getInstance()->settleUserCommission($record->user_id, $record->scene);
             }
 
             $record->status = 1;

@@ -216,7 +216,7 @@ class GiftCommissionService extends BaseService
     public function getPromoterCommissionListByTimeType($userId, $timeType, $columns = ['*'])
     {
         $query = $this->getPromoterCommissionQueryByTimeType($userId, $timeType);
-        return $query->whereIn('status', [1, 2, 3])->get($columns);
+        return $query->whereIn('status', [1, 2, 3, 4])->get($columns);
     }
 
     public function getPromoterCommissionQueryByTimeType($userId, $timeType)
@@ -243,7 +243,7 @@ class GiftCommissionService extends BaseService
     public function getManagerCommissionListByTimeType($userId, $timeType, $columns = ['*'])
     {
         $query = $this->getManagerCommissionQueryByTimeType($userId, $timeType);
-        return $query->whereIn('status', [1, 2, 3])->get($columns);
+        return $query->whereIn('status', [1, 2, 3, 4])->get($columns);
     }
 
     public function getManagerCommissionQueryByTimeType($userId, $timeType)
@@ -302,16 +302,31 @@ class GiftCommissionService extends BaseService
         return [$cashGiftCommission, $cashTeamCommission];
     }
 
-    public function settleUserCommission($userId)
+    public function withdrawUserCommission($userId)
     {
         $commissionList = GiftCommission::query()
             ->where(function($query) use ($userId) {
                 $query->where('promoter_id', $userId)
                     ->orWhere('manager_id', $userId);
             })->where('status', 2)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->get();
         foreach ($commissionList as $commission) {
             $commission->status = 3;
+            $commission->save();
+        }
+    }
+
+    public function settleUserCommission($userId)
+    {
+        $commissionList = GiftCommission::query()
+            ->where(function($query) use ($userId) {
+                $query->where('promoter_id', $userId)
+                    ->orWhere('manager_id', $userId);
+            })->where('status', 3)
+            ->get();
+        foreach ($commissionList as $commission) {
+            $commission->status = 4;
             $commission->save();
         }
     }

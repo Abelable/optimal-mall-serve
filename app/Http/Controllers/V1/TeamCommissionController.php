@@ -16,7 +16,7 @@ class TeamCommissionController extends Controller
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->sum('commission_amount');
         $pendingAmount = TeamCommissionService::getInstance()->getUserCommissionSum($this->userId(), [1]);
-        $settledAmount = TeamCommissionService::getInstance()->getUserCommissionSum($this->userId(), [2, 3]);
+        $settledAmount = TeamCommissionService::getInstance()->getUserCommissionSum($this->userId(), [2, 3, 4]);
         return $this->success([
             'cashAmount' => $cashAmount,
             'pendingAmount' => $pendingAmount,
@@ -31,10 +31,10 @@ class TeamCommissionController extends Controller
 
         $query = TeamCommissionService::getInstance()->getUserCommissionQueryByTimeType($this->userId(), $timeType, $scene);
 
-        $orderCount = (clone $query)->whereIn('status', [1, 2, 3])->distinct('order_id')->count('order_id');
-        $salesVolume = (clone $query)->whereIn('status', [1, 2, 3])->sum('commission_base');
+        $orderCount = (clone $query)->whereIn('status', [1, 2, 3, 4])->distinct('order_id')->count('order_id');
+        $salesVolume = (clone $query)->whereIn('status', [1, 2, 3, 4])->sum('commission_base');
         $pendingAmount = (clone $query)->where('status', 1)->sum('commission_amount');
-        $settledAmount = (clone $query)->whereIn('status', [2, 3])->sum('commission_amount');
+        $settledAmount = (clone $query)->whereIn('status', [2, 3, 4])->sum('commission_amount');
 
         return $this->success([
             'orderCount' => $orderCount,

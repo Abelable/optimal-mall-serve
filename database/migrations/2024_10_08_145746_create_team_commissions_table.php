@@ -15,7 +15,7 @@ class CreateTeamCommissionsTable extends Migration
     {
         Schema::create('team_commissions', function (Blueprint $table) {
             $table->id();
-            $table->integer('status')->default(0)->comment('佣金状态：0-订单待支付，1-待结算, 2-可提现，3-已结算');
+            $table->integer('status')->default(0)->comment('佣金状态：0-订单待支付，1-待结算, 2-可提现，3-提现中，4-已结算');
             $table->integer('manager_id')->comment('组织者id');
             $table->integer('manager_level')->comment('组织者等级');
             $table->integer('user_id')->comment('用户id');

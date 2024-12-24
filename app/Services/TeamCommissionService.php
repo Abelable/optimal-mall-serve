@@ -186,7 +186,7 @@ class TeamCommissionService extends BaseService
 
     public function getUserGMVByTimeType($userId, $timeType)
     {
-        return $this->getUserCommissionQueryByTimeType($userId, $timeType)->whereIn('status', [2, 3])->sum('commission_base');
+        return $this->getUserCommissionQueryByTimeType($userId, $timeType)->whereIn('status', [2, 3, 4])->sum('commission_base');
     }
 
 
@@ -205,5 +205,27 @@ class TeamCommissionService extends BaseService
             ->where('manager_id', $userId)
             ->whereIn('status', $statusList)
             ->sum('commission_amount');
+    }
+
+    public function withdrawUserCommission($userId)
+    {
+        $commissionList = $this->getUserCommissionQuery([$userId], [2])
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
+            ->get();
+        /** @var TeamCommission $commission */
+        foreach ($commissionList as $commission) {
+            $commission->status = 3;
+            $commission->save();
+        }
+    }
+
+    public function settleUserCommission($userId)
+    {
+        $commissionList = $this->getUserCommissionQuery([$userId], [3])->get();
+        /** @var TeamCommission $commission */
+        foreach ($commissionList as $commission) {
+            $commission->status = 4;
+            $commission->save();
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace App\Models;
  * App\Models\GiftCommission
  *
  * @property int $id
- * @property int $status 佣金状态：0-订单待支付，1-待结算, 2-可提现，3-已结算
+ * @property int $status 佣金状态：0-订单待支付，1-待结算, 2-可提现，3-提现中，4-已结算
  * @property int $user_id 用户id
  * @property int $promoter_id 推广员id
  * @property int $manager_id 组织者id

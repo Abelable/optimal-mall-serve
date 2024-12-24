@@ -217,7 +217,7 @@ class CommissionService extends BaseService
     {
         return Commission::query()
             ->whereIn('user_id', $userIds)
-            ->whereIn('status', [2, 3])
+            ->whereIn('status', [2, 3, 4])
             ->get($columns);
     }
 
@@ -225,16 +225,16 @@ class CommissionService extends BaseService
     {
         return Commission::query()
             ->whereIn('superior_id', $superiorIds)
-            ->whereIn('status', [2, 3])
+            ->whereIn('status', [2, 3, 4])
             ->get($columns);
     }
 
     public function getUserGMVByTimeType($userId, $timeType)
     {
-        return $this->getUserCommissionQueryByTimeType([$userId], $timeType)->whereIn('status', [2, 3])->sum('commission_base');
+        return $this->getUserCommissionQueryByTimeType([$userId], $timeType)->whereIn('status', [2, 3, 4])->sum('commission_base');
     }
 
-    public function settleUserCommission($userId, $scene)
+    public function withdrawUserCommission($userId, $scene)
     {
         $commissionList = $this->getUserCommissionQuery([$userId], [2])
             ->where('scene', $scene)
@@ -243,6 +243,16 @@ class CommissionService extends BaseService
         /** @var Commission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 3;
+            $commission->save();
+        }
+    }
+
+    public function settleUserCommission($userId, $scene)
+    {
+        $commissionList = $this->getUserCommissionQuery([$userId], [3])->where('scene', $scene)->get();
+        /** @var Commission $commission */
+        foreach ($commissionList as $commission) {
+            $commission->status = 4;
             $commission->save();
         }
     }
