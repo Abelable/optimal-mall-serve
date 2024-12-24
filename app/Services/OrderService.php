@@ -374,6 +374,7 @@ class OrderService extends BaseService
         return Order::query()
             ->where('status', OrderEnums::STATUS_SHIP)
             ->where('ship_time', '<=', now()->subDays(15))
+            ->where('ship_time', '>', now()->subDays(30))
             ->get($columns);
     }
 
@@ -844,6 +845,7 @@ class OrderService extends BaseService
         return Order::query()
             ->whereIn('status', [401, 501])
             ->where('updated_at', '<', now()->subDays(7))
+            ->where('updated_at', '>=', now()->subDays(14))
             ->get($columns);
     }
 }
