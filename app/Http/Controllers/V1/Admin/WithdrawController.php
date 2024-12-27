@@ -103,9 +103,23 @@ class WithdrawController extends Controller
         if (is_null($record)) {
             return $this->fail(CodeResponse::NOT_FOUND, '提现申请不存在');
         }
-        $record->status = 2;
-        $record->failure_reason = $reason;
-        $record->save();
+
+        $user = UserService::getInstance()->getUserById($record->user_id);
+        DB::transaction(function () use ($reason, $user, $record) {
+            if ($record->scene == 3) {
+                GiftCommissionService::getInstance()->restoreUserCommission($record->user_id);
+                if ($user->promoterInfo->level > 1) {
+                    TeamCommissionService::getInstance()->restoreUserCommission($record->user_id);
+                }
+            } else {
+                CommissionService::getInstance()->restoreUserCommission($record->user_id, $record->scene);
+            }
+
+            $record->status = 2;
+            $record->failure_reason = $reason;
+            $record->save();
+        });
+
         return $this->success();
     }
 

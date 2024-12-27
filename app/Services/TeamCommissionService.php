@@ -219,6 +219,18 @@ class TeamCommissionService extends BaseService
         }
     }
 
+    public function restoreUserCommission($userId)
+    {
+        $commissionList = $this->getUserCommissionQuery([$userId], [3])
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
+            ->get();
+        /** @var TeamCommission $commission */
+        foreach ($commissionList as $commission) {
+            $commission->status = 2;
+            $commission->save();
+        }
+    }
+
     public function settleUserCommission($userId)
     {
         $commissionList = $this->getUserCommissionQuery([$userId], [3])->get();

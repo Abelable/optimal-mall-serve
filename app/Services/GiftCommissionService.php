@@ -317,6 +317,21 @@ class GiftCommissionService extends BaseService
         }
     }
 
+    public function restoreUserCommission($userId)
+    {
+        $commissionList = GiftCommission::query()
+            ->where(function($query) use ($userId) {
+                $query->where('promoter_id', $userId)
+                    ->orWhere('manager_id', $userId);
+            })->where('status', 3)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
+            ->get();
+        foreach ($commissionList as $commission) {
+            $commission->status = 2;
+            $commission->save();
+        }
+    }
+
     public function settleUserCommission($userId)
     {
         $commissionList = GiftCommission::query()

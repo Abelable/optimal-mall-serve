@@ -247,6 +247,19 @@ class CommissionService extends BaseService
         }
     }
 
+    public function restoreUserCommission($userId, $scene)
+    {
+        $commissionList = $this->getUserCommissionQuery([$userId], [3])
+            ->where('scene', $scene)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
+            ->get();
+        /** @var Commission $commission */
+        foreach ($commissionList as $commission) {
+            $commission->status = 2;
+            $commission->save();
+        }
+    }
+
     public function settleUserCommission($userId, $scene)
     {
         $commissionList = $this->getUserCommissionQuery([$userId], [3])->where('scene', $scene)->get();
