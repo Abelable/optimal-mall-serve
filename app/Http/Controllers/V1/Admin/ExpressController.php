@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Express;
 use App\Services\ExpressService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\PageInput;
+use App\Utils\Inputs\ExpressPageInput;
 
 class ExpressController extends Controller
 {
@@ -14,7 +14,8 @@ class ExpressController extends Controller
 
     public function list()
     {
-        $input = PageInput::new();
+        /** @var ExpressPageInput $input */
+        $input = ExpressPageInput::new();
         $list = ExpressService::getInstance()->getExpressList($input);
         return $this->successPaginate($list);
     }

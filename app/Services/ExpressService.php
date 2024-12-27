@@ -3,13 +3,20 @@
 namespace App\Services;
 
 use App\Models\Express;
-use App\Utils\Inputs\PageInput;
+use App\Utils\Inputs\ExpressPageInput;
 
 class ExpressService extends BaseService
 {
-    public function getExpressList(PageInput $input, $columns = ['*'])
+    public function getExpressList(ExpressPageInput $input, $columns = ['*'])
     {
-        return Express::query()->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+        $query = Express::query();
+        if (!empty($input->name)) {
+            $query = $query->where('name', 'like', '%' . $input->name . '%');
+        }
+        if (!empty($input->code)) {
+            $query = $query->where('code', 'like', '%' . $input->code . '%');
+        }
+        return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function getExpressById($id, $columns = ['*'])
