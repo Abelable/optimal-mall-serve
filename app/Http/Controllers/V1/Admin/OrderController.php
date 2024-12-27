@@ -24,7 +24,7 @@ class OrderController extends Controller
     {
         /** @var OrderPageInput $input */
         $input = OrderPageInput::new();
-        $columns = ['id', 'user_id', 'order_sn', 'status', 'merchant_id', 'payment_amount', 'consignee', 'mobile', 'address', 'created_at', 'updated_at'];
+        $columns = ['id', 'user_id', 'order_sn', 'status', 'merchant_id', 'refund_amount', 'consignee', 'mobile', 'address', 'created_at', 'updated_at'];
         $page = OrderService::getInstance()->getOrderList($input, $columns);
         $orderList = collect($page->items());
 
@@ -143,7 +143,7 @@ class OrderController extends Controller
         try {
             Excel::import(new OrdersImport(), $excel);
         } catch (\Exception $e) {
-            throw new BusinessException(CodeResponse::INVALID_OPERATION, '订单导入失败');
+            throw new BusinessException(CodeResponse::INVALID_OPERATION, '订单导入失败' . $e->getMessage());
         }
 
         return $this->success();
