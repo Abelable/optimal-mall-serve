@@ -242,4 +242,9 @@ class GoodsService extends BaseService
         $goods->save();
         return $goods;
     }
+
+    public function handelActivityList($activityList)
+    {
+
+    }
 }
