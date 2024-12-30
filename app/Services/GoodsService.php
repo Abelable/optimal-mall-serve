@@ -97,13 +97,7 @@ class GoodsService extends BaseService
 
     public function getGoodsListByIds($ids, $columns=['*'])
     {
-        return Goods::query()
-            ->whereIn('id', $ids)
-            ->orderBy('sales_volume', 'desc')
-            ->orderBy('avg_score', 'desc')
-            ->orderBy('commission_rate', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->get($columns);
+        return Goods::query()->whereIn('id', $ids)->get($columns);
     }
 
     public function getGoodsList(GoodsListInput $input, $columns=['*'])

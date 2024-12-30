@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Goods;
+use App\Models\IntegrityGoods;
 use App\Services\ActivityService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
@@ -23,7 +24,10 @@ class IntegrityController extends Controller
 
     public function goodsList()
     {
-        $goodsIds = IntegrityGoodsService::getInstance()->getGoodsList(['goods_id'])->pluck('goods_id')->toArray();
+        $integrityGoodsList = IntegrityGoodsService::getInstance()->getGoodsList();
+        $goodsIds = $integrityGoodsList->pluck('goods_id')->toArray();
+
+//        $goodsIds = IntegrityGoodsService::getInstance()->getGoodsList(['goods_id'])->pluck('goods_id')->toArray();
 
         $activityList = ActivityService::getInstance()
             ->getActivityListByGoodsIds($goodsIds, ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
@@ -35,8 +39,12 @@ class IntegrityController extends Controller
 
         $giftGoodsIds = GiftGoodsService::getInstance()->getGoodsList([1, 2])->pluck('goods_id')->toArray();
 
-        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds);
-        $list = $goodsList->map(function (Goods $goods) use ($giftGoodsIds, $activityList, $groupedCouponList) {
+        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
+
+        $list = $integrityGoodsList->map(function (IntegrityGoods $integrityGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
+            /** @var Goods $goods */
+            $goods = $goodsList->get($integrityGoods->goods_id);
+
             $activity = $activityList->get($goods->id);
             $goods['activityInfo'] = $activity;
 
