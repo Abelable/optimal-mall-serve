@@ -45,6 +45,21 @@ class IntegrityGoodsController extends Controller
         return $this->success();
     }
 
+    public function editSort() {
+        $id = $this->verifyRequiredId('id');
+        $sort = $this->verifyRequiredInteger('sort');
+
+        $goods = IntegrityGoodsService::getInstance()->getGoodsById($id);
+        if (is_null($goods)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
+        }
+
+        $goods->sort = $sort;
+        $goods->save();
+
+        return $this->success();
+    }
+
     public function delete()
     {
         $id = $this->verifyRequiredId('id');

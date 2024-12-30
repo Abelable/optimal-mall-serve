@@ -15,7 +15,7 @@ class IntegrityGoodsService extends BaseService
 
     public function getGoodsList($columns = ['*'])
     {
-        return IntegrityGoods::query()->get($columns);
+        return IntegrityGoods::query()->orderBy('sort', 'desc')->get($columns);
     }
 
     public function getFilterGoodsList(GoodsListInput $input, $columns = ['*'])

@@ -9,6 +9,7 @@ namespace App\Models;
  * @property int $goods_id 商品id
  * @property string $goods_cover 商品图片
  * @property string $goods_name 商品名称
+ * @property int $sort 排序
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -22,6 +23,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|IntegrityGoods whereGoodsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IntegrityGoods whereGoodsName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IntegrityGoods whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|IntegrityGoods whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|IntegrityGoods whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|IntegrityGoods withTrashed()
  * @method static \Illuminate\Database\Query\Builder|IntegrityGoods withoutTrashed()

@@ -356,6 +356,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::prefix('goods')->group(function () {
             Route::post('list', 'IntegrityGoodsController@list');
             Route::post('add', 'IntegrityGoodsController@add');
+            Route::post('edit_sort', 'IntegrityGoodsController@editSort');
             Route::post('delete', 'IntegrityGoodsController@delete');
         });
     });
