@@ -27,4 +27,9 @@ class IntegrityGoodsService extends BaseService
     {
         return IntegrityGoods::query()->find($id, $columns);
     }
+
+    public function deleteById($id, $columns = ['*'])
+    {
+        IntegrityGoods::query()->where('id', $id)->delete();
+    }
 }

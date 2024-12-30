@@ -27,8 +27,6 @@ class IntegrityController extends Controller
         $integrityGoodsList = IntegrityGoodsService::getInstance()->getGoodsList();
         $goodsIds = $integrityGoodsList->pluck('goods_id')->toArray();
 
-//        $goodsIds = IntegrityGoodsService::getInstance()->getGoodsList(['goods_id'])->pluck('goods_id')->toArray();
-
         $activityList = ActivityService::getInstance()
             ->getActivityListByGoodsIds($goodsIds, ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
             ->keyBy('goods_id');
@@ -45,16 +43,22 @@ class IntegrityController extends Controller
             /** @var Goods $goods */
             $goods = $goodsList->get($integrityGoods->goods_id);
 
-            $activity = $activityList->get($goods->id);
-            $goods['activityInfo'] = $activity;
+            if (!is_null($goods)) {
+                $activity = $activityList->get($goods->id);
+                $goods['activityInfo'] = $activity;
 
-            $couponList = $groupedCouponList->get($goods->id);
-            $goods['couponList'] = $couponList ?: [];
+                $couponList = $groupedCouponList->get($goods->id);
+                $goods['couponList'] = $couponList ?: [];
 
-            $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
+                $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
+            } else {
+                IntegrityGoodsService::getInstance()->deleteById($integrityGoods->id);
+            }
 
             return $goods;
-        });
+        })->filter(function ($goods) {
+            return !is_null($goods);
+        })->values();
 
         // todo 商品列表存缓存
 
