@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\IntegrityGoods;
+use App\Models\VillageSnackGoods;
 use App\Services\GoodsService;
-use App\Services\IntegrityGoodsService;
+use App\Services\VillageSnackGoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsListInput;
 use App\Utils\Inputs\PageInput;
 
-class IntegrityGoodsController extends Controller
+class VillageSnackGoodsController extends Controller
 {
     protected $guard = 'Admin';
 
@@ -18,7 +18,7 @@ class IntegrityGoodsController extends Controller
     {
         /** @var PageInput $input */
         $input = PageInput::new();
-        $list = IntegrityGoodsService::getInstance()->getGoodsPage($input);
+        $list = VillageSnackGoodsService::getInstance()->getGoodsPage($input);
         return $this->successPaginate($list);
     }
 
@@ -27,19 +27,19 @@ class IntegrityGoodsController extends Controller
         /** @var GoodsListInput $input */
         $input = GoodsListInput::new();
 
-        $integrityGoodsList = IntegrityGoodsService::getInstance()->getFilterGoodsList($input);
-        if (count($integrityGoodsList) != 0) {
+        $snackGoodsList = VillageSnackGoodsService::getInstance()->getFilterGoodsList($input);
+        if (count($snackGoodsList) != 0) {
             return $this->fail(CodeResponse::DATA_EXISTED, '已添加相同商品');
         }
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
 
         foreach ($goodsList as $goods) {
-            $integrityGoods = IntegrityGoods::new();
-            $integrityGoods->goods_id = $goods->id;
-            $integrityGoods->goods_cover = $goods->cover;
-            $integrityGoods->goods_name = $goods->name;
-            $integrityGoods->save();
+            $snackGoods = VillageSnackGoods::new();
+            $snackGoods->goods_id = $goods->id;
+            $snackGoods->goods_cover = $goods->cover;
+            $snackGoods->goods_name = $goods->name;
+            $snackGoods->save();
         }
 
         return $this->success();
@@ -49,7 +49,7 @@ class IntegrityGoodsController extends Controller
         $id = $this->verifyRequiredId('id');
         $sort = $this->verifyRequiredInteger('sort');
 
-        $goods = IntegrityGoodsService::getInstance()->getGoodsById($id);
+        $goods = VillageSnackGoodsService::getInstance()->getGoodsById($id);
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
@@ -63,7 +63,7 @@ class IntegrityGoodsController extends Controller
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
-        $goods = IntegrityGoodsService::getInstance()->getGoodsById($id);
+        $goods = VillageSnackGoodsService::getInstance()->getGoodsById($id);
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }

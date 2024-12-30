@@ -345,6 +345,36 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         });
     });
 
+    Route::prefix('village')->group(function () {
+        Route::prefix('grain_goods')->group(function () {
+            Route::post('list', 'VillageGrainGoodsController@list');
+            Route::post('add', 'VillageGrainGoodsController@add');
+            Route::post('edit_sort', 'VillageGrainGoodsController@editSort');
+            Route::post('delete', 'VillageGrainGoodsController@delete');
+        });
+
+        Route::prefix('fresh_goods')->group(function () {
+            Route::post('list', 'VillageFreshGoodsController@list');
+            Route::post('add', 'VillageFreshGoodsController@add');
+            Route::post('edit_sort', 'VillageFreshGoodsController@editSort');
+            Route::post('delete', 'VillageFreshGoodsController@delete');
+        });
+
+        Route::prefix('snack_goods')->group(function () {
+            Route::post('list', 'VillageSnackGoodsController@list');
+            Route::post('add', 'VillageSnackGoodsController@add');
+            Route::post('edit_sort', 'VillageSnackGoodsController@editSort');
+            Route::post('delete', 'VillageSnackGoodsController@delete');
+        });
+
+        Route::prefix('gift_goods')->group(function () {
+            Route::post('list', 'VillageGiftGoodsController@list');
+            Route::post('add', 'VillageGiftGoodsController@add');
+            Route::post('edit_sort', 'VillageGiftGoodsController@editSort');
+            Route::post('delete', 'VillageGiftGoodsController@delete');
+        });
+    });
+
     Route::prefix('integrity')->group(function () {
         Route::prefix('banner')->group(function () {
             Route::post('list', 'IntegrityBannerController@list');
