@@ -7,7 +7,7 @@ namespace App\Models;
  *
  * @property int $id
  * @property int $status 活动状态：0-预告，1-进行中，2-结束
- * @property int $tag 活动标签：1-今日主推，2-活动预告
+ * @property int $tag 活动标签：1-今日主推，2-活动预告，3-诚试一下，4-诚食一口，5-诚意一看
  * @property string $name 活动名称
  * @property string $start_time 活动开始时间
  * @property string $end_time 活动结束时间
