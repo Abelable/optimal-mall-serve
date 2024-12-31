@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Goods;
 use App\Models\IntegrityGoods;
+use App\Models\VillageFreshGoods;
+use App\Models\VillageGiftGoods;
+use App\Models\VillageGrainGoods;
+use App\Models\VillageSnackGoods;
 use App\Services\ActivityService;
 use App\Services\ActivitySubscriptionService;
 use App\Services\CouponService;
@@ -101,9 +105,9 @@ class MallController extends Controller
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
 
-        $list = $grainGoodsList->map(function (IntegrityGoods $integrityGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
+        $list = $grainGoodsList->map(function (VillageGrainGoods $grainGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
             /** @var Goods $goods */
-            $goods = $goodsList->get($integrityGoods->goods_id);
+            $goods = $goodsList->get($grainGoods->goods_id);
 
             if (!is_null($goods)) {
                 $activity = $activityList->get($goods->id);
@@ -114,7 +118,7 @@ class MallController extends Controller
 
                 $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
             } else {
-                VillageGrainGoodsService::getInstance()->deleteById($integrityGoods->id);
+                VillageGrainGoodsService::getInstance()->deleteById($grainGoods->id);
             }
 
             return $goods;
@@ -144,9 +148,9 @@ class MallController extends Controller
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
 
-        $list = $freshGoodsList->map(function (IntegrityGoods $integrityGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
+        $list = $freshGoodsList->map(function (VillageFreshGoods $freshGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
             /** @var Goods $goods */
-            $goods = $goodsList->get($integrityGoods->goods_id);
+            $goods = $goodsList->get($freshGoods->goods_id);
 
             if (!is_null($goods)) {
                 $activity = $activityList->get($goods->id);
@@ -157,7 +161,7 @@ class MallController extends Controller
 
                 $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
             } else {
-                VillageFreshGoodsService::getInstance()->deleteById($integrityGoods->id);
+                VillageFreshGoodsService::getInstance()->deleteById($freshGoods->id);
             }
 
             return $goods;
@@ -187,9 +191,9 @@ class MallController extends Controller
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
 
-        $list = $snackGoodsList->map(function (IntegrityGoods $integrityGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
+        $list = $snackGoodsList->map(function (VillageSnackGoods $snackGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
             /** @var Goods $goods */
-            $goods = $goodsList->get($integrityGoods->goods_id);
+            $goods = $goodsList->get($snackGoods->goods_id);
 
             if (!is_null($goods)) {
                 $activity = $activityList->get($goods->id);
@@ -200,7 +204,7 @@ class MallController extends Controller
 
                 $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
             } else {
-                VillageSnackGoodsService::getInstance()->deleteById($integrityGoods->id);
+                VillageSnackGoodsService::getInstance()->deleteById($snackGoods->id);
             }
 
             return $goods;
@@ -230,9 +234,9 @@ class MallController extends Controller
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
 
-        $list = $giftGoodsList->map(function (IntegrityGoods $integrityGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
+        $list = $giftGoodsList->map(function (VillageGiftGoods $villageGiftGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
             /** @var Goods $goods */
-            $goods = $goodsList->get($integrityGoods->goods_id);
+            $goods = $goodsList->get($villageGiftGoods->goods_id);
 
             if (!is_null($goods)) {
                 $activity = $activityList->get($goods->id);
@@ -243,7 +247,7 @@ class MallController extends Controller
 
                 $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
             } else {
-                VillageGiftGoodsService::getInstance()->deleteById($integrityGoods->id);
+                VillageGiftGoodsService::getInstance()->deleteById($villageGiftGoods->id);
             }
 
             return $goods;
