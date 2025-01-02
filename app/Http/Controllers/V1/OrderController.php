@@ -415,6 +415,7 @@ class OrderController extends Controller
             'pay_time',
             'ship_time',
             'confirm_time',
+            'refund_amount',
             'created_at',
             'updated_at',
         ];

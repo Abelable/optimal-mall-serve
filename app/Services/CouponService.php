@@ -82,6 +82,9 @@ class CouponService extends BaseService
 
     public function updateCoupon(Coupon $coupon, CouponInput $input, Goods $goods)
     {
+        if ($coupon->status == 2) {
+            $coupon->status = 1;
+        }
         $coupon->denomination = $input->denomination;
         $coupon->name = $input->name;
         $coupon->description = $input->description;
