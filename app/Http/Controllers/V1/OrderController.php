@@ -351,6 +351,7 @@ class OrderController extends Controller
                 'statusDesc' => OrderEnums::STATUS_TEXT_MAP[$order->status],
                 'goodsList' => $goodsList,
                 'paymentAmount' => $order->payment_amount,
+                'refundAmount' => $order->refund_amount,
                 'consignee' => $order->consignee,
                 'mobile' => $order->mobile,
                 'address' => $order->address,
