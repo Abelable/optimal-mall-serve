@@ -8,7 +8,7 @@ use App\Services\GoodsService;
 use App\Services\RuralGoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsListInput;
-use App\Utils\Inputs\RuralGoodsPageInput;
+use App\Utils\Inputs\RegionGoodsPageInput;
 
 class RuralGoodsController extends Controller
 {
@@ -16,8 +16,8 @@ class RuralGoodsController extends Controller
 
     public function list()
     {
-        /** @var RuralGoodsPageInput $input */
-        $input = RuralGoodsPageInput::new();
+        /** @var RegionGoodsPageInput $input */
+        $input = RegionGoodsPageInput::new();
         $list = RuralGoodsService::getInstance()->getGoodsPage($input);
         return $this->successPaginate($list);
     }
