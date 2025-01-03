@@ -4,28 +4,28 @@ namespace App\Services;
 
 use App\Models\LimitedTimeRecruitGoods;
 use App\Utils\Inputs\GoodsListInput;
-use App\Utils\Inputs\RegionPageInput;
+use App\Utils\Inputs\CategoryPageInput;
 
 class LimitedTimeRecruitGoodsService extends BaseService
 {
-    public function getGoodsPage(RegionPageInput $input, $columns = ['*'])
+    public function getGoodsPage(CategoryPageInput $input, $columns = ['*'])
     {
         $query = LimitedTimeRecruitGoods::query();
-        if (!empty($input->regionId)) {
-            $query->where('region_id', $input->regionId);
+        if (!empty($input->categoryId)) {
+            $query->where('category_id', $input->categoryId);
         }
         return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getGoodsList($regionId, $columns = ['*'])
+    public function getGoodsList($categoryId, $columns = ['*'])
     {
-        return LimitedTimeRecruitGoods::query()->where('region_id', $regionId)->get($columns);
+        return LimitedTimeRecruitGoods::query()->where('category_id', $categoryId)->get($columns);
     }
 
     public function getFilterGoodsList(GoodsListInput $input, $columns = ['*'])
     {
         return LimitedTimeRecruitGoods::query()
-            ->where('region_id', $input->regionId)
+            ->where('category_id', $input->categoryId)
             ->whereIn('goods_id', $input->goodsIds)
             ->get($columns);
     }
