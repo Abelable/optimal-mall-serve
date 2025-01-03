@@ -28,7 +28,7 @@ class NewYearGoodsService extends BaseService
         return NewYearGoods::query()->find($id, $columns);
     }
 
-    public function deleteById($id, $columns = ['*'])
+    public function deleteById($id)
     {
         NewYearGoods::query()->where('id', $id)->delete();
     }

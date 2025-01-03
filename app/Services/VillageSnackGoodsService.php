@@ -28,7 +28,7 @@ class VillageSnackGoodsService extends BaseService
         return VillageSnackGoods::query()->find($id, $columns);
     }
 
-    public function deleteById($id, $columns = ['*'])
+    public function deleteById($id)
     {
         VillageSnackGoods::query()->where('id', $id)->delete();
     }

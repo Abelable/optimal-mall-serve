@@ -28,7 +28,7 @@ class VillageGiftGoodsService extends BaseService
         return VillageGiftGoods::query()->find($id, $columns);
     }
 
-    public function deleteById($id, $columns = ['*'])
+    public function deleteById($id)
     {
         VillageGiftGoods::query()->where('id', $id)->delete();
     }

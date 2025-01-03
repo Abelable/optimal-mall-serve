@@ -34,4 +34,9 @@ class NewYearLocalGoodsService extends BaseService
     {
         return NewYearLocalGoods::query()->find($id, $columns);
     }
+
+    public function deleteById($id)
+    {
+        NewYearLocalGoods::query()->where('id', $id)->delete();
+    }
 }
