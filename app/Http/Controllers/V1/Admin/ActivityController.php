@@ -42,7 +42,7 @@ class ActivityController extends Controller
 
         $activityList = ActivityService::getInstance()->getActivityListByGoodsIds($input->goodsIds);
         if (count($activityList) != 0) {
-            return $this->fail(CodeResponse::DATA_EXISTED, '已添加相同活动');
+            return $this->fail(CodeResponse::DATA_EXISTED, '已添加相同活动商品');
         }
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
