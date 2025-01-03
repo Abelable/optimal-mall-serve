@@ -34,4 +34,9 @@ class LimitedTimeRecruitGoodsService extends BaseService
     {
         return LimitedTimeRecruitGoods::query()->find($id, $columns);
     }
+
+    public function deleteById($id)
+    {
+        LimitedTimeRecruitGoods::query()->where('id', $id)->delete();
+    }
 }
