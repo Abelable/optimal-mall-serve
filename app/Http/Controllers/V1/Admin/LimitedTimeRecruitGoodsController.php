@@ -7,7 +7,7 @@ use App\Models\LimitedTimeRecruitGoods;
 use App\Services\GoodsService;
 use App\Services\LimitedTimeRecruitGoodsService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\RegionGoodsListInput;
+use App\Utils\Inputs\CategoryGoodsListInput;
 use App\Utils\Inputs\CategoryPageInput;
 
 class LimitedTimeRecruitGoodsController extends Controller
@@ -24,8 +24,8 @@ class LimitedTimeRecruitGoodsController extends Controller
 
     public function add()
     {
-        /** @var RegionGoodsListInput $input */
-        $input = RegionGoodsListInput::new();
+        /** @var CategoryGoodsListInput $input */
+        $input = CategoryGoodsListInput::new();
 
         $limitedTimeRecruitGoodsList = LimitedTimeRecruitGoodsService::getInstance()->getFilterGoodsList($input);
         if (count($limitedTimeRecruitGoodsList) != 0) {

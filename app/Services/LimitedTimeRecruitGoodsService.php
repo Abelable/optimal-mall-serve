@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\LimitedTimeRecruitGoods;
-use App\Utils\Inputs\RegionGoodsListInput;
+use App\Utils\Inputs\CategoryGoodsListInput;
 use App\Utils\Inputs\CategoryPageInput;
 
 class LimitedTimeRecruitGoodsService extends BaseService
@@ -22,7 +22,7 @@ class LimitedTimeRecruitGoodsService extends BaseService
         return LimitedTimeRecruitGoods::query()->where('category_id', $categoryId)->get($columns);
     }
 
-    public function getFilterGoodsList(RegionGoodsListInput $input, $columns = ['*'])
+    public function getFilterGoodsList(CategoryGoodsListInput $input, $columns = ['*'])
     {
         return LimitedTimeRecruitGoods::query()
             ->where('category_id', $input->categoryId)
