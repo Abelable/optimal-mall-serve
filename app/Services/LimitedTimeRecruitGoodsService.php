@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\RuralGoods;
+use App\Models\LimitedTimeRecruitGoods;
 use App\Utils\Inputs\GoodsListInput;
 use App\Utils\Inputs\RegionPageInput;
 
-class RuralGoodsService extends BaseService
+class LimitedTimeRecruitGoodsService extends BaseService
 {
     public function getGoodsPage(RegionPageInput $input, $columns = ['*'])
     {
-        $query = RuralGoods::query();
+        $query = LimitedTimeRecruitGoods::query();
         if (!empty($input->regionId)) {
             $query->where('region_id', $input->regionId);
         }
@@ -19,12 +19,12 @@ class RuralGoodsService extends BaseService
 
     public function getGoodsList($regionId, $columns = ['*'])
     {
-        return RuralGoods::query()->where('region_id', $regionId)->get($columns);
+        return LimitedTimeRecruitGoods::query()->where('region_id', $regionId)->get($columns);
     }
 
     public function getFilterGoodsList(GoodsListInput $input, $columns = ['*'])
     {
-        return RuralGoods::query()
+        return LimitedTimeRecruitGoods::query()
             ->where('region_id', $input->regionId)
             ->whereIn('goods_id', $input->goodsIds)
             ->get($columns);
@@ -32,6 +32,6 @@ class RuralGoodsService extends BaseService
 
     public function getGoodsById($id, $columns = ['*'])
     {
-        return RuralGoods::query()->find($id, $columns);
+        return LimitedTimeRecruitGoods::query()->find($id, $columns);
     }
 }

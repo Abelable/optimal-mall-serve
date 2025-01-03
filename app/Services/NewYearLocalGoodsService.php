@@ -4,11 +4,11 @@ namespace App\Services;
 
 use App\Models\NewYearLocalGoods;
 use App\Utils\Inputs\GoodsListInput;
-use App\Utils\Inputs\RegionGoodsPageInput;
+use App\Utils\Inputs\RegionPageInput;
 
 class NewYearLocalGoodsService extends BaseService
 {
-    public function getGoodsPage(RegionGoodsPageInput $input, $columns = ['*'])
+    public function getGoodsPage(RegionPageInput $input, $columns = ['*'])
     {
         $query = NewYearLocalGoods::query();
         if (!empty($input->regionId)) {

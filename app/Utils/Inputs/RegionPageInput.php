@@ -2,7 +2,7 @@
 
 namespace App\Utils\Inputs;
 
-class RegionGoodsPageInput extends PageInput
+class RegionPageInput extends PageInput
 {
     public $regionId;
 
