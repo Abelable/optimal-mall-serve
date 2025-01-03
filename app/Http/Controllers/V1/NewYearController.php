@@ -15,7 +15,7 @@ class NewYearController extends Controller
 {
     protected $only = [];
 
-    public function newYearGoodsList()
+    public function goodsList()
     {
         $newYearGoodsList = NewYearGoodsService::getInstance()->getGoodsList();
         $goodsIds = $newYearGoodsList->pluck('goods_id')->toArray();
@@ -38,7 +38,7 @@ class NewYearController extends Controller
         return $this->success($list);
     }
 
-    public function newYearCultureGoodsList()
+    public function cultureGoodsList()
     {
         $newYearCultureGoodsList = NewYearCultureGoodsService::getInstance()->getGoodsList();
         $goodsIds = $newYearCultureGoodsList->pluck('goods_id')->toArray();
@@ -67,7 +67,7 @@ class NewYearController extends Controller
         return $this->success($list);
     }
 
-    public function goodsList()
+    public function localGoodsList()
     {
         $regionId = $this->verifyRequiredId('regionId');
         $newYearLocalGoodsList = NewYearLocalGoodsService::getInstance()->getGoodsList($regionId);

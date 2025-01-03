@@ -158,6 +158,18 @@ Route::prefix('gift')->group(function () {
     Route::get('goods_list', 'GiftController@goodsList');
 });
 
+Route::prefix('new_year')->group(function () {
+    Route::get('goods_list', 'NewYearController@goodsList');
+    Route::get('culture_goods_list', 'NewYearController@cultureGoodsList');
+    Route::get('region_options', 'NewYearController@regionOptions');
+    Route::get('local_goods_list', 'NewYearController@localGoodsList');
+});
+
+Route::prefix('limited_time_recruit')->group(function () {
+    Route::get('category_options', 'LimitedTimeRecruitController@categoryOptions');
+    Route::get('goods_list', 'LimitedTimeRecruitController@goodsList');
+});
+
 Route::prefix('commission')->group(function () {
     Route::get('sum', 'CommissionController@sum');
     Route::get('time_data', 'CommissionController@timeData');
@@ -392,6 +404,60 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('add', 'IntegrityGoodsController@add');
             Route::post('edit_sort', 'IntegrityGoodsController@editSort');
             Route::post('delete', 'IntegrityGoodsController@delete');
+        });
+    });
+
+    Route::prefix('new_year')->group(function () {
+        Route::prefix('goods')->group(function () {
+            Route::post('list', 'NewYearGoodsController@list');
+            Route::post('add', 'NewYearGoodsController@add');
+            Route::post('edit_sort', 'NewYearGoodsController@editSort');
+            Route::post('delete', 'NewYearGoodsController@delete');
+        });
+
+        Route::prefix('culture_goods')->group(function () {
+            Route::post('list', 'NewYearCultureGoodsController@list');
+            Route::post('add', 'NewYearCultureGoodsController@add');
+            Route::post('edit_sort', 'NewYearCultureGoodsController@editSort');
+            Route::post('delete', 'NewYearCultureGoodsController@delete');
+        });
+
+        Route::prefix('region')->group(function () {
+            Route::post('list', 'NewYearLocalRegionController@list');
+            Route::get('detail', 'NewYearLocalRegionController@detail');
+            Route::post('add', 'NewYearLocalRegionController@add');
+            Route::post('edit', 'NewYearLocalRegionController@edit');
+            Route::post('edit_sort', 'NewYearLocalRegionController@editSort');
+            Route::post('edit_status', 'NewYearLocalRegionController@editStatus');
+            Route::post('delete', 'NewYearLocalRegionController@delete');
+            Route::get('options', 'NewYearLocalRegionController@options');
+        });
+
+        Route::prefix('local_goods')->group(function () {
+            Route::post('list', 'NewYearLocalGoodsController@list');
+            Route::post('add', 'NewYearLocalGoodsController@add');
+            Route::post('edit_sort', 'NewYearLocalGoodsController@editSort');
+            Route::post('delete', 'NewYearLocalGoodsController@delete');
+        });
+    });
+
+    Route::prefix('limited_time_recruit')->group(function () {
+        Route::prefix('category')->group(function () {
+            Route::post('list', 'LimitedTimeRecruitCategoryController@list');
+            Route::get('detail', 'LimitedTimeRecruitCategoryController@detail');
+            Route::post('add', 'LimitedTimeRecruitCategoryController@add');
+            Route::post('edit', 'LimitedTimeRecruitCategoryController@edit');
+            Route::post('edit_sort', 'LimitedTimeRecruitCategoryController@editSort');
+            Route::post('edit_status', 'LimitedTimeRecruitCategoryController@editStatus');
+            Route::post('delete', 'LimitedTimeRecruitCategoryController@delete');
+            Route::get('options', 'LimitedTimeRecruitCategoryController@options');
+        });
+
+        Route::prefix('goods')->group(function () {
+            Route::post('list', 'LimitedTimeRecruitGoodsController@list');
+            Route::post('add', 'LimitedTimeRecruitGoodsController@add');
+            Route::post('edit_sort', 'LimitedTimeRecruitGoodsController@editSort');
+            Route::post('delete', 'LimitedTimeRecruitGoodsController@delete');
         });
     });
 
