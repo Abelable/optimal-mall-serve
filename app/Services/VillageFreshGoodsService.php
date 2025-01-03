@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\VillageFreshGoods;
-use App\Utils\Inputs\GoodsListInput;
+use App\Utils\Inputs\RegionGoodsListInput;
 use App\Utils\Inputs\PageInput;
 
 class VillageFreshGoodsService extends BaseService
@@ -18,7 +18,7 @@ class VillageFreshGoodsService extends BaseService
         return VillageFreshGoods::query()->orderBy('sort', 'desc')->get($columns);
     }
 
-    public function getFilterGoodsList(GoodsListInput $input, $columns = ['*'])
+    public function getFilterGoodsList(RegionGoodsListInput $input, $columns = ['*'])
     {
         return VillageFreshGoods::query()->whereIn('goods_id', $input->goodsIds)->get($columns);
     }

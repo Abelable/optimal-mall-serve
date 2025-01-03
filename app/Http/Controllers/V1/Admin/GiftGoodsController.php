@@ -7,7 +7,7 @@ use App\Models\GiftGoods;
 use App\Services\GoodsService;
 use App\Services\GiftGoodsService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\GiftGoodsListInput;
+use App\Utils\Inputs\GiftRegionGoodsListInput;
 use App\Utils\Inputs\GiftGoodsPageInput;
 
 class GiftGoodsController extends Controller
@@ -24,8 +24,8 @@ class GiftGoodsController extends Controller
 
     public function add()
     {
-        /** @var GiftGoodsListInput $input */
-        $input = GiftGoodsListInput::new();
+        /** @var GiftRegionGoodsListInput $input */
+        $input = GiftRegionGoodsListInput::new();
 
         $giftGoodsList = GiftGoodsService::getInstance()->getFilterGoodsList($input);
         if (count($giftGoodsList) != 0) {

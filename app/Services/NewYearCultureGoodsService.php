@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\NewYearCultureGoods;
-use App\Utils\Inputs\GoodsListInput;
+use App\Utils\Inputs\RegionGoodsListInput;
 use App\Utils\Inputs\PageInput;
 
 class NewYearCultureGoodsService extends BaseService
@@ -18,7 +18,7 @@ class NewYearCultureGoodsService extends BaseService
         return NewYearCultureGoods::query()->orderBy('sort', 'desc')->get($columns);
     }
 
-    public function getFilterGoodsList(GoodsListInput $input, $columns = ['*'])
+    public function getFilterGoodsList(RegionGoodsListInput $input, $columns = ['*'])
     {
         return NewYearCultureGoods::query()->whereIn('goods_id', $input->goodsIds)->get($columns);
     }

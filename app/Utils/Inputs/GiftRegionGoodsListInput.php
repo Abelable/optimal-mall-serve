@@ -2,7 +2,7 @@
 
 namespace App\Utils\Inputs;
 
-class GiftGoodsListInput extends GoodsListInput
+class GiftRegionGoodsListInput extends RegionGoodsListInput
 {
     public $type;
 

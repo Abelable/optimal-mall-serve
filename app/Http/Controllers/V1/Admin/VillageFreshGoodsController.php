@@ -7,7 +7,7 @@ use App\Models\VillageFreshGoods;
 use App\Services\GoodsService;
 use App\Services\VillageFreshGoodsService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\GoodsListInput;
+use App\Utils\Inputs\RegionGoodsListInput;
 use App\Utils\Inputs\PageInput;
 
 class VillageFreshGoodsController extends Controller
@@ -24,8 +24,8 @@ class VillageFreshGoodsController extends Controller
 
     public function add()
     {
-        /** @var GoodsListInput $input */
-        $input = GoodsListInput::new();
+        /** @var RegionGoodsListInput $input */
+        $input = RegionGoodsListInput::new();
 
         $freshGoodsList = VillageFreshGoodsService::getInstance()->getFilterGoodsList($input);
         if (count($freshGoodsList) != 0) {

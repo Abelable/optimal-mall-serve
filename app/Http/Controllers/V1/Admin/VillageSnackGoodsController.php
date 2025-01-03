@@ -7,7 +7,7 @@ use App\Models\VillageSnackGoods;
 use App\Services\GoodsService;
 use App\Services\VillageSnackGoodsService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\GoodsListInput;
+use App\Utils\Inputs\RegionGoodsListInput;
 use App\Utils\Inputs\PageInput;
 
 class VillageSnackGoodsController extends Controller
@@ -24,8 +24,8 @@ class VillageSnackGoodsController extends Controller
 
     public function add()
     {
-        /** @var GoodsListInput $input */
-        $input = GoodsListInput::new();
+        /** @var RegionGoodsListInput $input */
+        $input = RegionGoodsListInput::new();
 
         $snackGoodsList = VillageSnackGoodsService::getInstance()->getFilterGoodsList($input);
         if (count($snackGoodsList) != 0) {

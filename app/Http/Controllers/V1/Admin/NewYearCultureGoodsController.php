@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\IntegrityGoods;
+use App\Models\NewYearCultureGoods;
 use App\Services\GoodsService;
-use App\Services\IntegrityGoodsService;
+use App\Services\NewYearCultureGoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\RegionGoodsListInput;
 use App\Utils\Inputs\PageInput;
 
-class IntegrityGoodsController extends Controller
+class NewYearCultureGoodsController extends Controller
 {
     protected $guard = 'Admin';
 
@@ -18,7 +18,7 @@ class IntegrityGoodsController extends Controller
     {
         /** @var PageInput $input */
         $input = PageInput::new();
-        $list = IntegrityGoodsService::getInstance()->getGoodsPage($input);
+        $list = NewYearCultureGoodsService::getInstance()->getGoodsPage($input);
         return $this->successPaginate($list);
     }
 
@@ -27,19 +27,19 @@ class IntegrityGoodsController extends Controller
         /** @var RegionGoodsListInput $input */
         $input = RegionGoodsListInput::new();
 
-        $integrityGoodsList = IntegrityGoodsService::getInstance()->getFilterGoodsList($input);
-        if (count($integrityGoodsList) != 0) {
+        $newYearCultureGoodsList = NewYearCultureGoodsService::getInstance()->getFilterGoodsList($input);
+        if (count($newYearCultureGoodsList) != 0) {
             return $this->fail(CodeResponse::DATA_EXISTED, '已添加相同商品');
         }
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($input->goodsIds, ['id', 'cover', 'name']);
 
         foreach ($goodsList as $goods) {
-            $integrityGoods = IntegrityGoods::new();
-            $integrityGoods->goods_id = $goods->id;
-            $integrityGoods->goods_cover = $goods->cover;
-            $integrityGoods->goods_name = $goods->name;
-            $integrityGoods->save();
+            $newYearCultureGoods = NewYearCultureGoods::new();
+            $newYearCultureGoods->goods_id = $goods->id;
+            $newYearCultureGoods->goods_cover = $goods->cover;
+            $newYearCultureGoods->goods_name = $goods->name;
+            $newYearCultureGoods->save();
         }
 
         return $this->success();
@@ -49,7 +49,7 @@ class IntegrityGoodsController extends Controller
         $id = $this->verifyRequiredId('id');
         $sort = $this->verifyRequiredInteger('sort');
 
-        $goods = IntegrityGoodsService::getInstance()->getGoodsById($id);
+        $goods = NewYearCultureGoodsService::getInstance()->getGoodsById($id);
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
@@ -63,7 +63,7 @@ class IntegrityGoodsController extends Controller
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
-        $goods = IntegrityGoodsService::getInstance()->getGoodsById($id);
+        $goods = NewYearCultureGoodsService::getInstance()->getGoodsById($id);
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }

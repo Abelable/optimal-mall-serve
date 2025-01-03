@@ -2,7 +2,7 @@
 
 namespace App\Utils\Inputs;
 
-class GoodsListInput extends BaseInput
+class RegionGoodsListInput extends BaseInput
 {
     public $regionId;
     public $goodsIds;
