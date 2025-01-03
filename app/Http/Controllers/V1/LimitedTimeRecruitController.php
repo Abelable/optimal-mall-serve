@@ -4,7 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Goods;
-use App\Models\NewYearGoods;
+use App\Models\LimitedTimeRecruitGoods;
 use App\Services\GoodsService;
 use App\Services\LimitedTimeRecruitGoodsService;
 use App\Services\LimitedTimeRecruitCategoryService;
@@ -27,7 +27,7 @@ class LimitedTimeRecruitController extends Controller
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
 
-        $list = $limitedRecruitLocalGoodsList->map(function (NewYearGoods $limitedRecruitGoods) use ($goodsList) {
+        $list = $limitedRecruitLocalGoodsList->map(function (LimitedTimeRecruitGoods $limitedRecruitGoods) use ($goodsList) {
             /** @var Goods $goods */
             $goods = $goodsList->get($limitedRecruitGoods->goods_id);
             if (is_null($goods)) {
