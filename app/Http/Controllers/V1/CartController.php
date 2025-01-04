@@ -56,7 +56,12 @@ class CartController extends Controller
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
         $groupedOrderGoodsList = OrderGoodsService::getInstance()->getRecentlyUserListByGoodsIds($this->userId(), $goodsIds)->groupBy('goods_id');
 
-        $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($goodsList, $groupedOrderGoodsList) {
+        $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+        $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+        $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+        $newYearGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds));
+
+        $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($newYearGoodsIds, $goodsList, $groupedOrderGoodsList) {
             if ($cartGoods->status != 1) {
                 return $cartGoods;
             }
@@ -164,10 +169,10 @@ class CartController extends Controller
                 }
             }
 
-            // todo 小程序发版之后删除
-            $cartGoods['stock'] = $goods->stock;
-
             $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
+
+            // todo 年货节结束注销
+            $cartGoods['isNewYearGift'] = in_array($cartGoods->goods_id, $newYearGoodsIds) ? 1 : 0;
 
             return $cartGoods;
         });
