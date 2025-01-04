@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\GoodsCategory;
+use App\Utils\CodeResponse;
 use App\Utils\Inputs\PageInput;
 
 class GoodsCategoryService extends BaseService
@@ -10,6 +11,10 @@ class GoodsCategoryService extends BaseService
     public function createList($goodsId, array $categoryIds)
     {
         foreach ($categoryIds as $categoryId) {
+            $goodsCategory = $this->getGoodsCategory($goodsId, $categoryId);
+            if (!is_null($goodsCategory)) {
+                $this->throwBusinessException(CodeResponse::DATA_EXISTED, '分类数据已存在，请勿重复提交');
+            }
             $goodsCategory = GoodsCategory::new();
             $goodsCategory->goods_id = $goodsId;
             $goodsCategory->category_id = $categoryId;
