@@ -7,6 +7,8 @@ use App\Services\BannerService;
 
 class BannerController extends Controller
 {
+    protected $only = [];
+
     public function pop()
     {
         $pop = BannerService::getInstance()->getPop();
