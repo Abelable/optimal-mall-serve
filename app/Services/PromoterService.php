@@ -189,4 +189,12 @@ class PromoterService extends BaseService
 
         return $weeklyGrowthRate;
     }
+
+    public function getRecentlyPromoter($userId, $days = 7, $columns = ['*'])
+    {
+        return Promoter::query()
+            ->where('user_id', $userId)
+            ->where('created_at', '>=', now()->subDays($days))
+            ->first($columns);
+    }
 }

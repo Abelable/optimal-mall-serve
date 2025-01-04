@@ -22,6 +22,11 @@ class LimitedTimeRecruitGoodsService extends BaseService
         return LimitedTimeRecruitGoods::query()->where('category_id', $categoryId)->get($columns);
     }
 
+    public function getAllGoodsList($columns = ['*'])
+    {
+        return LimitedTimeRecruitGoods::query()->get($columns);
+    }
+
     public function getFilterGoodsList(CategoryGoodsListInput $input, $columns = ['*'])
     {
         return LimitedTimeRecruitGoods::query()

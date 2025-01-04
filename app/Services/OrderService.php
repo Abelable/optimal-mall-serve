@@ -249,6 +249,20 @@ class OrderService extends BaseService
             // GiftCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
             GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
 
+            // todo 限时成为推广员活动，活动结束之后注释
+            $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+            $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+            $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+            $recruitGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+            $activityGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds, $recruitGoodsIds));
+            $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderIds($orderIds)->pluck('goods_id')->toArray());
+            $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
+            $userId = $orderList->first()->user_id;
+            $promoterInfo = UserService::getInstance()->getUserById($userId)->promoterInfo;
+            if (!empty($commonGoodsIds) && is_null($promoterInfo)) {
+                PromoterService::getInstance()->toBePromoter($userId);
+            }
+
             return $orderList;
         });
     }
@@ -519,7 +533,7 @@ class OrderService extends BaseService
         }
     }
 
-    public function refund($order)
+    public function refund(Order $order)
     {
         if (!$order->canRefundHandle()) {
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '该订单不能申请退款');
@@ -552,6 +566,19 @@ class OrderService extends BaseService
                 // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
                 // GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
                 GiftCommissionService::getInstance()->deleteListByOrderIds([$order->id]);
+
+                // todo 限时成为推广员活动，活动结束之后注释
+                $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+                $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+                $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+                $recruitGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+                $activityGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds, $recruitGoodsIds));
+                $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderId($order->id)->pluck('goods_id')->toArray());
+                $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
+                $recentlyPromoter = PromoterService::getInstance()->getRecentlyPromoter($order->user_id);
+                if (!empty($commonGoodsIds) && !is_null($recentlyPromoter)) {
+                    $recentlyPromoter->delete();
+                }
             } catch (GatewayException $exception) {
                 Log::error('wx_refund_fail', [$exception]);
             }
@@ -613,6 +640,19 @@ class OrderService extends BaseService
             // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
             // GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
             GiftCommissionService::getInstance()->deleteByGoodsId($orderId, $goodsId);
+
+            // todo 限时成为推广员活动，活动结束之后注释
+            $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+            $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+            $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+            $recruitGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+            $activityGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds, $recruitGoodsIds));
+            $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderId($order->id)->pluck('goods_id')->toArray());
+            $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
+            $recentlyPromoter = PromoterService::getInstance()->getRecentlyPromoter($order->user_id, 14);
+            if (!empty($commonGoodsIds) && !is_null($recentlyPromoter)) {
+                $recentlyPromoter->delete();
+            }
 
             return $order;
         } catch (GatewayException $exception) {
