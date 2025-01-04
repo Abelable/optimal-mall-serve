@@ -4,7 +4,9 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Goods;
+use App\Models\NewYearCultureGoods;
 use App\Models\NewYearGoods;
+use App\Models\NewYearLocalGoods;
 use App\Services\GoodsService;
 use App\Services\NewYearCultureGoodsService;
 use App\Services\NewYearGoodsService;
@@ -45,11 +47,11 @@ class NewYearController extends Controller
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
 
-        $list = $newYearCultureGoodsList->map(function (NewYearGoods $newYearGoods) use ($goodsList) {
+        $list = $newYearCultureGoodsList->map(function (NewYearCultureGoods $newYearCultureGoods) use ($goodsList) {
             /** @var Goods $goods */
-            $goods = $goodsList->get($newYearGoods->goods_id);
+            $goods = $goodsList->get($newYearCultureGoods->goods_id);
             if (is_null($goods)) {
-                NewYearCultureGoodsService::getInstance()->deleteById($newYearGoods->id);
+                NewYearCultureGoodsService::getInstance()->deleteById($newYearCultureGoods->id);
             }
             return $goods;
         })->filter(function ($goods) {
@@ -75,11 +77,11 @@ class NewYearController extends Controller
 
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
 
-        $list = $newYearLocalGoodsList->map(function (NewYearGoods $newYearGoods) use ($goodsList) {
+        $list = $newYearLocalGoodsList->map(function (NewYearLocalGoods $newYearLocalGoods) use ($goodsList) {
             /** @var Goods $goods */
-            $goods = $goodsList->get($newYearGoods->goods_id);
+            $goods = $goodsList->get($newYearLocalGoods->goods_id);
             if (is_null($goods)) {
-                NewYearLocalGoodsService::getInstance()->deleteById($newYearGoods->id);
+                NewYearLocalGoodsService::getInstance()->deleteById($newYearLocalGoods->id);
             }
             return $goods;
         })->filter(function ($goods) {
