@@ -48,7 +48,8 @@ class CartController extends Controller
             'price',
             'market_price',
             'number',
-            'created_at'
+            'created_at',
+            'updated_at',
         ];
         $list = CartGoodsService::getInstance()->cartGoodsList($this->userId(), $cartGoodsColumns);
         $goodsIds = array_unique($list->pluck('goods_id')->toArray());
