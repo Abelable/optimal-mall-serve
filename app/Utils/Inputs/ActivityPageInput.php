@@ -14,7 +14,7 @@ class ActivityPageInput extends PageInput
         return array_merge(parent::rules(), [
             'name' => 'string',
             'status' => 'integer|in:0,1,2',
-            'tag' => 'integer|in:1,2',
+            'tag' => 'integer|in:1,2,3,4,5',
             'goodsTag' => 'integer|in:1,2',
         ]);
     }
