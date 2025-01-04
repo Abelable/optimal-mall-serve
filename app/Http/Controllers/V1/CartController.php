@@ -47,6 +47,7 @@ class CartController extends Controller
             'selected_sku_index',
             'price',
             'market_price',
+            'commission_rate',
             'number',
             'created_at',
             'updated_at',
