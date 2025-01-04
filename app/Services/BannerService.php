@@ -42,10 +42,20 @@ class BannerService extends BaseService
         return Banner::query()->find($id, $columns);
     }
 
-    public function getBannerList($columns = ['*'])
+    public function getPop($columns = ['*'])
     {
         return Banner::query()
-            ->where('position', 1)
+            ->where('position', 3)
+            ->where('status', 1)
+            ->orderBy('sort', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->first($columns);
+    }
+
+    public function getBannerList($position = 1, $columns = ['*'])
+    {
+        return Banner::query()
+            ->where('position', $position)
             ->where('status', 1)
             ->orderBy('sort', 'desc')
             ->orderBy('created_at', 'desc')

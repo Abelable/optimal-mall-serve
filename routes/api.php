@@ -129,6 +129,11 @@ Route::prefix('refund')->group(function () {
     Route::post('delete', 'RefundController@delete');
 });
 
+Route::prefix('banner')->group(function () {
+    Route::get('pop', 'BannerController@pop');
+    Route::get('list', 'BannerController@list');
+});
+
 Route::prefix('mall')->group(function () {
     Route::get('banner_list', 'MallController@bannerList');
     Route::get('activity_list', 'MallController@activityList');

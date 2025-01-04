@@ -27,6 +27,7 @@ class MallController extends Controller
 {
     protected $only = ['subscribeActivity'];
 
+    // todo 小程序上线之后删除
     public function bannerList()
     {
         $list = BannerService::getInstance()->getBannerList();
