@@ -14,6 +14,11 @@ class CartGoodsService extends BaseService
         return CartGoods::query()->where('user_id', $userId)->where('scene', '1')->sum('number');
     }
 
+    public function cartGoodsNumberByGoodsIds($userId, array $goodsIds)
+    {
+        return CartGoods::query()->where('scene', '1')->where('user_id', $userId)->whereIn('goods_id', $goodsIds)->sum('number');
+    }
+
     public function cartGoodsList($userId, $columns = ['*'])
     {
         return CartGoods::query()->where('user_id', $userId)->where('scene', '1')->orderBy('updated_at', 'desc')->get($columns);

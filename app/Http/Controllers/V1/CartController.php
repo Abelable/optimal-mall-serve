@@ -7,6 +7,9 @@ use App\Models\CartGoods;
 use App\Models\Goods;
 use App\Services\CartGoodsService;
 use App\Services\GoodsService;
+use App\Services\NewYearCultureGoodsService;
+use App\Services\NewYearGoodsService;
+use App\Services\NewYearLocalGoodsService;
 use App\Services\OrderGoodsService;
 use App\Utils\Inputs\CartGoodsInput;
 use App\Utils\Inputs\CartGoodsEditInput;
@@ -16,6 +19,16 @@ class CartController extends Controller
     public function goodsNumber()
     {
         $number = CartGoodsService::getInstance()->cartGoodsNumber($this->userId());
+        return $this->success((int)$number);
+    }
+
+    public function newYearGoodsNumber()
+    {
+        $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+        $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+        $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+        $mergedGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds));
+        $number = CartGoodsService::getInstance()->cartGoodsNumberByGoodsIds($this->userId(), $mergedGoodsIds);
         return $this->success((int)$number);
     }
 

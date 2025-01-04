@@ -22,6 +22,11 @@ class NewYearLocalGoodsService extends BaseService
         return NewYearLocalGoods::query()->where('region_id', $regionId)->get($columns);
     }
 
+    public function getAllGoodsList($columns = ['*'])
+    {
+        return NewYearLocalGoods::query()->get($columns);
+    }
+
     public function getFilterGoodsList(RegionGoodsListInput $input, $columns = ['*'])
     {
         return NewYearLocalGoods::query()
