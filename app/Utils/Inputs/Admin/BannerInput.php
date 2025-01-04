@@ -10,6 +10,7 @@ class BannerInput extends BaseInput
     public $desc;
     public $scene;
     public $param;
+    public $position;
 
     public function rules()
     {
@@ -17,7 +18,8 @@ class BannerInput extends BaseInput
             'cover' => 'required|string',
             'desc' => 'string',
             'scene' => 'integer|in:1,2',
-            'param' => 'string'
+            'param' => 'string',
+            'position' => 'integer|in:1,2,3,4',
         ];
     }
 }

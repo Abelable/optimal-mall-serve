@@ -18,6 +18,7 @@ class BannerService extends BaseService
             $banner->scene = $input->scene;
             $banner->param = $input->param;
         }
+        $banner->position = $input->position;
         $banner->save();
         return $banner;
     }

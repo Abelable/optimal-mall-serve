@@ -9,7 +9,8 @@ namespace App\Models;
  * @property int $status 活动状态：1-活动中，2-活动结束
  * @property string $cover 活动封面
  * @property string $desc 活动描述
- * @property string $scene 链接跳转场景值：1-h5活动，2-商品详情
+ * @property int $position 使用位置：1-首页顶部Banner，2-首页限时活动Banner，3-首页弹窗，4-诚信乡村页面Banner
+ * @property int $scene 链接跳转场景值：1-h5活动，2-商品详情
  * @property string $param 链接参数值
  * @property int $sort 排序
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -25,6 +26,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Banner whereDesc($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Banner whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Banner whereParam($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Banner wherePosition($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Banner whereScene($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Banner whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Banner whereStatus($value)
