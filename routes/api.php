@@ -85,6 +85,7 @@ Route::prefix('goods')->group(function () {
 
 Route::prefix('cart')->group(function () {
     Route::get('goods_number', 'CartController@goodsNumber');
+    Route::get('new_year_goods_number', 'CartController@newYearGoodsNumber');
     Route::get('list', 'CartController@list');
     Route::post('fast_add', 'CartController@fastAdd');
     Route::post('add', 'CartController@add');
