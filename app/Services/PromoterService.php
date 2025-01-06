@@ -12,17 +12,18 @@ use Illuminate\Support\Facades\DB;
 
 class PromoterService extends BaseService
 {
-    public function create($userId, $level, $scene)
+    public function adminCreate($userId, $level, $scene)
     {
         $promoter = Promoter::new();
         $promoter->user_id = $userId;
         $promoter->level = $level;
         $promoter->scene = $scene;
+        $promoter->path = 1;
         $promoter->save();
         return $promoter;
     }
 
-    public function toBePromoter($userId)
+    public function toBePromoter($userId, $path, array $goodsIds)
     {
         $promoter = $this->getExactPromoter($userId, PromoterScene::LEVEL_PROMOTER, PromoterScene::SCENE_PROMOTER);
         if (is_null($promoter)) {
@@ -30,6 +31,8 @@ class PromoterService extends BaseService
             $promoter->user_id = $userId;
             $promoter->level = PromoterScene::LEVEL_PROMOTER;
             $promoter->scene = PromoterScene::SCENE_PROMOTER;
+            $promoter->path = $path;
+            $promoter->goods_ids = implode(',', $goodsIds);
             $promoter->save();
         }
     }

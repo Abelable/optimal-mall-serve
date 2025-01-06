@@ -73,7 +73,7 @@ class PromoterController extends Controller
         $userId = $this->verifyRequiredId('userId');
         $level = $this->verifyRequiredInteger('level');
         $scene = $this->verifyRequiredInteger('scene');
-        PromoterService::getInstance()->create($userId, $level, $scene);
+        PromoterService::getInstance()->adminCreate($userId, $level, $scene);
         return $this->success();
     }
 

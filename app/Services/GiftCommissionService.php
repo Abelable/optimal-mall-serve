@@ -94,7 +94,7 @@ class GiftCommissionService extends BaseService
             $commission->save();
 
             // 成为推官员
-            PromoterService::getInstance()->toBePromoter($commission->user_id);
+            PromoterService::getInstance()->toBePromoter($commission->user_id, 2, [$commission->goods_id]);
             return $commission;
         });
     }
@@ -111,7 +111,7 @@ class GiftCommissionService extends BaseService
             $commission->save();
 
             // 成为推官员
-            PromoterService::getInstance()->toBePromoter($commission->user_id);
+            PromoterService::getInstance()->toBePromoter($commission->user_id, 2, [$commission->goods_id]);
 
             return $commission;
         });

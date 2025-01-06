@@ -256,7 +256,7 @@ class OrderService extends BaseService
             $userId = $orderList->first()->user_id;
             $promoterInfo = UserService::getInstance()->getUserById($userId)->promoterInfo;
             if (!empty($commonGoodsIds) && is_null($promoterInfo)) {
-                PromoterService::getInstance()->toBePromoter($userId);
+                PromoterService::getInstance()->toBePromoter($userId, 3, $commonGoodsIds);
             }
 
             return $orderList;
