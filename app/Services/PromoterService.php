@@ -197,4 +197,9 @@ class PromoterService extends BaseService
             ->where('created_at', '>=', now()->subDays($days))
             ->first($columns);
     }
+
+    public function getUserPromoterByPathList($userId, array $pathList, $columns = ['*'])
+    {
+        return Promoter::query()->where('user_id', $userId)->whereIn('path', $pathList)->get($columns);
+    }
 }

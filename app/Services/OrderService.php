@@ -9,6 +9,7 @@ use App\Models\Coupon;
 use App\Models\FreightTemplate;
 use App\Models\Order;
 use App\Models\OrderGoods;
+use App\Models\Promoter;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\Admin\OrderPageInput;
@@ -563,13 +564,16 @@ class OrderService extends BaseService
                 // GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
                 GiftCommissionService::getInstance()->deleteListByOrderIds([$order->id]);
 
-                // todo 限时成为推广员活动，活动结束之后注释
-                $activityGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-                $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderId($order->id)->pluck('goods_id')->toArray());
-                $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
-                $recentlyPromoter = PromoterService::getInstance()->getRecentlyPromoter($order->user_id);
-                if (!empty($commonGoodsIds) && !is_null($recentlyPromoter)) {
-                    $recentlyPromoter->delete();
+                // 退款删除推官员身份
+                /** @var Promoter $promoterInfo */
+                $promoterInfo = PromoterService::getInstance()->getUserPromoterByPathList($order->user_id, [2, 3]);
+                if (!is_null($promoterInfo)) {
+                    $goodsIds = explode(',', $promoterInfo->goods_ids);
+                    $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderId($order->id)->pluck('goods_id')->toArray());
+                    $commonGoodsIds = array_intersect($orderGoodsIds, $goodsIds);
+                    if (!empty($commonGoodsIds)) {
+                        $promoterInfo->delete();
+                    }
                 }
             } catch (GatewayException $exception) {
                 Log::error('wx_refund_fail', [$exception]);
@@ -633,13 +637,14 @@ class OrderService extends BaseService
             // GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
             GiftCommissionService::getInstance()->deleteByGoodsId($orderId, $goodsId);
 
-            // todo 限时成为推广员活动，活动结束之后注释
-            $activityGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-            $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderId($order->id)->pluck('goods_id')->toArray());
-            $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
-            $recentlyPromoter = PromoterService::getInstance()->getRecentlyPromoter($order->user_id, 14);
-            if (!empty($commonGoodsIds) && !is_null($recentlyPromoter)) {
-                $recentlyPromoter->delete();
+            // 售后删除推官员身份
+            /** @var Promoter $promoterInfo */
+            $promoterInfo = PromoterService::getInstance()->getUserPromoterByPathList($order->user_id, [2, 3]);
+            if (!is_null($promoterInfo)) {
+                $goodsIds = explode(',', $promoterInfo->goods_ids);
+                if (in_array($goodsId, $goodsIds)) {
+                    $promoterInfo->delete();
+                }
             }
 
             return $order;
