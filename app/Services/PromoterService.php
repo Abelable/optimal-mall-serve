@@ -200,6 +200,6 @@ class PromoterService extends BaseService
 
     public function getUserPromoterByPathList($userId, array $pathList, $columns = ['*'])
     {
-        return Promoter::query()->where('user_id', $userId)->whereIn('path', $pathList)->get($columns);
+        return Promoter::query()->where('user_id', $userId)->whereIn('path', $pathList)->first($columns);
     }
 }
