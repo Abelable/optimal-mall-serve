@@ -250,11 +250,7 @@ class OrderService extends BaseService
             GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
 
             // todo 限时成为推广员活动，活动结束之后注释
-            $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
-            $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
-            $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-            $recruitGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-            $activityGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds, $recruitGoodsIds));
+            $activityGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
             $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderIds($orderIds)->pluck('goods_id')->toArray());
             $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
             $userId = $orderList->first()->user_id;
@@ -568,11 +564,7 @@ class OrderService extends BaseService
                 GiftCommissionService::getInstance()->deleteListByOrderIds([$order->id]);
 
                 // todo 限时成为推广员活动，活动结束之后注释
-                $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
-                $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
-                $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-                $recruitGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-                $activityGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds, $recruitGoodsIds));
+                $activityGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
                 $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderId($order->id)->pluck('goods_id')->toArray());
                 $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
                 $recentlyPromoter = PromoterService::getInstance()->getRecentlyPromoter($order->user_id);
@@ -642,11 +634,7 @@ class OrderService extends BaseService
             GiftCommissionService::getInstance()->deleteByGoodsId($orderId, $goodsId);
 
             // todo 限时成为推广员活动，活动结束之后注释
-            $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
-            $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
-            $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-            $recruitGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-            $activityGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds, $recruitGoodsIds));
+            $activityGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
             $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderId($order->id)->pluck('goods_id')->toArray());
             $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
             $recentlyPromoter = PromoterService::getInstance()->getRecentlyPromoter($order->user_id, 14);

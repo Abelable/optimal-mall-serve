@@ -25,16 +25,13 @@ class PromoterService extends BaseService
     public function toBePromoter($userId)
     {
         $promoter = $this->getExactPromoter($userId, PromoterScene::LEVEL_PROMOTER, PromoterScene::SCENE_PROMOTER);
-        if (!is_null($promoter)) {
-            $this->throwBusinessException(CodeResponse::INVALID_OPERATION, '您已经是推广员');
+        if (is_null($promoter)) {
+            $promoter = Promoter::new();
+            $promoter->user_id = $userId;
+            $promoter->level = PromoterScene::LEVEL_PROMOTER;
+            $promoter->scene = PromoterScene::SCENE_PROMOTER;
+            $promoter->save();
         }
-
-        $promoter = Promoter::new();
-        $promoter->user_id = $userId;
-        $promoter->level = PromoterScene::LEVEL_PROMOTER;
-        $promoter->scene = PromoterScene::SCENE_PROMOTER;
-        $promoter->save();
-        return $promoter;
     }
 
     public function toBeC1Organizer($userId)
