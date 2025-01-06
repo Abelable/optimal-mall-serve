@@ -26,6 +26,9 @@ class BannerService extends BaseService
     public function getBannerPage(BannerPageInput $input, $columns = ['*'])
     {
         $query = Banner::query();
+        if (!is_null($input->position)) {
+            $query->where('position', $input->position);
+        }
         if (!is_null($input->status)) {
             $query->where('status', $input->status);
         }
