@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Goods;
+use App\Services\ActivityService;
 use App\Services\GoodsCategoryService;
 use App\Services\GoodsService;
 use App\Utils\CodeResponse;
@@ -79,8 +80,18 @@ class GoodsController extends Controller
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
-        $goods->status = 2;
-        $goods->save();
+
+        DB::transaction(function () use ($goods) {
+            $goods->status = 2;
+            $goods->save();
+
+            // 下架商品活动
+            $activity = ActivityService::getInstance()->getActivityByGoodsId($goods->id, [1]);
+            if (!is_null($activity)) {
+                $activity->status = 2;
+                $activity->save();
+            }
+        });
 
         return $this->success();
     }
