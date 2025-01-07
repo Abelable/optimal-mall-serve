@@ -113,8 +113,19 @@ class PromoterController extends Controller
 
     public function options()
     {
-        $userIds = PromoterService::getInstance()->getOptions()->pluck('user_id')->toArray();
-        $options = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname']);
+        $promoterOptions = PromoterService::getInstance()->getOptions();
+        $userIds = $promoterOptions->pluck('user_id')->toArray();
+        $userList = UserService::getInstance()->getListByIds($userIds)->keyBy('id');
+        $options = $promoterOptions->map(function (Promoter $promoter) use ($userList) {
+            /** @var User $userInfo */
+            $userInfo = $userList->get($promoter->user_id);
+            return [
+                'id' => $userInfo->id,
+                'nickname' => $userInfo->nickname,
+                'avatar' => $userInfo->avatar,
+                'level' => $promoter->level,
+            ];
+        });
         return $this->success($options);
     }
 }
