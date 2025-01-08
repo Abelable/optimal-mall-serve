@@ -24,6 +24,9 @@ class ActivityService extends BaseService
         if (!is_null($input->goodsTag)) {
             $query = $query->where('goods_tag', $input->goodsTag);
         }
+        if (!is_null($input->goodsId)) {
+            $query = $query->where('goods_id', $input->goodsId);
+        }
         return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
     }
 
