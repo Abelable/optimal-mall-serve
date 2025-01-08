@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\CartGoods;
 use App\Models\Goods;
+use App\Services\ActivityService;
 use App\Services\CartGoodsService;
 use App\Services\GoodsService;
 use App\Services\NewYearCultureGoodsService;
@@ -58,12 +59,20 @@ class CartController extends Controller
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
         $groupedOrderGoodsList = OrderGoodsService::getInstance()->getRecentlyUserListByGoodsIds($this->userId(), $goodsIds)->groupBy('goods_id');
 
+        $noticeGoodsIds = ActivityService::getInstance()->getActivityListByStatus(0)->pluck('goods_id')->toArray();
+
+        // todo 年货节活动结束注释
         $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
         $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
         $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
         $newYearGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds));
 
-        $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($newYearGoodsIds, $goodsList, $groupedOrderGoodsList) {
+        $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($noticeGoodsIds, $newYearGoodsIds, $goodsList, $groupedOrderGoodsList) {
+            if (in_array($cartGoods->goods_id, $noticeGoodsIds)) {
+                $cartGoods->delete();
+                return null;
+            }
+
             if ($cartGoods->status != 1) {
                 return $cartGoods;
             }
@@ -177,7 +186,9 @@ class CartController extends Controller
             $cartGoods['isNewYearGift'] = in_array($cartGoods->goods_id, $newYearGoodsIds) ? 1 : 0;
 
             return $cartGoods;
-        });
+        })->filter(function ($cartGoods) {
+            return !is_null($cartGoods);
+        })->values();
 
         return $this->success($cartGoodsList);
     }
