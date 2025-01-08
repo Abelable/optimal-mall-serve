@@ -68,6 +68,7 @@ class CartController extends Controller
         $newYearGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds));
 
         $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($noticeGoodsIds, $newYearGoodsIds, $goodsList, $groupedOrderGoodsList) {
+            // todo 暂定删除活动商品，之后优化
             if (in_array($cartGoods->goods_id, $noticeGoodsIds)) {
                 $cartGoods->delete();
                 return null;
