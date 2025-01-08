@@ -41,7 +41,18 @@ class CouponService extends BaseService
 
     public function getCouponListByGoodsId($goodsId, $columns = ['*'])
     {
-        return Coupon::query()->where('status', 1)->where('goods_id', $goodsId)->get($columns);
+        // todo 优惠券到期处理
+        $list = Coupon::query()->where('status', 1)->where('goods_id', $goodsId)->get($columns);
+        return $list->map(function (Coupon $coupon) {
+            if (strtotime($coupon->expiration_time) <= time()) {
+                $coupon->status = 2;
+                $coupon->save();
+                return null;
+            }
+            return $coupon;
+        })->filter(function ($goods) {
+            return !is_null($goods);
+        })->values();
     }
 
     public function getCouponById($id, $columns = ['*'])
