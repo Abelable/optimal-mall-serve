@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Services\ActivityService;
+use App\Services\CouponService;
 use App\Services\OrderService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -20,6 +22,8 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             OrderService::getInstance()->systemConfirm();
             OrderService::getInstance()->confirmMissCommission();
+            CouponService::getInstance()->handelExpiredCoupons();
+            ActivityService::getInstance()->handelExpiredActivity();
         })->dailyAt('03:00')->runInBackground()->name('order_system_confirm')->onOneServer();
     }
 

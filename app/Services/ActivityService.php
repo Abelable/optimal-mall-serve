@@ -101,4 +101,12 @@ class ActivityService extends BaseService
         $activity->save();
         return $activity;
     }
+
+    public function handelExpiredActivity()
+    {
+        return Activity::query()
+            ->where('status', 1)
+            ->where('end_time', '<=', date('Y-m-d H:i:s', time()))
+            ->update(['status' => 2]);
+    }
 }

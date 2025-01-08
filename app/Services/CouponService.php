@@ -112,4 +112,12 @@ class CouponService extends BaseService
         }
         $coupon->save();
     }
+
+    public function handelExpiredCoupons()
+    {
+        return Coupon::query()
+            ->where('status', 1)
+            ->where('expiration_time', '<=', date('Y-m-d H:i:s', time()))
+            ->update(['status' => 2]);
+    }
 }
