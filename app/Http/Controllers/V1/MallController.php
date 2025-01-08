@@ -53,6 +53,19 @@ class MallController extends Controller
             ->groupBy('goods_id');
 
         $list = $activityList->map(function (Activity $activity) use ($groupedCouponList, $subscribedActivityIds, $goodsList) {
+            // todo 预告到期未开始
+            if ($activity->status == 0 && strtotime($activity->start_time) <= time()) {
+                $activity->status = 1;
+                $activity->save();
+            }
+
+            // todo 活动到期未结束
+            if ($activity->status == 1 && strtotime($activity->end_time) <= time()) {
+                $activity->status = 2;
+                $activity->save();
+                return null;
+            }
+
             /** @var Goods $goods */
             $goods = $goodsList->get($activity->goods_id);
             unset($activity->goods_id);
@@ -64,7 +77,9 @@ class MallController extends Controller
             $goods['couponList'] = $couponList ?: [];
 
             return $goods;
-        });
+        })->filter(function ($goods) {
+            return !is_null($goods);
+        })->values();
 
         // todo 缓存活动商品列表
 
