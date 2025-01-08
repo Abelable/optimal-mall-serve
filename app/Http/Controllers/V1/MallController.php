@@ -5,7 +5,6 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Goods;
-use App\Models\IntegrityGoods;
 use App\Models\VillageFreshGoods;
 use App\Models\VillageGiftGoods;
 use App\Models\VillageGrainGoods;
