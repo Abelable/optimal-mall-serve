@@ -108,7 +108,7 @@ class MallController extends Controller
         $goodsIds = $grainGoodsList->pluck('goods_id')->toArray();
 
         $activityList = ActivityService::getInstance()
-            ->getActivityListByGoodsIds($goodsIds, ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
+            ->getActivityListByGoodsIds($goodsIds, [0, 1], ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
             ->keyBy('goods_id');
 
         $groupedCouponList = CouponService::getInstance()
@@ -151,7 +151,7 @@ class MallController extends Controller
         $goodsIds = $freshGoodsList->pluck('goods_id')->toArray();
 
         $activityList = ActivityService::getInstance()
-            ->getActivityListByGoodsIds($goodsIds, ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
+            ->getActivityListByGoodsIds($goodsIds, [0, 1], ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
             ->keyBy('goods_id');
 
         $groupedCouponList = CouponService::getInstance()
@@ -194,7 +194,7 @@ class MallController extends Controller
         $goodsIds = $snackGoodsList->pluck('goods_id')->toArray();
 
         $activityList = ActivityService::getInstance()
-            ->getActivityListByGoodsIds($goodsIds, ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
+            ->getActivityListByGoodsIds($goodsIds, [0, 1], ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
             ->keyBy('goods_id');
 
         $groupedCouponList = CouponService::getInstance()
@@ -237,7 +237,7 @@ class MallController extends Controller
         $goodsIds = $giftGoodsList->pluck('goods_id')->toArray();
 
         $activityList = ActivityService::getInstance()
-            ->getActivityListByGoodsIds($goodsIds, ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
+            ->getActivityListByGoodsIds($goodsIds, [0, 1], ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
             ->keyBy('goods_id');
 
         $groupedCouponList = CouponService::getInstance()

@@ -40,7 +40,7 @@ class ActivityController extends Controller
         /** @var ActivityInput $input */
         $input = ActivityInput::new();
 
-        $activityList = ActivityService::getInstance()->getActivityListByGoodsIds($input->goodsIds);
+        $activityList = ActivityService::getInstance()->getActivityListByGoodsIds($input->goodsIds, [0, 1, 2]);
         if (count($activityList) != 0) {
             return $this->fail(CodeResponse::DATA_EXISTED, '已添加相同活动商品');
         }

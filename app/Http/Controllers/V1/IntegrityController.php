@@ -28,7 +28,7 @@ class IntegrityController extends Controller
         $goodsIds = $integrityGoodsList->pluck('goods_id')->toArray();
 
         $activityList = ActivityService::getInstance()
-            ->getActivityListByGoodsIds($goodsIds, ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
+            ->getActivityListByGoodsIds($goodsIds, [0, 1], ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
             ->keyBy('goods_id');
 
         $groupedCouponList = CouponService::getInstance()

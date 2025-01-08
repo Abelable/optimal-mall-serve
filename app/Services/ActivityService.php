@@ -40,9 +40,9 @@ class ActivityService extends BaseService
         return Activity::query()->where('status', $status)->orderBy('sort', 'desc')->get($columns);
     }
 
-    public function getActivityListByGoodsIds(array $goodsIds, $columns = ['*'])
+    public function getActivityListByGoodsIds(array $goodsIds, $statusList, $columns = ['*'])
     {
-        return Activity::query()->whereIn('status', [0, 1])->whereIn('goods_id', $goodsIds)->get($columns);
+        return Activity::query()->whereIn('status', $statusList)->whereIn('goods_id', $goodsIds)->get($columns);
     }
 
     public function getActivityByGoodsId($goodsId, array $statusList, $columns = ['*'])
