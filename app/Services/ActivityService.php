@@ -87,7 +87,6 @@ class ActivityService extends BaseService
             $this->throwBusinessException(CodeResponse::NOT_FOUND, '活动不存在');
         }
         $activity->status = 2;
-        $activity->tag = 0;
         $activity->save();
         return $activity;
     }

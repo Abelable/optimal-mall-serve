@@ -55,8 +55,7 @@ class MallController extends Controller
         $list = $activityList->map(function (Activity $activity) use ($groupedCouponList, $subscribedActivityIds, $goodsList) {
             // todo 预告到期未开始
             if ($activity->status == 0 && strtotime($activity->start_time) <= time()) {
-                $activity->status = 1;
-                $activity->save();
+                ActivityService::getInstance()->startActivity($activity->id);
             }
 
             // todo 活动到期未结束
