@@ -48,6 +48,10 @@ class OrderService extends BaseService
     public function getOrderPage(OrderPageInput $input, $columns = ['*'])
     {
         $query = Order::query();
+        if (!empty($input->goodsId)) {
+            $orderIds = OrderGoodsService::getInstance()->getListByGoodsIds([$input->goodsId])->pluck('order_id')->toArray();
+            $query = $query->whereIn('id', $orderIds);
+        }
         if (!empty($input->status)) {
             $query = $query->where('status', $input->status);
         }

@@ -8,6 +8,7 @@ class OrderPageInput extends PageInput
 {
     public $orderSn;
     public $status;
+    public $goodsId;
     public $merchantId;
     public $userId;
     public $consignee;
@@ -18,6 +19,7 @@ class OrderPageInput extends PageInput
         return array_merge([
             'orderSn' => 'string',
             'status' => 'integer',
+            'goodsId' => 'integer',
             'merchantId' => 'integer',
             'userId' => 'integer',
             'consignee' => 'string',
