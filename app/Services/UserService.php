@@ -70,6 +70,11 @@ class UserService extends BaseService
         return User::query()->whereNotIn('id', $promoterIds)->get($columns);
     }
 
+    public function getList($columns = ['*'])
+    {
+        return User::query()->get($columns);
+    }
+
     public function searchList($keywords)
     {
         return User::search($keywords)->get();

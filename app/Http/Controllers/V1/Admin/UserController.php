@@ -63,6 +63,12 @@ class UserController extends Controller
         return $this->success();
     }
 
+    public function options()
+    {
+        $options = UserService::getInstance()->getList(['id', 'avatar', 'nickname']);
+        return $this->success($options);
+    }
+
     public function normalOptions()
     {
         $promoterIds = PromoterService::getInstance()->getOptions()->pluck('user_id')->toArray();
