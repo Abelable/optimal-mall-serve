@@ -72,4 +72,9 @@ class OrderGoodsService extends BaseService
             ->where('created_at', '>=', now()->subDays(7))
             ->get($columns);
     }
+
+    public function getList($columns = ['*'])
+    {
+        return OrderGoods::query()->get($columns);
+    }
 }

@@ -243,8 +243,8 @@ class GoodsService extends BaseService
         return $goods;
     }
 
-    public function handelActivityList($activityList)
+    public function getListByIds(array $goodsIds, $columns = ['*'])
     {
-
+        return Goods::query()->whereIn('id', $goodsIds)->get($columns);
     }
 }

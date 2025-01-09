@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\OrdersImport;
 use App\Models\Order;
 use App\Models\OrderGoods;
+use App\Services\GoodsService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\UserService;
@@ -20,6 +21,13 @@ use Maatwebsite\Excel\Facades\Excel;
 class OrderController extends Controller
 {
     protected $guard = 'Admin';
+
+    public function orderedGoodsOptions()
+    {
+        $goodsIds = array_unique(OrderGoodsService::getInstance()->getList()->pluck('goods_id')->toArray());
+        $goodsOptions = GoodsService::getInstance()->getListByIds($goodsIds, ['id', 'cover', 'name']);
+        return $this->success($goodsOptions);
+    }
 
     public function orderedUserOptions()
     {
