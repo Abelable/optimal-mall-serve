@@ -7,6 +7,7 @@ use App\Exports\OrdersExport;
 use App\Http\Controllers\Controller;
 use App\Imports\OrdersImport;
 use App\Models\Order;
+use App\Models\OrderGoods;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\UserService;
@@ -31,10 +32,23 @@ class OrderController extends Controller
         $userIds = $orderList->pluck('user_id')->toArray();
         $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname'])->keyBy('id');
 
-        $list = $orderList->map(function (Order $order) use ($userList) {
+        $orderIds = $orderList->pluck('id')->toArray();
+        $goodsListColumns = ['order_id', 'goods_id', 'cover', 'name'];
+        $groupedGoodsList = OrderGoodsService::getInstance()->getListByOrderIds($orderIds, $goodsListColumns)->groupBy('order_id');
+
+        $list = $orderList->map(function (Order $order) use ($userList, $groupedGoodsList) {
             $user = $userList->get($order->user_id);
             $order['userInfo'] = $user;
             unset($order->user_id);
+
+            $goodsList = $groupedGoodsList->get($order->id)->map(function (OrderGoods $orderGoods) use ($order) {
+                return [
+                    'id' => $orderGoods->goods_id,
+                    'cover' => $orderGoods->cover,
+                    'name' => $orderGoods->name
+                ];
+            });
+            $order['goodsList'] = $goodsList;
             return $order;
         });
 

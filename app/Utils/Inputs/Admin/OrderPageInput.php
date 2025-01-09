@@ -9,6 +9,7 @@ class OrderPageInput extends PageInput
     public $orderSn;
     public $status;
     public $merchantId;
+    public $userId;
     public $consignee;
     public $mobile;
 
@@ -18,6 +19,7 @@ class OrderPageInput extends PageInput
             'orderSn' => 'string',
             'status' => 'integer',
             'merchantId' => 'integer',
+            'userId' => 'integer',
             'consignee' => 'string',
             'mobile' => 'regex:/^1[345789][0-9]{9}$/',
         ], parent::rules());
