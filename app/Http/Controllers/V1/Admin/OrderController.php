@@ -21,12 +21,18 @@ class OrderController extends Controller
 {
     protected $guard = 'Admin';
 
+    public function orderedUserOptions()
+    {
+        $userIds = OrderService::getInstance()->getOrderList()->pluck('user_id')->toArray();
+        $userOptions = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname']);
+        return $this->success($userOptions);
+    }
     public function list()
     {
         /** @var OrderPageInput $input */
         $input = OrderPageInput::new();
         $columns = ['id', 'user_id', 'order_sn', 'status', 'merchant_id', 'refund_amount', 'consignee', 'mobile', 'address', 'created_at', 'updated_at'];
-        $page = OrderService::getInstance()->getOrderList($input, $columns);
+        $page = OrderService::getInstance()->getOrderPage($input, $columns);
         $orderList = collect($page->items());
 
         $userIds = $orderList->pluck('user_id')->toArray();

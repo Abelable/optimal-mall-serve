@@ -522,6 +522,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
     });
 
     Route::prefix('order')->group(function () {
+        Route::get('user_options', 'OrderController@orderedUserOptions');
         Route::post('list', 'OrderController@list');
         Route::get('detail', 'OrderController@detail');
         Route::post('delivery', 'OrderController@delivery');

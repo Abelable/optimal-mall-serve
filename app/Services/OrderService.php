@@ -40,7 +40,12 @@ class OrderService extends BaseService
         return Order::query()->where('user_id', $userId)->whereIn('status', $statusList)->count();
     }
 
-    public function getOrderList(OrderPageInput $input, $columns = ['*'])
+    public function getOrderList($columns = ['*'])
+    {
+        return Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501])->get($columns);
+    }
+
+    public function getOrderPage(OrderPageInput $input, $columns = ['*'])
     {
         $query = Order::query();
         if (!empty($input->status)) {
