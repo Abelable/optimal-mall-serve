@@ -34,4 +34,9 @@ class RuralGoodsService extends BaseService
     {
         return RuralGoods::query()->find($id, $columns);
     }
+
+    public function deleteByGoodsId($goodsId)
+    {
+        return RuralGoods::query()->where('goods_id', $goodsId)->delete();
+    }
 }

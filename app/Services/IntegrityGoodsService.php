@@ -30,6 +30,11 @@ class IntegrityGoodsService extends BaseService
 
     public function deleteById($id)
     {
-        IntegrityGoods::query()->where('id', $id)->delete();
+        return IntegrityGoods::query()->where('id', $id)->delete();
+    }
+
+    public function deleteByGoodsId($goodsId)
+    {
+        return IntegrityGoods::query()->where('goods_id', $goodsId)->delete();
     }
 }

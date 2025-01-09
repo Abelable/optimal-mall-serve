@@ -5,8 +5,15 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Goods;
 use App\Services\ActivityService;
+use App\Services\GiftGoodsService;
 use App\Services\GoodsCategoryService;
 use App\Services\GoodsService;
+use App\Services\IntegrityGoodsService;
+use App\Services\LimitedTimeRecruitGoodsService;
+use App\Services\NewYearCultureGoodsService;
+use App\Services\NewYearGoodsService;
+use App\Services\NewYearLocalGoodsService;
+use App\Services\RuralGoodsService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsListInput;
 use App\Utils\Inputs\GoodsInput;
@@ -91,6 +98,13 @@ class GoodsController extends Controller
                 $activity->status = 2;
                 $activity->save();
             }
+            RuralGoodsService::getInstance()->deleteByGoodsId($goods->id);
+            GiftGoodsService::getInstance()->deleteByGoodsId($goods->id);
+            IntegrityGoodsService::getInstance()->deleteByGoodsId($goods->id);
+            NewYearGoodsService::getInstance()->deleteByGoodsId($goods->id);
+            NewYearCultureGoodsService::getInstance()->deleteByGoodsId($goods->id);
+            NewYearLocalGoodsService::getInstance()->deleteByGoodsId($goods->id);
+            LimitedTimeRecruitGoodsService::getInstance()->deleteByGoodsId($goods->id);
         });
 
         return $this->success();

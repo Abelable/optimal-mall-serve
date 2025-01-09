@@ -42,6 +42,11 @@ class NewYearLocalGoodsService extends BaseService
 
     public function deleteById($id)
     {
-        NewYearLocalGoods::query()->where('id', $id)->delete();
+        return NewYearLocalGoods::query()->where('id', $id)->delete();
+    }
+
+    public function deleteByGoodsId($goodsId)
+    {
+        return NewYearLocalGoods::query()->where('goods_id', $goodsId)->delete();
     }
 }

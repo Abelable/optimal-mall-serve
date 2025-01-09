@@ -35,4 +35,9 @@ class GiftGoodsService extends BaseService
     {
         return GiftGoods::query()->find($id, $columns);
     }
+
+    public function deleteByGoodsId($goodsId)
+    {
+        return GiftGoods::query()->where('goods_id', $goodsId)->delete();
+    }
 }

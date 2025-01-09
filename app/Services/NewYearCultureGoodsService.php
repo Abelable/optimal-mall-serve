@@ -30,6 +30,11 @@ class NewYearCultureGoodsService extends BaseService
 
     public function deleteById($id)
     {
-        NewYearCultureGoods::query()->where('id', $id)->delete();
+       return NewYearCultureGoods::query()->where('id', $id)->delete();
+    }
+
+    public function deleteByGoodsId($goodsId)
+    {
+        return NewYearCultureGoods::query()->where('goods_id', $goodsId)->delete();
     }
 }

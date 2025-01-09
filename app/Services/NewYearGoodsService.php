@@ -32,4 +32,9 @@ class NewYearGoodsService extends BaseService
     {
         NewYearGoods::query()->where('id', $id)->delete();
     }
+
+    public function deleteByGoodsId($goodsId)
+    {
+        NewYearGoods::query()->where('goods_id', $goodsId)->delete();
+    }
 }
