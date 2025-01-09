@@ -22,6 +22,12 @@ class OrderController extends Controller
 {
     protected $guard = 'Admin';
 
+    public function shipOrderCount()
+    {
+        $count = OrderService::getInstance()->getOrderCountByStatusList([201, 204]);
+        return $this->success($count);
+    }
+
     public function orderedGoodsOptions()
     {
         $goodsIds = array_unique(OrderGoodsService::getInstance()->getList()->pluck('goods_id')->toArray());

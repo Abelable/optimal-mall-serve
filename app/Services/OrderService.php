@@ -899,4 +899,9 @@ class OrderService extends BaseService
             ->where('updated_at', '>=', now()->subDays(14))
             ->get($columns);
     }
+
+    public function getOrderCountByStatusList(array $statusList)
+    {
+        return Order::query()->whereIn('status', $statusList)->count();
+    }
 }
