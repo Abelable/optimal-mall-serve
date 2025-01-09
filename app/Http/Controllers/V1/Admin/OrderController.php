@@ -39,7 +39,7 @@ class OrderController extends Controller
         $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname'])->keyBy('id');
 
         $orderIds = $orderList->pluck('id')->toArray();
-        $goodsListColumns = ['order_id', 'goods_id', 'cover', 'name'];
+        $goodsListColumns = ['order_id', 'goods_id', 'cover', 'name', 'number'];
         $groupedGoodsList = OrderGoodsService::getInstance()->getListByOrderIds($orderIds, $goodsListColumns)->groupBy('order_id');
 
         $list = $orderList->map(function (Order $order) use ($userList, $groupedGoodsList) {
@@ -51,7 +51,8 @@ class OrderController extends Controller
                 return [
                     'id' => $orderGoods->goods_id,
                     'cover' => $orderGoods->cover,
-                    'name' => $orderGoods->name
+                    'name' => $orderGoods->name,
+                    'number' => $orderGoods->number,
                 ];
             });
             $order['goodsList'] = $goodsList;
