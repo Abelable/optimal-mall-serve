@@ -134,7 +134,7 @@ class GoodsController extends Controller
                 $address = AddressService::getInstance()->getDefaultAddress($this->userId(), $addressColumns);
             } else {
                 /** @var Address $address */
-                $address = AddressService::getInstance()->getById($this->userId(), $addressId, $addressColumns);
+                $address = AddressService::getInstance()->getUserAddressById($this->userId(), $addressId, $addressColumns);
             }
             $goods['addressInfo'] = $address;
         }

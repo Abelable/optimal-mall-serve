@@ -47,7 +47,7 @@ class OrderController extends Controller
             $address = AddressService::getInstance()->getDefaultAddress($this->userId(), $addressColumns);
         } else {
             /** @var Address $address */
-            $address = AddressService::getInstance()->getById($this->userId(), $addressId, $addressColumns);
+            $address = AddressService::getInstance()->getUserAddressById($this->userId(), $addressId, $addressColumns);
         }
 
         $cartGoodsListColumns = ['goods_id', 'cover', 'name', 'is_gift', 'freight_template_id', 'selected_sku_name', 'price', 'number'];
@@ -175,7 +175,7 @@ class OrderController extends Controller
 
         $orderIds = DB::transaction(function () use ($input) {
             // 1.获取地址
-            $address = AddressService::getInstance()->getById($this->userId(), $input->addressId);
+            $address = AddressService::getInstance()->getUserAddressById($this->userId(), $input->addressId);
             if (is_null($address)) {
                 return $this->fail(CodeResponse::NOT_FOUND, '用户地址不存在');
             }
