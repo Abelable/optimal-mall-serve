@@ -13,6 +13,7 @@ use App\Services\CartGoodsService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\CategoryService;
+use App\Services\GoodsRealImageService;
 use App\Services\GoodsService;
 use App\Services\MerchantService;
 use App\Services\OrderGoodsService;
@@ -118,6 +119,9 @@ class GoodsController extends Controller
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
+
+        $realImages = GoodsRealImageService::getInstance()->getByGoodsId($goods->id);
+        $goods['realImageList'] = json_decode($realImages);
 
         $goods->image_list = json_decode($goods->image_list);
         $goods->detail_image_list = json_decode($goods->detail_image_list);

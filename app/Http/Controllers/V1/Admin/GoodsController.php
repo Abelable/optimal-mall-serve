@@ -46,7 +46,7 @@ class GoodsController extends Controller
         }
 
         $realImages = GoodsRealImageService::getInstance()->getByGoodsId($id);
-        $goods['real_image_list'] = json_decode($realImages->image_list);
+        $goods['realImageList'] = json_decode($realImages->image_list);
 
         $goods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
         unset($goods->categories);
