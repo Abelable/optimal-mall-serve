@@ -189,12 +189,12 @@ class OrderController extends Controller
 
     public function modifyAddressInfo()
     {
-        $orderId = $this->verifyRequiredInteger('id');
+        $id = $this->verifyRequiredInteger('id');
         $consignee = $this->verifyRequiredString('consignee');
         $mobile = $this->verifyRequiredString('mobile');
         $address = $this->verifyRequiredString('address');
 
-        $order = OrderService::getInstance()->getOrderById($orderId);
+        $order = OrderService::getInstance()->getOrderById($id);
         if (!$order->canShipHandle()) {
             return $this->fail(CodeResponse::ORDER_INVALID_OPERATION, '非待发货订单，无法修改地址');
         }
