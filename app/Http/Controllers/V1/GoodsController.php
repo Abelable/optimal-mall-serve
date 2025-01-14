@@ -121,7 +121,7 @@ class GoodsController extends Controller
         }
 
         $realImages = GoodsRealImageService::getInstance()->getByGoodsId($goods->id);
-        $goods['realImageList'] = json_decode($realImages);
+        $goods['realImageList'] = $realImages ? json_decode($realImages->image_list) : [];
 
         $goods->image_list = json_decode($goods->image_list);
         $goods->detail_image_list = json_decode($goods->detail_image_list);

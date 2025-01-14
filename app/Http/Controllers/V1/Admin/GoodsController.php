@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Goods;
+use App\Models\GoodsRealImage;
 use App\Services\ActivityService;
 use App\Services\GiftGoodsService;
 use App\Services\GoodsCategoryService;
@@ -45,8 +46,9 @@ class GoodsController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
 
+        /** @var GoodsRealImage $realImages */
         $realImages = GoodsRealImageService::getInstance()->getByGoodsId($id);
-        $goods['realImageList'] = json_decode($realImages->image_list);
+        $goods['realImageList'] = $realImages ? json_decode($realImages->image_list) : [];
 
         $goods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
         unset($goods->categories);
