@@ -570,4 +570,12 @@ class OrderController extends Controller
 
         return $this->success($token);
     }
+
+    public function modifyOrderAddressInfo()
+    {
+        $orderId = $this->verifyRequiredInteger('orderId');
+        $addressId = $this->verifyRequiredInteger('addressId');
+        OrderService::getInstance()->modifyAddressInfo($this->userId(), $orderId, $addressId);
+        return $this->success();
+    }
 }

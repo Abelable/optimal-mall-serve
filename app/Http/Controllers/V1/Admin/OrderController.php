@@ -41,6 +41,7 @@ class OrderController extends Controller
         $userOptions = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname']);
         return $this->success($userOptions);
     }
+
     public function list()
     {
         /** @var OrderPageInput $input */
@@ -182,6 +183,25 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             throw new BusinessException(CodeResponse::INVALID_OPERATION, '订单导入失败' . $e->getMessage());
         }
+
+        return $this->success();
+    }
+
+    public function modifyAddressInfo()
+    {
+        $orderId = $this->verifyRequiredInteger('id');
+        $consignee = $this->verifyRequiredString('consignee');
+        $mobile = $this->verifyRequiredString('mobile');
+        $address = $this->verifyRequiredString('address');
+
+        $order = OrderService::getInstance()->getOrderById($orderId);
+        if (!$order->canShipHandle()) {
+            return $this->fail(CodeResponse::ORDER_INVALID_OPERATION, '非待发货订单，无法修改地址');
+        }
+        $order->consignee = $consignee;
+        $order->mobile = $mobile;
+        $order->address = $address;
+        $order->save();
 
         return $this->success();
     }
