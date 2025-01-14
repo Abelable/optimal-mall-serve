@@ -7,6 +7,7 @@ use App\Models\Goods;
 use App\Services\ActivityService;
 use App\Services\GiftGoodsService;
 use App\Services\GoodsCategoryService;
+use App\Services\GoodsRealImageService;
 use App\Services\GoodsService;
 use App\Services\IntegrityGoodsService;
 use App\Services\LimitedTimeRecruitGoodsService;
@@ -43,6 +44,10 @@ class GoodsController extends Controller
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
+
+        $realImages = GoodsRealImageService::getInstance()->getByGoodsId($id);
+        $goods['real_image_list'] = json_decode($realImages->image_list);
+
         $goods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
         unset($goods->categories);
         $goods->image_list = json_decode($goods->image_list);
@@ -74,7 +79,13 @@ class GoodsController extends Controller
         if (is_null($goods)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
         }
-        $goods->delete();
+
+        DB::transaction(function () use ($goods) {
+            $goods->delete();
+            GoodsCategoryService::getInstance()->deleteListByGoodsId($goods->id);
+            GoodsRealImageService::getInstance()->delete($goods->id);
+        });
+
 
         return $this->success();
     }
@@ -117,6 +128,7 @@ class GoodsController extends Controller
         DB::transaction(function () use ($input) {
             $goods = GoodsService::getInstance()->createGoods($input);
             GoodsCategoryService::getInstance()->createList($goods->id, $input->categoryIds);
+            GoodsRealImageService::getInstance()->create($goods->id, $input->realImageList);
         });
 
         return $this->success();
@@ -137,6 +149,7 @@ class GoodsController extends Controller
             GoodsService::getInstance()->updateGoods($goods, $input);
             GoodsCategoryService::getInstance()->deleteListByGoodsId($goods->id);
             GoodsCategoryService::getInstance()->createList($goods->id, $input->categoryIds);
+            GoodsRealImageService::getInstance()->update($goods->id, $input->realImageList);
         });
 
         return $this->success();

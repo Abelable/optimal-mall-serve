@@ -9,6 +9,7 @@ class GoodsInput extends BaseInput
     public $activityCover;
     public $imageList;
     public $detailImageList;
+    public $realImageList;
     public $defaultSpecImage;
     public $name;
     public $introduction;
@@ -32,6 +33,7 @@ class GoodsInput extends BaseInput
             'activityCover' => 'string',
             'imageList' => 'required|array',
             'detailImageList' => 'required|array',
+            'realImageList' => 'array',
             'defaultSpecImage' => 'required|string',
             'name' => 'required|string',
             'introduction' => 'string',
