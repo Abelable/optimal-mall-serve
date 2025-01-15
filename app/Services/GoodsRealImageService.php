@@ -18,6 +18,10 @@ class GoodsRealImageService extends BaseService
     public function update($goodsId, $images)
     {
         $goodsRealImage = $this->getByGoodsId($goodsId);
+        if (is_null($goodsRealImage)) {
+            $goodsRealImage = GoodsRealImage::new();
+            $goodsRealImage->goods_id = $goodsId;
+        }
         $goodsRealImage->image_list = json_encode($images);
         $goodsRealImage->save();
         return $goodsRealImage;
