@@ -462,6 +462,7 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单未付款，无法发货');
         }
         $order->status = OrderEnums::STATUS_SHIP;
+
         $order->ship_channel = $shipChannel;
         if (empty($shipCode)) {
             $express = ExpressService::getInstance()->getExpressByName($shipChannel);
@@ -470,6 +471,14 @@ class OrderService extends BaseService
             $order->ship_code = $shipCode;
         }
         $order->ship_sn = $shipSn;
+
+//        DB::transaction(function () use ($orderId, $shipChannel, $shipCode, $shipSn) {
+//            $orderPackage = OrderPackageService::getInstance()->create($orderId, $shipChannel, $shipCode, $shipSn);
+//
+//            $orderGoodsList = OrderGoodsService::getInstance()->getListByOrderId($orderId);
+//
+//        });
+
         $order->ship_time = now()->toDateTimeString();
         if ($order->cas() == 0) {
             $this->throwUpdateFail();
@@ -480,6 +489,11 @@ class OrderService extends BaseService
         WxMpServe::new()->uploadShippingInfo($openid, $order);
 
         return $order;
+    }
+
+    public function splitShip($orderId, $shipChannel, $shipCode, $shipSn)
+    {
+
     }
 
     public function finish($userId, $orderId)

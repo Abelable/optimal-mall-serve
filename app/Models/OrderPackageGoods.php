@@ -8,7 +8,8 @@ namespace App\Models;
  * @property int $id
  * @property int $package_id 包裹id
  * @property int $goods_id 商品id
- * @property int $goods_cover 商品图片
+ * @property string $goods_cover 商品图片
+ * @property string $goods_name 商品名称
  * @property int $goods_number 商品数量
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -21,6 +22,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereGoodsCover($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereGoodsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereGoodsName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereGoodsNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods wherePackageId($value)
