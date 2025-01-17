@@ -739,7 +739,7 @@ class OrderService extends BaseService
 
     public function salesSum()
     {
-        return Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501])->sum('payment_amount');
+        return Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501])->sum('refund_amount');
     }
 
     public function dailySalesList()
@@ -750,7 +750,7 @@ class OrderService extends BaseService
         return Order::query()
             ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('SUM(payment_amount) as sum'))
+            ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('SUM(refund_amount) as sum'))
             ->groupBy(DB::raw('DATE(created_at)'))
             ->get();
     }
