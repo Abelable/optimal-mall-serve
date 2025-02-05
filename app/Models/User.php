@@ -15,8 +15,8 @@ use Illuminate\Notifications\Notifiable;
  * App\Models\User
  *
  * @property int $id
- * @property string $nickname 用户昵称或网络名称
  * @property string $avatar 用户头像图片
+ * @property string $nickname 用户昵称或网络名称
  * @property string $mobile 用户手机号码
  * @property string $openid 小程序openid
  * @property int $gender 性别：0-未知，1-男，2-女
