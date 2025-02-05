@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderGoods;
 use App\Services\GoodsService;
 use App\Services\OrderGoodsService;
+use App\Services\OrderPackageService;
 use App\Services\OrderService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
@@ -86,19 +87,23 @@ class OrderController extends Controller
         if (is_null($order)) {
             return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
         }
+
         $goodsList = OrderGoodsService::getInstance()->getListByOrderId($order->id);
         $order['goods_list'] = $goodsList;
+
+        $packageList = OrderPackageService::getInstance()->getListByOrderId($order->id);
+        $order['package_list'] = $packageList;
+
         return $this->success($order);
     }
 
     public function delivery()
     {
         $id = $this->verifyRequiredInteger('id');
-        $shipChannel = $this->verifyRequiredString('shipChannel');
-        $shipCode = $this->verifyRequiredString('shipCode');
-        $shipSn = $this->verifyRequiredString('shipSn');
+        $packageList = $this->verifyArrayNotEmpty('packageList');
+        $isAllDelivered = $this->verifyRequiredInteger('isAllDelivered');
 
-        OrderService::getInstance()->ship($id, $shipChannel, $shipCode, $shipSn);
+        OrderService::getInstance()->splitShip($id, $packageList, $isAllDelivered == 1);
 
         // todo: 管理员操组记录
 

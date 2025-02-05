@@ -4,6 +4,7 @@ namespace App\Utils;
 
 use App\Models\Activity;
 use App\Models\Order;
+use App\Models\OrderPackage;
 use App\Utils\Traits\HttpClient;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -102,8 +103,21 @@ class WxMpServe
         );
     }
 
-    public function uploadShippingInfo($openid, Order $order)
+    public function uploadShippingInfo($openid, Order $order, array $orderPackageList, $isAllDelivered)
     {
+        $shippingList = [];
+        /** @var OrderPackage $orderPackage */
+        foreach ($orderPackageList as $orderPackage) {
+            $shippingList[] = [
+                'tracking_no' => $orderPackage->ship_sn,
+                'express_company' => $orderPackage->ship_code,
+                'item_desc' => $orderPackage->goodsList()->pluck('goods_name')->implode('，'),
+                'contact' => [
+                    'receiver_contact' => substr($order->mobile,0, 3) . '****' .substr($order->mobile,-4)
+                ]
+            ];
+        }
+
         return $this->httpPost(
             sprintf(self::UPLOAD_SHIPPING_INFO_URL, $this->stableAccessToken),
             [
@@ -113,17 +127,8 @@ class WxMpServe
                 ],
                 'logistics_type' => 1,
                 'delivery_mode' => 2,
-                'is_all_delivered' => true,
-                'shipping_list' => [
-                    [
-                        'tracking_no' => $order->ship_sn,
-                        'express_company' => $order->ship_code,
-                        'item_desc' => $order->goodsList->pluck('name')->implode('，'),
-                        'contact' => [
-                            'receiver_contact' => substr($order->mobile,0, 3) . '****' .substr($order->mobile,-4)
-                        ]
-                    ]
-                ],
+                'is_all_delivered' => $isAllDelivered,
+                'shipping_list' => $shippingList,
                 'upload_time' => Carbon::now()->format('Y-m-d\TH:i:s.uP'),
                 'payer' => [
                     'openid' => $openid
