@@ -15,7 +15,7 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('order_sn')->comment('订单编号');
+            $table->string('order_sn')->unique()->comment('订单编号');
             $table->integer('status')->comment('订单状态');
             $table->string('remarks')->default('')->comment('订单备注');
             $table->integer('merchant_id')->comment('商家id');
