@@ -517,7 +517,9 @@ class OrderService extends BaseService
                 }
                 $orderPackage = OrderPackageService::getInstance()->create($order->id, $shipChannel, $shipCode, $shipSn);
                 $orderPackageList[] = $orderPackage;
-                foreach ($package['goodsList'] as $goods) {
+
+                $goodsList = json_decode($package['goodsList']);
+                foreach ($goodsList as $goods) {
                     OrderPackageGoodsService::getInstance()->create($orderPackage->id, $goods['id'], $goods['cover'], $goods['name'], $goods['number']);
                 }
             }
