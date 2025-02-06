@@ -6,6 +6,7 @@ namespace App\Models;
  * App\Models\OrderPackageGoods
  *
  * @property int $id
+ * @property int $order_id 订单id
  * @property int $package_id 包裹id
  * @property int $goods_id 商品id
  * @property string $goods_cover 商品图片
@@ -25,6 +26,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereGoodsName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereGoodsNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereOrderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods wherePackageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|OrderPackageGoods withTrashed()

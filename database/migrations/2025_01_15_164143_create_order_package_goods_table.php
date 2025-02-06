@@ -15,6 +15,7 @@ class CreateOrderPackageGoodsTable extends Migration
     {
         Schema::create('order_package_goods', function (Blueprint $table) {
             $table->id();
+            $table->integer('order_id')->comment('订单id');
             $table->integer('package_id')->comment('包裹id');
             $table->integer('goods_id')->comment('商品id');
             $table->string('goods_cover')->comment('商品图片');

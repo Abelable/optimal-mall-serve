@@ -18,4 +18,9 @@ class OrderPackageGoodsService extends BaseService
         $goods->goods_number = $goodsNumber;
         $goods->save();
     }
+
+    public function getListByOrderId($orderId, $columns = ['*'])
+    {
+        return OrderPackageGoods::query()->where('order_id', $orderId)->get($columns);
+    }
 }
