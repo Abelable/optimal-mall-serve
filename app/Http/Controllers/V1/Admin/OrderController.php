@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderGoods;
 use App\Services\GoodsService;
 use App\Services\OrderGoodsService;
+use App\Services\OrderPackageGoodsService;
 use App\Services\OrderPackageService;
 use App\Services\OrderService;
 use App\Services\UserService;
@@ -91,8 +92,11 @@ class OrderController extends Controller
         $goodsList = OrderGoodsService::getInstance()->getListByOrderId($order->id);
         $order['goods_list'] = $goodsList;
 
+        $packageGoodsList = OrderPackageGoodsService::getInstance()->getListByOrderId($order->id);
+        $order['package_goods_list'] = $packageGoodsList ?: [];
+
         $packageList = OrderPackageService::getInstance()->getListByOrderId($order->id);
-        $order['package_list'] = $packageList;
+        $order['package_list'] = $packageList ?: [];
 
         return $this->success($order);
     }
@@ -113,14 +117,26 @@ class OrderController extends Controller
     public function shippingInfo()
     {
         $id = $this->verifyRequiredId('id');
-        $order = OrderService::getInstance()->getOrderById($id);
-        if (is_null($order)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
+        $package = OrderPackageService::getInstance()->getPackageById($id);
+
+        if (!is_null($package)) {
+            $order = OrderService::getInstance()->getOrderById($package->order_id);
+            if (is_null($order)) {
+                return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
+            }
+            $traces = ExpressServe::new()->track($package->ship_code, $package->ship_sn, $order->mobile);
+        } else {
+            // todo 旧逻辑兼容处理
+            $order = OrderService::getInstance()->getOrderById($id);
+            if (is_null($order)) {
+                return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
+            }
+            $traces = ExpressServe::new()->track($order->ship_code, $order->ship_sn, $order->mobile);
         }
-        $traces = ExpressServe::new()->track($order->ship_code, $order->ship_sn, $order->mobile);
+
         return $this->success([
-            'shipChannel' => $order->ship_channel,
-            'shipSn' => $order->ship_sn,
+            'shipChannel' => $package ? $package->ship_channel : $order->ship_channel,
+            'shipSn' => $package ? $package->ship_sn : $order->ship_sn,
             'traces' => $traces
         ]);
     }

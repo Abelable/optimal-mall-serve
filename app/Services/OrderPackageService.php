@@ -21,4 +21,9 @@ class OrderPackageService extends BaseService
     {
         return OrderPackage::query()->where('order_id', $orderId)->get($columns);
     }
+
+    public function getPackageById($id, $columns = ['*'])
+    {
+        return OrderPackage::query()->find($id, $columns);
+    }
 }

@@ -8,9 +8,10 @@ use App\Models\OrderPackageGoods;
 class OrderPackageGoodsService extends BaseService
 {
 
-    public function create($packageId, $goodsId, $goodsCover, $goodsName, $goodsNumber)
+    public function create($orderId, $packageId, $goodsId, $goodsCover, $goodsName, $goodsNumber)
     {
         $goods = OrderPackageGoods::new();
+        $goods->order_id = $orderId;
         $goods->package_id = $packageId;
         $goods->goods_id = $goodsId;
         $goods->goods_cover = $goodsCover;
