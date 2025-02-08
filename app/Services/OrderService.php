@@ -508,9 +508,9 @@ class OrderService extends BaseService
 
             $orderPackageList = [];
             foreach ($packageList as $package) {
-                $shipChannel = $package['channel'];
-                $shipCode = $package['code'];
-                $shipSn = $package['sn'];
+                $shipChannel = $package['shipChannel'];
+                $shipCode = $package['shipCode'];
+                $shipSn = $package['shipSn'];
                 if (empty($shipCode)) {
                     $express = ExpressService::getInstance()->getExpressByName($shipChannel);
                     $shipCode = $express->code;
