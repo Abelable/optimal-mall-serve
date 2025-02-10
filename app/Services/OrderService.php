@@ -367,8 +367,10 @@ class OrderService extends BaseService
     public function restoreCoupon($userId, $couponId)
     {
         $userCoupon = UserCouponService::getInstance()->getUserUsedCouponByCouponId($userId, $couponId);
-        $userCoupon->status = 1;
-        $userCoupon->save();
+        if (!is_null($userCoupon)) {
+            $userCoupon->status = 1;
+            $userCoupon->save();
+        }
         return $userCoupon;
     }
 
