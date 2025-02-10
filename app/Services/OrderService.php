@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Exceptions\BusinessException;
 use App\Jobs\OverTimeCancelOrder;
 use App\Models\Address;
 use App\Models\CartGoods;
@@ -461,39 +460,76 @@ class OrderService extends BaseService
         if (!$order->canShipHandle()) {
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单未付款，无法发货');
         }
-        $order->status = OrderEnums::STATUS_SHIP;
 
-        $order->ship_channel = $shipChannel;
         if (empty($shipCode)) {
             $express = ExpressService::getInstance()->getExpressByName($shipChannel);
-            $order->ship_code = $express->code;
-        } else {
-            $order->ship_code = $shipCode;
-        }
-        $order->ship_sn = $shipSn;
-
-//        DB::transaction(function () use ($orderId, $shipChannel, $shipCode, $shipSn) {
-//            $orderPackage = OrderPackageService::getInstance()->create($orderId, $shipChannel, $shipCode, $shipSn);
-//
-//            $orderGoodsList = OrderGoodsService::getInstance()->getListByOrderId($orderId);
-//
-//        });
-
-        $order->ship_time = now()->toDateTimeString();
-        if ($order->cas() == 0) {
-            $this->throwUpdateFail();
+            $shipCode = $express->code;
         }
 
-        // 发货同步小程序后台
-        $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
-        WxMpServe::new()->uploadShippingInfo($openid, $order);
+        DB::transaction(function () use ($order, $shipChannel, $shipCode, $shipSn) {
+            $order->status = OrderEnums::STATUS_SHIP;
+            $order->ship_time = now()->toDateTimeString();
+            if ($order->cas() == 0) {
+                $this->throwUpdateFail();
+            }
+
+            $orderPackage = OrderPackageService::getInstance()->create($order->id, $shipChannel, $shipCode, $shipSn);
+            $orderGoodsList = OrderGoodsService::getInstance()->getListByOrderId($order->id);
+            foreach ($orderGoodsList as $orderGoods) {
+                OrderPackageGoodsService::getInstance()->create($order->id, $orderPackage->id, $orderGoods->goods_id, $orderGoods->cover, $orderGoods->name, $orderGoods->number);
+            }
+
+            // 发货同步小程序后台
+            $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
+            WxMpServe::new()->uploadShippingInfo($openid, $order, [$orderPackage], true);
+        });
 
         return $order;
     }
 
-    public function splitShip($orderId, $shipChannel, $shipCode, $shipSn)
+    public function splitShip($orderId, array $packageList, $isAllDelivered = false)
     {
+        $order = $this->getOrderById($orderId);
+        if (is_null($order)) {
+            $this->throwBadArgumentValue();
+        }
+        if (!$order->canShipHandle()) {
+            $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单未付款，无法发货');
+        }
 
+        DB::transaction(function () use ($order, $packageList, $isAllDelivered) {
+            if ($isAllDelivered) {
+                $order->status = OrderEnums::STATUS_SHIP;
+                $order->ship_time = now()->toDateTimeString();
+                if ($order->cas() == 0) {
+                    $this->throwUpdateFail();
+                }
+            }
+
+            $orderPackageList = [];
+            foreach ($packageList as $package) {
+                $shipChannel = $package['shipChannel'];
+                $shipCode = $package['shipCode'];
+                $shipSn = $package['shipSn'];
+                if (empty($shipCode)) {
+                    $express = ExpressService::getInstance()->getExpressByName($shipChannel);
+                    $shipCode = $express->code;
+                }
+                $orderPackage = OrderPackageService::getInstance()->create($order->id, $shipChannel, $shipCode, $shipSn);
+                $orderPackageList[] = $orderPackage;
+
+                $goodsList = json_decode($package['goodsList']);
+                foreach ($goodsList as $goods) {
+                    OrderPackageGoodsService::getInstance()->create($order->id, $orderPackage->id, $goods['id'], $goods['cover'], $goods['name'], $goods['number']);
+                }
+            }
+
+            // 发货同步小程序后台
+            $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
+            WxMpServe::new()->uploadShippingInfo($openid, $order, $orderPackageList, $isAllDelivered);
+        });
+
+        return $order;
     }
 
     public function finish($userId, $orderId)

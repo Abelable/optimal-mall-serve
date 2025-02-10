@@ -13,6 +13,8 @@ namespace App\Models;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OrderPackageGoods[] $goodsList
+ * @property-read int|null $goods_list_count
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackage newQuery()
  * @method static \Illuminate\Database\Query\Builder|OrderPackage onlyTrashed()
@@ -31,4 +33,8 @@ namespace App\Models;
  */
 class OrderPackage extends BaseModel
 {
+    public function goodsList()
+    {
+        return $this->hasMany(OrderPackageGoods::class, 'package_id');
+    }
 }

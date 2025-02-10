@@ -16,4 +16,14 @@ class OrderPackageService extends BaseService
         $package->save();
         return $package;
     }
+
+    public function getListByOrderId($orderId, $columns = ['*'])
+    {
+        return OrderPackage::query()->where('order_id', $orderId)->get($columns);
+    }
+
+    public function getPackageById($id, $columns = ['*'])
+    {
+        return OrderPackage::query()->find($id, $columns);
+    }
 }
