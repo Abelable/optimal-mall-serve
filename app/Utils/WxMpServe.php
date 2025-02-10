@@ -138,11 +138,11 @@ class WxMpServe
         );
     }
 
-    public function getWaybillToken($openid, Order $order)
+    public function getWaybillToken($openid, $shipCode, $shipSn, $packageGoodsList, Order $order)
     {
-        $goodsArray = [];
-        foreach ($order->goodsList as $goods) {
-            $goodsArray[] = [
+        $goodsList = [];
+        foreach ($packageGoodsList as $goods) {
+            $goodsList[] = [
                 'goods_img_url' => $goods->cover,
                 'goods_name' => $goods->name,
             ];
@@ -151,11 +151,11 @@ class WxMpServe
             sprintf(self::TRACE_WAYBILL_URL, $this->stableAccessToken),
             [
                 'openid' => $openid,
-                'delivery_id' => $order->ship_code,
-                'waybill_id' => $order->ship_sn,
+                'delivery_id' => $shipCode,
+                'waybill_id' => $shipSn,
                 'receiver_phone' => $order->mobile,
                 'goods_info' => [
-                    'detail_list' => $goodsArray
+                    'detail_list' => $goodsList
                 ],
                 'trans_id' =>  $order->pay_id,
                 'order_detail_path' => 'pages/mine/subpages/order-center/subpages/order-detail/index?id=' . $order->id,

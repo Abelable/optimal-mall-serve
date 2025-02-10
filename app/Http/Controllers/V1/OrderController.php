@@ -11,6 +11,7 @@ use App\Models\FreightTemplate;
 use App\Models\GiftCommission;
 use App\Models\Order;
 use App\Models\OrderGoods;
+use App\Models\OrderPackageGoods;
 use App\Services\AddressService;
 use App\Services\CartGoodsService;
 use App\Services\CommissionService;
@@ -19,6 +20,7 @@ use App\Services\FreightTemplateService;
 use App\Services\GiftCommissionService;
 use App\Services\GiftGoodsService;
 use App\Services\OrderGoodsService;
+use App\Services\OrderPackageService;
 use App\Services\OrderService;
 use App\Services\PromoterService;
 use App\Services\RelationService;
@@ -414,6 +416,8 @@ class OrderController extends Controller
             'coupon_denomination',
             'payment_amount',
             'pay_time',
+            'ship_channel',
+            'ship_sn',
             'ship_time',
             'confirm_time',
             'refund_amount',
@@ -561,12 +565,29 @@ class OrderController extends Controller
     public function waybillToken()
     {
         $id = $this->verifyRequiredId('id');
-        $order = OrderService::getInstance()->getOrderById($id);
-        if (is_null($order)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
-        }
+        $package = OrderPackageService::getInstance()->getPackageById($id);
 
-        $token = WxMpServe::new()->getWaybillToken($this->user()->openid, $order);
+        if (!is_null($package)) {
+            $order = OrderService::getInstance()->getOrderById($package->order_id);
+            if (is_null($order)) {
+                return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
+            }
+            $goodsList = $package->goodsList->map(function (OrderPackageGoods $goods) {
+                return [
+                    'id' => $goods->goods_id,
+                    'cover' => $goods->goods_cover,
+                    'name' => $goods->goods_name,
+                ];
+            });
+            $token = WxMpServe::new()->getWaybillToken($this->user()->openid, $package->ship_code, $package->ship_sn, $goodsList, $order);
+        } else {
+            // todo 旧逻辑兼容处理
+            $order = OrderService::getInstance()->getOrderById($id);
+            if (is_null($order)) {
+                return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
+            }
+            $token = WxMpServe::new()->getWaybillToken($this->user()->openid, $order->ship_code, $order->ship_sn, $order->goodsList, $order);
+        }
 
         return $this->success($token);
     }
