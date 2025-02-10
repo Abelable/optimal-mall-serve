@@ -64,16 +64,19 @@ class OrderController extends Controller
             $order['userInfo'] = $user;
             unset($order->user_id);
 
-            $goodsList = $groupedGoodsList->get($order->id)->map(function (OrderGoods $orderGoods) use ($order) {
-                return [
-                    'id' => $orderGoods->goods_id,
-                    'cover' => $orderGoods->cover,
-                    'name' => $orderGoods->name,
-                    'skuName' => $orderGoods->selected_sku_name,
-                    'price' => $orderGoods->price,
-                    'number' => $orderGoods->number,
-                ];
-            });
+            $goodsList = [];
+            if (!is_null($groupedGoodsList->get($order->id))) {
+                $goodsList = $groupedGoodsList->get($order->id)->map(function (OrderGoods $orderGoods) use ($order) {
+                    return [
+                        'id' => $orderGoods->goods_id,
+                        'cover' => $orderGoods->cover,
+                        'name' => $orderGoods->name,
+                        'skuName' => $orderGoods->selected_sku_name,
+                        'price' => $orderGoods->price,
+                        'number' => $orderGoods->number,
+                    ];
+                });
+            }
             $order['goodsList'] = $goodsList;
             return $order;
         });
