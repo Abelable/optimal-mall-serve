@@ -428,8 +428,13 @@ class OrderController extends Controller
         if (is_null($order)) {
             return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
         }
+
         $goodsList = OrderGoodsService::getInstance()->getListByOrderId($order->id);
         $order['goods_list'] = $goodsList;
+
+        $packageList = OrderPackageService::getInstance()->getListByOrderId($order->id);
+        $order['package_list'] = $packageList ?: [];
+
         return $this->success($order);
     }
 
