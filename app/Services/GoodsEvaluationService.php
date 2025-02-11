@@ -53,6 +53,7 @@ class GoodsEvaluationService extends BaseService
         return GoodsEvaluation::query()
             ->where('goods_id', $goodsId)
             ->orderBy('like_number', 'desc')
+            ->orderBy('created_at', 'desc')
             ->take($count)
             ->get($columns);
     }
