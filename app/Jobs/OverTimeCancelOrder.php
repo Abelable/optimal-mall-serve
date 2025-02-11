@@ -39,7 +39,7 @@ class OverTimeCancelOrder implements ShouldQueue
     public function handle()
     {
         try {
-            OrderService::getInstance()->SystemCancel($this->userId, $this->orderId);
+            OrderService::getInstance()->systemAutoCancel($this->userId, $this->orderId);
         } catch (BusinessException $e) {
             Log::error($e->getMessage());
         }

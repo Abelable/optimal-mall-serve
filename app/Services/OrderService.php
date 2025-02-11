@@ -289,7 +289,7 @@ class OrderService extends BaseService
         });
     }
 
-    public function systemCancel($userId, $orderId)
+    public function systemAutoCancel($userId, $orderId)
     {
         return DB::transaction(function () use ($userId, $orderId) {
             $orderList = $this->getUserOrderList($userId, [$orderId]);
@@ -298,6 +298,25 @@ class OrderService extends BaseService
             }
             return $this->cancel($orderList, 'system');
         });
+    }
+
+    public function systemCancel()
+    {
+        return DB::transaction(function () {
+            $orderList = $this->getOverTimeUnpaidList();
+            if (count($orderList) == 0) {
+                $this->throwBadArgumentValue();
+            }
+            return $this->cancel($orderList, 'system');
+        });
+    }
+
+    public function getOverTimeUnpaidList($columns = ['*'])
+    {
+        return Order::query()
+            ->where('status', OrderEnums::STATUS_CREATE)
+            ->where('created_at', '<=', now()->subHours(24))
+            ->get($columns);
     }
 
     public function adminCancel($orderIds)
