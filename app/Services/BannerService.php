@@ -25,7 +25,7 @@ class BannerService extends BaseService
 
     public function getBannerPage(BannerPageInput $input, $columns = ['*'])
     {
-        $query = Banner::query();
+        $query = Banner::query()->orderByRaw("FIELD(status, 1, 2)");
         if (!is_null($input->position)) {
             $query->where('position', $input->position);
         }
