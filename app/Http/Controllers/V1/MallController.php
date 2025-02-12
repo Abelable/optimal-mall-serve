@@ -11,6 +11,7 @@ use App\Models\VillageGrainGoods;
 use App\Models\VillageSnackGoods;
 use App\Services\ActivityService;
 use App\Services\ActivitySubscriptionService;
+use App\Services\ActivityTagService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\GoodsService;
@@ -31,6 +32,12 @@ class MallController extends Controller
     {
         $list = BannerService::getInstance()->getBannerList();
         return $this->success($list);
+    }
+
+    public function activityTagOptions()
+    {
+        $options = ActivityTagService::getInstance()->getTagOptions(['id', 'name']);
+        return $this->success($options);
     }
 
     public function activityList()
