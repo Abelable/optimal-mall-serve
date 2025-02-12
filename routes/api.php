@@ -309,6 +309,17 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         });
 
         Route::prefix('activity')->group(function () {
+            Route::prefix('tag')->group(function () {
+                Route::post('list', 'ActivityTagController@list');
+                Route::get('detail', 'ActivityTagController@detail');
+                Route::post('add', 'ActivityTagController@add');
+                Route::post('edit', 'ActivityTagController@edit');
+                Route::post('edit_sort', 'ActivityTagController@editSort');
+                Route::post('edit_status', 'ActivityTagController@editStatus');
+                Route::post('delete', 'ActivityTagController@delete');
+                Route::get('options', 'ActivityTagController@options');
+            });
+
             Route::post('list', 'ActivityController@list');
             Route::get('detail', 'ActivityController@detail');
             Route::post('add', 'ActivityController@add');
