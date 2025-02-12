@@ -11,7 +11,7 @@ class ActivityService extends BaseService
 {
     public function getActivityPage(ActivityPageInput $input, $columns = ['*'])
     {
-        $query = Activity::query();
+        $query = Activity::query()->orderByRaw("FIELD(status, 0, 1, 2)");
         if (!is_null($input->name)) {
             $query = $query->where('name', 'like', "%$input->name%");
         }
