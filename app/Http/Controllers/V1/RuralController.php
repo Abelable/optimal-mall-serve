@@ -8,19 +8,12 @@ use App\Services\ActivityService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\GoodsService;
-use App\Services\RuralBannerService;
 use App\Services\RuralGoodsService;
 use App\Services\RuralRegionService;
 
 class RuralController extends Controller
 {
     protected $only = [];
-
-    public function bannerList()
-    {
-        $list = RuralBannerService::getInstance()->getBannerList();
-        return $this->success($list);
-    }
 
     public function regionOptions()
     {

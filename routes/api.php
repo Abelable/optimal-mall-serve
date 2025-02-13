@@ -136,7 +136,6 @@ Route::prefix('banner')->group(function () {
 });
 
 Route::prefix('mall')->group(function () {
-    Route::get('banner_list', 'MallController@bannerList');
     Route::get('activity_tag_options', 'MallController@activityTagOptions');
     Route::get('activity_list', 'MallController@activityList');
     Route::post('activity_subscribe', 'MallController@subscribeActivity');
@@ -152,13 +151,11 @@ Route::prefix('coupon')->group(function () {
 });
 
 Route::prefix('rural')->group(function () {
-    Route::get('banner_list', 'RuralController@bannerList');
     Route::get('region_options', 'RuralController@regionOptions');
     Route::get('goods_list', 'RuralController@goodsList');
 });
 
 Route::prefix('integrity')->group(function () {
-    Route::get('banner_list', 'IntegrityController@bannerList');
     Route::get('goods_list', 'IntegrityController@goodsList');
 });
 
@@ -348,17 +345,6 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
     });
 
     Route::prefix('rural')->group(function () {
-        Route::prefix('banner')->group(function () {
-            Route::post('list', 'RuralBannerController@list');
-            Route::get('detail', 'RuralBannerController@detail');
-            Route::post('add', 'RuralBannerController@add');
-            Route::post('edit', 'RuralBannerController@edit');
-            Route::post('edit_sort', 'RuralBannerController@editSort');
-            Route::post('up', 'RuralBannerController@up');
-            Route::post('down', 'RuralBannerController@down');
-            Route::post('delete', 'RuralBannerController@delete');
-        });
-
         Route::prefix('region')->group(function () {
             Route::post('list', 'RuralRegionController@list');
             Route::get('detail', 'RuralRegionController@detail');
@@ -408,17 +394,6 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
     });
 
     Route::prefix('integrity')->group(function () {
-        Route::prefix('banner')->group(function () {
-            Route::post('list', 'IntegrityBannerController@list');
-            Route::get('detail', 'IntegrityBannerController@detail');
-            Route::post('add', 'IntegrityBannerController@add');
-            Route::post('edit', 'IntegrityBannerController@edit');
-            Route::post('edit_sort', 'IntegrityBannerController@editSort');
-            Route::post('up', 'IntegrityBannerController@up');
-            Route::post('down', 'IntegrityBannerController@down');
-            Route::post('delete', 'IntegrityBannerController@delete');
-        });
-
         Route::prefix('goods')->group(function () {
             Route::post('list', 'IntegrityGoodsController@list');
             Route::post('add', 'IntegrityGoodsController@add');

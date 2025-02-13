@@ -9,18 +9,11 @@ use App\Services\ActivityService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\GoodsService;
-use App\Services\IntegrityBannerService;
 use App\Services\IntegrityGoodsService;
 
 class IntegrityController extends Controller
 {
     protected $only = [];
-
-    public function bannerList()
-    {
-        $list = IntegrityBannerService::getInstance()->getBannerList();
-        return $this->success($list);
-    }
 
     public function goodsList()
     {
