@@ -61,13 +61,13 @@ class CartController extends Controller
 
         $noticeGoodsIds = ActivityService::getInstance()->getActivityListByStatus(0)->pluck('goods_id')->toArray();
 
-        // todo 年货节活动结束注释
-        $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
-        $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
-        $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-        $newYearGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds));
+        // 年货节
+        // $newYearGoodsIds = NewYearGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+        // $newYearCultureGoodsIds = NewYearCultureGoodsService::getInstance()->getGoodsList()->pluck('goods_id')->toArray();
+        // $newYearLocalGoodsIds = NewYearLocalGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+        // $newYearGoodsIds = array_unique(array_merge($newYearGoodsIds, $newYearCultureGoodsIds, $newYearLocalGoodsIds));
 
-        $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($noticeGoodsIds, $newYearGoodsIds, $goodsList, $groupedOrderGoodsList) {
+        $cartGoodsList = $list->map(function (CartGoods $cartGoods) use ($noticeGoodsIds, $goodsList, $groupedOrderGoodsList) {
             // todo 暂定删除活动商品，之后优化
             if (in_array($cartGoods->goods_id, $noticeGoodsIds)) {
                 $cartGoods->delete();
@@ -183,8 +183,8 @@ class CartController extends Controller
 
             $cartGoods['categoryIds'] = $goods->categories->pluck('category_id')->toArray();
 
-            // todo 年货节结束注销
-            $cartGoods['isNewYearGift'] = in_array($cartGoods->goods_id, $newYearGoodsIds) ? 1 : 0;
+            // 年货节
+            // $cartGoods['isNewYearGift'] = in_array($cartGoods->goods_id, $newYearGoodsIds) ? 1 : 0;
 
             return $cartGoods;
         })->filter(function ($cartGoods) {
