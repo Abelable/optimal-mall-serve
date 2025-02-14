@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\Coupon;
 use App\Models\Goods;
-use App\Models\OrderGoods;
 use App\Services\ActivityService;
 use App\Services\ActivitySubscriptionService;
 use App\Services\AddressService;
@@ -19,7 +18,6 @@ use App\Services\GoodsService;
 use App\Services\MerchantService;
 use App\Services\OrderGoodsService;
 use App\Services\UserCouponService;
-use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\GoodsPageInput;
 use App\Utils\Inputs\RecommendGoodsPageInput;
@@ -193,21 +191,7 @@ class GoodsController extends Controller
         }
 
         // 购买用户列表
-        $latestOrderGoodsList = OrderGoodsService::getInstance()->getLatestListByGoodsId($goods->id, 50);
-        $customerIds = $latestOrderGoodsList->pluck('user_id')->toArray();
-        $customerList = UserService::getInstance()->getListByIds($customerIds)->keyBy('id');
-        $latestCustomerList = $latestOrderGoodsList->map(function (OrderGoods $orderGoods) use ($customerList) {
-            $customer = $customerList->get($orderGoods->user_id);
-            return $customer ? [
-                'id' => $customer->id,
-                'avatar' => $customer->avatar,
-                'nickname' => $customer->nickname,
-                'createdAt' => $orderGoods->created_at,
-            ] : null;
-        })->filter(function ($customer) {
-            return !is_null($customer);
-        })->values();
-        $goods['customerList'] = $latestCustomerList;
+        $goods['customerList'] = OrderGoodsService::getInstance()->getLatestCustomerList($goods->id);
 
         return $this->success($goods);
     }

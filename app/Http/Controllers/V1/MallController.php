@@ -15,7 +15,6 @@ use App\Services\ActivityTagService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\GoodsService;
-use App\Services\BannerService;
 use App\Services\OrderGoodsService;
 use App\Services\VillageFreshGoodsService;
 use App\Services\VillageGiftGoodsService;
@@ -48,9 +47,6 @@ class MallController extends Controller
         $goodsIds = $activityList->pluck('goods_id')->toArray();
         $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
 
-//        $orderGoodsList = OrderGoodsService::getInstance()->getListByGoodsIds($goodsIds, ['goods_id', 'user_id']);
-//        $groupedCustomerIds
-
         $groupedCouponList = CouponService::getInstance()
             ->getCouponListByGoodsIds($goodsIds, ['goods_id', 'name', 'denomination', 'type', 'num_limit', 'price_limit'])
             ->groupBy('goods_id');
@@ -77,6 +73,10 @@ class MallController extends Controller
 
             $couponList = $groupedCouponList->get($goods->id);
             $goods['couponList'] = $couponList ?: [];
+
+            if ($activity->status == 1) {
+                $goods['customerList'] = OrderGoodsService::getInstance()->getLatestCustomerList($goods->id);
+            }
 
             return $goods;
         })->filter(function ($goods) {

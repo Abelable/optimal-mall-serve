@@ -86,4 +86,22 @@ class OrderGoodsService extends BaseService
             ->limit($limit)
             ->get($columns);
     }
+
+    public function getLatestCustomerList($goodsId, $limit = 50)
+    {
+        $latestOrderGoodsList = $this->getLatestListByGoodsId($goodsId, $limit);
+        $customerIds = $latestOrderGoodsList->pluck('user_id')->toArray();
+        $customerList = UserService::getInstance()->getListByIds($customerIds)->keyBy('id');
+        return $latestOrderGoodsList->map(function (OrderGoods $orderGoods) use ($customerList) {
+            $customer = $customerList->get($orderGoods->user_id);
+            return $customer ? [
+                'id' => $customer->id,
+                'avatar' => $customer->avatar,
+                'nickname' => $customer->nickname,
+                'createdAt' => $orderGoods->created_at,
+            ] : null;
+        })->filter(function ($customer) {
+            return !is_null($customer);
+        })->values();
+    }
 }
