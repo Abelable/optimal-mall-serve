@@ -198,13 +198,15 @@ class GoodsController extends Controller
         $customerList = UserService::getInstance()->getListByIds($customerIds)->keyBy('id');
         $latestCustomerList = $latestOrderGoodsList->map(function (OrderGoods $orderGoods) use ($customerList) {
             $customer = $customerList->get($orderGoods->user_id);
-            return [
+            return $customer ? [
                 'id' => $customer->id,
                 'avatar' => $customer->avatar,
                 'nickname' => $customer->nickname,
                 'createdAt' => $orderGoods->created_at,
-            ];
-        });
+            ] : null;
+        })->filter(function ($customer) {
+            return !is_null($customer);
+        })->values();
         $goods['customerList'] = $latestCustomerList;
 
         return $this->success($goods);
