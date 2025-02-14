@@ -77,4 +77,13 @@ class OrderGoodsService extends BaseService
     {
         return OrderGoods::query()->get($columns);
     }
+
+    public function getLatestListByGoodsId($goodsId, $limit, $columns = ['*'])
+    {
+        return OrderGoods::query()
+            ->where('goods_id', $goodsId)
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get($columns);
+    }
 }
