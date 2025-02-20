@@ -264,15 +264,15 @@ class OrderService extends BaseService
             // GiftCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
             GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
 
-            // todo 限时成为推广员活动，活动结束之后注释
-            $activityGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
-            $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderIds($orderIds)->pluck('goods_id')->toArray());
-            $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
-            $userId = $orderList->first()->user_id;
-            $promoterInfo = UserService::getInstance()->getUserById($userId)->promoterInfo;
-            if (!empty($commonGoodsIds) && is_null($promoterInfo)) {
-                PromoterService::getInstance()->toBePromoter($userId, 3, $commonGoodsIds);
-            }
+            // 限时成为推广员活动
+            // $activityGoodsIds = LimitedTimeRecruitGoodsService::getInstance()->getAllGoodsList()->pluck('goods_id')->toArray();
+            // $orderGoodsIds = array_unique(OrderGoodsService::getInstance()->getListByOrderIds($orderIds)->pluck('goods_id')->toArray());
+            // $commonGoodsIds = array_intersect($orderGoodsIds, $activityGoodsIds);
+            // $userId = $orderList->first()->user_id;
+            // $promoterInfo = UserService::getInstance()->getUserById($userId)->promoterInfo;
+            // if (!empty($commonGoodsIds) && is_null($promoterInfo)) {
+            //      PromoterService::getInstance()->toBePromoter($userId, 3, $commonGoodsIds);
+            // }
 
             return $orderList;
         });
