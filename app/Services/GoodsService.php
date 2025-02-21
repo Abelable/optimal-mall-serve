@@ -44,7 +44,7 @@ class GoodsService extends BaseService
                 $q->where('category_id', $input->categoryId);
             });
         }
-        if (!empty($input->sort)) {
+        if ($input->sort != 'id') {
             $query = $query->orderBy($input->sort, $input->order);
         } else {
             $query = $query
