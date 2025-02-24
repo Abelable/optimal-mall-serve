@@ -6,9 +6,13 @@ use App\Models\Account;
 
 class AccountService extends BaseService
 {
-    public function getUserAccount($userId, $columns = ['*'])
+    public function getUserAccount($userId)
     {
-        return Account::query()->where('user_id', $userId)->first($columns);
+        $account = Account::query()->where('user_id', $userId)->first();
+        if (is_null($account)) {
+            $account = $this->createUserAccount($userId);
+        }
+        return $account;
     }
 
     public function createUserAccount($userId): Account

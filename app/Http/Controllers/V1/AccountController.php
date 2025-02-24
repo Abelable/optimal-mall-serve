@@ -17,9 +17,6 @@ class AccountController extends Controller
     public function accountInfo()
     {
         $account = AccountService::getInstance()->getUserAccount($this->userId());
-        if (is_null($account)) {
-            $account = AccountService::getInstance()->createUserAccount($this->userId());
-        }
         return $this->success([
             'id' => $account->id,
             'balance' => $account->balance ?: 0,
