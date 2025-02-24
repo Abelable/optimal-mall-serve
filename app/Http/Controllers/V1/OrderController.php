@@ -578,7 +578,7 @@ class OrderController extends Controller
                 return $this->fail(CodeResponse::NOT_FOUND, '订单不存在');
             }
             $goodsList = $package->goodsList->map(function (OrderPackageGoods $goods) {
-                return [
+                return (object) [
                     'id' => $goods->goods_id,
                     'cover' => $goods->goods_cover,
                     'name' => $goods->goods_name,

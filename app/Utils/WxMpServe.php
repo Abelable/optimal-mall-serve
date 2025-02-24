@@ -143,7 +143,7 @@ class WxMpServe
         $goodsList = [];
         foreach ($packageGoodsList as $goods) {
             $goodsList[] = [
-                'goods_img_url' => $goods->cover,
+                'goods_img_url' => $goods->cover ?: '',
                 'goods_name' => $goods->name,
             ];
         }
