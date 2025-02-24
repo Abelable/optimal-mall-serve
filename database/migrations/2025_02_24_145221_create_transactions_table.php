@@ -18,7 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->integer('account_id')->comment('账户id');
             $table->integer('type')->comment('变更类型：1-佣金提现，2-消费抵扣，3-订单退款');
             $table->float('amount')->comment('金额');
-            $table->string('reference_id')->comment('外部参考ID，如订单号');
+            $table->string('reference_id')->default('')->comment('外部参考ID，如订单号');
             $table->timestamps();
             $table->softDeletes();
         });
