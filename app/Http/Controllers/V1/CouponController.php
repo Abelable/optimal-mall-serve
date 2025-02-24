@@ -48,9 +48,13 @@ class CouponController extends Controller
         $list = $userCouponList->map(function (UserCoupon $userCoupon) use ($couponList) {
             /** @var Coupon $coupon */
             $coupon = $couponList->get($userCoupon->coupon_id);
-            $coupon->status = $userCoupon->status;
+            if (!is_null($coupon)) {
+                $coupon->status = $userCoupon->status;
+            }
             return $coupon;
-        });
+        })->filter(function ($coupon) {
+            return !is_null($coupon);
+        })->values();
 
         return $this->success($this->paginate($page, $list));
     }
