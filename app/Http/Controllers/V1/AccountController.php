@@ -14,13 +14,16 @@ use App\Utils\Inputs\PageInput;
 class AccountController extends Controller
 {
     protected $except = [];
-    public function balance()
+    public function accountInfo()
     {
         $account = AccountService::getInstance()->getUserAccount($this->userId());
         if (is_null($account)) {
             $account = AccountService::getInstance()->createUserAccount($this->userId());
         }
-        return $this->success($account->balance);
+        return $this->success([
+            'id' => $account->id,
+            'balance' => $account->balance,
+        ]);
     }
 
     public function transactionRecordList()

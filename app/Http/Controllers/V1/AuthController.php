@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Exceptions\BusinessException;
 use App\Http\Controllers\Controller;
+use App\Services\AccountService;
 use App\Services\RelationService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
@@ -42,6 +43,9 @@ class AuthController extends Controller
             if (!empty($input->superiorId)) {
                 RelationService::getInstance()->banding($input->superiorId, $user->id);
             }
+
+            // 创建用户余额
+            AccountService::getInstance()->createUserAccount($user->id);
 
             return Auth::guard('user')->login($user);
         });

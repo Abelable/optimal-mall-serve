@@ -207,7 +207,7 @@ Route::prefix('withdraw')->group(function () {
 });
 
 Route::prefix('account')->group(function () {
-    Route::get('balance', 'AccountController@balance');
+    Route::get('info', 'AccountController@accountInfo');
     Route::get('transaction_record_list', 'AccountController@transactionRecordList');
 });
 
