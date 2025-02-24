@@ -206,6 +206,11 @@ Route::prefix('withdraw')->group(function () {
     Route::get('record_list', 'WithdrawalController@recordList');
 });
 
+Route::prefix('account')->group(function () {
+    Route::get('balance', 'AccountController@balance');
+    Route::get('transaction_record_list', 'AccountController@transactionRecordList');
+});
+
 /*
 |--------------------------------------------------------------------------
 | 管理后台接口
