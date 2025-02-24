@@ -22,7 +22,7 @@ class AccountController extends Controller
         }
         return $this->success([
             'id' => $account->id,
-            'balance' => $account->balance,
+            'balance' => $account->balance ?: 0,
         ]);
     }
 
