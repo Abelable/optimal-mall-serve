@@ -48,9 +48,16 @@ class CouponController extends Controller
         $list = $userCouponList->map(function (UserCoupon $userCoupon) use ($couponList) {
             /** @var Coupon $coupon */
             $coupon = $couponList->get($userCoupon->coupon_id);
-            if (!is_null($coupon)) {
-                $coupon->status = $userCoupon->status;
+            if (is_null($coupon)) {
+                return null;
             }
+            // 处理优惠券已过期、已下架情况下，用户领取优惠券状态问题
+            if ($coupon->status != 1 && $userCoupon->status == 1) {
+                $userCoupon->status = 3;
+                $userCoupon->save();
+                return null;
+            }
+            $coupon->status = $userCoupon->status;
             return $coupon;
         })->filter(function ($coupon) {
             return !is_null($coupon);
