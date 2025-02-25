@@ -23,11 +23,14 @@ class AccountService extends BaseService
         return $account;
     }
 
-    public function updateBalance($userId, $amount)
+    public function updateBalance($userId, $type, $amount, $referenceId = '')
     {
         $account = $this->getUserAccount($userId);
-        $account->balance = bcadd($account->balance, $amount, 2);
+        $oldBalance = $account->balance;
+        $newBalance = bcadd($oldBalance, $amount, 2);
+        $account->balance = $newBalance;
         $account->save();
-        return $account;
+        TransactionService::getInstance()->createTransaction($account->id, $type, $amount, $referenceId);
+        AccountChangeLogService::getInstance()->createLog($account->id, $oldBalance, $newBalance, $type, $amount);
     }
 }

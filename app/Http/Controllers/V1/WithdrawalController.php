@@ -74,13 +74,7 @@ class WithdrawalController extends Controller
                 }
 
                 // 提现至余额
-                $account = AccountService::getInstance()->getUserAccount($this->userId());
-                $oldBalance = $account->balance;
-                $newBalance = bcadd($oldBalance, $withdrawAmount, 2);
-                $account->balance = $newBalance;
-                $account->save();
-                TransactionService::getInstance()->createTransaction($account->id, 1, $withdrawAmount);
-                AccountChangeLogService::getInstance()->createLog($account->id, $oldBalance, $newBalance, 1, $withdrawAmount);
+                AccountService::getInstance()->updateBalance($this->userId(), 1, $withdrawAmount);
             } else {
                 if ($input->scene == 3) {
                     GiftCommissionService::getInstance()->withdrawUserCommission($this->userId());

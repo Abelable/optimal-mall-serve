@@ -15,13 +15,13 @@ class TransactionService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function createTransaction($accountId, $type, $amount, $reference_id = '')
+    public function createTransaction($accountId, $type, $amount, $referenceId = '')
     {
         $transaction = new Transaction();
         $transaction->account_id = $accountId;
         $transaction->type = $type;
         $transaction->amount = $amount;
-        $transaction->reference_id = $reference_id;
+        $transaction->reference_id = $referenceId;
         $transaction->save();
         return $transaction;
     }

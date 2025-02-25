@@ -208,10 +208,18 @@ class OrderController extends Controller
                 }
             }
 
-            // 3.获取购物车商品
+            // 4.判断余额状态
+            if (!is_null($input->useBalance) && $input->useBalance != 0) {
+                $account = AccountService::getInstance()->getUserAccount($this->userId());
+                if ($account->status == 0 || $account->balance <= 0) {
+                    return $this->fail(CodeResponse::NOT_FOUND, '余额异常不可用，请联系客服解决问题');
+                }
+            }
+
+            // 4.获取购物车商品
             $cartGoodsList = CartGoodsService::getInstance()->getCartGoodsListByIds($this->userId(), $input->cartGoodsIds);
 
-            // 4.获取运费模板列表
+            // 5.获取运费模板列表
             $freightTemplateIds = $cartGoodsList->pluck('freight_template_id')->toArray();
             $freightTemplateList = FreightTemplateService::getInstance()
                 ->getListByIds($freightTemplateIds)
@@ -220,7 +228,7 @@ class OrderController extends Controller
                     return $freightTemplate;
                 })->keyBy('id');
 
-            // 5.按商家进行订单拆分，生成对应订单
+            // 6.按商家进行订单拆分，生成对应订单
             $merchantIds = collect(array_unique($cartGoodsList->pluck('merchant_id')->toArray()));
 
             $promoterInfo = $this->user()->promoterInfo;
@@ -238,24 +246,36 @@ class OrderController extends Controller
                 }
             }
 
-            $orderIds = $merchantIds->map(function ($merchantId) use ($managerId, $superiorId, $promoterInfo, $superiorPromoterInfo, $managerPromoterInfo, $userId, $coupon, $address, $cartGoodsList, $freightTemplateList) {
+            $orderIds = $merchantIds->map(function ($merchantId) use (
+                $managerId,
+                $superiorId,
+                $promoterInfo,
+                $superiorPromoterInfo,
+                $managerPromoterInfo,
+                $userId,
+                $coupon,
+                $address,
+                $cartGoodsList,
+                $freightTemplateList,
+                $input
+            ) {
                 $filterCartGoodsList = $cartGoodsList->groupBy('merchant_id')->get($merchantId);
-                $orderId = OrderService::getInstance()->createOrder($userId, $merchantId, $filterCartGoodsList, $freightTemplateList, $address, $coupon);
+                $orderId = OrderService::getInstance()->createOrder($userId, $merchantId, $filterCartGoodsList, $freightTemplateList, $address, $coupon, $input->useBalance ?: 0);
 
-                // 6.生成订单商品快照
+                // 7.生成订单商品快照
                 OrderGoodsService::getInstance()->createList($filterCartGoodsList, $orderId, $userId);
 
                 /** @var CartGoods $cartGoods */
                 foreach ($filterCartGoodsList as $cartGoods) {
                     if ($cartGoods->is_gift && is_null($promoterInfo)) {
-                        // 7.礼包佣金逻辑（前提：礼包商品，普通用户）
+                        // 8.礼包佣金逻辑（前提：礼包商品，普通用户）
                         // 场景1：普通用户没有上级 - 生成佣金记录，只作为记录用
                         // 场景2：普通用户上级为推广员，没有上上级，或上上级也为推广员 - 生成15%上级佣金的佣金记录
                         // 场景3：普通用户上级为推广员，上上级为C级 - 生成包含15%上级佣金、5%上上级佣金的佣金记录
                         // 场景4：普通用户上级为C级 - 生成包含20%上级佣金的佣金记录
                         GiftCommissionService::getInstance()->createCommission($userId, $orderId, $cartGoods, $superiorId, $managerId);
                     } else {
-                        // 8.生成商品佣金记录（前提：非礼包商品）
+                        // 9.生成商品佣金记录（前提：非礼包商品）
                         // 场景1：普通用户且没有上级 - 不需要生成佣金记录
                         // 场景2：普通用户拥有上级 - 生成"分享场景"佣金记录
                         // 场景3：推官员 - 生成"自购场景"佣金记录
@@ -265,7 +285,7 @@ class OrderController extends Controller
                             CommissionService::getInstance()->createCommission($scene, $userId, $orderId, $cartGoods, $superiorId, $coupon);
                         }
 
-                        // 9.生成团队佣金记录（前提：非礼包商品）
+                        // 10.生成团队佣金记录（前提：非礼包商品）
                         // 场景1：推广员 -> 推广员 -> 普通用户下单
                         // 场景2：推广员 -> 推广员下单
                         if (!is_null($superiorPromoterInfo)) {
@@ -281,10 +301,10 @@ class OrderController extends Controller
                 return $orderId;
             });
 
-            // 10.清空购物车
+            // 11.清空购物车
             CartGoodsService::getInstance()->deleteCartGoodsList($this->userId(), $input->cartGoodsIds);
 
-            // 11.优惠券已使用
+            // 12.使用优惠券
             if (!is_null($input->couponId)) {
                 UserCouponService::getInstance()->useCoupon($this->userId(), $input->couponId);
             }

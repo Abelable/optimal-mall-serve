@@ -20,7 +20,9 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property float $freight_price 运费
  * @property int $coupon_id 优惠券id
  * @property float $coupon_denomination 优惠券抵扣
+ * @property float $deduction_balance 余额抵扣
  * @property float $payment_amount 支付金额
+ * @property float $total_payment_amount 总支付金额，拆单场景
  * @property string $pay_id 支付id
  * @property string $pay_time 支付时间
  * @property string $ship_channel 快递公司
@@ -50,6 +52,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereCouponDenomination($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereCouponId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereDeductionBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereFinishTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereFreightPrice($value)
@@ -72,6 +75,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereShipSn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereShipTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereTotalPaymentAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUserId($value)
  * @method static \Illuminate\Database\Query\Builder|Order withTrashed()

@@ -111,7 +111,7 @@ class OrderService extends BaseService
         return Order::query()->where('order_sn', $orderSn)->exists();
     }
 
-    public function createOrder($userId, $merchantId, $cartGoodsList, $freightTemplateList, Address $address, Coupon $coupon = null)
+    public function createOrder($userId, $merchantId, $cartGoodsList, $freightTemplateList, Address $address, Coupon $coupon = null, $useBalance = 0)
     {
         $totalPrice = 0;
         $totalFreightPrice = 0;
@@ -153,8 +153,20 @@ class OrderService extends BaseService
         $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);
         $paymentAmount = bcsub($paymentAmount, $couponDenomination, 2);
 
+        $orderSn = $this->generateOrderSn();
+        // 余额抵扣
+        $deductionBalance = 0;
+        if ($useBalance == 1) {
+            $account = AccountService::getInstance()->getUserAccount($userId);
+            $deductionBalance = min($paymentAmount, $account->balance);
+            $paymentAmount = bcsub($paymentAmount, $deductionBalance, 2);
+
+            // 更新余额
+            AccountService::getInstance()->updateBalance($userId, 2, -$deductionBalance, $orderSn);
+        }
+
         $order = Order::new();
-        $order->order_sn = $this->generateOrderSn();
+        $order->order_sn = $orderSn;
         $order->status = OrderEnums::STATUS_CREATE;
         $order->user_id = $userId;
         $order->merchant_id = $merchantId;
@@ -167,6 +179,7 @@ class OrderService extends BaseService
             $order->coupon_id = $coupon->id;
             $order->coupon_denomination = $couponDenomination;
         }
+        $order->deduction_balance = $deductionBalance;
         $order->payment_amount = $paymentAmount;
         $order->refund_amount = $paymentAmount;
         $order->save();
@@ -244,8 +257,7 @@ class OrderService extends BaseService
             $orderList = $orderList->map(function (Order $order) use ($actualPaymentAmount, $payId) {
                 $order->pay_id = $payId;
                 $order->pay_time = now()->toDateTimeString();
-                // 重新赋值payment_amount，用于后续退款
-                $order->payment_amount = $actualPaymentAmount;
+                $order->total_payment_amount = $actualPaymentAmount;
                 $order->status = OrderEnums::STATUS_PAY;
                 if ($order->cas() == 0) {
                     $this->throwUpdateFail();
@@ -626,7 +638,7 @@ class OrderService extends BaseService
                 $refundParams = [
                     'transaction_id' => $order->pay_id,
                     'out_refund_no' => time(),
-                    'total_fee' => bcmul($order->payment_amount, 100),
+                    'total_fee' => bcmul($order->total_payment_amount, 100),
                     'refund_fee' => bcmul($order->refund_amount, 100),
                     'refund_desc' => '商品退款',
                     'type' => 'miniapp'
@@ -640,6 +652,11 @@ class OrderService extends BaseService
                 $order->refund_time = now()->toDateTimeString();
                 if ($order->cas() == 0) {
                     $this->throwUpdateFail();
+                }
+
+                // 退还余额
+                if ($order->deduction_balance != 0) {
+                    AccountService::getInstance()->updateBalance($order->user_id, 3, $order->deduction_balance, $order->order_sn);
                 }
 
                 // 删除佣金记录
