@@ -12,6 +12,7 @@ use App\Models\GiftCommission;
 use App\Models\Order;
 use App\Models\OrderGoods;
 use App\Models\OrderPackageGoods;
+use App\Services\AccountService;
 use App\Services\AddressService;
 use App\Services\CartGoodsService;
 use App\Services\CommissionService;
@@ -42,6 +43,7 @@ class OrderController extends Controller
         $addressId = $this->verifyId('addressId');
         $cartGoodsIds = $this->verifyArrayNotEmpty('cartGoodsIds');
         $couponId = $this->verifyId('couponId');
+        $useBalance = $this->verifyBoolean('useBalance', false);
 
         $addressColumns = ['id', 'name', 'mobile', 'region_code_list', 'region_desc', 'address_detail'];
         if (is_null($addressId)) {
@@ -66,6 +68,7 @@ class OrderController extends Controller
         $errMsg = '';
         $totalFreightPrice = 0;
         $couponDenomination = 0;
+        $deductionBalance = 0;
         $totalPrice = 0;
         $totalNumber = 0;
 
@@ -115,6 +118,14 @@ class OrderController extends Controller
         $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);
         $paymentAmount = bcsub($paymentAmount, $couponDenomination, 2);
 
+        // 余额逻辑
+        $account = AccountService::getInstance()->getUserAccount($this->userId());
+        $accountBalance = $account->status == 1 ? $account->balance : 0;
+        if ($useBalance) {
+            $deductionBalance = min($paymentAmount, $accountBalance);
+            $paymentAmount = bcsub($paymentAmount, $deductionBalance, 2);
+        }
+
         return $this->success([
             'errMsg' => $errMsg,
             'addressInfo' => $address,
@@ -124,6 +135,8 @@ class OrderController extends Controller
             'couponDenomination' => $couponDenomination,
             'totalPrice' => $totalPrice,
             'totalNumber' => $totalNumber,
+            'accountBalance' => $accountBalance,
+            'deductionBalance' => $deductionBalance,
             'paymentAmount' => $paymentAmount
         ]);
     }
