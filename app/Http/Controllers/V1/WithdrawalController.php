@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\AccountChangeLogService;
+use App\Services\AccountService;
 use App\Services\CommissionService;
 use App\Services\GiftCommissionService;
 use App\Services\TeamCommissionService;
+use App\Services\TransactionService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\PageInput;
@@ -18,13 +21,16 @@ class WithdrawalController extends Controller
 {
     public function submit()
     {
-        $date = Carbon::now()->day;
-        if ($date < 25) {
-            return $this->fail(CodeResponse::INVALID_OPERATION, '每月25-31号才可提现');
-        }
-
         /** @var WithdrawalInput $input */
         $input = WithdrawalInput::new();
+
+        if ($input->path != 3) {
+            $date = Carbon::now()->day;
+            if ($date < 25) {
+                return $this->fail(CodeResponse::INVALID_OPERATION, '每月25-31号才可提现');
+            }
+        }
+
         if ($input->withdrawAmount == 0) {
             return $this->fail(CodeResponse::INVALID_OPERATION, '提现金额不能为0');
         }
@@ -57,13 +63,33 @@ class WithdrawalController extends Controller
         DB::transaction(function () use ($withdrawAmount, $input) {
             WithdrawalService::getInstance()->addWithdrawal($this->userId(), $withdrawAmount, $input);
 
-            if ($input->scene == 3) {
-                GiftCommissionService::getInstance()->withdrawUserCommission($this->userId());
-                if ($this->user()->promoterInfo->level > 1) {
-                    TeamCommissionService::getInstance()->withdrawUserCommission($this->userId());
+            if ($input->path == 3) {
+                if ($input->scene == 3) {
+                    GiftCommissionService::getInstance()->settleUserCommission($this->userId(), 2);
+                    if ($this->user()->promoterInfo->level > 1) {
+                        TeamCommissionService::getInstance()->settleUserCommission($this->userId(), 2);
+                    }
+                } else {
+                    CommissionService::getInstance()->settleUserCommission($this->userId(), $input->scene, 2);
                 }
+
+                // 提现至余额
+                $account = AccountService::getInstance()->getUserAccount($this->userId());
+                $oldBalance = $account->balance;
+                $newBalance = bcadd($oldBalance, $withdrawAmount, 2);
+                $account->balance = $newBalance;
+                $account->save();
+                TransactionService::getInstance()->createTransaction($account->id, 1, $withdrawAmount);
+                AccountChangeLogService::getInstance()->createLog($account->id, $oldBalance, $newBalance, 1, $withdrawAmount);
             } else {
-                CommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->scene);
+                if ($input->scene == 3) {
+                    GiftCommissionService::getInstance()->withdrawUserCommission($this->userId());
+                    if ($this->user()->promoterInfo->level > 1) {
+                        TeamCommissionService::getInstance()->withdrawUserCommission($this->userId());
+                    }
+                } else {
+                    CommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->scene);
+                }
             }
         });
 

@@ -22,4 +22,12 @@ class AccountService extends BaseService
         $account->save();
         return $account;
     }
+
+    public function updateBalance($userId, $amount)
+    {
+        $account = $this->getUserAccount($userId);
+        $account->balance = bcadd($account->balance, $amount, 2);
+        $account->save();
+        return $account;
+    }
 }

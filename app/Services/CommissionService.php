@@ -260,9 +260,9 @@ class CommissionService extends BaseService
         }
     }
 
-    public function settleUserCommission($userId, $scene)
+    public function settleUserCommission($userId, $scene, $status = 3)
     {
-        $commissionList = $this->getUserCommissionQuery([$userId], [3])->where('scene', $scene)->get();
+        $commissionList = $this->getUserCommissionQuery([$userId], [$status])->where('scene', $scene)->get();
         /** @var Commission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 4;

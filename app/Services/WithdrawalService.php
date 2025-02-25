@@ -11,10 +11,17 @@ class WithdrawalService extends BaseService
 {
     public function addWithdrawal($userId, $withdrawAmount, WithdrawalInput $input)
     {
-        $taxFee = $input->scene == 1 ? 0 : bcmul($withdrawAmount, 0.06, 2);
-        $actualAmount = bcsub($withdrawAmount, $taxFee + 1, 2);
-
         $withdrawal = Withdrawal::new();
+
+        if ($input->path == 3) { // 提现至余额
+            $taxFee = 0;
+            $actualAmount = $withdrawAmount;
+            $withdrawal->status = 1;
+        } else {
+            $taxFee = $input->scene == 1 ? 0 : bcmul($withdrawAmount, 0.06, 2);
+            $actualAmount = bcsub($withdrawAmount, $taxFee + 1, 2);
+        }
+
         $withdrawal->user_id = $userId;
         $withdrawal->scene = $input->scene;
         $withdrawal->withdraw_amount = $withdrawAmount;

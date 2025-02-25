@@ -332,13 +332,13 @@ class GiftCommissionService extends BaseService
         }
     }
 
-    public function settleUserCommission($userId)
+    public function settleUserCommission($userId, $status = 3)
     {
         $commissionList = GiftCommission::query()
             ->where(function($query) use ($userId) {
                 $query->where('promoter_id', $userId)
                     ->orWhere('manager_id', $userId);
-            })->where('status', 3)
+            })->where('status', $status)
             ->get();
         foreach ($commissionList as $commission) {
             $commission->status = 4;

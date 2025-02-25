@@ -231,9 +231,9 @@ class TeamCommissionService extends BaseService
         }
     }
 
-    public function settleUserCommission($userId)
+    public function settleUserCommission($userId, $status = 3)
     {
-        $commissionList = $this->getUserCommissionQuery([$userId], [3])->get();
+        $commissionList = $this->getUserCommissionQuery([$userId], [$status])->get();
         /** @var TeamCommission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 4;
