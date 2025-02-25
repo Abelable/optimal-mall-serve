@@ -94,6 +94,14 @@ class OrderService extends BaseService
             ->get($columns);
     }
 
+    public function getUnpaidListByIds(array $ids, $columns = ['*'])
+    {
+        return Order::query()
+            ->whereIn('id', $ids)
+            ->where('status', OrderEnums::STATUS_CREATE)
+            ->get($columns);
+    }
+
     public function generateOrderSn()
     {
         return retry(5, function () {
@@ -253,11 +261,20 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::FAIL, $errMsg);
         }
 
+        return $this->paySuccess($orderList, $actualPaymentAmount, $paymentAmount);
+    }
+
+    public function paySuccess($orderList, $payId = null, $actualPaymentAmount = null)
+    {
         return DB::transaction(function () use ($actualPaymentAmount, $payId, $orderList) {
             $orderList = $orderList->map(function (Order $order) use ($actualPaymentAmount, $payId) {
-                $order->pay_id = $payId;
+                if (!is_null($payId)) {
+                    $order->pay_id = $payId;
+                }
                 $order->pay_time = now()->toDateTimeString();
-                $order->total_payment_amount = $actualPaymentAmount;
+                if (!is_null($actualPaymentAmount)) {
+                    $order->total_payment_amount = $actualPaymentAmount;
+                }
                 $order->status = OrderEnums::STATUS_PAY;
                 if ($order->cas() == 0) {
                     $this->throwUpdateFail();

@@ -319,7 +319,13 @@ class OrderController extends Controller
     {
         $orderIds = $this->verifyArrayNotEmpty('orderIds');
         $order = OrderService::getInstance()->createWxPayOrder($this->userId(), $orderIds, $this->user()->openid);
-        $payParams = Pay::wechat()->miniapp($order);
+        $payParams = null;
+        if ($order['total_fee'] == 0) {
+            $orderList = OrderService::getInstance()->getUnpaidListByIds($orderIds);
+            OrderService::getInstance()->paySuccess($orderList);
+        } else {
+            $payParams = Pay::wechat()->miniapp($order);
+        }
         return $this->success($payParams);
     }
 
@@ -447,6 +453,7 @@ class OrderController extends Controller
             'freight_price',
             'coupon_id',
             'coupon_denomination',
+            'deduction_balance',
             'payment_amount',
             'pay_time',
             'ship_channel',
