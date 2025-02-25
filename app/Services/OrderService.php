@@ -635,20 +635,23 @@ class OrderService extends BaseService
         }
         DB::transaction(function () use ($order) {
             try {
-                $refundParams = [
-                    'transaction_id' => $order->pay_id,
-                    'out_refund_no' => time(),
-                    'total_fee' => bcmul($order->total_payment_amount, 100),
-                    'refund_fee' => bcmul($order->refund_amount, 100),
-                    'refund_desc' => '商品退款',
-                    'type' => 'miniapp'
-                ];
+                // 微信退款
+                if ($order->refund_amount != 0) {
+                    $refundParams = [
+                        'transaction_id' => $order->pay_id,
+                        'out_refund_no' => time(),
+                        'total_fee' => bcmul($order->total_payment_amount, 100),
+                        'refund_fee' => bcmul($order->refund_amount, 100),
+                        'refund_desc' => '商品退款',
+                        'type' => 'miniapp'
+                    ];
 
-                $result = Pay::wechat()->refund($refundParams);
-                Log::info('order_wx_refund', $result->toArray());
+                    $result = Pay::wechat()->refund($refundParams);
+                    $order->refund_id = $result['refund_id'];
+                    Log::info('order_wx_refund', $result->toArray());
+                }
 
                 $order->status = OrderEnums::STATUS_REFUND_CONFIRM;
-                $order->refund_id = $result['refund_id'];
                 $order->refund_time = now()->toDateTimeString();
                 if ($order->cas() == 0) {
                     $this->throwUpdateFail();
