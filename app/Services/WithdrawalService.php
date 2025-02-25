@@ -17,16 +17,17 @@ class WithdrawalService extends BaseService
             $taxFee = 0;
             $actualAmount = $withdrawAmount;
             $withdrawal->status = 1;
+            $withdrawal->handling_fee = 0;
         } else {
             $taxFee = $input->scene == 1 ? 0 : bcmul($withdrawAmount, 0.06, 2);
             $actualAmount = bcsub($withdrawAmount, $taxFee + 1, 2);
+            $withdrawal->handling_fee = 1;
         }
 
         $withdrawal->user_id = $userId;
         $withdrawal->scene = $input->scene;
         $withdrawal->withdraw_amount = $withdrawAmount;
         $withdrawal->tax_fee = $taxFee;
-        $withdrawal->handling_fee = 1;
         $withdrawal->actual_amount = $actualAmount;
         $withdrawal->path = $input->path;
         if (!empty($input->remark)) {

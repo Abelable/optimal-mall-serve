@@ -14,7 +14,7 @@ class WithdrawalInput extends BaseInput
         return [
             'scene' => 'required|integer|in:1,2,3',
             'withdrawAmount' => 'required|numeric',
-            'path' => 'required|integer|in:1,2',
+            'path' => 'required|integer|in:1,2,3',
             'remark' => 'string',
         ];
     }
