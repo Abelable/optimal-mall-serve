@@ -144,9 +144,9 @@ class CommissionService extends BaseService
         return $this->getUserCommissionQuery($userIds, $statusList)->sum('commission_base');
     }
 
-    public function getUserCommissionQuery(array $userIds, array $statusList)
+    public function getUserCommissionQuery(array $userIds, array $statusList, $path = null)
     {
-        return Commission::query()
+        $query = Commission::query()
             ->where(function($query) use ($userIds) {
                 $query->where(function($query) use ($userIds) {
                     $query->where('scene', 1)
@@ -156,6 +156,10 @@ class CommissionService extends BaseService
                         ->whereIn('superior_id', $userIds);
                 });
             })->whereIn('status', $statusList);
+        if (!is_null($path)) {
+            $query = $query->where('path', $path);
+        }
+        return $query;
     }
 
     public function getUserCommissionListByTimeType($userId, $timeType, array $statusList, $scene = null, $columns = ['*'])
@@ -234,7 +238,7 @@ class CommissionService extends BaseService
         return $this->getUserCommissionQueryByTimeType([$userId], $timeType)->whereIn('status', [2, 3, 4])->sum('commission_base');
     }
 
-    public function withdrawUserCommission($userId, $scene)
+    public function withdrawUserCommission($userId, $scene, $path)
     {
         $commissionList = $this->getUserCommissionQuery([$userId], [2])
             ->where('scene', $scene)
@@ -242,6 +246,7 @@ class CommissionService extends BaseService
             ->get();
         /** @var Commission $commission */
         foreach ($commissionList as $commission) {
+            $commission->path = $path;
             $commission->status = 3;
             $commission->save();
         }
@@ -260,9 +265,9 @@ class CommissionService extends BaseService
         }
     }
 
-    public function settleUserCommission($userId, $scene, $status = 3)
+    public function settleUserCommission($userId, $scene, $path, $status = 3)
     {
-        $commissionList = $this->getUserCommissionQuery([$userId], [$status])->where('scene', $scene)->get();
+        $commissionList = $this->getUserCommissionQuery([$userId], [$status], $path)->where('scene', $scene)->get();
         /** @var Commission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 4;

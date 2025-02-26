@@ -302,7 +302,7 @@ class GiftCommissionService extends BaseService
         return [$cashGiftCommission, $cashTeamCommission];
     }
 
-    public function withdrawUserCommission($userId)
+    public function withdrawUserCommission($userId, $path)
     {
         $commissionList = GiftCommission::query()
             ->where(function($query) use ($userId) {
@@ -312,6 +312,7 @@ class GiftCommissionService extends BaseService
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->get();
         foreach ($commissionList as $commission) {
+            $commission->path = $path;
             $commission->status = 3;
             $commission->save();
         }
@@ -332,13 +333,14 @@ class GiftCommissionService extends BaseService
         }
     }
 
-    public function settleUserCommission($userId, $status = 3)
+    public function settleUserCommission($userId, $path, $status = 3)
     {
         $commissionList = GiftCommission::query()
             ->where(function($query) use ($userId) {
                 $query->where('promoter_id', $userId)
                     ->orWhere('manager_id', $userId);
             })->where('status', $status)
+            ->where('path', $path)
             ->get();
         foreach ($commissionList as $commission) {
             $commission->status = 4;

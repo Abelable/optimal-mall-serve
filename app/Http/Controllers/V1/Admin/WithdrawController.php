@@ -80,12 +80,12 @@ class WithdrawController extends Controller
 
         DB::transaction(function () use ($user, $record) {
             if ($record->scene == 3) {
-                GiftCommissionService::getInstance()->settleUserCommission($record->user_id);
+                GiftCommissionService::getInstance()->settleUserCommission($record->user_id, $record->path);
                 if ($user->promoterInfo->level > 1) {
-                    TeamCommissionService::getInstance()->settleUserCommission($record->user_id);
+                    TeamCommissionService::getInstance()->settleUserCommission($record->user_id, $record->path);
                 }
             } else {
-                CommissionService::getInstance()->settleUserCommission($record->user_id, $record->scene);
+                CommissionService::getInstance()->settleUserCommission($record->user_id, $record->scene, $record->path);
             }
 
             $record->status = 1;

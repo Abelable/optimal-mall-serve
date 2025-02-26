@@ -143,9 +143,13 @@ class TeamCommissionService extends BaseService
         return $this->getUserCommissionQuery($userId, $statusList)->sum('commission_base');
     }
 
-    public function getUserCommissionQuery($userId, array $statusList)
+    public function getUserCommissionQuery($userId, array $statusList, $path = null)
     {
-        return TeamCommission::query()->where('manager_id', $userId)->whereIn('status', $statusList);
+        $query = TeamCommission::query()->where('manager_id', $userId)->whereIn('status', $statusList);
+        if (!is_null($path)) {
+            $query = $query->where('path', $path);
+        }
+        return $query;
     }
 
     public function getUserCommissionListByTimeType($userId, $timeType, array $statusList, $columns = ['*'])
@@ -207,13 +211,14 @@ class TeamCommissionService extends BaseService
             ->sum('commission_amount');
     }
 
-    public function withdrawUserCommission($userId)
+    public function withdrawUserCommission($userId, $path)
     {
         $commissionList = $this->getUserCommissionQuery([$userId], [2])
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->get();
         /** @var TeamCommission $commission */
         foreach ($commissionList as $commission) {
+            $commission->path = $path;
             $commission->status = 3;
             $commission->save();
         }
@@ -231,9 +236,9 @@ class TeamCommissionService extends BaseService
         }
     }
 
-    public function settleUserCommission($userId, $status = 3)
+    public function settleUserCommission($userId, $path, $status = 3)
     {
-        $commissionList = $this->getUserCommissionQuery([$userId], [$status])->get();
+        $commissionList = $this->getUserCommissionQuery([$userId], [$status], $path)->get();
         /** @var TeamCommission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 4;

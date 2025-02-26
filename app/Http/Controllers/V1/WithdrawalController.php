@@ -63,24 +63,24 @@ class WithdrawalController extends Controller
 
             if ($input->path == 3) {
                 if ($input->scene == 3) {
-                    GiftCommissionService::getInstance()->settleUserCommission($this->userId(), 2);
+                    GiftCommissionService::getInstance()->settleUserCommission($this->userId(), 0, 2);
                     if ($this->user()->promoterInfo->level > 1) {
-                        TeamCommissionService::getInstance()->settleUserCommission($this->userId(), 2);
+                        TeamCommissionService::getInstance()->settleUserCommission($this->userId(), 0, 2);
                     }
                 } else {
-                    CommissionService::getInstance()->settleUserCommission($this->userId(), $input->scene, 2);
+                    CommissionService::getInstance()->settleUserCommission($this->userId(), $input->scene, 0, 2);
                 }
 
                 // 提现至余额
                 AccountService::getInstance()->updateBalance($this->userId(), 1, $withdrawAmount);
             } else {
                 if ($input->scene == 3) {
-                    GiftCommissionService::getInstance()->withdrawUserCommission($this->userId());
+                    GiftCommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->path);
                     if ($this->user()->promoterInfo->level > 1) {
-                        TeamCommissionService::getInstance()->withdrawUserCommission($this->userId());
+                        TeamCommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->path);
                     }
                 } else {
-                    CommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->scene);
+                    CommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->scene, $input->path);
                 }
             }
         });
