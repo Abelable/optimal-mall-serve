@@ -49,10 +49,4 @@ class EnterpriseInfoController extends Controller
         $enterpriseInfo->delete();
         return $this->success();
     }
-
-    public function getPendingCount()
-    {
-        $count = EnterpriseInfoService::getInstance()->getCountByStatus(0);
-        return $this->success($count);
-    }
 }

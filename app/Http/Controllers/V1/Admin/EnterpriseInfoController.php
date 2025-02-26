@@ -72,4 +72,10 @@ class EnterpriseInfoController extends Controller
         $authInfo->delete();
         return $this->success();
     }
+
+    public function getPendingCount()
+    {
+        $count = EnterpriseInfoService::getInstance()->getCountByStatus(0);
+        return $this->success($count);
+    }
 }

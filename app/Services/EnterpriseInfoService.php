@@ -42,7 +42,10 @@ class EnterpriseInfoService extends BaseService
         if (!empty($input->name)) {
             $query = $query->where('name', 'like', "%$input->name%");
         }
-        return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+        return $query
+            ->orderByRaw("FIELD(status, 0) DESC")
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function getEnterpriseInfoById($id, $columns = ['*'])
