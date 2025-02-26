@@ -532,6 +532,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
     });
 
     Route::prefix('refund')->group(function () {
+        Route::get('waiting_count', 'RefundController@waitingRefundCount');
         Route::post('list', 'RefundController@list');
         Route::get('detail', 'RefundController@detail');
         Route::post('approved', 'RefundController@approved');

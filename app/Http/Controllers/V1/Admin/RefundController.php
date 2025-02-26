@@ -112,4 +112,10 @@ class RefundController extends Controller
         $refund->delete();
         return $this->success();
     }
+
+    public function waitingRefundCount()
+    {
+        $count = RefundService::getInstance()->getCountByStatus(0);
+        return $this->success($count);
+    }
 }

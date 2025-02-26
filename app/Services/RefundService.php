@@ -66,4 +66,9 @@ class RefundService extends BaseService
     {
         return Refund::query()->whereIn('id', $ids)->get($columns);
     }
+
+    public function getCountByStatus($status)
+    {
+        return Refund::query()->where('status', $status)->count();
+    }
 }
