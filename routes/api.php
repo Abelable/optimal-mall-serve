@@ -264,6 +264,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('approved', 'AuthInfoController@approved');
         Route::post('reject', 'AuthInfoController@reject');
         Route::post('delete', 'AuthInfoController@delete');
+        Route::get('pending_count', 'AuthInfoController@getPendingCount');
     });
 
     Route::prefix('enterprise_info')->group(function () {

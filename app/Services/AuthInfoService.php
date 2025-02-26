@@ -61,4 +61,9 @@ class AuthInfoService extends BaseService
     {
         return AuthInfo::query()->whereIn('id', $ids)->get($columns);
     }
+
+    public function getCountByStatus($status)
+    {
+        return AuthInfo::query()->where('status', $status)->count();
+    }
 }
