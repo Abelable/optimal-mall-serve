@@ -23,7 +23,7 @@ class CreateWithdrawalsTable extends Migration
             $table->float('tax_fee')->default(0)->comment('税费');
             $table->float('handling_fee')->comment('手续费');
             $table->float('actual_amount')->comment('实际到账金额');
-            $table->integer('path')->comment('提现方式：1-微信；2-银行卡');
+            $table->integer('path')->comment('提现方式：1-微信；2-银行卡；3-余额');
             $table->string('remark')->default('')->comment('备注');
             $table->timestamps();
             $table->softDeletes();

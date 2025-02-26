@@ -7,6 +7,7 @@ namespace App\Models;
  *
  * @property int $id
  * @property int $status 佣金状态：0-订单待支付，1-待结算, 2-可提现，3-提现中，4-已结算
+ * @property int $path 提现方式：1-微信；2-银行卡；3-余额
  * @property int $manager_id 组织者id
  * @property int $manager_level 组织者等级
  * @property int $user_id 用户id
@@ -41,6 +42,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|TeamCommission whereManagerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TeamCommission whereManagerLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TeamCommission whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeamCommission wherePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TeamCommission whereRefundStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TeamCommission whereSelectedSkuName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TeamCommission whereStatus($value)
