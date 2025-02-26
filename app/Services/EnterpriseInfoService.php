@@ -59,4 +59,9 @@ class EnterpriseInfoService extends BaseService
     {
         return EnterpriseInfo::query()->whereIn('id', $ids)->get($columns);
     }
+
+    public function getCountByStatus($status)
+    {
+        return EnterpriseInfo::query()->where('status', $status)->count();
+    }
 }

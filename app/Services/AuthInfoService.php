@@ -44,7 +44,10 @@ class AuthInfoService extends BaseService
         if (!empty($input->mobile)) {
             $query = $query->where('mobile', $input->mobile);
         }
-        return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+        return $query
+            ->orderByRaw("FIELD(status, 0) DESC")
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function getAuthInfoById($id, $columns = ['*'])

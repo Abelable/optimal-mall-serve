@@ -273,6 +273,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('approved', 'EnterpriseInfoController@approved');
         Route::post('reject', 'EnterpriseInfoController@reject');
         Route::post('delete', 'EnterpriseInfoController@delete');
+        Route::get('pending_count', 'EnterpriseInfoController@getPendingCount');
     });
 
     Route::prefix('team')->group(function () {
