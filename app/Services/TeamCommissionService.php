@@ -213,7 +213,7 @@ class TeamCommissionService extends BaseService
 
     public function withdrawUserCommission($userId, $path)
     {
-        $commissionList = $this->getUserCommissionQuery([$userId], [2])
+        $commissionList = $this->getUserCommissionQuery($userId, [2])
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->get();
         /** @var TeamCommission $commission */
@@ -226,7 +226,7 @@ class TeamCommissionService extends BaseService
 
     public function restoreUserCommission($userId)
     {
-        $commissionList = $this->getUserCommissionQuery([$userId], [3])
+        $commissionList = $this->getUserCommissionQuery($userId, [3])
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->get();
         /** @var TeamCommission $commission */
@@ -238,7 +238,12 @@ class TeamCommissionService extends BaseService
 
     public function settleUserCommission($userId, $path, $status = 3)
     {
-        $commissionList = $this->getUserCommissionQuery([$userId], [$status], $path)->get();
+        $query = $this->getUserCommissionQuery($userId, [$status], $path);
+        // 处理提现至余额的特殊情况
+        if ($status == 2) {
+            $query = $query->whereMonth('created_at', '!=', Carbon::now()->month);
+        }
+        $commissionList = $query->get();
         /** @var TeamCommission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 4;

@@ -335,13 +335,17 @@ class GiftCommissionService extends BaseService
 
     public function settleUserCommission($userId, $path, $status = 3)
     {
-        $commissionList = GiftCommission::query()
+        $query = GiftCommission::query()
             ->where(function($query) use ($userId) {
                 $query->where('promoter_id', $userId)
                     ->orWhere('manager_id', $userId);
             })->where('status', $status)
-            ->where('path', $path)
-            ->get();
+            ->where('path', $path);
+        // 处理提现至余额的特殊情况
+        if ($status == 2) {
+            $query = $query->whereMonth('created_at', '!=', Carbon::now()->month);
+        }
+        $commissionList = $query->get();
         foreach ($commissionList as $commission) {
             $commission->status = 4;
             $commission->save();

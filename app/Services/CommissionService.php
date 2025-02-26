@@ -267,7 +267,12 @@ class CommissionService extends BaseService
 
     public function settleUserCommission($userId, $scene, $path, $status = 3)
     {
-        $commissionList = $this->getUserCommissionQuery([$userId], [$status], $path)->where('scene', $scene)->get();
+        $query = $this->getUserCommissionQuery([$userId], [$status], $path)->where('scene', $scene);
+        // 处理提现至余额的特殊情况
+        if ($status == 2) {
+            $query = $query->whereMonth('created_at', '!=', Carbon::now()->month);
+        }
+        $commissionList = $query->get();
         /** @var Commission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 4;
