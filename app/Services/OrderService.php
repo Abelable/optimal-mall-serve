@@ -261,7 +261,7 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::FAIL, $errMsg);
         }
 
-        return $this->paySuccess($orderList, $actualPaymentAmount, $paymentAmount);
+        return $this->paySuccess($orderList, $payId, $actualPaymentAmount);
     }
 
     public function paySuccess($orderList, $payId = null, $actualPaymentAmount = null)
@@ -271,10 +271,10 @@ class OrderService extends BaseService
                 if (!is_null($payId)) {
                     $order->pay_id = $payId;
                 }
-                $order->pay_time = now()->toDateTimeString();
                 if (!is_null($actualPaymentAmount)) {
                     $order->total_payment_amount = $actualPaymentAmount;
                 }
+                $order->pay_time = now()->toDateTimeString();
                 $order->status = OrderEnums::STATUS_PAY;
                 if ($order->cas() == 0) {
                     $this->throwUpdateFail();
