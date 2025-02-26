@@ -133,4 +133,10 @@ class WithdrawController extends Controller
         $record->delete();
         return $this->success();
     }
+
+    public function getPendingCount()
+    {
+        $count = WithdrawalService::getInstance()->getCountByStatus(0);
+        return $this->success($count);
+    }
 }

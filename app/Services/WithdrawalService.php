@@ -55,7 +55,10 @@ class WithdrawalService extends BaseService
         if (!is_null($input->scene)) {
             $query = $query->where('scene', $input->scene);
         }
-        return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+        return $query
+            ->orderByRaw("FIELD(status, 0) DESC")
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function getRecordById($id, $columns = ['*'])
@@ -70,5 +73,10 @@ class WithdrawalService extends BaseService
             ->where('scene', $scene)
             ->where('status', 0)
             ->first($columns);
+    }
+
+    public function getCountByStatus($status)
+    {
+        return Withdrawal::query()->where('status', $status)->count();
     }
 }
