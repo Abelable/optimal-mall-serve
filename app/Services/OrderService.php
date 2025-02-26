@@ -530,8 +530,10 @@ class OrderService extends BaseService
             }
 
             // 发货同步小程序后台
-            $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
-            WxMpServe::new()->uploadShippingInfo($openid, $order, [$orderPackage], true);
+            if ($order->refund_amount != 0) {
+                $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
+                WxMpServe::new()->uploadShippingInfo($openid, $order, [$orderPackage], true);
+            }
         });
 
         return $order;
@@ -575,8 +577,10 @@ class OrderService extends BaseService
             }
 
             // 发货同步小程序后台
-            $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
-            WxMpServe::new()->uploadShippingInfo($openid, $order, $orderPackageList, $isAllDelivered);
+            if ($order->refund_amount != 0) {
+                $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
+                WxMpServe::new()->uploadShippingInfo($openid, $order, $orderPackageList, $isAllDelivered);
+            }
         });
 
         return $order;
@@ -791,7 +795,7 @@ class OrderService extends BaseService
         return Order::query()
             ->whereIn('id', $ids)
             ->orderBy($input->sort, $input->order)
-            ->paginate($input->limit, $columns, 'page', $input->page);;
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function getUserOrderById($userId, $id, $columns = ['*'])

@@ -157,7 +157,7 @@ class WxMpServe
                 'goods_info' => [
                     'detail_list' => $goodsList
                 ],
-                'trans_id' =>  $order->pay_id,
+                'trans_id' => $order->pay_id,
                 'order_detail_path' => 'pages/mine/subpages/order-center/subpages/order-detail/index?id=' . $order->id,
             ],
             3
