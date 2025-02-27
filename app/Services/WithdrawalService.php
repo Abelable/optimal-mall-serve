@@ -55,6 +55,9 @@ class WithdrawalService extends BaseService
         if (!is_null($input->scene)) {
             $query = $query->where('scene', $input->scene);
         }
+        if (!is_null($input->path)) {
+            $query = $query->where('path', $input->path);
+        }
         return $query
             ->orderByRaw("FIELD(status, 0) DESC")
             ->orderBy($input->sort, $input->order)
