@@ -220,11 +220,9 @@ class TeamCommissionService extends BaseService
         }
     }
 
-    public function restoreUserCommission($userId)
+    public function restoreCommissionByWithdrawalId($withdrawalId)
     {
-        $commissionList = $this->getUserCommissionQuery($userId, [3])
-            ->whereMonth('created_at', '!=', Carbon::now()->month)
-            ->get();
+        $commissionList = TeamCommission::query()->where('withdrawal_id', $withdrawalId)->where('status', 3)->get();
         /** @var TeamCommission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 2;

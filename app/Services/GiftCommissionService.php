@@ -319,15 +319,9 @@ class GiftCommissionService extends BaseService
         }
     }
 
-    public function restoreUserCommission($userId)
+    public function restoreCommissionByWithdrawalId($withdrawalId)
     {
-        $commissionList = GiftCommission::query()
-            ->where(function($query) use ($userId) {
-                $query->where('promoter_id', $userId)
-                    ->orWhere('manager_id', $userId);
-            })->where('status', 3)
-            ->whereMonth('created_at', '!=', Carbon::now()->month)
-            ->get();
+        $commissionList = GiftCommission::query()->where('withdrawal_id', $withdrawalId)->where('status', 3)->get();
         foreach ($commissionList as $commission) {
             $commission->status = 2;
             $commission->save();

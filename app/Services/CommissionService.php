@@ -248,12 +248,9 @@ class CommissionService extends BaseService
         }
     }
 
-    public function restoreUserCommission($userId, $scene)
+    public function restoreCommissionByWithdrawalId($withdrawalId)
     {
-        $commissionList = $this->getUserCommissionQuery([$userId], [3])
-            ->where('scene', $scene)
-            ->whereMonth('created_at', '!=', Carbon::now()->month)
-            ->get();
+        $commissionList = Commission::query()->where('withdrawal_id', $withdrawalId)->where('status', 3)->get();
         /** @var Commission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 2;

@@ -125,12 +125,12 @@ class WithdrawalController extends Controller
         $user = UserService::getInstance()->getUserById($record->user_id);
         DB::transaction(function () use ($reason, $user, $record) {
             if ($record->scene == 3) {
-                GiftCommissionService::getInstance()->restoreUserCommission($record->user_id);
+                GiftCommissionService::getInstance()->restoreCommissionByWithdrawalId($record->id);
                 if ($user->promoterInfo->level > 1) {
-                    TeamCommissionService::getInstance()->restoreUserCommission($record->user_id);
+                    TeamCommissionService::getInstance()->restoreCommissionByWithdrawalId($record->id);
                 }
             } else {
-                CommissionService::getInstance()->restoreUserCommission($record->user_id, $record->scene);
+                CommissionService::getInstance()->restoreCommissionByWithdrawalId($record->user_id, $record->scene);
             }
 
             $record->status = 2;
