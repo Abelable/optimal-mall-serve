@@ -143,13 +143,9 @@ class TeamCommissionService extends BaseService
         return $this->getUserCommissionQuery($userId, $statusList)->sum('commission_base');
     }
 
-    public function getUserCommissionQuery($userId, array $statusList, $path = null)
+    public function getUserCommissionQuery($userId, array $statusList)
     {
-        $query = TeamCommission::query()->where('manager_id', $userId)->whereIn('status', $statusList);
-        if (!is_null($path)) {
-            $query = $query->where('path', $path);
-        }
-        return $query;
+        return TeamCommission::query()->where('manager_id', $userId)->whereIn('status', $statusList);
     }
 
     public function getUserCommissionListByTimeType($userId, $timeType, array $statusList, $columns = ['*'])
@@ -238,7 +234,7 @@ class TeamCommissionService extends BaseService
 
     public function settleUserCommission($userId, $path, $status = 3)
     {
-        $query = $this->getUserCommissionQuery($userId, [$status], $path);
+        $query = $this->getUserCommissionQuery($userId, [$status])->where('path', $path);
         // 处理提现至余额的特殊情况
         if ($status == 2) {
             $query = $query->whereMonth('created_at', '!=', Carbon::now()->month);

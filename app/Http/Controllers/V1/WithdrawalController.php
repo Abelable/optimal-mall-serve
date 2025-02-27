@@ -59,6 +59,7 @@ class WithdrawalController extends Controller
         }
 
         DB::transaction(function () use ($withdrawAmount, $input) {
+            // todo Commission新增path字段改为withdrawal_id
             WithdrawalService::getInstance()->addWithdrawal($this->userId(), $withdrawAmount, $input);
 
             if ($input->path == 3) {
