@@ -234,7 +234,7 @@ class CommissionService extends BaseService
         return $this->getUserCommissionQueryByTimeType([$userId], $timeType)->whereIn('status', [2, 3, 4])->sum('commission_base');
     }
 
-    public function withdrawUserCommission($userId, $scene, $path)
+    public function withdrawUserCommission($userId, $scene, $withdrawalId)
     {
         $commissionList = $this->getUserCommissionQuery([$userId], [2])
             ->where('scene', $scene)
@@ -242,7 +242,7 @@ class CommissionService extends BaseService
             ->get();
         /** @var Commission $commission */
         foreach ($commissionList as $commission) {
-            $commission->path = $path;
+            $commission->withdrawal_id = $withdrawalId;
             $commission->status = 3;
             $commission->save();
         }
@@ -261,14 +261,28 @@ class CommissionService extends BaseService
         }
     }
 
-    public function settleUserCommission($userId, $scene, $path, $status = 3)
+    public function settleCommissionToBalance($userId, $scene, $withdrawalId)
     {
-        $query = $this->getUserCommissionQuery([$userId], [$status])->where('path', $path)->where('scene', $scene);
-        // 处理提现至余额的特殊情况
-        if ($status == 2) {
-            $query = $query->whereMonth('created_at', '!=', Carbon::now()->month);
+        $commissionList = $this->getUserCommissionQuery([$userId], [2])
+            ->where('scene', $scene)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
+            ->get();
+        /** @var Commission $commission */
+        foreach ($commissionList as $commission) {
+            $commission->withdrawal_id = $withdrawalId;
+            $commission->status = 4;
+            $commission->save();
         }
-        $commissionList = $query->get();
+    }
+
+    public function getCommissionSumByWithdrawalId($withdrawalId, $status = 3)
+    {
+        return Commission::query()->where('withdrawal_id', $withdrawalId)->where('status', $status)->sum('commission_amount');
+    }
+
+    public function settleCommissionByWithdrawalId($withdrawalId)
+    {
+        $commissionList = Commission::query()->where('withdrawal_id', $withdrawalId)->where('status', 3)->get();
         /** @var Commission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 4;

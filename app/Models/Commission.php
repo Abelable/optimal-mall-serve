@@ -7,7 +7,7 @@ namespace App\Models;
  *
  * @property int $id
  * @property int $status 佣金状态：0-订单待支付，1-待结算, 2-可提现，3-提现中，4-已结算
- * @property int $path 提现方式：1-微信；2-银行卡；3-余额
+ * @property int $withdrawal_id 提现记录id
  * @property int $scene 场景：1-自购，2-分享
  * @property int $user_id 用户id
  * @property int $superior_id 上级id
@@ -40,7 +40,6 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereGoodsPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereOrderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Commission wherePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereRefundStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereScene($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereSelectedSkuName($value)
@@ -49,6 +48,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereTotalPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Commission whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Commission whereWithdrawalId($value)
  * @method static \Illuminate\Database\Query\Builder|Commission withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Commission withoutTrashed()
  * @mixin \Eloquent

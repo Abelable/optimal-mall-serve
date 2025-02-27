@@ -11,19 +11,19 @@ use App\Services\TeamCommissionService;
 use App\Services\UserService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\WithdrawPageInput;
+use App\Utils\Inputs\WithdrawalPageInput;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yansongda\LaravelPay\Facades\Pay;
 
-class WithdrawController extends Controller
+class WithdrawalController extends Controller
 {
     protected $guard = 'Admin';
 
     public function list()
     {
-        /** @var WithdrawPageInput $input */
-        $input = WithdrawPageInput::new();
+        /** @var WithdrawalPageInput $input */
+        $input = WithdrawalPageInput::new();
         $page = WithdrawalService::getInstance()->getList($input);
         $recordList = collect($page->items());
 
@@ -65,31 +65,49 @@ class WithdrawController extends Controller
         }
 
         $user = UserService::getInstance()->getUserById($record->user_id);
-        if ($record->path == 1) {
-            // todo 微信转账
-            $params = [
-                'partner_trade_no' => time(),
-                'openid' => $user->openid,
-                'check_name' => 'NO_CHECK',
-                'amount' => bcmul($record->actual_amount, 100),
-                'desc' => '佣金提现',
-            ];
-            $result = Pay::wechat()->transfer($params);
-            Log::info('commission_wx_transfer', $result->toArray());
+
+        // 校验提现金额
+        if ($record->scene == 3) {
+            $giftCommissionSum = GiftCommissionService::getInstance()->getCommissionSumByWithdrawalId($record->user_id, $record->id);
+            $teamCommissionSum = 0;
+            if ($user->promoterInfo->level > 1) {
+                $teamCommissionSum = TeamCommissionService::getInstance()->getCommissionSumByWithdrawalId($record->id);
+            }
+            $commissionSum = bcadd($giftCommissionSum, $teamCommissionSum, 2);
+        } else {
+            $commissionSum = CommissionService::getInstance()->getCommissionSumByWithdrawalId($record->id);
+        }
+        if (bccomp($commissionSum, $record->withdraw_amount, 2) != 0) {
+            $errMsg = "用户（ID：{$record->user_id}）提现金额（{$record->withdraw_amount}）与实际可提现金额（{$commissionSum}）不一致，请检查";
+            Log::error($errMsg);
+            return $this->fail(CodeResponse::INVALID_OPERATION, $errMsg);
         }
 
         DB::transaction(function () use ($user, $record) {
             if ($record->scene == 3) {
-                GiftCommissionService::getInstance()->settleUserCommission($record->user_id, $record->path);
+                GiftCommissionService::getInstance()->settleCommissionByWithdrawalId($record->id);
                 if ($user->promoterInfo->level > 1) {
-                    TeamCommissionService::getInstance()->settleUserCommission($record->user_id, $record->path);
+                    TeamCommissionService::getInstance()->settleCommissionByWithdrawalId($record->id);
                 }
             } else {
-                CommissionService::getInstance()->settleUserCommission($record->user_id, $record->scene, $record->path);
+                CommissionService::getInstance()->settleCommissionByWithdrawalId($record->id);
             }
 
             $record->status = 1;
             $record->save();
+
+            if ($record->path == 1) {
+                // todo 微信转账
+                $params = [
+                    'partner_trade_no' => time(),
+                    'openid' => $user->openid,
+                    'check_name' => 'NO_CHECK',
+                    'amount' => bcmul($record->actual_amount, 100),
+                    'desc' => '佣金提现',
+                ];
+                $result = Pay::wechat()->transfer($params);
+                Log::info('commission_wx_transfer', $result->toArray());
+            }
         });
 
         return $this->success();

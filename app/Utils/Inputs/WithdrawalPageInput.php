@@ -2,7 +2,7 @@
 
 namespace App\Utils\Inputs;
 
-class WithdrawPageInput extends PageInput
+class WithdrawalPageInput extends PageInput
 {
     public $status;
     public $scene;

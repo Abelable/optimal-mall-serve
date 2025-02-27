@@ -59,29 +59,27 @@ class WithdrawalController extends Controller
         }
 
         DB::transaction(function () use ($withdrawAmount, $input) {
-            // todo Commission新增path字段改为withdrawal_id
-            WithdrawalService::getInstance()->addWithdrawal($this->userId(), $withdrawAmount, $input);
+            $withdrawal = WithdrawalService::getInstance()->addWithdrawal($this->userId(), $withdrawAmount, $input);
 
-            if ($input->path == 3) {
+            if ($input->path == 3) { // 提现至余额
                 if ($input->scene == 3) {
-                    GiftCommissionService::getInstance()->settleUserCommission($this->userId(), 0, 2);
+                    GiftCommissionService::getInstance()->settleCommissionToBalance($this->userId(), $withdrawal->id);
                     if ($this->user()->promoterInfo->level > 1) {
-                        TeamCommissionService::getInstance()->settleUserCommission($this->userId(), 0, 2);
+                        TeamCommissionService::getInstance()->settleCommissionToBalance($this->userId(), $withdrawal->id);
                     }
                 } else {
-                    CommissionService::getInstance()->settleUserCommission($this->userId(), $input->scene, 0, 2);
+                    CommissionService::getInstance()->settleCommissionToBalance($this->userId(), $input->scene, $withdrawal->id);
                 }
 
-                // 提现至余额
                 AccountService::getInstance()->updateBalance($this->userId(), 1, $withdrawAmount);
             } else {
                 if ($input->scene == 3) {
-                    GiftCommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->path);
+                    GiftCommissionService::getInstance()->withdrawUserCommission($this->userId(), $withdrawal->id);
                     if ($this->user()->promoterInfo->level > 1) {
-                        TeamCommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->path);
+                        TeamCommissionService::getInstance()->withdrawUserCommission($this->userId(), $withdrawal->id);
                     }
                 } else {
-                    CommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->scene, $input->path);
+                    CommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->scene, $withdrawal->id);
                 }
             }
         });

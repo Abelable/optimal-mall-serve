@@ -302,17 +302,18 @@ class GiftCommissionService extends BaseService
         return [$cashGiftCommission, $cashTeamCommission];
     }
 
-    public function withdrawUserCommission($userId, $path)
+    public function withdrawUserCommission($userId, $withdrawalId)
     {
         $commissionList = GiftCommission::query()
             ->where(function($query) use ($userId) {
                 $query->where('promoter_id', $userId)
                     ->orWhere('manager_id', $userId);
-            })->where('status', 2)
+            })
+            ->where('status', 2)
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->get();
         foreach ($commissionList as $commission) {
-            $commission->path = $path;
+            $commission->withdrawal_id = $withdrawalId;
             $commission->status = 3;
             $commission->save();
         }
@@ -333,19 +334,34 @@ class GiftCommissionService extends BaseService
         }
     }
 
-    public function settleUserCommission($userId, $path, $status = 3)
+    public function settleCommissionToBalance($userId, $withdrawalId)
     {
-        $query = GiftCommission::query()
+        $commissionList = GiftCommission::query()
             ->where(function($query) use ($userId) {
                 $query->where('promoter_id', $userId)
                     ->orWhere('manager_id', $userId);
-            })->where('status', $status)
-            ->where('path', $path);
-        // 处理提现至余额的特殊情况
-        if ($status == 2) {
-            $query = $query->whereMonth('created_at', '!=', Carbon::now()->month);
+            })
+            ->where('status', 2)
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
+            ->get();
+        foreach ($commissionList as $commission) {
+            $commission->withdrawal_id = $withdrawalId;
+            $commission->status = 4;
+            $commission->save();
         }
-        $commissionList = $query->get();
+    }
+
+    public function getCommissionSumByWithdrawalId($userId, $withdrawalId, $status = 3)
+    {
+        $query = GiftCommission::query()->where('withdrawal_id', $withdrawalId)->where('status', $status);
+        $promoterCommissionSum = (clone $query)->where('promoter_id', $userId)->sum('promoter_commission');
+        $managerCommissionSum = (clone $query)->where('manager_id', $userId)->sum('manager_commission');
+        return bcadd($promoterCommissionSum, $managerCommissionSum, 2);
+    }
+
+    public function settleCommissionByWithdrawalId($withdrawalId)
+    {
+        $commissionList = GiftCommission::query()->where('withdrawal_id', $withdrawalId)->where('status', 3)->get();
         foreach ($commissionList as $commission) {
             $commission->status = 4;
             $commission->save();

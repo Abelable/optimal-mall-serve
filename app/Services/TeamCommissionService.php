@@ -207,14 +207,14 @@ class TeamCommissionService extends BaseService
             ->sum('commission_amount');
     }
 
-    public function withdrawUserCommission($userId, $path)
+    public function withdrawUserCommission($userId, $withdrawalId)
     {
         $commissionList = $this->getUserCommissionQuery($userId, [2])
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->get();
         /** @var TeamCommission $commission */
         foreach ($commissionList as $commission) {
-            $commission->path = $path;
+            $commission->withdrawal_id = $withdrawalId;
             $commission->status = 3;
             $commission->save();
         }
@@ -232,14 +232,27 @@ class TeamCommissionService extends BaseService
         }
     }
 
-    public function settleUserCommission($userId, $path, $status = 3)
+    public function settleCommissionToBalance($userId, $withdrawalId)
     {
-        $query = $this->getUserCommissionQuery($userId, [$status])->where('path', $path);
-        // 处理提现至余额的特殊情况
-        if ($status == 2) {
-            $query = $query->whereMonth('created_at', '!=', Carbon::now()->month);
+        $commissionList = $this->getUserCommissionQuery($userId, [2])
+            ->whereMonth('created_at', '!=', Carbon::now()->month)
+            ->get();
+        /** @var TeamCommission $commission */
+        foreach ($commissionList as $commission) {
+            $commission->withdrawal_id = $withdrawalId;
+            $commission->status = 4;
+            $commission->save();
         }
-        $commissionList = $query->get();
+    }
+
+    public function getCommissionSumByWithdrawalId($withdrawalId, $status = 3)
+    {
+        return TeamCommission::query()->where('withdrawal_id', $withdrawalId)->where('status', $status)->sum('commission_amount');
+    }
+
+    public function settleCommissionByWithdrawalId($withdrawalId)
+    {
+        $commissionList = TeamCommission::query()->where('withdrawal_id', $withdrawalId)->where('status', 3)->get();
         /** @var TeamCommission $commission */
         foreach ($commissionList as $commission) {
             $commission->status = 4;

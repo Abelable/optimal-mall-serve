@@ -294,12 +294,12 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
     });
 
     Route::prefix('withdraw')->group(function () {
-        Route::post('list', 'WithdrawController@list');
-        Route::get('detail', 'WithdrawController@detail');
-        Route::post('approved', 'WithdrawController@approved');
-        Route::post('reject', 'WithdrawController@reject');
-        Route::post('delete', 'WithdrawController@delete');
-        Route::get('pending_count', 'WithdrawController@getPendingCount');
+        Route::post('list', 'WithdrawalController@list');
+        Route::get('detail', 'WithdrawalController@detail');
+        Route::post('approved', 'WithdrawalController@approved');
+        Route::post('reject', 'WithdrawalController@reject');
+        Route::post('delete', 'WithdrawalController@delete');
+        Route::get('pending_count', 'WithdrawalController@getPendingCount');
     });
 
     Route::prefix('mall')->group(function () {
