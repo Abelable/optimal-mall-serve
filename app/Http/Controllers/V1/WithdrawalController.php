@@ -22,6 +22,10 @@ class WithdrawalController extends Controller
         /** @var WithdrawalInput $input */
         $input = WithdrawalInput::new();
 
+        if (is_null($this->user()->authInfo)) {
+            return $this->fail(CodeResponse::INVALID_OPERATION, '需完成实名认证才可提现');
+        }
+
         if ($input->path != 3) {
             $date = Carbon::now()->day;
             if ($date < 25) {
