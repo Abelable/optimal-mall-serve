@@ -15,9 +15,9 @@ class AccountService extends BaseService
         return $account;
     }
 
-    public function createUserAccount($userId): Account
+    public function createUserAccount($userId)
     {
-        $account = new Account();
+        $account = Account::new();
         $account->user_id = $userId;
         $account->save();
         return $account;
