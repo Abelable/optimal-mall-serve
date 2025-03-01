@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\CartGoods;
 use App\Models\OrderGoods;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class OrderGoodsService extends BaseService
 {
@@ -103,5 +105,31 @@ class OrderGoodsService extends BaseService
         })->filter(function ($customer) {
             return !is_null($customer);
         })->values();
+    }
+
+    public function getTopSalesGoodsList($startDate, $endDate)
+    {
+        $startDate = Carbon::createFromTimestamp($startDate);
+        $endDate   = Carbon::createFromTimestamp($endDate);
+        return OrderGoods::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('goods_id')
+            ->select('goods_id', DB::raw('SUM(price * number) as sum'))
+            ->orderByDesc('sum')
+            ->limit(7)
+            ->get();
+    }
+
+    public function getTopOrderCountGoodsList($startDate, $endDate)
+    {
+        $startDate = Carbon::createFromTimestamp($startDate);
+        $endDate   = Carbon::createFromTimestamp($endDate);
+        return OrderGoods::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('goods_id')
+            ->select('goods_id', DB::raw('SUM(number) as count'))
+            ->orderByDesc('count')
+            ->limit(7)
+            ->get();
     }
 }

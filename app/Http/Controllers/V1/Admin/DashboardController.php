@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\OrderGoods;
+use App\Services\GoodsService;
+use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\PromoterService;
 use App\Services\UserService;
@@ -88,6 +91,45 @@ class DashboardController extends Controller
             'dailyCountList' => $dailyCountList,
             'dailyGrowthRate' => $dailyGrowthRate,
             'weeklyGrowthRate' => $weeklyGrowthRate
+        ]);
+    }
+
+    public function topGoodsList()
+    {
+        $startDate = $this->verifyRequiredString('startDate');
+        $endDate = $this->verifyRequiredString('endDate');
+
+        $topSalesList = OrderGoodsService::getInstance()->getTopSalesGoodsList($startDate, $endDate);
+        $topOrderCountList = OrderGoodsService::getInstance()->getTopOrderCountGoodsList($startDate, $endDate);
+
+        $topSalesGoodsIds = $topSalesList->pluck('goods_id')->toArray();
+        $topOrderCountGoodsIds = $topOrderCountList->pluck('goods_id')->toArray();
+        $goodsIds = array_unique(array_merge($topSalesGoodsIds, $topOrderCountGoodsIds));
+        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
+
+        $topSalesGoodsList = $topSalesList->map(function ($item) use ($goodsList) {
+            $goods = $goodsList->get($item->goods_id);
+            return [
+                'id' => $goods->id,
+                'cover' => $goods->cover,
+                'name' => $goods->name,
+                'sum' => $item->sum,
+            ];
+        });
+
+        $topOrderCountGoodsList = $topOrderCountList->map(function ($item) use ($goodsList) {
+            $goods = $goodsList->get($item->goods_id);
+            return [
+                'id' => $goods->id,
+                'cover' => $goods->cover,
+                'name' => $goods->name,
+                'count' => $item->count,
+            ];
+        });
+
+        return $this->success([
+            'topSalesGoodsList' => $topSalesGoodsList,
+            'topOrderCountGoodsList' => $topOrderCountGoodsList
         ]);
     }
 }
