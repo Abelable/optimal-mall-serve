@@ -8,7 +8,7 @@ class AdminTodoService extends BaseService
 {
     public function getTodoList($columns=['*'])
     {
-        return AdminTodo::query()->get($columns);
+        return AdminTodo::query()->orderBy('created_at', 'desc')->get($columns);
     }
 
     public function createTodo($type, array $referenceIds)
