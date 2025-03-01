@@ -15,16 +15,16 @@ class DashboardController extends Controller
     {
         $totalSales = OrderService::getInstance()->salesSum();
         $dailySalesList = OrderService::getInstance()->dailySalesList();
+        $monthlySalesList = OrderService::getInstance()->monthlySalesList();
         $dailyGrowthRate = OrderService::getInstance()->dailySalesGrowthRate();
         $weeklyGrowthRate = OrderService::getInstance()->weeklySalesGrowthRate();
-        $monthlySalesList = OrderService::getInstance()->monthlySalesList();
 
         return $this->success([
             'totalSales' => number_format($totalSales, 2),
             'dailySalesList' => $dailySalesList,
+            'monthlySalesList' => $monthlySalesList,
             'dailyGrowthRate' => $dailyGrowthRate,
             'weeklyGrowthRate' => $weeklyGrowthRate,
-            'monthlySalesList' => $monthlySalesList,
         ]);
     }
 
@@ -32,6 +32,7 @@ class DashboardController extends Controller
     {
         $totalCount = OrderService::getInstance()->orderCountSum();
         $dailyCountList = OrderService::getInstance()->dailyOrderCountList();
+        $monthlyCountList = OrderService::getInstance()->monthlyOrderCountList();
         $dailyGrowthRate = OrderService::getInstance()->dailyOrderCountGrowthRate();
         $weeklyGrowthRate = OrderService::getInstance()->weeklyOrderCountGrowthRate();
 
@@ -46,6 +47,7 @@ class DashboardController extends Controller
         return $this->success([
             'totalCount' => $totalCount,
             'dailyCountList' => $dailyCountList,
+            'monthlyCountList' => $monthlyCountList,
             'dailyGrowthRate' => $dailyGrowthRate,
             'weeklyGrowthRate' => $weeklyGrowthRate,
             'repurchaseRate' => round($repurchaseRate, 2)

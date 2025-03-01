@@ -944,6 +944,20 @@ class OrderService extends BaseService
             ->get();
     }
 
+    public function monthlyOrderCountList()
+    {
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subMonths(12)->startOfMonth();
+
+        return Order::query()
+            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"), DB::raw('COUNT(*) as count'))
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"))
+            ->orderBy('month', 'asc')
+            ->get();
+    }
+
     public function dailyOrderCountGrowthRate()
     {
         $query = Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501]);
