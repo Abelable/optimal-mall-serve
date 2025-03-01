@@ -862,8 +862,28 @@ class OrderService extends BaseService
         return Order::query()
             ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->select(DB::raw('DATE(created_at) as created_at'), DB::raw('SUM(refund_amount) as sum'))
+            ->select(
+                DB::raw('DATE(created_at) as created_at'),
+                DB::raw('SUM(refund_amount + deduction_balance) as sum')
+            )
             ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+    }
+
+    public function monthlySalesList()
+    {
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subMonths(12)->startOfMonth();
+
+        return Order::query()
+            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
+                DB::raw("SUM(refund_amount + deduction_balance) as sum")
+            )
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"))
+            ->orderBy('month', 'asc')
             ->get();
     }
 

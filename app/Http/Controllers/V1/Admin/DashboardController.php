@@ -17,12 +17,14 @@ class DashboardController extends Controller
         $dailySalesList = OrderService::getInstance()->dailySalesList();
         $dailyGrowthRate = OrderService::getInstance()->dailySalesGrowthRate();
         $weeklyGrowthRate = OrderService::getInstance()->weeklySalesGrowthRate();
+        $monthlySalesList = OrderService::getInstance()->monthlySalesList();
 
         return $this->success([
             'totalSales' => number_format($totalSales, 2),
             'dailySalesList' => $dailySalesList,
             'dailyGrowthRate' => $dailyGrowthRate,
-            'weeklyGrowthRate' => $weeklyGrowthRate
+            'weeklyGrowthRate' => $weeklyGrowthRate,
+            'monthlySalesList' => $monthlySalesList,
         ]);
     }
 
