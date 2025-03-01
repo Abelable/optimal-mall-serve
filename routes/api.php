@@ -232,6 +232,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::get('user_count_data', 'DashboardController@userCountData');
         Route::get('promoter_count_data', 'DashboardController@promoterCountData');
         Route::get('top_goods_list', 'DashboardController@topGoodsList');
+        Route::get('commission_data', 'DashboardController@commissionData');
     });
 
     Route::post('list', 'AdminController@list');

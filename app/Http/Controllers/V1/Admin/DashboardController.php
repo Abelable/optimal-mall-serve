@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Commission;
 use App\Models\OrderGoods;
+use App\Services\CommissionService;
+use App\Services\GiftCommissionService;
 use App\Services\GoodsService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\PromoterService;
+use App\Services\TeamCommissionService;
 use App\Services\UserService;
 
 class DashboardController extends Controller
@@ -130,6 +134,19 @@ class DashboardController extends Controller
         return $this->success([
             'topSalesGoodsList' => $topSalesGoodsList,
             'topOrderCountGoodsList' => $topOrderCountGoodsList
+        ]);
+    }
+
+    public function commissionData()
+    {
+        $monthlyCommissionList = CommissionService::getInstance()->monthlyCommissionList();
+        $monthlyGiftCommissionList = GiftCommissionService::getInstance()->monthlyCommissionList();
+        $monthlyTeamCommissionList = TeamCommissionService::getInstance()->monthlyCommissionList();
+
+        return $this->success([
+            'monthlyCommissionList' => $monthlyCommissionList,
+            'monthlyGiftCommissionList' => $monthlyGiftCommissionList,
+            'monthlyTeamCommissionList' => $monthlyTeamCommissionList
         ]);
     }
 }

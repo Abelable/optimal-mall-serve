@@ -361,4 +361,21 @@ class GiftCommissionService extends BaseService
             $commission->save();
         }
     }
+
+    public function monthlyCommissionList()
+    {
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subMonths(12)->startOfMonth();
+
+        return GiftCommission::query()
+            ->whereIn('status', [1, 2, 3, 4])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
+                DB::raw("SUM(promoter_commission + manager_commission) as sum")
+            )
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"))
+            ->orderBy('month', 'asc')
+            ->get();
+    }
 }

@@ -8,6 +8,7 @@ use App\Models\Coupon;
 use App\Models\Commission;
 use App\Utils\CodeResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CommissionService extends BaseService
 {
@@ -285,5 +286,22 @@ class CommissionService extends BaseService
             $commission->status = 4;
             $commission->save();
         }
+    }
+
+    public function monthlyCommissionList()
+    {
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subMonths(12)->startOfMonth();
+
+        return Commission::query()
+            ->whereIn('status', [1, 2, 3, 4])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
+                DB::raw("SUM(commission_amount) as sum")
+            )
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"))
+            ->orderBy('month', 'asc')
+            ->get();
     }
 }
