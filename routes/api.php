@@ -233,6 +233,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::get('promoter_count_data', 'DashboardController@promoterCountData');
         Route::get('top_goods_list', 'DashboardController@topGoodsList');
         Route::get('commission_data', 'DashboardController@commissionData');
+        Route::get('todo_list', 'DashboardController@todoList');
     });
 
     Route::post('list', 'AdminController@list');

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\AdminTodoService;
 use App\Services\EnterpriseInfoService;
 use App\Utils\CodeResponse;
+use App\Utils\Enums\AdminTodoEnums;
 use App\Utils\Inputs\EnterpriseInfoPageInput;
+use Illuminate\Support\Facades\DB;
 
 class EnterpriseInfoController extends Controller
 {
@@ -39,8 +42,13 @@ class EnterpriseInfoController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前企业认证信息不存在');
         }
 
-        $authInfo->status = 1;
-        $authInfo->save();
+        DB::transaction(function () use ($authInfo) {
+            $authInfo->status = 1;
+            $authInfo->save();
+
+            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ENTERPRISE_CONFIRM, $authInfo->id);
+        });
+
 
         return $this->success();
     }
@@ -55,9 +63,13 @@ class EnterpriseInfoController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前企业认证信息不存在');
         }
 
-        $authInfo->status = 2;
-        $authInfo->failure_reason = $reason;
-        $authInfo->save();
+        DB::transaction(function () use ($authInfo, $reason) {
+            $authInfo->status = 2;
+            $authInfo->failure_reason = $reason;
+            $authInfo->save();
+
+            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ENTERPRISE_CONFIRM, $authInfo->id);
+        });
 
         return $this->success();
     }

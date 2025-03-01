@@ -5,11 +5,13 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\OrderGoods;
 use App\Models\Refund;
+use App\Services\AdminTodoService;
 use App\Services\CouponService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\RefundService;
 use App\Utils\CodeResponse;
+use App\Utils\Enums\AdminTodoEnums;
 use App\Utils\Inputs\RefundInput;
 use Illuminate\Support\Facades\DB;
 
@@ -47,9 +49,12 @@ class RefundController extends Controller
 
         DB::transaction(function () use ($orderSn, $input, $couponId, $goodsId, $orderId) {
             $refundAmount = $this->calcRefundAmount($orderId, $goodsId, $couponId);
-            RefundService::getInstance()->createRefund($this->userId(), $orderId, $orderSn, $goodsId, $couponId, $refundAmount, $input);
+            $refund = RefundService::getInstance()->createRefund($this->userId(), $orderId, $orderSn, $goodsId, $couponId, $refundAmount, $input);
 
             OrderService::getInstance()->afterSale($this->userId(), $orderId);
+
+            // 生成后台售后处理代办事项
+            AdminTodoService::getInstance()->createTodo(AdminTodoEnums::REFUND_CONFIRM, [$refund->id]);
         });
 
         return $this->success();

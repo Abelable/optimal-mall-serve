@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\OrderGoods;
 use App\Models\Promoter;
 use App\Utils\CodeResponse;
+use App\Utils\Enums\AdminTodoEnums;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\Admin\OrderPageInput;
 use App\Utils\Inputs\PageInput;
@@ -303,6 +304,9 @@ class OrderService extends BaseService
             //      PromoterService::getInstance()->toBePromoter($userId, 3, $commonGoodsIds);
             // }
 
+            // 生成后台待发货代办事项
+            AdminTodoService::getInstance()->createTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $orderIds);
+
             return $orderList;
         });
     }
@@ -534,6 +538,9 @@ class OrderService extends BaseService
                 $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
                 WxMpServe::new()->uploadShippingInfo($openid, $order, [$orderPackage], true);
             }
+
+            // 完成后台待发货代办事项
+            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $order->id);
         });
 
         return $order;
@@ -702,6 +709,9 @@ class OrderService extends BaseService
                         $promoterInfo->delete();
                     }
                 }
+
+                // 删除后台待发货代办事项
+                AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $order->id);
             } catch (GatewayException $exception) {
                 Log::error('wx_refund_fail', [$exception]);
             }

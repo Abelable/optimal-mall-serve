@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Commission;
 use App\Models\OrderGoods;
+use App\Services\AdminTodoService;
 use App\Services\CommissionService;
 use App\Services\GiftCommissionService;
 use App\Services\GoodsService;
@@ -148,5 +149,11 @@ class DashboardController extends Controller
             'monthlyGiftCommissionList' => $monthlyGiftCommissionList,
             'monthlyTeamCommissionList' => $monthlyTeamCommissionList
         ]);
+    }
+
+    public function todoList()
+    {
+        $todoList = AdminTodoService::getInstance()->getTodoList();
+        return $this->success($todoList);
     }
 }

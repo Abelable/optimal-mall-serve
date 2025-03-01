@@ -4,11 +4,13 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Services\AccountService;
+use App\Services\AdminTodoService;
 use App\Services\CommissionService;
 use App\Services\GiftCommissionService;
 use App\Services\TeamCommissionService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
+use App\Utils\Enums\AdminTodoEnums;
 use App\Utils\Inputs\PageInput;
 use App\Utils\Inputs\WithdrawalInput;
 use Illuminate\Support\Carbon;
@@ -85,6 +87,8 @@ class WithdrawalController extends Controller
                 } else {
                     CommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->scene, $withdrawal->id);
                 }
+
+                AdminTodoService::getInstance()->createTodo(AdminTodoEnums::WITHDRAWAL_CONFIRM, [$withdrawal->id]);
             }
         });
 

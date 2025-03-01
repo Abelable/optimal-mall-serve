@@ -4,9 +4,12 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\EnterpriseInfo;
+use App\Services\AdminTodoService;
 use App\Services\EnterpriseInfoService;
 use App\Utils\CodeResponse;
+use App\Utils\Enums\AdminTodoEnums;
 use App\Utils\Inputs\EnterpriseInfoInput;
+use Illuminate\Support\Facades\DB;
 
 class EnterpriseInfoController extends Controller
 {
@@ -20,7 +23,12 @@ class EnterpriseInfoController extends Controller
     {
         /** @var EnterpriseInfoInput $input */
         $input = EnterpriseInfoInput::new();
-        EnterpriseInfoService::getInstance()->createEnterpriseInfo($this->userId(), $input);
+
+        DB::transaction(function () use ($input) {
+            $enterpriseInfo = EnterpriseInfoService::getInstance()->createEnterpriseInfo($this->userId(), $input);
+            AdminTodoService::getInstance()->createTodo(AdminTodoEnums::ENTERPRISE_CONFIRM, [$enterpriseInfo->id]);
+        });
+
         return $this->success();
     }
 

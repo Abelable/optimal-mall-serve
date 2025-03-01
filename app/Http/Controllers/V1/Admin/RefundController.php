@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\AdminTodoService;
 use App\Services\MerchantService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\RefundService;
 use App\Utils\CodeResponse;
+use App\Utils\Enums\AdminTodoEnums;
 use App\Utils\ExpressServe;
 use App\Utils\Inputs\StatusPageInput;
 use Illuminate\Support\Facades\DB;
@@ -47,9 +49,9 @@ class RefundController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '售后信息不存在');
         }
 
-        if (($refund->status == 0 && $refund->refund_type == 1)
-            || ($refund->status == 2 && $refund->refund_type == 2)) {
-            DB::transaction(function () use ($refund) {
+        DB::transaction(function () use ($refund) {
+            if (($refund->status == 0 && $refund->refund_type == 1)
+                || ($refund->status == 2 && $refund->refund_type == 2)) {
                 $refund->status = 3;
                 $refund->save();
 
@@ -59,11 +61,14 @@ class RefundController extends Controller
                     $refund->coupon_id,
                     $refund->refund_amount
                 );
-            });
-        } else {
-            $refund->status = 1;
-            $refund->save();
-        }
+            } else {
+                $refund->status = 1;
+                $refund->save();
+            }
+
+            // 完成后台售后确认代办任务
+            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::REFUND_CONFIRM, $refund->id);
+        });
 
         return $this->success();
     }
@@ -95,9 +100,14 @@ class RefundController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '售后信息不存在');
         }
 
-        $refund->status = 4;
-        $refund->failure_reason = $reason;
-        $refund->save();
+        DB::transaction(function () use ($refund, $reason) {
+            $refund->status = 4;
+            $refund->failure_reason = $reason;
+            $refund->save();
+
+            // 完成后台售后确认代办任务
+            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::REFUND_CONFIRM, $refund->id);
+        });
 
         return $this->success();
     }

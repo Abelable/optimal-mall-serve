@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Withdrawal;
+use App\Services\AdminTodoService;
 use App\Services\BankCardService;
 use App\Services\CommissionService;
 use App\Services\GiftCommissionService;
@@ -11,6 +12,7 @@ use App\Services\TeamCommissionService;
 use App\Services\UserService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
+use App\Utils\Enums\AdminTodoEnums;
 use App\Utils\Inputs\WithdrawalPageInput;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -96,6 +98,8 @@ class WithdrawalController extends Controller
             $record->status = 1;
             $record->save();
 
+            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::WITHDRAWAL_CONFIRM, $record->id);
+
             if ($record->path == 1) {
                 // todo 微信转账
                 $params = [
@@ -136,6 +140,8 @@ class WithdrawalController extends Controller
             $record->status = 2;
             $record->failure_reason = $reason;
             $record->save();
+
+            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::WITHDRAWAL_CONFIRM, $record->id);
         });
 
         return $this->success();
