@@ -861,7 +861,9 @@ class OrderService extends BaseService
 
     public function salesSum()
     {
-        return Order::query()->whereIn('status', [201, 204, 301, 401, 402, 403, 501])->sum('refund_amount');
+        return Order::query()
+            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501])
+            ->sum(DB::raw('refund_amount + deduction_balance'));
     }
 
     public function dailySalesList()
