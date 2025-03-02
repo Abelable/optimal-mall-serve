@@ -588,6 +588,9 @@ class OrderService extends BaseService
                 $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
                 WxMpServe::new()->uploadShippingInfo($openid, $order, $orderPackageList, $isAllDelivered);
             }
+
+            // 完成后台待发货代办事项
+            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $order->id);
         });
 
         return $order;
