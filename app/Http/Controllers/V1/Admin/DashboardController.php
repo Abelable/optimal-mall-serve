@@ -90,12 +90,14 @@ class DashboardController extends Controller
         $dailyCountList = PromoterService::getInstance()->dailyPromoterCountList();
         $dailyGrowthRate = PromoterService::getInstance()->dailyPromoterCountGrowthRate();
         $weeklyGrowthRate = PromoterService::getInstance()->weeklyPromoterCountGrowthRate();
+        $levelsCountList = PromoterService::getInstance()->getPromoterLevelsCount();
 
         return $this->success([
             'totalCount' => $totalCount,
             'dailyCountList' => $dailyCountList,
             'dailyGrowthRate' => $dailyGrowthRate,
-            'weeklyGrowthRate' => $weeklyGrowthRate
+            'weeklyGrowthRate' => $weeklyGrowthRate,
+            'levelsCountList' => $levelsCountList
         ]);
     }
 

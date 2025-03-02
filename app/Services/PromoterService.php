@@ -202,4 +202,13 @@ class PromoterService extends BaseService
     {
         return Promoter::query()->where('user_id', $userId)->whereIn('path', $pathList)->first($columns);
     }
+
+    public function getPromoterLevelsCount()
+    {
+        return Promoter::query()
+            ->select('level', DB::raw('COUNT(*) as number'))
+            ->whereIn('level', [1, 2, 3, 4])
+            ->groupBy('level')
+            ->get();
+    }
 }
