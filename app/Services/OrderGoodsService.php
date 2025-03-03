@@ -112,6 +112,7 @@ class OrderGoodsService extends BaseService
         $startDate = Carbon::createFromTimestamp($startDate);
         $endDate   = Carbon::createFromTimestamp($endDate);
         return OrderGoods::query()
+            ->where('status', '1')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('goods_id')
             ->select('goods_id', DB::raw('SUM(price * number) as sum'))
@@ -125,11 +126,17 @@ class OrderGoodsService extends BaseService
         $startDate = Carbon::createFromTimestamp($startDate);
         $endDate   = Carbon::createFromTimestamp($endDate);
         return OrderGoods::query()
+            ->where('status', '1')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('goods_id')
             ->select('goods_id', DB::raw('COUNT(*) as count'))
             ->orderByDesc('count')
             ->limit(7)
             ->get();
+    }
+
+    public function updateStatusByOrderIds(array $orderIds, $status)
+    {
+        return OrderGoods::query()->whereIn('order_id', $orderIds)->update(['status' => $status]);
     }
 }

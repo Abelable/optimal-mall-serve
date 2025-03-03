@@ -307,6 +307,9 @@ class OrderService extends BaseService
             // 生成后台待发货代办事项
             AdminTodoService::getInstance()->createTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $orderIds);
 
+            // 更新订单商品状态
+            OrderGoodsService::getInstance()->updateStatusByOrderIds($orderIds, 1);
+
             return $orderList;
         });
     }
@@ -715,6 +718,9 @@ class OrderService extends BaseService
 
                 // 删除后台待发货代办事项
                 AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $order->id);
+
+                // 更新订单商品状态
+                OrderGoodsService::getInstance()->updateStatusByOrderIds([$order->id], 2);
             } catch (GatewayException $exception) {
                 Log::error('wx_refund_fail', [$exception]);
             }
@@ -786,6 +792,9 @@ class OrderService extends BaseService
                     $promoterInfo->delete();
                 }
             }
+
+            // 更新订单商品状态
+            OrderGoodsService::getInstance()->updateStatusByOrderIds([$order->id], 2);
 
             return $order;
         } catch (GatewayException $exception) {

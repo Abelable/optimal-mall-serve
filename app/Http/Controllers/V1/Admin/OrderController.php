@@ -229,4 +229,31 @@ class OrderController extends Controller
 
         return $this->success();
     }
+
+    public function updateOrderGoodsStatus()
+    {
+        $orderList = Order::query()->get();
+        $orderList->map(function (Order $order) {
+            $orderGoodsList = OrderGoodsService::getInstance()->getListByOrderId($order->id);
+            if ($order->status == 201
+                || $order->status == 204
+                || $order->status == 301
+                || $order->status == 401
+                || $order->status == 402
+                || $order->status == 403
+                || $order->status == 501
+            ) {
+                $orderGoodsList->map(function (OrderGoods $orderGoods) {
+                    $orderGoods->status = 1;
+                    $orderGoods->save();
+                });
+            } else if ($order->status == 202 || $order->status == 203) {
+                $orderGoodsList->map(function (OrderGoods $orderGoods) {
+                    $orderGoods->status = 2;
+                    $orderGoods->save();
+                });
+            }
+        });
+        return $this->success();
+    }
 }

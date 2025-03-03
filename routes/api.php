@@ -537,6 +537,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('delete', 'OrderController@delete');
         Route::post('export', 'OrderController@export');
         Route::post('import', 'OrderController@import');
+        Route::post('update_order_goods_status', 'OrderController@updateOrderGoodsStatus');
     });
 
     Route::prefix('refund')->group(function () {
