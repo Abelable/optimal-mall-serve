@@ -278,7 +278,7 @@ class OrderController extends Controller
                         // 9.生成商品佣金记录（前提：非礼包商品）
                         // 场景1：普通用户且没有上级 - 不需要生成佣金记录
                         // 场景2：普通用户拥有上级 - 生成"分享场景"佣金记录
-                        // 场景3：推官员 - 生成"自购场景"佣金记录
+                        // 场景3：推广员 - 生成"自购场景"佣金记录
                         if (!is_null($promoterInfo) || !is_null($superiorId)) {
                             $scene = !is_null($promoterInfo) ? 1 : 2;
                             $superiorId = !is_null($promoterInfo) ? null : $superiorId;

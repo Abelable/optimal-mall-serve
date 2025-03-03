@@ -290,7 +290,7 @@ class OrderService extends BaseService
             CommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
             TeamCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
 
-            // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+            // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
             // GiftCommissionService::getInstance()->updateListToOrderPaidStatus($orderIds);
             GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
 
@@ -499,7 +499,7 @@ class OrderService extends BaseService
         CommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds, $role);
         TeamCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds, $role);
 
-        // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+        // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
         // GiftCommissionService::getInstance()->updateListToOrderConfirmStatus($orderIds);
 
         return $orderList;
@@ -697,11 +697,11 @@ class OrderService extends BaseService
                 CommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
                 TeamCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
 
-                // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+                // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
                 // GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
                 GiftCommissionService::getInstance()->deleteListByOrderIds([$order->id]);
 
-                // 退款删除推官员身份
+                // 退款删除推广员身份
                 /** @var Promoter $promoterInfo */
                 $promoterInfo = PromoterService::getInstance()->getUserPromoterByPathList($order->user_id, [2, 3]);
                 if (!is_null($promoterInfo)) {
@@ -773,11 +773,11 @@ class OrderService extends BaseService
             CommissionService::getInstance()->deletePaidCommission($orderId, $goodsId);
             TeamCommissionService::getInstance()->deletePaidCommission($orderId, $goodsId);
 
-            // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+            // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
             // GiftCommissionService::getInstance()->deletePaidListByOrderIds([$order->id]);
             GiftCommissionService::getInstance()->deleteByGoodsId($orderId, $goodsId);
 
-            // 售后删除推官员身份
+            // 售后删除推广员身份
             /** @var Promoter $promoterInfo */
             $promoterInfo = PromoterService::getInstance()->getUserPromoterByPathList($order->user_id, [2, 3]);
             if (!is_null($promoterInfo)) {

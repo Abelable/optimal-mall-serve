@@ -75,25 +75,25 @@ class GiftCommissionService extends BaseService
 
     public function updateListToOrderConfirmStatus($orderIds)
     {
-        // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+        // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
         // $commissionList = $this->getPaidListByOrderIds($orderIds);
         $commissionList = $this->getListByOrderIds($orderIds);
 
         return $commissionList->map(function (GiftCommission $commission) {
             //  if ($commission->refund_status == 1) {
-            //      // 7天无理由商品：确认收货7天后更新佣金状态，并成为推官员
+            //      // 7天无理由商品：确认收货7天后更新佣金状态，并成为推广员
             //      dispatch(new GiftCommissionConfirm($commission->id));
             //  } else {
             //      $commission->status = 2;
             //      $commission->save();
             //
-            //      // 成为推官员
+            //      // 成为推广员
             //      PromoterService::getInstance()->toBePromoter($commission->user_id);
             //  }
             $commission->status = 2;
             $commission->save();
 
-            // 成为推官员
+            // 成为推广员
             PromoterService::getInstance()->toBePromoter($commission->user_id, 2, [$commission->goods_id]);
             return $commission;
         });
@@ -110,7 +110,7 @@ class GiftCommissionService extends BaseService
             $commission->status = 2;
             $commission->save();
 
-            // 成为推官员
+            // 成为推广员
             PromoterService::getInstance()->toBePromoter($commission->user_id, 2, [$commission->goods_id]);
 
             return $commission;
@@ -122,13 +122,13 @@ class GiftCommissionService extends BaseService
         return GiftCommission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
     }
 
-    // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+    // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
     public function deleteListByOrderIds(array $orderIds)
     {
         return GiftCommission::query()->whereIn('order_id', $orderIds)->delete();
     }
 
-    // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+    // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
     public function deleteByGoodsId($orderId, $goodsId)
     {
         return GiftCommission::query()
@@ -137,7 +137,7 @@ class GiftCommissionService extends BaseService
             ->delete();
     }
 
-    // todo 礼包逻辑临时改动，付款成功就成为推官员，售后需人工处理产生的佣金记录
+    // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
     public function getListByOrderIds(array $orderIds, $columns = ['*'])
     {
         return GiftCommission::query()
