@@ -221,4 +221,12 @@ class PromoterService extends BaseService
             ->orderByDesc('total_commission')
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
+
+    public function updatePromotedUserCount($userId, $count = 1)
+    {
+        $promoter = $this->getPromoterByUserId($userId);
+        $promoter->promoted_user_number = $promoter->promoted_user_number + $count;
+        $promoter->save();
+        return $promoter;
+    }
 }

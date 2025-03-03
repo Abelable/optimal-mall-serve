@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Exceptions\BusinessException;
 use App\Http\Controllers\Controller;
 use App\Services\AccountService;
+use App\Services\PromoterService;
 use App\Services\RelationService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
@@ -39,9 +40,13 @@ class AuthController extends Controller
             // 用户注册
             $user = UserService::getInstance()->register($result['openid'], $input);
 
-            // 绑定上下级
+
             if (!empty($input->superiorId)) {
+                // 绑定上下级
                 RelationService::getInstance()->banding($input->superiorId, $user->id);
+
+                // 增加上级推广人数
+                PromoterService::getInstance()->updatePromotedUserCount($input->superiorId);
             }
 
             // 创建用户余额
