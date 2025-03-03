@@ -141,12 +141,13 @@ class PromoterController extends Controller
         $promoterList = collect($page->items());
 
         $userIds = $promoterList->pluck('user_id')->toArray();
-        $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname'])->keyBy('id');
+        $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname', 'mobile'])->keyBy('id');
 
         $list = $promoterList->map(function (Promoter $promoter) use ($userList) {
-            $userInfo = $userList->get($promoter->user_id);
-            $promoter['userInfo'] = $userInfo;
-            unset($promoter->user_id);
+            $user = $userList->get($promoter->user_id);
+            $promoter['avatar'] = $user->avatar;
+            $promoter['nickname'] = $user->nickname;
+            $promoter['mobile'] = $user->mobile;
             return $promoter;
         });
 
