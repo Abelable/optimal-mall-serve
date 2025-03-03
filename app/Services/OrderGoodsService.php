@@ -127,7 +127,7 @@ class OrderGoodsService extends BaseService
         return OrderGoods::query()
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('goods_id')
-            ->select('goods_id', DB::raw('SUM(number) as count'))
+            ->select('goods_id', DB::raw('COUNT(*) as count'))
             ->orderByDesc('count')
             ->limit(7)
             ->get();
