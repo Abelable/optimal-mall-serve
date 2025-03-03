@@ -21,7 +21,9 @@ class CreatePromotersTable extends Migration
             $table->integer('path')->comment('生成路径：1-管理后台添加，2-礼包购买，3-限时活动');
             $table->string('goods_ids')->default('')->comment('礼包商品id-用于售后退款删除推广员身份');
             $table->integer('promoted_user_number')->default(0)->comment('推广人数');
-            $table->float('commission_total')->default(0)->comment('累计佣金');
+            $table->float('commission_sum')->default(0)->comment('累计商品佣金');
+            $table->float('gift_commission_sum')->default(0)->comment('累计礼包佣金');
+            $table->float('team_commission_sum')->default(0)->comment('累计团队佣金');
             $table->timestamps();
             $table->softDeletes();
         });

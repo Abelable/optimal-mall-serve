@@ -5,8 +5,11 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Promoter;
 use App\Models\User;
+use App\Services\CommissionService;
+use App\Services\GiftCommissionService;
 use App\Services\PromoterService;
 use App\Services\RelationService;
+use App\Services\TeamCommissionService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\UserPageInput;
@@ -127,5 +130,23 @@ class PromoterController extends Controller
             ];
         });
         return $this->success($options);
+    }
+
+    public function updateList()
+    {
+        $promoterList = Promoter::query()->get();
+        $promoterList->map(function (Promoter $promoter) {
+            $promotedUserCount = RelationService::getInstance()->getCountBySuperiorId($promoter->user_id);
+            $promoter->promoted_user_number = $promotedUserCount;
+
+            $commissionSum = CommissionService::getInstance()->getUserCommissionSum($promoter->user_id, [1, 2, 3, 4]);
+
+
+            $promoterCommissionSum = GiftCommissionService::getInstance()->getPromoterCommissionSum($promoter->user_id, [1, 2, 3, 4]);
+            $managerCommissionSum = GiftCommissionService::getInstance()->getManagerCommissionSum($promoter->user_id, [1, 2, 3, 4]);
+            $teamCommissionSum = TeamCommissionService::getInstance()->getUserCommission($promoter->user_id, [1, 2, 3, 4]);
+
+            $promoter->save();
+        });
     }
 }
