@@ -154,13 +154,19 @@ class PromoterController extends Controller
         $userIds = $promoterList->pluck('user_id')->toArray();
         $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname', 'mobile'])->keyBy('id');
 
-        $list = $promoterList->map(function (Promoter $promoter, $index) use ($page, $userList) {
+        $withdrawSumList = WithdrawalService::getInstance()->getWithdrawSumListByUserIds($userIds)->keyBy('user_id');
+
+        $list = $promoterList->map(function (Promoter $promoter, $index) use ($withdrawSumList, $page, $userList) {
             $user = $userList->get($promoter->user_id);
             $promoter['avatar'] = $user->avatar;
             $promoter['nickname'] = $user->nickname;
             $promoter['mobile'] = $user->mobile;
 
             $promoter['rank'] = ($page->currentPage() - 1) * $page->perPage() + $index + 1;
+
+            $withdrawSum = $withdrawSumList->get($user->id);
+            $promoter['settledCommissionSum'] = $withdrawSum ? $withdrawSum->sum : 0;
+
             return $promoter;
         });
 
