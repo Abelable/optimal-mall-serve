@@ -338,4 +338,9 @@ class CommissionService extends BaseService
             ->orderBy('month', 'asc')
             ->get();
     }
+
+    public function getCommissionSumByStatus(array $statusList)
+    {
+        return Commission::query()->whereIn('status', $statusList)->sum('commission_amount');
+    }
 }

@@ -146,10 +146,23 @@ class DashboardController extends Controller
         $monthlyGiftCommissionList = GiftCommissionService::getInstance()->monthlyCommissionList();
         $monthlyTeamCommissionList = TeamCommissionService::getInstance()->monthlyCommissionList();
 
+        $pendingCommissionSum = CommissionService::getInstance()->getCommissionSumByStatus([1, 2, 3]);
+        $settledCommissionSum = CommissionService::getInstance()->getCommissionSumByStatus([4]);
+        $pendingGiftCommissionSum = GiftCommissionService::getInstance()->getCommissionSumByStatus([1, 2, 3]);
+        $settledGiftCommissionSum = GiftCommissionService::getInstance()->getCommissionSumByStatus([4]);
+        $pendingTeamCommissionSum = TeamCommissionService::getInstance()->getCommissionSumByStatus([1, 2, 3]);
+        $settledTeamCommissionSum = TeamCommissionService::getInstance()->getCommissionSumByStatus([4]);
+
         return $this->success([
             'monthlyCommissionList' => $monthlyCommissionList,
             'monthlyGiftCommissionList' => $monthlyGiftCommissionList,
-            'monthlyTeamCommissionList' => $monthlyTeamCommissionList
+            'monthlyTeamCommissionList' => $monthlyTeamCommissionList,
+            'pendingCommissionSum' => $pendingCommissionSum,
+            'settledCommissionSum' => $settledCommissionSum,
+            'pendingGiftCommissionSum' => $pendingGiftCommissionSum,
+            'settledGiftCommissionSum' => $settledGiftCommissionSum,
+            'pendingTeamCommissionSum' => $pendingTeamCommissionSum,
+            'settledTeamCommissionSum' => $settledTeamCommissionSum
         ]);
     }
 

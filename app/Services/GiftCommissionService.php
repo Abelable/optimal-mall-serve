@@ -405,4 +405,11 @@ class GiftCommissionService extends BaseService
             ->orderBy('month', 'asc')
             ->get();
     }
+
+    public function getCommissionSumByStatus(array $statusList)
+    {
+        return GiftCommission::query()
+            ->whereIn('status', $statusList)
+            ->sum(DB::raw('promoter_commission + manager_commission'));
+    }
 }
