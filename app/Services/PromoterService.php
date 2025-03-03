@@ -216,7 +216,9 @@ class PromoterService extends BaseService
     public function getTopPromoterPage(PageInput $input, $columns = ['*'])
     {
         return Promoter::query()
-            ->orderBy('promoted_user_number', 'desc')
+            ->select('*', DB::raw('(commission_sum + gift_commission_sum + team_commission_sum) as total_commission'))
+            ->orderByDesc('promoted_user_number')
+            ->orderByDesc('total_commission')
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 }
