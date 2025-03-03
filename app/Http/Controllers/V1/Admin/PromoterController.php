@@ -168,7 +168,7 @@ class PromoterController extends Controller
 
             $promoterCommissionSum = GiftCommissionService::getInstance()->getPromoterCommissionSum($promoter->user_id, [1, 2, 3, 4]);
             $managerCommissionSum = GiftCommissionService::getInstance()->getManagerCommissionSum($promoter->user_id, [1, 2, 3, 4]);
-            $promoter->gift_commission_sum = bcadd($managerCommissionSum, $promoterCommissionSum);
+            $promoter->gift_commission_sum = bcadd($managerCommissionSum, $promoterCommissionSum, 2);
 
             $teamCommissionSum = TeamCommissionService::getInstance()->getUserCommission($promoter->user_id, [1, 2, 3, 4]);
             $promoter->team_commission_sum = $teamCommissionSum;

@@ -49,6 +49,10 @@ class TeamCommissionService extends BaseService
         return $commissionList->map(function (TeamCommission $commission) {
             $commission->status = 1;
             $commission->save();
+
+            // 更新推广员团队佣金
+            PromoterService::getInstance()->updateTeamCommissionSum($commission->manager_id, $commission->commission_amount);
+
             return $commission;
         });
     }
@@ -94,16 +98,27 @@ class TeamCommissionService extends BaseService
 
     public function deletePaidListByOrderIds(array $orderIds)
     {
-        return TeamCommission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
+        $commissionList = $this->getPaidListByOrderIds($orderIds);
+        $commissionList->map(function (TeamCommission $commission) {
+            // 更新推广员团队佣金
+            PromoterService::getInstance()->updateTeamCommissionSum($commission->manager_id, -$commission->commission_amount);
+
+            $commission->delete();
+        });
     }
 
     public function deletePaidCommission($orderId, $goodsId)
     {
-        return TeamCommission::query()
+        $commission = TeamCommission::query()
             ->where('status', 1)
             ->where('order_id', $orderId)
             ->where('goods_id', $goodsId)
-            ->delete();
+            ->first();
+
+        // 更新推广员团队佣金
+        PromoterService::getInstance()->updateTeamCommissionSum($commission->manager_id, -$commission->commission_amount);
+
+        $commission->delete();
     }
 
     public function getPaidListByOrderIds(array $orderIds, $columns = ['*'])

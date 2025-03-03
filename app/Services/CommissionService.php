@@ -51,6 +51,14 @@ class CommissionService extends BaseService
         return $commissionList->map(function (Commission $commission) {
             $commission->status = 1;
             $commission->save();
+
+            // 更新推广员商品佣金
+            if ($commission->scene == 1) {
+                PromoterService::getInstance()->updateCommissionSum($commission->user_id, $commission->commission_amount);
+            } else {
+                PromoterService::getInstance()->updateCommissionSum($commission->superior_id, $commission->commission_amount);
+            }
+
             return $commission;
         });
     }
@@ -64,6 +72,13 @@ class CommissionService extends BaseService
     {
         return Commission::query()
             ->where('status', 0)
+            ->whereIn('order_id', $orderIds)
+            ->get($columns);
+    }
+
+    public function getListByOrderIds(array $orderIds, $columns = ['*'])
+    {
+        return Commission::query()
             ->whereIn('order_id', $orderIds)
             ->get($columns);
     }
@@ -96,16 +111,35 @@ class CommissionService extends BaseService
 
     public function deletePaidListByOrderIds(array $orderIds)
     {
-        return Commission::query()->where('status', 1)->whereIn('order_id', $orderIds)->delete();
+        $commissionList = $this->getPaidListByOrderIds($orderIds);
+        $commissionList->map(function (Commission $commission) {
+            // 更新推广员商品佣金
+            if ($commission->scene == 1) {
+                PromoterService::getInstance()->updateCommissionSum($commission->user_id, -$commission->commission_amount);
+            } else {
+                PromoterService::getInstance()->updateCommissionSum($commission->superior_id, -$commission->commission_amount);
+            }
+
+            $commission->delete();
+        });
     }
 
     public function deletePaidCommission($orderId, $goodsId)
     {
-        return Commission::query()
+        $commission = Commission::query()
             ->where('status', 1)
             ->where('order_id', $orderId)
             ->where('goods_id', $goodsId)
-            ->delete();
+            ->first();
+
+        // 更新推广员商品佣金
+        if ($commission->scene == 1) {
+            PromoterService::getInstance()->updateCommissionSum($commission->user_id, -$commission->commission_amount);
+        } else {
+            PromoterService::getInstance()->updateCommissionSum($commission->superior_id, -$commission->commission_amount);
+        }
+
+        $commission->delete();
     }
 
     public function getPaidListByOrderIds(array $orderIds, $columns = ['*'])

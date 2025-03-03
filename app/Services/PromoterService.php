@@ -229,4 +229,28 @@ class PromoterService extends BaseService
         $promoter->save();
         return $promoter;
     }
+
+    public function updateCommissionSum($userId, $commission)
+    {
+        $promoter = $this->getPromoterByUserId($userId);
+        $promoter->commission_sum = bcadd($promoter->commission_sum, $commission, 2);
+        $promoter->save();
+        return $promoter;
+    }
+
+    public function updateGiftCommissionSum($userId, $commission)
+    {
+        $promoter = $this->getPromoterByUserId($userId);
+        $promoter->gift_commission_sum = bcadd($promoter->gift_commission_sum, $commission, 2);
+        $promoter->save();
+        return $promoter;
+    }
+
+    public function updateTeamCommissionSum($userId, $commission)
+    {
+        $promoter = $this->getPromoterByUserId($userId);
+        $promoter->team_commission_sum = bcadd($promoter->team_commission_sum, $commission, 2);
+        $promoter->save();
+        return $promoter;
+    }
 }

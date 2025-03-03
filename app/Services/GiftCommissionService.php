@@ -95,6 +95,14 @@ class GiftCommissionService extends BaseService
 
             // 成为推广员
             PromoterService::getInstance()->toBePromoter($commission->user_id, 2, [$commission->goods_id]);
+
+            // 更新推广员礼包佣金
+            if ($commission->manager_id != 0) {
+                PromoterService::getInstance()->updateGiftCommissionSum($commission->manager_id, $commission->manager_commission);
+            } else {
+                PromoterService::getInstance()->updateGiftCommissionSum($commission->promoter_id, $commission->promoter_commission);
+            }
+
             return $commission;
         });
     }
@@ -125,16 +133,35 @@ class GiftCommissionService extends BaseService
     // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
     public function deleteListByOrderIds(array $orderIds)
     {
-        return GiftCommission::query()->whereIn('order_id', $orderIds)->delete();
+        $commissionList = $this->getListByOrderIds($orderIds);
+        $commissionList->map(function (GiftCommission $commission) {
+            // 更新推广员礼包佣金
+            if ($commission->manager_id != 0) {
+                PromoterService::getInstance()->updateGiftCommissionSum($commission->manager_id, -$commission->manager_commission);
+            } else {
+                PromoterService::getInstance()->updateGiftCommissionSum($commission->promoter_id, -$commission->promoter_commission);
+            }
+
+            $commission->delete();
+        });
     }
 
     // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
     public function deleteByGoodsId($orderId, $goodsId)
     {
-        return GiftCommission::query()
+        $commission = GiftCommission::query()
             ->where('order_id', $orderId)
             ->where('goods_id', $goodsId)
-            ->delete();
+            ->first();
+
+        // 更新推广员礼包佣金
+        if ($commission->manager_id != 0) {
+            PromoterService::getInstance()->updateGiftCommissionSum($commission->manager_id, -$commission->manager_commission);
+        } else {
+            PromoterService::getInstance()->updateGiftCommissionSum($commission->promoter_id, -$commission->promoter_commission);
+        }
+
+        $commission->delete();
     }
 
     // todo 礼包逻辑临时改动，付款成功就成为推广员，售后需人工处理产生的佣金记录
