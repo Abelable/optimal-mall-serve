@@ -15,6 +15,7 @@ class CreateOrderGoodsTable extends Migration
     {
         Schema::create('order_goods', function (Blueprint $table) {
             $table->id();
+            $table->integer('status')->default(0)->comment('状态：0-待付款，1-已付款，2-已退款');
             $table->integer('user_id')->comment('用户id');
             $table->integer('order_id')->comment('订单id');
             $table->integer('merchant_id')->default(0)->comment('商家id');

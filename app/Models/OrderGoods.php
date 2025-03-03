@@ -6,6 +6,7 @@ namespace App\Models;
  * App\Models\OrderGoods
  *
  * @property int $id
+ * @property int $status 状态：0-待付款，1-已付款，2-已退款
  * @property int $user_id 用户id
  * @property int $order_id 订单id
  * @property int $merchant_id 商家id
@@ -42,6 +43,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereRefundStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereSelectedSkuIndex($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereSelectedSkuName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderGoods whereUserId($value)
  * @method static \Illuminate\Database\Query\Builder|OrderGoods withTrashed()
