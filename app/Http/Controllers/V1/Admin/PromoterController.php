@@ -13,6 +13,7 @@ use App\Services\TeamCommissionService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\UserPageInput;
+use App\Utils\Inputs\PageInput;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Console\Input\Input;
 
@@ -130,6 +131,26 @@ class PromoterController extends Controller
             ];
         });
         return $this->success($options);
+    }
+
+    public function topPromoterList()
+    {
+        /** @var PageInput $input */
+        $input = PageInput::new();
+        $page = PromoterService::getInstance()->getTopPromoterPage($input);
+        $promoterList = collect($page->items());
+
+        $userIds = $promoterList->pluck('user_id')->toArray();
+        $userList = UserService::getInstance()->getListByIds($userIds, ['id', 'avatar', 'nickname'])->keyBy('id');
+
+        $list = $promoterList->map(function (Promoter $promoter) use ($userList) {
+            $userInfo = $userList->get($promoter->user_id);
+            $promoter['userInfo'] = $userInfo;
+            unset($promoter->user_id);
+            return $promoter;
+        });
+
+        return $this->success($this->paginate($page, $list));
     }
 
     public function updateList()

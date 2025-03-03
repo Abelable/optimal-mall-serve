@@ -287,6 +287,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('change_level', 'PromoterController@changeLevel');
             Route::post('delete', 'PromoterController@delete');
             Route::get('options', 'PromoterController@options');
+            Route::post('top_list', 'PromoterController@topPromoterList');
             Route::post('update_list', 'PromoterController@updateList');
         });
 
