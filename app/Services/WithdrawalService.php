@@ -6,6 +6,7 @@ use App\Models\Withdrawal;
 use App\Utils\Inputs\PageInput;
 use App\Utils\Inputs\WithdrawalPageInput;
 use App\Utils\Inputs\WithdrawalInput;
+use Illuminate\Support\Facades\DB;
 
 class WithdrawalService extends BaseService
 {
@@ -81,5 +82,15 @@ class WithdrawalService extends BaseService
     public function getCountByStatus($status)
     {
         return Withdrawal::query()->where('status', $status)->count();
+    }
+
+    public function getWithdrawSumListByUserIds(array $userIds)
+    {
+        return Withdrawal::query()
+            ->where('status', 1)
+            ->whereIn('user_id', $userIds)
+            ->select('user_id', DB::raw('SUM(withdraw_amount) as sum'))
+            ->groupBy('user_id')
+            ->get();
     }
 }
