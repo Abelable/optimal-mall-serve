@@ -17,6 +17,7 @@ class AdminController extends Controller
 
     public function list()
     {
+        /** @var AdminListInput $input */
         $input = AdminListInput::new();
         $list = AdminService::getInstance()->getAdminList($input);
         return $this->successPaginate($list);
