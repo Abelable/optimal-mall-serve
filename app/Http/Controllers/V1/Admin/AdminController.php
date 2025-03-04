@@ -74,6 +74,9 @@ class AdminController extends Controller
         if (!empty($input->nickname)) {
             $admin->nickname = $input->nickname;
         }
+        if (!empty($input->password)) {
+            $admin->password = Hash::make($input->password);
+        }
         $admin->role_id = $input->roleId;
         $admin->save();
 

@@ -10,6 +10,7 @@ class AdminEditInput extends BaseInput
     public $avatar;
     public $nickname;
     public $roleId;
+    public $password;
 
     public function rules()
     {
@@ -18,6 +19,7 @@ class AdminEditInput extends BaseInput
             'avatar' => 'string',
             'nickname' => 'string',
             'roleId' => 'required|integer|digits_between:1,20',
+            'password' => 'string',
         ];
     }
 }
