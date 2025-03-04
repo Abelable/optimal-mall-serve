@@ -17,6 +17,7 @@ class CreateAdminRolesTable extends Migration
             $table->id();
             $table->string('name')->comment('管理员角色名称');
             $table->string('desc')->default('')->comment('管理员角色描述');
+            $table->longText('permission')->comment('管理员角色权限');
             $table->timestamps();
             $table->softDeletes();
         });
