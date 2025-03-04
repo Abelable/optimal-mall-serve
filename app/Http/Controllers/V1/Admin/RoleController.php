@@ -57,11 +57,6 @@ class RoleController extends Controller
         $desc = $this->verifyString('desc');
         $permission = $this->verifyRequiredString('permission');
 
-        $role = RoleService::getInstance()->getRoleByName($name);
-        if (!is_null($role)) {
-            return $this->fail(CodeResponse::DATA_EXISTED, '管理员角色已存在');
-        }
-
         $role = RoleService::getInstance()->getRoleById($id);
         if (is_null($role)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前管理员角色不存在');

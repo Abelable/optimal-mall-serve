@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Exceptions\BusinessException;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\AdminService;
+use App\Services\Admin\RoleService;
 use App\Utils\CodeResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -30,7 +31,11 @@ class AuthController extends Controller
         }
 
         $token = Auth::guard('Admin')->login($admin);
-        return $this->success($token);
+        $permission = RoleService::getInstance()->getRoleById($admin->role_id)->permission;
+        return $this->success([
+            'token' => $token,
+            'permission' => $permission,
+        ]);
     }
 
     public function logout()
