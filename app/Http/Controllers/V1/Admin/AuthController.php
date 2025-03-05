@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     protected $guard = 'Admin';
-    protected $only = ['info'];
+    protected $only = ['info', 'updateInfo'];
 
     public function login()
     {
@@ -67,5 +67,22 @@ class AuthController extends Controller
             'nickname' => $admin->nickname,
             'avatar' => $admin->avatar
         ]);
+    }
+
+    public function updateInfo()
+    {
+        $avatar = $this->verifyString('avatar');
+        $nickname = $this->verifyString('nickname');
+
+        $admin = $this->admin();
+        if (!empty($avatar)) {
+            $admin->avatar = $avatar;
+        }
+        if (!empty($nickname)) {
+            $admin->nickname = $nickname;
+        }
+        $admin->save();
+
+        return $this->success();
     }
 }
