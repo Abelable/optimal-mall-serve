@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     protected $guard = 'Admin';
-    protected $only = ['info', 'updateInfo'];
+    protected $only = ['logout', 'baseInfo', 'updateBaseInfo', 'resetPassword'];
 
     public function login()
     {
@@ -60,7 +60,7 @@ class AuthController extends Controller
         return $this->success($token);
     }
 
-    public function info()
+    public function baseInfo()
     {
         $admin = $this->admin();
         return $this->success([
@@ -69,7 +69,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function updateInfo()
+    public function updateBaseInfo()
     {
         $avatar = $this->verifyString('avatar');
         $nickname = $this->verifyString('nickname');
@@ -81,6 +81,22 @@ class AuthController extends Controller
         if (!empty($nickname)) {
             $admin->nickname = $nickname;
         }
+        $admin->save();
+
+        return $this->success();
+    }
+
+    public function resetPassword()
+    {
+        $password = $this->verifyRequiredString('password');
+        $newPassword = $this->verifyRequiredString('newPassword');
+        $admin = $this->admin();
+
+        $isPass = Hash::check($password, $admin->getAuthPassword());
+        if (!$isPass) {
+            return $this->fail(CodeResponse::INVALID_ACCOUNT, '原密码错误');
+        }
+        $admin->password = Hash::make($newPassword);
         $admin->save();
 
         return $this->success();

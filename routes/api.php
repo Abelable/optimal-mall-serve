@@ -223,8 +223,9 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('login', 'AuthController@login');
         Route::get('logout', 'AuthController@logout');
         Route::get('token_refresh', 'AuthController@refreshToken');
-        Route::get('me', 'AuthController@info');
-        Route::post('update', 'AuthController@updateInfo');
+        Route::get('base_info', 'AuthController@baseInfo');
+        Route::post('update_base_info', 'AuthController@updateBaseInfo');
+        Route::post('reset_password', 'AuthController@resetPassword');
     });
 
     Route::prefix('dashboard')->group(function () {
