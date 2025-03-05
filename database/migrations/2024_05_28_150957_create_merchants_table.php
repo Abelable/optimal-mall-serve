@@ -20,6 +20,9 @@ class CreateMerchantsTable extends Migration
             $table->string('mobile')->comment('手机号');
             $table->string('address_detail')->comment('收获地址');
             $table->longText('license')->comment('经营资质');
+            $table->decimal('longitude', 9, 6)->default(0.000000)->comment('提货点经度');
+            $table->decimal('latitude', 8, 6)->default(0.000000)->comment('提货点纬度');
+            $table->string('pickup_address_detail')->default('')->comment('提货点地址');
             $table->string('supplement')->default('')->comment('补充说明');
             $table->timestamps();
             $table->softDeletes();
