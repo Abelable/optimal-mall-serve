@@ -9,8 +9,9 @@ class ActivityTagService extends BaseService
 {
     public function getTagList(PageInput $input, $columns = ['*'])
     {
-        $query = ActivityTag::query();
-        return $query->orderBy($input->sort, $input->order)->paginate($input->limit, $columns, 'page', $input->page);
+        return ActivityTag::query()
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function getTagById($id, $columns = ['*'])
