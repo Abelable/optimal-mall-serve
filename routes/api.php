@@ -478,6 +478,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('edit', 'MerchantController@edit');
         Route::post('delete', 'MerchantController@delete');
         Route::get('options', 'MerchantController@options');
+        Route::post('init_refund_address', 'MerchantController@initRefundAddress');
     });
 
     Route::prefix('express')->group(function () {

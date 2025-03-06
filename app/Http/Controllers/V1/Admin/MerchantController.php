@@ -4,6 +4,8 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Merchant;
+use App\Models\MerchantRefundAddress;
+use App\Services\MerchantRefundAddressService;
 use App\Services\MerchantService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\MerchantInput;
@@ -75,5 +77,15 @@ class MerchantController extends Controller
     {
         $options = MerchantService::getInstance()->getMerchantOptions(['id', 'name']);
         return $this->success($options);
+    }
+
+    public function initRefundAddress()
+    {
+        $list = MerchantService::getInstance()->getMerchantOptions();
+        $list->map(function (Merchant $merchant) {
+            MerchantRefundAddressService::getInstance()
+                ->createAddress($merchant->id, $merchant->consignee_name, $merchant->mobile, $merchant->address_detail);
+        });
+        return $this->success();
     }
 }
