@@ -247,4 +247,9 @@ class GoodsService extends BaseService
     {
         return Goods::query()->whereIn('id', $goodsIds)->get($columns);
     }
+
+    public function getGoodsListByMerchantId($merchantId, $columns = ['*'])
+    {
+        return Goods::query()->where('merchant_id', $merchantId)->get($columns);
+    }
 }

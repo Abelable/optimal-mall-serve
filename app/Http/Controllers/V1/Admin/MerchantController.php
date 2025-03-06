@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Goods;
 use App\Models\Merchant;
-use App\Models\MerchantRefundAddress;
+use App\Services\GoodsRefundAddressService;
+use App\Services\GoodsService;
 use App\Services\MerchantRefundAddressService;
 use App\Services\MerchantService;
 use App\Utils\CodeResponse;
@@ -83,8 +85,12 @@ class MerchantController extends Controller
     {
         $list = MerchantService::getInstance()->getMerchantOptions();
         $list->map(function (Merchant $merchant) {
-            MerchantRefundAddressService::getInstance()
+            $refundAddress = MerchantRefundAddressService::getInstance()
                 ->createAddress($merchant->id, $merchant->consignee_name, $merchant->mobile, $merchant->address_detail);
+            $goodsList = GoodsService::getInstance()->getGoodsListByMerchantId($merchant->id);
+            $goodsList->map(function (Goods $goods) use ($refundAddress) {
+                GoodsRefundAddressService::getInstance()->createAddress($goods->id, $refundAddress->id);
+            });
         });
         return $this->success();
     }
