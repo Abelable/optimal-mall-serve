@@ -11,9 +11,6 @@ namespace App\Models;
  * @property string $mobile 手机号
  * @property string $address_detail 收获地址
  * @property string $license 经营资质
- * @property string $longitude 提货点经度
- * @property string $latitude 提货点纬度
- * @property string $pickup_address_detail 提货点地址
  * @property string $supplement 补充说明
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -27,12 +24,9 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereLatitude($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereLicense($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereLongitude($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereMobile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Merchant wherePickupAddressDetail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereSupplement($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Merchant withTrashed()
