@@ -16,7 +16,7 @@ class CreateMerchantManagersTable extends Migration
         Schema::create('merchant_managers', function (Blueprint $table) {
             $table->id();
             $table->integer('merchant_id')->comment('商家id');
-            $table->integer('goods_id')->comment('用户id');
+            $table->integer('user_id')->comment('用户id');
             $table->timestamps();
             $table->softDeletes();
         });

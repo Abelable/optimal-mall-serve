@@ -10,6 +10,7 @@ class MerchantInput extends BaseInput
     public $consigneeName;
     public $mobile;
     public $addressDetail;
+    public $managerIds;
     public $license;
     public $supplement;
 
@@ -20,6 +21,7 @@ class MerchantInput extends BaseInput
             'consigneeName' => 'required|string',
             'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
             'addressDetail' => 'required|string',
+            'managerIds' => 'array',
             'license' => 'array',
             'supplement' => 'string'
         ];

@@ -16,6 +16,8 @@ namespace App\Models;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MerchantManager[] $managers
+ * @property-read int|null $managers_count
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Merchant newQuery()
  * @method static \Illuminate\Database\Query\Builder|Merchant onlyTrashed()
@@ -37,4 +39,13 @@ namespace App\Models;
  */
 class Merchant extends BaseModel
 {
+    public function managers()
+    {
+        return $this->hasMany(MerchantManager::class, 'merchant_id');
+    }
+
+    public function managerIds()
+    {
+        return $this->managers()->pluck('user_id');
+    }
 }

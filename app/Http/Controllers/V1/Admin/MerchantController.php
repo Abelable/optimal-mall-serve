@@ -7,11 +7,13 @@ use App\Models\Goods;
 use App\Models\Merchant;
 use App\Services\GoodsRefundAddressService;
 use App\Services\GoodsService;
+use App\Services\MerchantManagerService;
 use App\Services\MerchantRefundAddressService;
 use App\Services\MerchantService;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\MerchantInput;
 use App\Utils\Inputs\Admin\MerchantListInput;
+use Illuminate\Support\Facades\DB;
 
 class MerchantController extends Controller
 {
@@ -45,7 +47,14 @@ class MerchantController extends Controller
         /** @var MerchantInput $input */
         $input = MerchantInput::new();
         $merchant = Merchant::new();
-        MerchantService::getInstance()->updateMerchant($merchant, $input);
+
+        DB::transaction(function () use ($input, $merchant) {
+            $merchant = MerchantService::getInstance()->updateMerchant($merchant, $input);
+            foreach ($input->managerIds as $managerId) {
+                MerchantManagerService::getInstance()->createManager($merchant->id, $managerId);
+            }
+        });
+
         return $this->success();
     }
 
@@ -60,7 +69,19 @@ class MerchantController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前商家不存在');
         }
 
-        MerchantService::getInstance()->updateMerchant($merchant, $input);
+        DB::transaction(function () use ($input, $merchant) {
+            $merchant = MerchantService::getInstance()->updateMerchant($merchant, $input);
+
+            $managerIds = $merchant->managerIds()->toArray();
+            $existingManagerIds = implode(',', $managerIds);
+            $inputManagerIds = implode(',', $input->managerIds);
+            if ($existingManagerIds != $inputManagerIds) {
+                MerchantManagerService::getInstance()->deleteManager($merchant->id);
+                foreach ($input->managerIds as $managerId) {
+                    MerchantManagerService::getInstance()->createManager($merchant->id, $managerId);
+                }
+            }
+        });
         return $this->success();
     }
 
