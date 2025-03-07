@@ -39,6 +39,7 @@ class MerchantController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '当前商家不存在');
         }
         $merchant->license = json_decode($merchant->license);
+        $merchant['managerIds'] = $merchant->managerIds();
         return $this->success($merchant);
     }
 
