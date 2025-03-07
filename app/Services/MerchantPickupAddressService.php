@@ -17,9 +17,7 @@ class MerchantPickupAddressService extends BaseService
     public function updateAddress(MerchantPickupAddress $address, PickupAddressInput $input)
     {
         $address->name = $input->name;
-        if (!empty($input->timeFrame)) {
-            $address->time_frame = $input->timeFrame;
-        }
+        $address->time_frame = $input->timeFrame;
         $address->merchant_id = $input->merchantId;
         $address->longitude = $input->longitude;
         $address->latitude = $input->latitude;
