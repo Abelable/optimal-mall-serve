@@ -41,7 +41,7 @@ class MerchantService extends BaseService
         if (!empty($input->mobile)) {
             $merchant->mobile = $input->mobile;
         }
-        if (!empty($input->address)) {
+        if (!empty($input->addressDetail)) {
             $merchant->address_detail = $input->addressDetail;
         }
         $merchant->license = json_encode($input->license);
