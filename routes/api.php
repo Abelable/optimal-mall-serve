@@ -479,6 +479,22 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('delete', 'MerchantController@delete');
         Route::get('options', 'MerchantController@options');
         Route::post('init_refund_address', 'MerchantController@initRefundAddress');
+
+        Route::prefix('refund_address')->group(function () {
+            Route::post('list', 'MerchantRefundAddressController@list');
+            Route::get('detail', 'MerchantRefundAddressController@detail');
+            Route::post('add', 'MerchantRefundAddressController@add');
+            Route::post('edit', 'MerchantRefundAddressController@edit');
+            Route::post('delete', 'MerchantRefundAddressController@delete');
+        });
+
+        Route::prefix('pickup_address')->group(function () {
+            Route::post('list', 'MerchantPickupAddressController@list');
+            Route::get('detail', 'MerchantPickupAddressController@detail');
+            Route::post('add', 'MerchantPickupAddressController@add');
+            Route::post('edit', 'MerchantPickupAddressController@edit');
+            Route::post('delete', 'MerchantPickupAddressController@delete');
+        });
     });
 
     Route::prefix('express')->group(function () {

@@ -32,9 +32,18 @@ class MerchantService extends BaseService
     public function updateMerchant(Merchant $merchant, MerchantInput $input)
     {
         $merchant->name = $input->name;
-        $merchant->consignee_name = $input->consigneeName;
-        $merchant->mobile = $input->mobile;
-        $merchant->address_detail = $input->addressDetail;
+        if (!empty($input->companyName)) {
+            $merchant->company_name = $input->companyName;
+        }
+        if (!empty($input->consigneeName)) {
+            $merchant->consignee_name = $input->consigneeName;
+        }
+        if (!empty($input->mobile)) {
+            $merchant->mobile = $input->mobile;
+        }
+        if (!empty($input->address)) {
+            $merchant->address_detail = $input->addressDetail;
+        }
         $merchant->license = json_encode($input->license);
         if (!empty($input->supplement)) {
             $merchant->supplement = $input->supplement;

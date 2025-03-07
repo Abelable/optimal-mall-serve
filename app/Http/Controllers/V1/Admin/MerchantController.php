@@ -51,8 +51,10 @@ class MerchantController extends Controller
 
         DB::transaction(function () use ($input, $merchant) {
             $merchant = MerchantService::getInstance()->updateMerchant($merchant, $input);
-            foreach ($input->managerIds as $managerId) {
-                MerchantManagerService::getInstance()->createManager($merchant->id, $managerId);
+            if (!empty($input->managerIds)) {
+                foreach ($input->managerIds as $managerId) {
+                    MerchantManagerService::getInstance()->createManager($merchant->id, $managerId);
+                }
             }
         });
 

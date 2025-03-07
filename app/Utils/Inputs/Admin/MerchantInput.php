@@ -7,6 +7,7 @@ use App\Utils\Inputs\BaseInput;
 class MerchantInput extends BaseInput
 {
     public $name;
+    public $companyName;
     public $consigneeName;
     public $mobile;
     public $addressDetail;
@@ -18,9 +19,10 @@ class MerchantInput extends BaseInput
     {
         return [
             'name' => 'required|string',
-            'consigneeName' => 'required|string',
-            'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
-            'addressDetail' => 'required|string',
+            'companyName' => 'string',
+            'consigneeName' => 'string',
+            'mobile' => 'string',
+            'addressDetail' => 'string',
             'managerIds' => 'array',
             'license' => 'array',
             'supplement' => 'string'

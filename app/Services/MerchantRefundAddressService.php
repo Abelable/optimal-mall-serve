@@ -7,9 +7,14 @@ use App\Utils\Inputs\PageInput;
 
 class MerchantRefundAddressService extends BaseService
 {
-    public function createAddress($merchantId, $consigneeName, $mobile, $addressDetail)
+    public function createAddress($merchantId, $consigneeName, $mobile, $addressDetail): MerchantRefundAddress
     {
         $address = MerchantRefundAddress::new();
+        return $this->updateAddress($address, $merchantId, $consigneeName, $mobile, $addressDetail);
+    }
+
+    public function updateAddress(MerchantRefundAddress $address, $merchantId, $consigneeName, $mobile, $addressDetail): MerchantRefundAddress
+    {
         $address->merchant_id = $merchantId;
         $address->consignee_name = $consigneeName;
         $address->mobile = $mobile;
@@ -30,6 +35,11 @@ class MerchantRefundAddressService extends BaseService
             ->where('merchant_id', $merchantId)
             ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
+    public function getAddressById($id, $columns = ['*'])
+    {
+        return MerchantRefundAddress::query()->find($id, $columns);
     }
 
     public function getAddressOptions($merchantId, $columns = ['*'])

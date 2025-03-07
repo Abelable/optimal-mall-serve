@@ -2,22 +2,28 @@
 
 namespace App\Services;
 
-use App\Models\Merchant;
 use App\Models\MerchantPickupAddress;
-use App\Models\MerchantRefundAddress;
-use App\Utils\Inputs\Admin\MerchantInput;
-use App\Utils\Inputs\Admin\MerchantListInput;
 use App\Utils\Inputs\PageInput;
+use App\Utils\Inputs\PickupAddressInput;
 
 class MerchantPickupAddressService extends BaseService
 {
-    public function createAddress($merchantId, $longitude, $latitude, $addressDetail)
+    public function createAddress(PickupAddressInput $input)
     {
         $address = MerchantPickupAddress::new();
-        $address->merchant_id = $merchantId;
-        $address->longitude = $longitude;
-        $address->latitude = $latitude;
-        $address->address_detail = $addressDetail;
+        return $this->updateAddress($address, $input);
+    }
+
+    public function updateAddress(MerchantPickupAddress $address, PickupAddressInput $input)
+    {
+        $address->name = $input->name;
+        if (!empty($input->timeFrame)) {
+            $address->time_frame = $input->timeFrame;
+        }
+        $address->merchant_id = $input->merchantId;
+        $address->longitude = $input->longitude;
+        $address->latitude = $input->latitude;
+        $address->address_detail = $input->addressDetail;
         $address->save();
         return $address;
     }
@@ -34,6 +40,11 @@ class MerchantPickupAddressService extends BaseService
             ->where('merchant_id', $merchantId)
             ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
+    public function getAddressById($id, $columns = ['*'])
+    {
+        return MerchantPickupAddress::query()->find($id, $columns);
     }
 
     public function getAddressOptions($merchantId, $columns = ['*'])
