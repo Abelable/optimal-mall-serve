@@ -18,6 +18,7 @@ class CreateGoodsPickupAddressesTable extends Migration
             $table->integer('goods_id')->comment('商品id');
             $table->integer('pickup_address_id')->comment('自提地址id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
