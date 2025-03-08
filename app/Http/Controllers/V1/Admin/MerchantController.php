@@ -108,14 +108,19 @@ class MerchantController extends Controller
     public function initRefundAddress()
     {
         $list = MerchantService::getInstance()->getMerchantOptions();
-        $list->map(function (Merchant $merchant) {
-            $refundAddress = MerchantRefundAddressService::getInstance()
-                ->createAddress($merchant->id, $merchant->consignee_name, $merchant->mobile, $merchant->address_detail);
-            $goodsList = GoodsService::getInstance()->getGoodsListByMerchantId($merchant->id);
-            $goodsList->map(function (Goods $goods) use ($refundAddress) {
-                GoodsRefundAddressService::getInstance()->createAddress($goods->id, $refundAddress->id);
+
+        DB::transaction(function () use ($list) {
+            $list->map(function (Merchant $merchant) {
+                $refundAddress = MerchantRefundAddressService::getInstance()
+                    ->createAddress($merchant->id, $merchant->consignee_name, $merchant->mobile, $merchant->address_detail);
+
+                $goodsList = GoodsService::getInstance()->getGoodsListByMerchantId($merchant->id);
+                $goodsList->map(function (Goods $goods) use ($refundAddress) {
+                    GoodsRefundAddressService::getInstance()->createAddress($goods->id, $refundAddress->id);
+                });
             });
         });
+
         return $this->success();
     }
 }
