@@ -70,4 +70,11 @@ class MerchantRefundAddressController extends Controller
         $address->delete();
         return $this->success();
     }
+
+    public function options()
+    {
+        $merchantId = $this->verifyRequiredInteger('merchantId');
+        $options = MerchantRefundAddressService::getInstance()->getAddressOptions($merchantId);
+        return $this->success($options);
+    }
 }

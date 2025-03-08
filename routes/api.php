@@ -486,6 +486,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('add', 'MerchantRefundAddressController@add');
             Route::post('edit', 'MerchantRefundAddressController@edit');
             Route::post('delete', 'MerchantRefundAddressController@delete');
+            Route::get('options', 'MerchantRefundAddressController@options');
         });
 
         Route::prefix('pickup_address')->group(function () {
@@ -494,6 +495,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('add', 'MerchantPickupAddressController@add');
             Route::post('edit', 'MerchantPickupAddressController@edit');
             Route::post('delete', 'MerchantPickupAddressController@delete');
+            Route::get('options', 'MerchantPickupAddressController@options');
         });
     });
 
