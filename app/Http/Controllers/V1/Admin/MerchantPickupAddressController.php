@@ -35,8 +35,8 @@ class MerchantPickupAddressController extends Controller
     {
         /** @var PickupAddressInput $input */
         $input = PickupAddressInput::new();
-        $address = MerchantPickupAddressService::getInstance()->createAddress($input);
-        return $this->success($address);
+        MerchantPickupAddressService::getInstance()->createAddress($input);
+        return $this->success();
     }
 
     public function edit()
