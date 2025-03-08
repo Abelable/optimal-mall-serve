@@ -58,6 +58,10 @@ class GoodsController extends Controller
         $goods->detail_image_list = json_decode($goods->detail_image_list);
         $goods->sku_list = json_decode($goods->sku_list);
         $goods->spec_list = json_decode($goods->spec_list);
+
+        $goods['pickupAddressIds'] = $goods->pickupAddressIds();
+        $goods['refundAddressIds'] = $goods->refundAddressIds();
+
         return $this->success($goods);
     }
 
@@ -95,8 +99,8 @@ class GoodsController extends Controller
             GoodsService::getInstance()->updateGoods($goods, $input);
             GoodsCategoryService::getInstance()->createList($goods->id, $input->categoryIds);
             GoodsRealImageService::getInstance()->update($goods->id, $input->realImageList);
-            GoodsPickupAddressService::getInstance()->createList($goods->id, $input->pickupAddressIds);
-            GoodsRefundAddressService::getInstance()->createList($goods->id, $input->refundAddressIds);
+            GoodsPickupAddressService::getInstance()->createList($goods->id, $input->pickupAddressIds?:[]);
+            GoodsRefundAddressService::getInstance()->createList($goods->id, $input->refundAddressIds?:[]);
         });
 
         return $this->success();
