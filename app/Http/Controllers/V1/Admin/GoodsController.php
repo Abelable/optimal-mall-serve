@@ -8,7 +8,9 @@ use App\Models\GoodsRealImage;
 use App\Services\ActivityService;
 use App\Services\GiftGoodsService;
 use App\Services\GoodsCategoryService;
+use App\Services\GoodsPickupAddressService;
 use App\Services\GoodsRealImageService;
+use App\Services\GoodsRefundAddressService;
 use App\Services\GoodsService;
 use App\Services\IntegrityGoodsService;
 use App\Services\LimitedTimeRecruitGoodsService;
@@ -59,6 +61,47 @@ class GoodsController extends Controller
         return $this->success($goods);
     }
 
+    public function add()
+    {
+        /** @var GoodsInput $input */
+        $input = GoodsInput::new();
+        DB::transaction(function () use ($input) {
+            $goods = GoodsService::getInstance()->createGoods($input);
+            GoodsCategoryService::getInstance()->createList($goods->id, $input->categoryIds);
+            GoodsRealImageService::getInstance()->create($goods->id, $input->realImageList);
+            if (!empty($input->pickupAddressIds)) {
+                GoodsPickupAddressService::getInstance()->createList($goods->id, $input->pickupAddressIds);
+            }
+            if (!empty($input->refundAddressIds)) {
+                GoodsRefundAddressService::getInstance()->createList($goods->id, $input->refundAddressIds);
+            }
+        });
+
+        return $this->success();
+    }
+
+    public function edit()
+    {
+        $id = $this->verifyRequiredId('id');
+        /** @var GoodsInput $input */
+        $input = GoodsInput::new();
+
+        $goods = GoodsService::getInstance()->getGoodsById($id);
+        if (is_null($goods)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
+        }
+
+        DB::transaction(function () use ($input, $goods) {
+            GoodsService::getInstance()->updateGoods($goods, $input);
+            GoodsCategoryService::getInstance()->createList($goods->id, $input->categoryIds);
+            GoodsRealImageService::getInstance()->update($goods->id, $input->realImageList);
+            GoodsPickupAddressService::getInstance()->createList($goods->id, $input->pickupAddressIds);
+            GoodsRefundAddressService::getInstance()->createList($goods->id, $input->refundAddressIds);
+        });
+
+        return $this->success();
+    }
+
     public function up()
     {
         $id = $this->verifyRequiredId('id');
@@ -69,25 +112,6 @@ class GoodsController extends Controller
         }
         $goods->status = 1;
         $goods->save();
-
-        return $this->success();
-    }
-
-    public function delete()
-    {
-        $id = $this->verifyRequiredId('id');
-
-        $goods = GoodsService::getInstance()->getGoodsById($id);
-        if (is_null($goods)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
-        }
-
-        DB::transaction(function () use ($goods) {
-            $goods->delete();
-            GoodsCategoryService::getInstance()->deleteListByGoodsId($goods->id);
-            GoodsRealImageService::getInstance()->delete($goods->id);
-        });
-
 
         return $this->success();
     }
@@ -123,40 +147,6 @@ class GoodsController extends Controller
         return $this->success();
     }
 
-    public function add()
-    {
-        /** @var GoodsInput $input */
-        $input = GoodsInput::new();
-        DB::transaction(function () use ($input) {
-            $goods = GoodsService::getInstance()->createGoods($input);
-            GoodsCategoryService::getInstance()->createList($goods->id, $input->categoryIds);
-            GoodsRealImageService::getInstance()->create($goods->id, $input->realImageList);
-        });
-
-        return $this->success();
-    }
-
-    public function edit()
-    {
-        $id = $this->verifyRequiredId('id');
-        /** @var GoodsInput $input */
-        $input = GoodsInput::new();
-
-        $goods = GoodsService::getInstance()->getGoodsById($id);
-        if (is_null($goods)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
-        }
-
-        DB::transaction(function () use ($input, $goods) {
-            GoodsService::getInstance()->updateGoods($goods, $input);
-            GoodsCategoryService::getInstance()->deleteListByGoodsId($goods->id);
-            GoodsCategoryService::getInstance()->createList($goods->id, $input->categoryIds);
-            GoodsRealImageService::getInstance()->update($goods->id, $input->realImageList);
-        });
-
-        return $this->success();
-    }
-
     public function editSales()
     {
         $id = $this->verifyRequiredId('id');
@@ -178,5 +168,25 @@ class GoodsController extends Controller
         $keywords = $this->verifyString('keywords');
         $goodsOptions = GoodsService::getInstance()->getGoodsOptions($keywords, ['id', 'cover', 'name']);
         return $this->success($goodsOptions);
+    }
+
+    public function delete()
+    {
+        $id = $this->verifyRequiredId('id');
+
+        $goods = GoodsService::getInstance()->getGoodsById($id);
+        if (is_null($goods)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前商品不存在');
+        }
+
+        DB::transaction(function () use ($goods) {
+            $goods->delete();
+            GoodsCategoryService::getInstance()->deleteListByGoodsId($goods->id);
+            GoodsRealImageService::getInstance()->delete($goods->id);
+            GoodsPickupAddressService::getInstance()->deleteByGoodsId($goods->id);
+            GoodsRefundAddressService::getInstance()->deleteByGoodsId($goods->id);
+        });
+
+        return $this->success();
     }
 }

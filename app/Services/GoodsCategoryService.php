@@ -10,15 +10,25 @@ class GoodsCategoryService extends BaseService
 {
     public function createList($goodsId, array $categoryIds)
     {
-        foreach ($categoryIds as $categoryId) {
-            $goodsCategory = $this->getGoodsCategory($goodsId, $categoryId);
-            if (!is_null($goodsCategory)) {
-                $this->throwBusinessException(CodeResponse::DATA_EXISTED, '分类数据已存在，请勿重复提交');
+        $existingCategoryIds = $this->getListByGoodsId($goodsId)->pluck('category_id')->toArray();
+        $categoryIdsToDelete = array_diff($existingCategoryIds, $categoryIds);
+        $categoryIdsToAdd = array_diff($categoryIds, $existingCategoryIds);
+
+        if (!empty($categoryIdsToDelete)) {
+            $this->deleteList($goodsId, $categoryIdsToDelete);
+        }
+
+        if (!empty($categoryIdsToAdd)) {
+            $insertData = [];
+            foreach ($categoryIdsToAdd as $categoryId) {
+                $insertData[] = [
+                    'goods_id' => $goodsId,
+                    'category_id' => $categoryId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
             }
-            $goodsCategory = GoodsCategory::new();
-            $goodsCategory->goods_id = $goodsId;
-            $goodsCategory->category_id = $categoryId;
-            $goodsCategory->save();
+            GoodsCategory::query()->insert($insertData);
         }
     }
 
@@ -42,9 +52,9 @@ class GoodsCategoryService extends BaseService
         return GoodsCategory::query()->where('goods_id', $goodsId)->where('category_id', $categoryId)->first($columns);
     }
 
-    public function delete($goodsId, $categoryId)
+    public function deleteList($goodsId, array $categoryIds)
     {
-        return GoodsCategory::query()->where('goods_id', $goodsId)->where('category_id', $categoryId)->delete();
+        return GoodsCategory::query()->where('goods_id', $goodsId)->whereIn('category_id', $categoryIds)->delete();
     }
 
     public function deleteListByGoodsId($goodsId)
