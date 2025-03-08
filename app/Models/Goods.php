@@ -23,6 +23,7 @@ use Laravel\Scout\Searchable;
  * @property float $market_price 市场原价
  * @property int $stock 商品库存
  * @property float $commission_rate 佣金比例%
+ * @property int $delivery_method 提货方式：1-快递，2-自提，3-快递/自提
  * @property int $refund_status 是否支持7天无理由：0-不支持，1-支持
  * @property int $number_limit 限购数量
  * @property string $spec_list 商品规格列表
@@ -46,6 +47,7 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereDefaultSpecImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Goods whereDeliveryMethod($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereDetailImageList($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereFreightTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Goods whereId($value)

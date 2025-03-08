@@ -30,6 +30,7 @@ class CreateGoodsTable extends Migration
             $table->float('market_price')->default(0)->comment('市场原价');
             $table->integer('stock')->comment('商品库存');
             $table->float('commission_rate')->default(0)->comment('佣金比例%');
+            $table->integer('delivery_method')->default(1)->comment('提货方式：1-快递，2-自提，3-快递/自提');
             $table->integer('refund_status')->default(0)->comment('是否支持7天无理由：0-不支持，1-支持');
             $table->integer('number_limit')->default(0)->comment('限购数量');
             $table->longText('spec_list')->comment('商品规格列表');
