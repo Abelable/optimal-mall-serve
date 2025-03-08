@@ -15,7 +15,7 @@ class PickupAddressInput extends BaseInput
     {
         return [
             'merchantId' => 'required|integer|digits_between:1,20',
-            'name' => 'required|string',
+            'name' => 'string',
             'timeFrame' => 'string',
             'addressDetail' => 'required|string',
             'longitude' => 'required|numeric',
