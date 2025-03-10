@@ -106,6 +106,7 @@ class GoodsController extends Controller
             'freight_template_id',
             'commission_rate',
             'refund_status',
+            'delivery_method',
             'number_limit',
             'image_list',
             'detail_image_list',
