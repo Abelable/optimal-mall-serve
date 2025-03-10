@@ -40,30 +40,34 @@ class OrderController extends Controller
 {
     public function preOrderInfo()
     {
-        $addressId = $this->verifyId('addressId');
         $cartGoodsIds = $this->verifyArrayNotEmpty('cartGoodsIds');
+        $pickedDeliveryMethod = $this->verifyInteger('pickedDeliveryMethod', 1);
+        $addressId = $this->verifyId('addressId');
         $couponId = $this->verifyId('couponId');
         $useBalance = $this->verifyBoolean('useBalance', false);
 
-        $addressColumns = ['id', 'name', 'mobile', 'region_code_list', 'region_desc', 'address_detail'];
-        if (is_null($addressId)) {
-            /** @var Address $address */
-            $address = AddressService::getInstance()->getDefaultAddress($this->userId(), $addressColumns);
-        } else {
-            /** @var Address $address */
-            $address = AddressService::getInstance()->getUserAddressById($this->userId(), $addressId, $addressColumns);
-        }
-
-        $cartGoodsListColumns = ['goods_id', 'cover', 'name', 'is_gift', 'freight_template_id', 'selected_sku_name', 'price', 'number'];
+        $cartGoodsListColumns = ['goods_id', 'cover', 'name', 'is_gift', 'freight_template_id', 'selected_sku_name', 'price', 'number', 'delivery_method'];
         $cartGoodsList = CartGoodsService::getInstance()->getCartGoodsListByIds($this->userId(), $cartGoodsIds, $cartGoodsListColumns);
 
-        $freightTemplateIds = $cartGoodsList->pluck('freight_template_id')->toArray();
-        $freightTemplateList = FreightTemplateService::getInstance()
-            ->getListByIds($freightTemplateIds)
-            ->map(function (FreightTemplate $freightTemplate) {
-                $freightTemplate->area_list = json_decode($freightTemplate->area_list);
-                return $freightTemplate;
-            })->keyBy('id');
+        $address = null;
+        if ($pickedDeliveryMethod == 1) {
+            $addressColumns = ['id', 'name', 'mobile', 'region_code_list', 'region_desc', 'address_detail'];
+            if (is_null($addressId)) {
+                /** @var Address $address */
+                $address = AddressService::getInstance()->getDefaultAddress($this->userId(), $addressColumns);
+            } else {
+                /** @var Address $address */
+                $address = AddressService::getInstance()->getUserAddressById($this->userId(), $addressId, $addressColumns);
+            }
+
+            $freightTemplateIds = $cartGoodsList->pluck('freight_template_id')->toArray();
+            $freightTemplateList = FreightTemplateService::getInstance()
+                ->getListByIds($freightTemplateIds)
+                ->map(function (FreightTemplate $freightTemplate) {
+                    $freightTemplate->area_list = json_decode($freightTemplate->area_list);
+                    return $freightTemplate;
+                })->keyBy('id');
+        }
 
         $errMsg = '';
         $totalFreightPrice = 0;
@@ -88,31 +92,33 @@ class OrderController extends Controller
             $totalNumber = $totalNumber + $cartGoods->number;
 
             // 计算运费
-            if (is_null($address) || $cartGoods->freight_template_id == 0) {
-                $freightPrice = 0;
-            } else {
-                /** @var FreightTemplate $freightTemplate */
-                $freightTemplate = $freightTemplateList->get($cartGoods->freight_template_id);
-                if ($freightTemplate->free_quota != 0 && $price > $freightTemplate->free_quota) {
+            if ($pickedDeliveryMethod == 1) {
+                if (is_null($address) || $cartGoods->freight_template_id == 0) {
                     $freightPrice = 0;
                 } else {
-                    $cityCode = substr(json_decode($address->region_code_list)[1], 0, 4);
-                    $area = collect($freightTemplate->area_list)->first(function ($area) use ($cityCode) {
-                        return in_array($cityCode, explode(',', $area->pickedCityCodes));
-                    });
-                    if (is_null($area)) {
-                        $errMsg = '商品"' . $cartGoods->name . '"暂不支持配送至当前地址，请更换收货地址';
+                    /** @var FreightTemplate $freightTemplate */
+                    $freightTemplate = $freightTemplateList->get($cartGoods->freight_template_id);
+                    if ($freightTemplate->free_quota != 0 && $price > $freightTemplate->free_quota) {
                         $freightPrice = 0;
                     } else {
-                        if ($freightTemplate->compute_mode == 1) {
-                            $freightPrice = $area->fee;
+                        $cityCode = substr(json_decode($address->region_code_list)[1], 0, 4);
+                        $area = collect($freightTemplate->area_list)->first(function ($area) use ($cityCode) {
+                            return in_array($cityCode, explode(',', $area->pickedCityCodes));
+                        });
+                        if (is_null($area)) {
+                            $errMsg = '商品"' . $cartGoods->name . '"暂不支持配送至当前地址，请更换收货地址';
+                            $freightPrice = 0;
                         } else {
-                            $freightPrice = bcmul($area->fee, $cartGoods->number, 2);
+                            if ($freightTemplate->compute_mode == 1) {
+                                $freightPrice = $area->fee;
+                            } else {
+                                $freightPrice = bcmul($area->fee, $cartGoods->number, 2);
+                            }
                         }
                     }
                 }
+                $totalFreightPrice = bcadd($totalFreightPrice, $freightPrice, 2);
             }
-            $totalFreightPrice = bcadd($totalFreightPrice, $freightPrice, 2);
         }
 
         $paymentAmount = bcadd($totalPrice, $totalFreightPrice, 2);
