@@ -67,6 +67,7 @@ class CartGoodsService extends BaseService
             $cartGoods->merchant_id = $goods->merchant_id;
             $cartGoods->freight_template_id = $goods->freight_template_id;
             $cartGoods->refund_status = $goods->refund_status;
+            $cartGoods->delivery_method = $goods->delivery_method;
             $cartGoods->cover = $goods->cover;
             $cartGoods->name = $goods->name;
             if (count($skuList) != 0 && $selectedSkuIndex != -1) {
