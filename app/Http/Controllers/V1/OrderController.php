@@ -101,18 +101,23 @@ class OrderController extends Controller
                     if ($freightTemplate->free_quota != 0 && $price > $freightTemplate->free_quota) {
                         $freightPrice = 0;
                     } else {
-                        $cityCode = substr(json_decode($address->region_code_list)[1], 0, 4);
-                        $area = collect($freightTemplate->area_list)->first(function ($area) use ($cityCode) {
-                            return in_array($cityCode, explode(',', $area->pickedCityCodes));
-                        });
-                        if (is_null($area)) {
-                            $errMsg = '商品"' . $cartGoods->name . '"暂不支持配送至当前地址，请更换收货地址';
+                        $cityCode = json_decode($address->region_code_list)[1];
+                        if (strlen($cityCode) != 6) {
+                            $errMsg = '收货地址异常，请编辑更新地址，建议手动获取地址省市区';
                             $freightPrice = 0;
                         } else {
-                            if ($freightTemplate->compute_mode == 1) {
-                                $freightPrice = $area->fee;
+                            $area = collect($freightTemplate->area_list)->first(function ($area) use ($cityCode) {
+                                return in_array(substr($cityCode, 0, 4), explode(',', $area->pickedCityCodes));
+                            });
+                            if (is_null($area)) {
+                                $errMsg = '商品"' . $cartGoods->name . '"暂不支持配送至当前地址，请更换收货地址';
+                                $freightPrice = 0;
                             } else {
-                                $freightPrice = bcmul($area->fee, $cartGoods->number, 2);
+                                if ($freightTemplate->compute_mode == 1) {
+                                    $freightPrice = $area->fee;
+                                } else {
+                                    $freightPrice = bcmul($area->fee, $cartGoods->number, 2);
+                                }
                             }
                         }
                     }
