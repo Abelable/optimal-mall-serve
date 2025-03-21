@@ -499,7 +499,9 @@ class OrderController extends Controller
 
         $commissionList = CommissionService::getInstance()->getUserCommissionListByTimeType($this->userId(), $timeType, $statusList,$scene ?: null);
         $groupCommissionList = $commissionList->groupBy('order_id');
-        $keyCommissionList = $commissionList->keyBy('goods_id');
+        $keyCommissionList = $commissionList->mapWithKeys(function ($commission) {
+            return [ $commission->order_id . '_' . $commission->goods_id => $commission ];
+        });
         $orderIds = $commissionList->pluck('order_id')->toArray();
 
         $goodsIds = $commissionList->pluck('goods_id')->toArray();
@@ -515,9 +517,10 @@ class OrderController extends Controller
             $firstCommission = $orderCommissionList->first();
 
             $orderGoodsList = $groupGoodsList->get($order->id);
-            $orderGoodsList->map(function (OrderGoods $goods) use ($keyCommissionList) {
+            $orderGoodsList->map(function (OrderGoods $goods) use ($order, $keyCommissionList) {
+                $commissionKey = $order->id . '_' . $goods->goods_id;
                 /** @var Commission $commission */
-                $commission = $keyCommissionList->get($goods->goods_id);
+                $commission = $keyCommissionList->get($commissionKey);
                 $goods['commission'] = $commission->commission_amount;
                 unset($goods->order_id);
                 return $goods;
