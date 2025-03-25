@@ -49,4 +49,9 @@ class MerchantPickupAddressService extends BaseService
     {
         return MerchantPickupAddress::query()->where('merchant_id', $merchantId)->get($columns);
     }
+
+    public function getListByIds(array $ids, $columns = ['*'])
+    {
+        return MerchantPickupAddress::query()->whereIn('id', $ids)->get($columns);
+    }
 }

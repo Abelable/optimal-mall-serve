@@ -13,8 +13,10 @@ use App\Services\CartGoodsService;
 use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\CategoryService;
+use App\Services\GoodsPickupAddressService;
 use App\Services\GoodsRealImageService;
 use App\Services\GoodsService;
+use App\Services\MerchantPickupAddressService;
 use App\Services\MerchantService;
 use App\Services\OrderGoodsService;
 use App\Services\UserCouponService;
@@ -230,5 +232,16 @@ class GoodsController extends Controller
         })->values()->toArray();
 
         return $this->success($list);
+    }
+
+    public function getPickupAddressList()
+    {
+        $goodsId = $this->verifyRequiredId('goodsId');
+        $pickupAddressIds = GoodsPickupAddressService::getInstance()->getListByGoodsId($goodsId)->pluck('pickup_address_id')->toArray();
+
+        $columns = ['id', 'name', 'time_frame', 'address_detail', 'longitude', 'latitude'];
+        $pickupAddressList = MerchantPickupAddressService::getInstance()->getListByIds($pickupAddressIds, $columns);
+
+        return $this->success($pickupAddressList);
     }
 }
