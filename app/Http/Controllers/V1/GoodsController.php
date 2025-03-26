@@ -236,7 +236,8 @@ class GoodsController extends Controller
 
     public function getPickupAddressList()
     {
-        $goodsId = $this->verifyRequiredId('goodsId');
+        $cartGoodsId = $this->verifyRequiredId('cartGoodsId');
+        $goodsId = CartGoodsService::getInstance()->getCartGoodsById($cartGoodsId)->goods_id;
         $pickupAddressIds = GoodsPickupAddressService::getInstance()->getListByGoodsId($goodsId)->pluck('pickup_address_id')->toArray();
 
         $columns = ['id', 'name', 'time_frame', 'address_detail', 'longitude', 'latitude'];
