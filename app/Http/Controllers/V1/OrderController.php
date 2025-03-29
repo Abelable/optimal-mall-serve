@@ -383,7 +383,7 @@ class OrderController extends Controller
                 $statusList = [OrderEnums::STATUS_PAY, OrderEnums::STATUS_EXPORTED];
                 break;
             case 3:
-                $statusList = [OrderEnums::STATUS_SHIP];
+                $statusList = [OrderEnums::STATUS_SHIP, OrderEnums::STATUS_PENDING_VERIFICATION];
                 break;
             case 4:
                 $statusList = [OrderEnums::STATUS_CONFIRM, OrderEnums::STATUS_AUTO_CONFIRM, OrderEnums::STATUS_ADMIN_CONFIRM];
