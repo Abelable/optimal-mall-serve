@@ -21,6 +21,7 @@ use App\Services\FreightTemplateService;
 use App\Services\GiftCommissionService;
 use App\Services\GiftGoodsService;
 use App\Services\MerchantManagerService;
+use App\Services\MerchantPickupAddressService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderPackageService;
 use App\Services\OrderService;
@@ -499,11 +500,14 @@ class OrderController extends Controller
             'id',
             'order_sn',
             'status',
-            'remarks',
             'user_id',
+            'delivery_mode',
             'consignee',
             'mobile',
             'address',
+            'pickup_address_id',
+            'pickup_time',
+            'pickup_mobile',
             'goods_price',
             'freight_price',
             'coupon_id',
@@ -516,6 +520,7 @@ class OrderController extends Controller
             'ship_time',
             'confirm_time',
             'refund_amount',
+            'remarks',
             'created_at',
             'updated_at',
         ];
@@ -529,6 +534,13 @@ class OrderController extends Controller
 
         $packageList = OrderPackageService::getInstance()->getListByOrderId($order->id);
         $order['package_list'] = $packageList ?: [];
+
+        if ($order->delivery_mode == 2) {
+            $pickupAddress = MerchantPickupAddressService::getInstance()
+                ->getAddressById($order->pickup_address_id, ['id', 'name', 'address_detail', 'latitude', 'longitude']);
+            $order['pickup_address'] = $pickupAddress;
+            unset($order['pickup_address_id']);
+        }
 
         return $this->success($order);
     }

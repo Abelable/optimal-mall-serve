@@ -181,6 +181,7 @@ class OrderService extends BaseService
         $order->order_sn = $orderSn;
         $order->status = OrderEnums::STATUS_CREATE;
         $order->user_id = $userId;
+        $order->delivery_mode = $input->deliveryMode;
         if ($input->deliveryMode == 1) {
             $order->consignee = $address->name;
             $order->mobile = $address->mobile;
