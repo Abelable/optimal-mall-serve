@@ -541,8 +541,8 @@ class OrderController extends Controller
             $order['pickup_address'] = $pickupAddress;
             unset($order['pickup_address_id']);
 
-            $verifyCode = OrderVerifyService::getInstance()->getByOrderId($order->id)->verify_code;
-            $order['verify_code'] = $verifyCode;
+            $verifyInfo = OrderVerifyService::getInstance()->getByOrderId($order->id);
+            $order['verify_code'] = $verifyInfo->verify_code ?: null;
         }
 
         return $this->success($order);
