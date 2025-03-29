@@ -28,11 +28,9 @@ class WithdrawalController extends Controller
             return $this->fail(CodeResponse::INVALID_OPERATION, '需完成实名认证才可提现');
         }
 
-        if ($input->path != 3) {
-            $date = Carbon::now()->day;
-            if ($date < 25) {
-                return $this->fail(CodeResponse::INVALID_OPERATION, '每月25-31号才可提现');
-            }
+        $date = Carbon::now()->day;
+        if ($date < 25) {
+            return $this->fail(CodeResponse::INVALID_OPERATION, '每月25-31号才可提现');
         }
 
         if ($input->withdrawAmount == 0) {

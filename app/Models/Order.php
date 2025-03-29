@@ -10,12 +10,15 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property int $id
  * @property string $order_sn 订单编号
  * @property int $status 订单状态
- * @property string $remarks 订单备注
- * @property int $merchant_id 商家id
  * @property int $user_id 用户id
+ * @property int $delivery_mode 配送方式：1-快递，2-自提
  * @property string $consignee 收件人姓名
  * @property string $mobile 收件人手机号
  * @property string $address 具体收货地址
+ * @property int $pickup_address_id 提货地址id
+ * @property string $pickup_time 提货时间
+ * @property string $pickup_mobile 提货预留手机号
+ * @property int $merchant_id 商家id
  * @property float $goods_price 商品总价格
  * @property float $freight_price 运费
  * @property int $coupon_id 优惠券id
@@ -29,13 +32,14 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property string $ship_code 快递公司编号
  * @property string $ship_sn 快递编号
  * @property string $ship_time 发货时间
- * @property string $confirm_time 用户确认收货时间
+ * @property string $confirm_time 确认收货/使用时间
  * @property string $finish_time 订单关闭时间
  * @property float $refund_amount 退款金额
  * @property string $refund_id 退款id
  * @property string $refund_type 退款方式
  * @property string $refund_remarks 退款备注
  * @property string $refund_time 退款时间
+ * @property string $remarks 订单备注
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -54,6 +58,7 @@ use App\Utils\Traits\OrderStatusTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDeductionBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereDeliveryMode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereFinishTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereFreightPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereGoodsPrice($value)
@@ -64,6 +69,9 @@ use App\Utils\Traits\OrderStatusTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Order wherePayId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order wherePayTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order wherePaymentAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order wherePickupAddressId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order wherePickupMobile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order wherePickupTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereRefundAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereRefundId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereRefundRemarks($value)

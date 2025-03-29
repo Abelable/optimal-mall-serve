@@ -15,6 +15,7 @@ use App\Utils\CodeResponse;
 use App\Utils\Enums\AdminTodoEnums;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\Admin\OrderPageInput;
+use App\Utils\Inputs\CreateOrderInput;
 use App\Utils\Inputs\PageInput;
 use App\Utils\WxMpServe;
 use Illuminate\Support\Carbon;
@@ -120,7 +121,7 @@ class OrderService extends BaseService
         return Order::query()->where('order_sn', $orderSn)->exists();
     }
 
-    public function createOrder($userId, $merchantId, $cartGoodsList, $freightTemplateList, Address $address, Coupon $coupon = null, $useBalance = 0)
+    public function createOrder($userId, $merchantId, $cartGoodsList, CreateOrderInput $input, $freightTemplateList = null, Address $address = null, Coupon $coupon = null)
     {
         $totalPrice = 0;
         $totalFreightPrice = 0;
@@ -131,14 +132,16 @@ class OrderService extends BaseService
             $price = bcmul($cartGoods->price, $cartGoods->number, 2);
             $totalPrice = bcadd($totalPrice, $price, 2);
 
-            // 计算运费
-            if ($cartGoods->freight_template_id == 0) {
-                $freightPrice = 0;
-            } else {
-                $freightTemplate = $freightTemplateList->get($cartGoods->freight_template_id);
-                $freightPrice = $this->calcFreightPrice($freightTemplate, $address, $price, $cartGoods->number);
+            if ($input->deliveryMode == 1) {
+                // 计算运费
+                if ($cartGoods->freight_template_id == 0) {
+                    $freightPrice = 0;
+                } else {
+                    $freightTemplate = $freightTemplateList->get($cartGoods->freight_template_id);
+                    $freightPrice = $this->calcFreightPrice($freightTemplate, $address, $price, $cartGoods->number);
+                }
+                $totalFreightPrice = bcadd($totalFreightPrice, $freightPrice, 2);
             }
-            $totalFreightPrice = bcadd($totalFreightPrice, $freightPrice, 2);
 
             // 优惠券
             if (!is_null($coupon) && $coupon->goods_id == $cartGoods->goods_id) {
@@ -165,7 +168,7 @@ class OrderService extends BaseService
         $orderSn = $this->generateOrderSn();
         // 余额抵扣
         $deductionBalance = 0;
-        if ($useBalance == 1) {
+        if ($input->useBalance == 1) {
             $account = AccountService::getInstance()->getUserAccount($userId);
             $deductionBalance = min($paymentAmount, $account->balance);
             $paymentAmount = bcsub($paymentAmount, $deductionBalance, 2);
@@ -178,10 +181,16 @@ class OrderService extends BaseService
         $order->order_sn = $orderSn;
         $order->status = OrderEnums::STATUS_CREATE;
         $order->user_id = $userId;
+        if ($input->deliveryMode == 1) {
+            $order->consignee = $address->name;
+            $order->mobile = $address->mobile;
+            $order->address = $address->region_desc . ' ' . $address->address_detail;
+        } else {
+            $order->pickup_address_id = $input->pickupAddressId;
+            $order->pickup_time = $input->pickupTime;
+            $order->pickup_mobile = $input->pickupMobile;
+        }
         $order->merchant_id = $merchantId;
-        $order->consignee = $address->name;
-        $order->mobile = $address->mobile;
-        $order->address = $address->region_desc . ' ' . $address->address_detail;
         $order->goods_price = $totalPrice;
         $order->freight_price = $totalFreightPrice;
         if (!is_null($coupon)) {
@@ -276,12 +285,23 @@ class OrderService extends BaseService
                     $order->total_payment_amount = $actualPaymentAmount;
                 }
                 $order->pay_time = now()->toDateTimeString();
-                $order->status = OrderEnums::STATUS_PAY;
+                if ($order->delivery_mode == 1) {
+                    $order->status = OrderEnums::STATUS_PAY;
+                } else {
+                    $order->status = OrderEnums::STATUS_PENDING_VERIFICATION;
+                    OrderVerifyService::getInstance()->createOrderVerify($order->id);
+                    // 同步微信后台订单发货
+                    $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
+                    WxMpServe::new()->verify($openid, $order->pay_id);
+                }
+
                 if ($order->cas() == 0) {
                     $this->throwUpdateFail();
                 }
+
                 // todo 通知（邮件或钉钉）管理员、
                 // todo 通知（短信、系统消息）商家
+
                 return $order;
             });
 
@@ -805,6 +825,11 @@ class OrderService extends BaseService
     public function getOrderById($id, $columns = ['*'])
     {
         return Order::query()->find($id, $columns);
+    }
+
+    public function getPendingVerifyOrderById($id, $columns = ['*'])
+    {
+        return Order::query()->where('status', OrderEnums::STATUS_PENDING_VERIFICATION)->find($id, $columns);
     }
 
     public function getOrderListByIds(array $ids, $columns = ['*'])

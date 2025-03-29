@@ -138,6 +138,27 @@ class WxMpServe
         );
     }
 
+    public function verify($openid, $payId)
+    {
+        return $this->httpPost(
+            sprintf(self::UPLOAD_SHIPPING_INFO_URL, $this->stableAccessToken),
+            [
+                'order_key' => [
+                    'order_number_type' => 2,
+                    'transaction_id' => $payId
+                ],
+                'logistics_type' => 4,
+                'delivery_mode' => 1,
+                'shipping_list' => [],
+                'upload_time' => Carbon::now()->format('Y-m-d\TH:i:s.uP'),
+                'payer' => [
+                    'openid' => $openid
+                ]
+            ],
+            3
+        );
+    }
+
     public function getWaybillToken($openid, $shipCode, $shipSn, $packageGoodsList, Order $order)
     {
         $goodsList = [];

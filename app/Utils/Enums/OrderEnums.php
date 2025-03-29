@@ -13,6 +13,7 @@ class OrderEnums
     const STATUS_REFUND_CONFIRM = 203;
     const STATUS_EXPORTED = 204;
     const STATUS_SHIP = 301;
+    const STATUS_PENDING_VERIFICATION = 302;
     const STATUS_CONFIRM = 401;
     const STATUS_AUTO_CONFIRM = 402;
     const STATUS_ADMIN_CONFIRM = 403;
@@ -28,9 +29,10 @@ class OrderEnums
         self::STATUS_REFUND_CONFIRM => '已退款',
         self::STATUS_EXPORTED => '已付款，订单已导出',
         self::STATUS_SHIP => '已发货',
-        self::STATUS_CONFIRM => '已收货',
-        self::STATUS_AUTO_CONFIRM => '已收货(系统)',
-        self::STATUS_ADMIN_CONFIRM => '已收货(管理员)',
+        self::STATUS_PENDING_VERIFICATION => '待核销',
+        self::STATUS_CONFIRM => '已收货/使用',
+        self::STATUS_AUTO_CONFIRM => '已收货/使用(系统)',
+        self::STATUS_ADMIN_CONFIRM => '已收货/使用(管理员)',
         self::STATUS_FINISHED => '已完成',
     ];
 }

@@ -20,9 +20,11 @@ use App\Services\CouponService;
 use App\Services\FreightTemplateService;
 use App\Services\GiftCommissionService;
 use App\Services\GiftGoodsService;
+use App\Services\MerchantManagerService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderPackageService;
 use App\Services\OrderService;
+use App\Services\OrderVerifyService;
 use App\Services\PromoterService;
 use App\Services\RelationService;
 use App\Services\TeamCommissionService;
@@ -34,6 +36,7 @@ use App\Utils\Inputs\PageInput;
 use App\Utils\WxMpServe;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Yansongda\LaravelPay\Facades\Pay;
 
 class OrderController extends Controller
@@ -41,7 +44,7 @@ class OrderController extends Controller
     public function preOrderInfo()
     {
         $cartGoodsIds = $this->verifyArrayNotEmpty('cartGoodsIds');
-        $pickedDeliveryMethod = $this->verifyInteger('pickedDeliveryMethod', 1);
+        $deliveryMode = $this->verifyInteger('deliveryMode', 1);
         $addressId = $this->verifyId('addressId');
         $couponId = $this->verifyId('couponId');
         $useBalance = $this->verifyBoolean('useBalance', false);
@@ -50,7 +53,7 @@ class OrderController extends Controller
         $cartGoodsList = CartGoodsService::getInstance()->getCartGoodsListByIds($this->userId(), $cartGoodsIds, $cartGoodsListColumns);
 
         $address = null;
-        if ($pickedDeliveryMethod == 1) {
+        if ($deliveryMode == 1) {
             $addressColumns = ['id', 'name', 'mobile', 'region_code_list', 'region_desc', 'address_detail'];
             if (is_null($addressId)) {
                 /** @var Address $address */
@@ -92,7 +95,7 @@ class OrderController extends Controller
             $totalNumber = $totalNumber + $cartGoods->number;
 
             // 计算运费
-            if ($pickedDeliveryMethod == 1) {
+            if ($deliveryMode == 1) {
                 if (is_null($address) || $cartGoods->freight_template_id == 0) {
                     $freightPrice = 0;
                 } else {
@@ -201,9 +204,12 @@ class OrderController extends Controller
 
         $orderIds = DB::transaction(function () use ($input) {
             // 1.获取地址
-            $address = AddressService::getInstance()->getUserAddressById($this->userId(), $input->addressId);
-            if (is_null($address)) {
-                return $this->fail(CodeResponse::NOT_FOUND, '用户地址不存在');
+            $address = null;
+            if ($input->deliveryMode == 1) {
+                $address = AddressService::getInstance()->getUserAddressById($this->userId(), $input->addressId);
+                if (is_null($address)) {
+                    return $this->fail(CodeResponse::NOT_FOUND, '用户地址不存在');
+                }
             }
 
             // 2.获取优惠券
@@ -219,7 +225,7 @@ class OrderController extends Controller
                 }
             }
 
-            // 4.判断余额状态
+            // 3.判断余额状态
             if (!is_null($input->useBalance) && $input->useBalance != 0) {
                 $account = AccountService::getInstance()->getUserAccount($this->userId());
                 if ($account->status == 0 || $account->balance <= 0) {
@@ -231,13 +237,16 @@ class OrderController extends Controller
             $cartGoodsList = CartGoodsService::getInstance()->getCartGoodsListByIds($this->userId(), $input->cartGoodsIds);
 
             // 5.获取运费模板列表
-            $freightTemplateIds = $cartGoodsList->pluck('freight_template_id')->toArray();
-            $freightTemplateList = FreightTemplateService::getInstance()
-                ->getListByIds($freightTemplateIds)
-                ->map(function (FreightTemplate $freightTemplate) {
-                    $freightTemplate->area_list = json_decode($freightTemplate->area_list);
-                    return $freightTemplate;
-                })->keyBy('id');
+            $freightTemplateList = null;
+            if ($input->deliveryMode == 1) {
+                $freightTemplateIds = $cartGoodsList->pluck('freight_template_id')->toArray();
+                $freightTemplateList = FreightTemplateService::getInstance()
+                    ->getListByIds($freightTemplateIds)
+                    ->map(function (FreightTemplate $freightTemplate) {
+                        $freightTemplate->area_list = json_decode($freightTemplate->area_list);
+                        return $freightTemplate;
+                    })->keyBy('id');
+            }
 
             // 6.按商家进行订单拆分，生成对应订单
             $merchantIds = collect(array_unique($cartGoodsList->pluck('merchant_id')->toArray()));
@@ -271,7 +280,7 @@ class OrderController extends Controller
                 $input
             ) {
                 $filterCartGoodsList = $cartGoodsList->groupBy('merchant_id')->get($merchantId);
-                $orderId = OrderService::getInstance()->createOrder($userId, $merchantId, $filterCartGoodsList, $freightTemplateList, $address, $coupon, $input->useBalance ?: 0);
+                $orderId = OrderService::getInstance()->createOrder($userId, $merchantId, $filterCartGoodsList, $input, $freightTemplateList, $address, $coupon);
 
                 // 7.生成订单商品快照
                 OrderGoodsService::getInstance()->createList($filterCartGoodsList, $orderId, $userId);
@@ -418,6 +427,41 @@ class OrderController extends Controller
     {
         $id = $this->verifyRequiredId('id');
         OrderService::getInstance()->userCancel($this->userId(), $id);
+        return $this->success();
+    }
+
+    public function qrCode()
+    {
+        $id = $this->verifyRequiredId('id');
+        $verifyInfo = OrderVerifyService::getInstance()->getByOrderId($id);
+        $qrCode = QrCode::size(200)->generate($verifyInfo->verify_code);
+        return response($qrCode)->header('Content-Type', 'image/png');
+    }
+
+    public function verify()
+    {
+        $code = $this->verifyRequiredString('code');
+
+        $verifyInfo = OrderVerifyService::getInstance()->getByCode($code);
+        if (is_null($verifyInfo)) {
+            return $this->fail(CodeResponse::PARAM_VALUE_ILLEGAL, '无效核销码');
+        }
+
+        $order = OrderService::getInstance()->getPendingVerifyOrderById($verifyInfo->order_id);
+        if (is_null($order)) {
+            return $this->fail(CodeResponse::PARAM_VALUE_ILLEGAL, '订单不存在');
+        }
+
+        $managerIds = MerchantManagerService::getInstance()->getManagerList($order->merchant_id)->pluck('user_id')->toArray();
+        if (!in_array($this->userId(), $managerIds)) {
+            return $this->fail(CodeResponse::PARAM_VALUE_ILLEGAL, '非当前商家核销员，无法核销');
+        }
+
+        DB::transaction(function () use ($verifyInfo, $order) {
+            OrderService::getInstance()->userConfirm($order->user_id, $order->id);
+            OrderVerifyService::getInstance()->verified($verifyInfo->id, $this->userId());
+        });
+
         return $this->success();
     }
 

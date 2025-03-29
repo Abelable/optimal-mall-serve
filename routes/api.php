@@ -112,6 +112,8 @@ Route::prefix('order')->group(function () {
     Route::get('list', 'OrderController@list');
     Route::get('detail', 'OrderController@detail');
     Route::post('modify_address_info', 'OrderController@modifyOrderAddressInfo');
+    Route::get('qr_code', 'OrderController@qrCode');
+    Route::post('verify', 'OrderController@verify');
     Route::post('confirm', 'OrderController@confirm');
     Route::post('refund', 'OrderController@refund');
     Route::post('cancel', 'OrderController@cancel');
