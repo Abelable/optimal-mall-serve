@@ -36,7 +36,7 @@ class OrderVerify extends BaseModel
     {
         do {
             $code = rand(10000000, 99999999);
-        } while (self::where('verify_code', $code)->exists());
+        } while (self::query()->where('verify_code', $code)->exists());
 
         return $code;
     }

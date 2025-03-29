@@ -8,10 +8,11 @@ class OrderVerifyService extends BaseService
 {
     public function createOrderVerify($orderId)
     {
-        return OrderVerify::query()->create([
-            'order_id' => $orderId,
-            'verify_code' => OrderVerify::generateVerifyCode(),
-        ]);
+        $verify = OrderVerify::new();
+        $verify->order_id = $orderId;
+        $verify->verify_code = OrderVerify::generateVerifyCode();
+        $verify->save();
+        return $verify;
     }
 
     public function getByCode($code, $columns = ['*'])
