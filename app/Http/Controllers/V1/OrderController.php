@@ -540,6 +540,9 @@ class OrderController extends Controller
                 ->getAddressById($order->pickup_address_id, ['id', 'name', 'address_detail', 'latitude', 'longitude']);
             $order['pickup_address'] = $pickupAddress;
             unset($order['pickup_address_id']);
+
+            $verifyCode = OrderVerifyService::getInstance()->getByOrderId($order->id)->verify_code;
+            $order['verify_code'] = $verifyCode;
         }
 
         return $this->success($order);
