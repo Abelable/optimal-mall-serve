@@ -495,7 +495,7 @@ class OrderService extends BaseService
     public function confirm($orderList, $role = 'user')
     {
         $orderList = $orderList->map(function (Order $order) use ($role) {
-            if ($order->status != OrderEnums::STATUS_SHIP) {
+            if (!$order->canConfirmHandle()) {
                 $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单无法确认');
             }
             switch ($role) {
