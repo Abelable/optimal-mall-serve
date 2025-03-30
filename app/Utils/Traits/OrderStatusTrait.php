@@ -62,7 +62,7 @@ trait OrderStatusTrait
         'export' => [OrderEnums::STATUS_PAY],
         'ship' => [OrderEnums::STATUS_PAY, OrderEnums::STATUS_EXPORTED],
         'confirm' => [OrderEnums::STATUS_SHIP, OrderEnums::STATUS_PENDING_VERIFICATION],
-        'refund' => [OrderEnums::STATUS_PAY, OrderEnums::STATUS_EXPORTED, OrderEnums::STATUS_REFUND],
+        'refund' => [OrderEnums::STATUS_PAY, OrderEnums::STATUS_PENDING_VERIFICATION, OrderEnums::STATUS_EXPORTED, OrderEnums::STATUS_REFUND],
         // 同意退款
         'agreerefund' => [OrderEnums::STATUS_REFUND],
         'comment' => [
