@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             OrderService::getInstance()->systemCancel();
             OrderService::getInstance()->systemConfirm();
+            OrderService::getInstance()->systemFinish();
             OrderService::getInstance()->confirmMissCommission();
             CouponService::getInstance()->handelExpiredCoupons();
             ActivityService::getInstance()->handelExpiredActivity();

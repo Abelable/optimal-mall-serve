@@ -492,6 +492,33 @@ class OrderService extends BaseService
 
     }
 
+    public function getTimeoutUnFinishedOrders($columns = ['*'])
+    {
+        return Order::query()
+            ->whereIn('status', [OrderEnums::STATUS_CONFIRM, OrderEnums::STATUS_AUTO_CONFIRM, OrderEnums::STATUS_ADMIN_CONFIRM])
+            ->where('confirm_time', '<=', now()->subDays(15))
+            ->get($columns);
+//        ->where('confirm_time', '>', now()->subDays(30))
+    }
+
+    public function systemFinish()
+    {
+        $orderList = $this->getTimeoutUnFinishedOrders();
+        if (count($orderList) == 0) {
+            $this->throwBadArgumentValue();
+        }
+        return $orderList->map(function (Order $order) {
+            if (!$order->canFinishHandle()) {
+                $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能设置为完成状态');
+            }
+            $order->status = OrderEnums::STATUS_AUTO_FINISHED;
+            if ($order->cas() == 0) {
+                $this->throwUpdateFail();
+            }
+            return $order;
+        });
+    }
+
     public function confirm($orderList, $role = 'user')
     {
         $orderList = $orderList->map(function (Order $order) use ($role) {

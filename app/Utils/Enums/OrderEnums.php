@@ -18,6 +18,7 @@ class OrderEnums
     const STATUS_AUTO_CONFIRM = 402;
     const STATUS_ADMIN_CONFIRM = 403;
     const STATUS_FINISHED = 501;
+    const STATUS_AUTO_FINISHED = 502;
 
     const STATUS_TEXT_MAP = [
         self::STATUS_CREATE => '待付款',
@@ -34,5 +35,6 @@ class OrderEnums
         self::STATUS_AUTO_CONFIRM => '已收货/使用(系统)',
         self::STATUS_ADMIN_CONFIRM => '已收货/使用(管理员)',
         self::STATUS_FINISHED => '已完成',
+        self::STATUS_AUTO_FINISHED => '已完成(系统)',
     ];
 }
