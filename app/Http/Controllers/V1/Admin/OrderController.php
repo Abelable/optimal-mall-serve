@@ -9,10 +9,12 @@ use App\Imports\OrdersImport;
 use App\Models\Order;
 use App\Models\OrderGoods;
 use App\Services\GoodsService;
+use App\Services\MerchantPickupAddressService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderPackageGoodsService;
 use App\Services\OrderPackageService;
 use App\Services\OrderService;
+use App\Services\OrderVerifyService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
 use App\Utils\ExpressServe;
@@ -100,6 +102,16 @@ class OrderController extends Controller
 
         $packageList = OrderPackageService::getInstance()->getListByOrderId($order->id);
         $order['package_list'] = $packageList ?: [];
+
+        if ($order->delivery_mode == 2) {
+            $pickupAddress = MerchantPickupAddressService::getInstance()
+                ->getAddressById($order->pickup_address_id, ['id', 'name', 'address_detail', 'latitude', 'longitude']);
+            $order['pickup_address'] = $pickupAddress;
+            unset($order['pickup_address_id']);
+
+            $verifyInfo = OrderVerifyService::getInstance()->getByOrderId($order->id);
+            $order['verify_code'] = $verifyInfo->verify_code ?: null;
+        }
 
         return $this->success($order);
     }
