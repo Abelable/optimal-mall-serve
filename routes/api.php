@@ -113,6 +113,7 @@ Route::prefix('order')->group(function () {
     Route::get('detail', 'OrderController@detail');
     Route::post('modify_address_info', 'OrderController@modifyOrderAddressInfo');
     Route::get('qr_code', 'OrderController@qrCode');
+    Route::get('verify_code', 'OrderController@verifyCode');
     Route::post('verify', 'OrderController@verify');
     Route::post('confirm', 'OrderController@confirm');
     Route::post('refund', 'OrderController@refund');

@@ -288,6 +288,8 @@ class OrderService extends BaseService
                 $order->pay_time = now()->toDateTimeString();
                 if ($order->delivery_mode == 1) {
                     $order->status = OrderEnums::STATUS_PAY;
+                    // 生成后台待发货代办事项
+                    AdminTodoService::getInstance()->createTodo(AdminTodoEnums::ORDER_SHIP_WAITING, [$order->id]);
                 } else {
                     $order->status = OrderEnums::STATUS_PENDING_VERIFICATION;
                     OrderVerifyService::getInstance()->createOrderVerify($order->id);
@@ -324,9 +326,6 @@ class OrderService extends BaseService
             // if (!empty($commonGoodsIds) && is_null($promoterInfo)) {
             //      PromoterService::getInstance()->toBePromoter($userId, 3, $commonGoodsIds);
             // }
-
-            // 生成后台待发货代办事项
-            AdminTodoService::getInstance()->createTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $orderIds);
 
             // 更新订单商品状态
             OrderGoodsService::getInstance()->updateStatusByOrderIds($orderIds, 1);
