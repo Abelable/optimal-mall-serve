@@ -22,7 +22,7 @@ class OrderVerifyService extends BaseService
 
     public function getByOrderId($orderId, $columns = ['*'])
     {
-        return OrderVerify::query()->where('order_id', $orderId)->where('status', 0)->first($columns);
+        return OrderVerify::query()->where('order_id', $orderId)->first($columns);
     }
 
     public function getById($id, $columns = ['*'])
