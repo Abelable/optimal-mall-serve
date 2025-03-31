@@ -254,6 +254,7 @@ class OrderController extends Controller
                 || $order->status == 402
                 || $order->status == 403
                 || $order->status == 501
+                || $order->status == 502
             ) {
                 $orderGoodsList->map(function (OrderGoods $orderGoods) {
                     $orderGoods->status = 1;
