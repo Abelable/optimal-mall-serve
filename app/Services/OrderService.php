@@ -349,10 +349,9 @@ class OrderService extends BaseService
     {
         return DB::transaction(function () use ($userId, $orderId) {
             $orderList = $this->getUserOrderList($userId, [$orderId]);
-            if (count($orderList) == 0) {
-                $this->throwBadArgumentValue();
+            if (count($orderList) != 0) {
+                $this->cancel($orderList, 'system');
             }
-            return $this->cancel($orderList, 'system');
         });
     }
 
@@ -360,10 +359,9 @@ class OrderService extends BaseService
     {
         return DB::transaction(function () {
             $orderList = $this->getOverTimeUnpaidList();
-            if (count($orderList) == 0) {
-                $this->throwBadArgumentValue();
+            if (count($orderList) != 0) {
+                $this->cancel($orderList, 'system');
             }
-            return $this->cancel($orderList, 'system');
         });
     }
 
@@ -484,10 +482,9 @@ class OrderService extends BaseService
     {
         return DB::transaction(function () {
             $orderList = $this->getTimeoutUnConfirmOrders();
-            if (count($orderList) == 0) {
-                $this->throwBadArgumentValue();
+            if (count($orderList) != 0) {
+                $this->confirm($orderList, 'system');
             }
-            return $this->confirm($orderList, 'system');
         });
 
     }
@@ -497,26 +494,24 @@ class OrderService extends BaseService
         return Order::query()
             ->whereIn('status', [OrderEnums::STATUS_CONFIRM, OrderEnums::STATUS_AUTO_CONFIRM, OrderEnums::STATUS_ADMIN_CONFIRM])
             ->where('confirm_time', '<=', now()->subDays(15))
+            ->where('confirm_time', '>', now()->subDays(30))
             ->get($columns);
-//        ->where('confirm_time', '>', now()->subDays(30))
     }
 
     public function systemFinish()
     {
         $orderList = $this->getTimeoutUnFinishedOrders();
-        if (count($orderList) == 0) {
-            $this->throwBadArgumentValue();
+        if (count($orderList) != 0) {
+            $orderList->map(function (Order $order) {
+                if (!$order->canFinishHandle()) {
+                    $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能设置为完成状态');
+                }
+                $order->status = OrderEnums::STATUS_AUTO_FINISHED;
+                if ($order->cas() == 0) {
+                    $this->throwUpdateFail();
+                }
+            });
         }
-        return $orderList->map(function (Order $order) {
-            if (!$order->canFinishHandle()) {
-                $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能设置为完成状态');
-            }
-            $order->status = OrderEnums::STATUS_AUTO_FINISHED;
-            if ($order->cas() == 0) {
-                $this->throwUpdateFail();
-            }
-            return $order;
-        });
     }
 
     public function confirm($orderList, $role = 'user')
