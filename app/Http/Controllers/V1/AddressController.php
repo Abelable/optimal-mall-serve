@@ -41,6 +41,16 @@ class AddressController extends Controller
         /** @var AddressInput $input */
         $input = AddressInput::new();
 
+        $regionCodeList = json_decode($input->regionCodeList) ?? [];
+        if (!is_array($regionCodeList)) {
+            return $this->fail(CodeResponse::PARAM_VALUE_INVALID, '省市区编码格式错误，请手动选择省市区');
+        }
+        foreach ($regionCodeList as $code) {
+            if (strlen($code) !== 6) {
+                return $this->fail(CodeResponse::PARAM_VALUE_INVALID, '省市区编码格式错误，请手动选择省市区');
+            }
+        }
+
         $address = Address::new();
         $address->user_id = $this->userId();
         $this->updateAddress($address, $input);
@@ -53,10 +63,21 @@ class AddressController extends Controller
         /** @var AddressInput $input */
         $input = AddressInput::new();
 
+        $regionCodeList = json_decode($input->regionCodeList) ?? [];
+        if (!is_array($regionCodeList)) {
+            return $this->fail(CodeResponse::PARAM_VALUE_INVALID, '省市区编码格式错误，请手动选择省市区');
+        }
+        foreach ($regionCodeList as $code) {
+            if (strlen($code) !== 6) {
+                return $this->fail(CodeResponse::PARAM_VALUE_INVALID, '省市区编码格式错误，请手动选择省市区');
+            }
+        }
+
         $address = AddressService::getInstance()->getUserAddressById($this->userId(), $input->id);
         if (is_null($address)) {
             return $this->fail(CodeResponse::NOT_FOUND, '收货地址不存在');
         }
+
         $this->updateAddress($address, $input);
 
         return $this->success();
