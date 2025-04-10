@@ -209,6 +209,7 @@ class GoodsService extends BaseService
 
     public function updateGoods(Goods $goods, GoodsInput $input)
     {
+        $goods->merchant_id = $input->merchantId;
         $goods->video = $input->video ?? '';
         $goods->cover = $input->cover;
         $goods->activity_cover = $input->activityCover ?? '';
@@ -218,16 +219,15 @@ class GoodsService extends BaseService
         $goods->name = $input->name;
         $goods->introduction = $input->introduction ?? '';
         $goods->freight_template_id = $input->freightTemplateId;
-        $goods->merchant_id = $input->merchantId;
         $goods->price = $input->price;
         $goods->market_price = $input->marketPrice ?? 0;
-        $goods->stock = $input->stock;
         $goods->commission_rate = $input->commissionRate ?? 0;
+        $goods->stock = $input->stock;
         $goods->number_limit = $input->numberLimit ?? 0;
-        $goods->delivery_method = $input->deliveryMethod;
-        $goods->refund_status = $input->refundStatus;
         $goods->spec_list = json_encode($input->specList);
         $goods->sku_list = json_encode($input->skuList);
+        $goods->delivery_method = $input->deliveryMethod;
+        $goods->refund_status = $input->refundStatus;
         $goods->save();
 
         return $goods;

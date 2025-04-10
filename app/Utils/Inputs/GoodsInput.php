@@ -4,6 +4,8 @@ namespace App\Utils\Inputs;
 
 class GoodsInput extends BaseInput
 {
+    public $merchantId;
+    public $categoryIds;
     public $video;
     public $cover;
     public $activityCover;
@@ -14,23 +16,23 @@ class GoodsInput extends BaseInput
     public $name;
     public $introduction;
     public $freightTemplateId;
-    public $categoryIds;
-    public $merchantId;
     public $price;
     public $marketPrice;
-    public $stock;
     public $commissionRate;
+    public $stock;
     public $numberLimit;
+    public $specList;
+    public $skuList;
     public $deliveryMethod;
     public $pickupAddressIds;
     public $refundStatus;
     public $refundAddressIds;
-    public $specList;
-    public $skuList;
 
     public function rules()
     {
         return [
+            'merchantId' => 'required|integer|digits_between:1,20',
+            'categoryIds' => 'required|array',
             'video' => 'string',
             'cover' => 'required|string',
             'activityCover' => 'string',
@@ -41,19 +43,17 @@ class GoodsInput extends BaseInput
             'name' => 'required|string',
             'introduction' => 'string',
             'freightTemplateId' => 'required|integer|digits_between:1,20',
-            'categoryIds' => 'required|array',
-            'merchantId' => 'required|integer|digits_between:1,20',
             'price' => 'required|numeric',
             'marketPrice' => 'numeric',
-            'stock' => 'required|integer',
             'commissionRate' => 'numeric',
+            'stock' => 'required|integer',
             'numberLimit' => 'integer|digits_between:1,20',
+            'specList' => 'array',
+            'skuList' => 'array',
             'deliveryMethod' => 'required|integer|in:1,2,3',
             'pickupAddressIds' => 'array',
             'refundStatus' => 'required|integer|in:0,1',
             'refundAddressIds' => 'array',
-            'specList' => 'array',
-            'skuList' => 'array',
         ];
     }
 }
