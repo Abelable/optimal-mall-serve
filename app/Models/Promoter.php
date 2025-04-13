@@ -7,7 +7,7 @@ namespace App\Models;
  *
  * @property int $id
  * @property int $user_id 用户id
- * @property int $level 用户等级：1-乡村推广员，2-乡村组织者C1，3-C2，4-C3，5-乡村振兴委员会
+ * @property int $level 推广员等级：1-乡村推广员，2-乡村组织者C1，3-C2，4-C3，5-乡村振兴委员会
  * @property int $scene 场景值，防串改，与等级对应「等级-场景值」：1-100, 2-201, 3-202, 4-203, 5-300
  * @property int $path 生成路径：1-管理后台添加，2-礼包购买，3-限时活动
  * @property string $goods_ids 礼包商品id-用于售后退款删除推广员身份
