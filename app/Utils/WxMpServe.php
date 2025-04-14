@@ -15,8 +15,8 @@ class WxMpServe
     use HttpClient;
 
     const ACCESS_TOKEN_KEY = 'wx_mp_access_token';
-    const STABLE_ACCESS_TOKEN_KEY = 'wx_mp_stable_access_token';
     const GET_ACCESS_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
+    const STABLE_ACCESS_TOKEN_KEY = 'wx_mp_stable_access_token';
     const GET_STABLE_ACCESS_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/stable_token';
     const GET_PHONE_NUMBER_URL = 'https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=%s';
     const GET_OPENID_URL = 'https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code';
