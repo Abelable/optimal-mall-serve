@@ -449,13 +449,11 @@ class OrderService extends BaseService
 
     public function userConfirm($userId, $orderId)
     {
-        return DB::transaction(function () use ($userId, $orderId) {
-            $orderList = $this->getUserOrderList($userId, [$orderId]);
-            if (count($orderList) == 0) {
-                $this->throwBadArgumentValue();
-            }
-            return $this->confirm($orderList);
-        });
+        $orderList = $this->getUserOrderList($userId, [$orderId]);
+        if (count($orderList) == 0) {
+            $this->throwBadArgumentValue();
+        }
+        return $this->confirm($orderList);
     }
 
     public function adminConfirm($orderIds)
