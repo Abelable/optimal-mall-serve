@@ -469,15 +469,6 @@ class OrderService extends BaseService
         });
     }
 
-    public function getTimeoutUnConfirmOrders($columns = ['*'])
-    {
-        return Order::query()
-            ->where('status', OrderEnums::STATUS_SHIP)
-            ->where('ship_time', '<=', now()->subDays(15))
-            ->where('ship_time', '>', now()->subDays(30))
-            ->get($columns);
-    }
-
     public function systemConfirm()
     {
         return DB::transaction(function () {
@@ -486,7 +477,15 @@ class OrderService extends BaseService
                 $this->confirm($orderList, 'system');
             }
         });
+    }
 
+    public function getTimeoutUnConfirmOrders($columns = ['*'])
+    {
+        return Order::query()
+            ->where('status', OrderEnums::STATUS_SHIP)
+            ->where('ship_time', '<=', now()->subDays(15))
+            ->where('ship_time', '>', now()->subDays(30))
+            ->get($columns);
     }
 
     public function getTimeoutUnFinishedOrders($columns = ['*'])
