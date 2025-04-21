@@ -62,8 +62,9 @@ class GoodsEvaluationController extends Controller
     public function detail()
     {
         $orderId = $this->verifyRequiredId('orderId');
-        $info = GoodsEvaluationService::getInstance()->getEvaluationByOrderId($orderId);
-        return $this->success($info);
+        $evaluation = GoodsEvaluationService::getInstance()->getEvaluationByOrderId($orderId);
+        $evaluation->image_list = json_decode($evaluation->image_list);
+        return $this->success($evaluation);
     }
 
     public function add()
@@ -74,6 +75,18 @@ class GoodsEvaluationController extends Controller
         DB::transaction(function () use ($input) {
             GoodsEvaluationService::getInstance()->createEvaluation($this->userId(), $input);
             OrderService::getInstance()->finish($this->userId(), $input->orderId);
+        });
+
+        return $this->success();
+    }
+
+    public function edit()
+    {
+        /** @var GoodsEvaluationInput $input */
+        $input = GoodsEvaluationInput::new();
+
+        DB::transaction(function () use ($input) {
+            GoodsEvaluationService::getInstance()->editEvaluation($input);
         });
 
         return $this->success();

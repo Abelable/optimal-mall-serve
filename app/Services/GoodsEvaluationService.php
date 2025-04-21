@@ -27,11 +27,17 @@ class GoodsEvaluationService extends BaseService
         return GoodsEvaluation::query()->where('order_id', $orderId)->first($columns);
     }
 
+    public function getEvaluationListByOrderId($orderId, $columns = ['*'])
+    {
+        return GoodsEvaluation::query()->where('order_id', $orderId)->get($columns);
+    }
+
     public function createEvaluation($userId, GoodsEvaluationInput $input)
     {
         foreach ($input->goodsIds as $goodsId) {
             $evaluation = GoodsEvaluation::new();
             $evaluation->user_id = $userId;
+            $evaluation->order_id = $input->orderId;
             $evaluation->goods_id = $goodsId;
             $evaluation->score = $input->score;
             $evaluation->content = $input->content;
@@ -43,9 +49,19 @@ class GoodsEvaluationService extends BaseService
         }
     }
 
-    public function editEvaluation($userId, GoodsEvaluationInput $input)
+    public function editEvaluation(GoodsEvaluationInput $input)
     {
+        $evaluationList = $this->getEvaluationListByOrderId($input->orderId)->keyBy('goods_id');
+        foreach ($input->goodsIds as $goodsId) {
+            $evaluation = $evaluationList->get($goodsId);
+            $evaluation->score = $input->score;
+            $evaluation->content = $input->content;
+            $evaluation->image_list = json_encode($input->imageList);
+            $evaluation->save();
 
+            $avgScore = $this->getAverageScore($goodsId);
+            GoodsService::getInstance()->updateAvgScore($goodsId, round($avgScore, 1));
+        }
     }
 
     public function getAverageScore($goodsId)
