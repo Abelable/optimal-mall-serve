@@ -394,6 +394,9 @@ class OrderController extends Controller
             case 5:
                 $statusList = [OrderEnums::STATUS_REFUND, OrderEnums::STATUS_REFUND_CONFIRM];
                 break;
+            case 6:
+                $statusList = [OrderEnums::STATUS_FINISHED];
+                break;
             default:
                 $statusList = [];
                 break;
@@ -433,6 +436,7 @@ class OrderController extends Controller
                 'address' => $order->address,
                 'orderSn' => $order->order_sn,
                 'payTime' => $order->pay_time,
+                'finishTime' => $order->finish_time,
                 'createdAt' => $order->created_at
             ];
         });
@@ -541,6 +545,7 @@ class OrderController extends Controller
             'ship_sn',
             'ship_time',
             'confirm_time',
+            'finish_time',
             'refund_amount',
             'remarks',
             'created_at',

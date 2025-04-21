@@ -648,6 +648,7 @@ class OrderService extends BaseService
             $this->throwBusinessException(CodeResponse::ORDER_INVALID_OPERATION, '订单不能设置为完成状态');
         }
         $order->status = OrderEnums::STATUS_FINISHED;
+        $order->finish_time = now()->toDateTimeString();
         if ($order->cas() == 0) {
             $this->throwUpdateFail();
         }
