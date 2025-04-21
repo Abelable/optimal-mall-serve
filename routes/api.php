@@ -111,6 +111,7 @@ Route::prefix('order')->group(function () {
     Route::get('totals', 'OrderController@orderListTotals');
     Route::get('list', 'OrderController@list');
     Route::get('detail', 'OrderController@detail');
+    Route::get('search', 'OrderController@search');
     Route::post('modify_address_info', 'OrderController@modifyOrderAddressInfo');
     Route::get('qr_code', 'OrderController@qrCode');
     Route::get('verify_code', 'OrderController@verifyCode');
@@ -123,6 +124,12 @@ Route::prefix('order')->group(function () {
     Route::post('team_commission_list', 'OrderController@teamCommissionOrderList');
     Route::get('gift_commission_list', 'OrderController@giftCommissionOrderList');
     Route::get('waybill_token', 'OrderController@waybillToken');
+
+    Route::prefix('keyword')->group(function () {
+        Route::get('list', 'OrderKeywordController@list');
+        Route::post('add', 'OrderKeywordController@add');
+        Route::post('clear', 'OrderKeywordController@clear');
+    });
 });
 
 Route::prefix('refund')->group(function () {

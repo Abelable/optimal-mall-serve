@@ -371,7 +371,8 @@ class OrderController extends Controller
 
         $statusList = $this->statusList($status);
         $page = OrderService::getInstance()->getOrderListByStatus($this->userId(), $statusList, $input);
-        $list = $this->orderList($page);
+        $orderList = collect($page->items());
+        $list = $this->handleOrderList($orderList);
 
         return $this->success($this->paginate($page, $list));
     }
@@ -401,9 +402,8 @@ class OrderController extends Controller
         return $statusList;
     }
 
-    private function orderList($page)
+    private function handleOrderList($orderList)
     {
-        $orderList = collect($page->items());
         $orderIds = $orderList->pluck('id')->toArray();
         $goodsListColumns = ['order_id', 'goods_id', 'merchant_id', 'is_gift', 'refund_status', 'cover', 'name', 'selected_sku_name', 'price', 'number'];
         $groupedGoodsList = OrderGoodsService::getInstance()->getListByOrderIds($orderIds, $goodsListColumns)->groupBy('order_id');
@@ -424,6 +424,18 @@ class OrderController extends Controller
                 'createdAt' => $order->created_at
             ];
         });
+    }
+
+    public function search()
+    {
+        $keywords = $this->verifyRequiredString('keywords');
+
+        $orderGoodsList = OrderGoodsService::getInstance()->searchList($keywords);
+        $orderIds = $orderGoodsList->pluck('order_id')->toArray();
+        $orderList = OrderService::getInstance()->getOrderListByIds($orderIds);
+        $list = $this->handleOrderList($orderList);
+
+        return $this->success($list);
     }
 
     public function cancel()
