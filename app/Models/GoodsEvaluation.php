@@ -9,6 +9,7 @@ use phpDocumentor\Reflection\Types\This;
  *
  * @property int $id
  * @property int $user_id 用户id
+ * @property int $order_id 订单id
  * @property int $goods_id 商品id
  * @property float $score 商品评分
  * @property string $content 评论内容
@@ -28,6 +29,7 @@ use phpDocumentor\Reflection\Types\This;
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsEvaluation whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsEvaluation whereImageList($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsEvaluation whereLikeNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GoodsEvaluation whereOrderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsEvaluation whereScore($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsEvaluation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GoodsEvaluation whereUserId($value)

@@ -59,6 +59,13 @@ class GoodsEvaluationController extends Controller
         });
     }
 
+    public function detail()
+    {
+        $orderId = $this->verifyRequiredId('orderId');
+        $info = GoodsEvaluationService::getInstance()->getEvaluationByOrderId($orderId);
+        return $this->success($info);
+    }
+
     public function add()
     {
         /** @var GoodsEvaluationInput $input */
