@@ -140,8 +140,8 @@ class OrderGoodsService extends BaseService
         return OrderGoods::query()->whereIn('order_id', $orderIds)->update(['status' => $status]);
     }
 
-    public function searchList($keyword, $columns = ['*'])
+    public function searchList($userId, $keyword, $columns = ['*'])
     {
-        return OrderGoods::query()->where('name', 'like', "%{$keyword}%")->get($columns);
+        return OrderGoods::query()->where('user_id', $userId)->where('name', 'like', "%{$keyword}%")->get($columns);
     }
 }

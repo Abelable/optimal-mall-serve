@@ -402,6 +402,18 @@ class OrderController extends Controller
         return $statusList;
     }
 
+    public function search()
+    {
+        $keywords = $this->verifyRequiredString('keywords');
+
+        $orderGoodsList = OrderGoodsService::getInstance()->searchList($this->userId(), $keywords);
+        $orderIds = $orderGoodsList->pluck('order_id')->toArray();
+        $orderList = OrderService::getInstance()->getOrderListByIds($orderIds);
+        $list = $this->handleOrderList($orderList);
+
+        return $this->success($list);
+    }
+
     private function handleOrderList($orderList)
     {
         $orderIds = $orderList->pluck('id')->toArray();
@@ -424,18 +436,6 @@ class OrderController extends Controller
                 'createdAt' => $order->created_at
             ];
         });
-    }
-
-    public function search()
-    {
-        $keywords = $this->verifyRequiredString('keywords');
-
-        $orderGoodsList = OrderGoodsService::getInstance()->searchList($keywords);
-        $orderIds = $orderGoodsList->pluck('order_id')->toArray();
-        $orderList = OrderService::getInstance()->getOrderListByIds($orderIds);
-        $list = $this->handleOrderList($orderList);
-
-        return $this->success($list);
     }
 
     public function cancel()
