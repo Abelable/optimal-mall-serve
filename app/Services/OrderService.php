@@ -863,7 +863,7 @@ class OrderService extends BaseService
 
     public function getOrderListByIds(array $ids, $columns = ['*'])
     {
-        return Order::query()->whereIn('id', $ids)->get($columns);
+        return Order::query()->whereIn('id', $ids)->orderBy('created_at', 'desc')->get($columns);
     }
 
     public function getOrderPageByIds(array $ids, PageInput $input, $columns = ['*'])
