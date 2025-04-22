@@ -70,7 +70,7 @@ class RefundController extends Controller
             // 完成后台售后确认代办任务
             AdminTodoService::getInstance()->deleteTodo(NotificationEnums::REFUND_NOTICE, $refund->id);
             NotificationService::getInstance()
-                ->addNotification(NotificationEnums::REFUND_NOTICE, '订单售后提醒', '您申请的售后订单已完成退款，请确认', $refund->user_id, $refund->id);
+                ->addNotification(NotificationEnums::REFUND_NOTICE, '订单售后提醒', '您申请的售后订单已完成退款，请确认', $refund->user_id, $refund->order_id);
         });
 
         return $this->success();
@@ -111,7 +111,7 @@ class RefundController extends Controller
             // 完成后台售后确认代办任务
             AdminTodoService::getInstance()->deleteTodo(NotificationEnums::REFUND_NOTICE, $refund->id);
             NotificationService::getInstance()
-                ->addNotification(NotificationEnums::REFUND_NOTICE, '订单售后驳回', $reason, $refund->user_id, $refund->id);
+                ->addNotification(NotificationEnums::REFUND_NOTICE, '订单售后驳回', $reason, $refund->user_id, $refund->order_id);
         });
 
         return $this->success();
