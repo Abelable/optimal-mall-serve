@@ -21,6 +21,7 @@ class CreateNotificationsTable extends Migration
             $table->string('cover')->default('')->comment('消息封面');
             $table->string('title')->comment('消息标题');
             $table->string('content')->comment('消息内容');
+            $table->integer('content_num')->default(1)->comment('消息内容数量');
             $table->string('reference_id')->default('')->comment('外部参考ID，如订单号');
             $table->timestamps();
             $table->softDeletes();

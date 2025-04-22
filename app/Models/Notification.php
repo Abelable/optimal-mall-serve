@@ -12,6 +12,7 @@ namespace App\Models;
  * @property string $cover 消息封面
  * @property string $title 消息标题
  * @property string $content 消息内容
+ * @property int $content_num 消息内容数量
  * @property string $reference_id 外部参考ID，如订单号
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -21,6 +22,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Query\Builder|Notification onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Notification query()
  * @method static \Illuminate\Database\Eloquent\Builder|Notification whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Notification whereContentNum($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Notification whereCover($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Notification whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Notification whereDeletedAt($value)
