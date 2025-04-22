@@ -59,6 +59,14 @@ Route::prefix('wx')->group(function () {
     Route::get('qrcode', 'CommonController@wxQRCode');
 });
 
+Route::prefix('notification')->group(function () {
+    Route::get('unread_count', 'NotificationController@unreadCount');
+    Route::get('list', 'NotificationController@list');
+    Route::post('clear', 'NotificationController@clear');
+    Route::post('clear_all', 'NotificationController@clearAll');
+    Route::get('delete', 'NotificationController@delete');
+});
+
 Route::prefix('keyword')->group(function () {
     Route::get('list', 'KeywordController@list');
     Route::post('add', 'KeywordController@add');

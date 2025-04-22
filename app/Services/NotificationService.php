@@ -6,6 +6,11 @@ use App\Models\Notification;
 
 class NotificationService extends BaseService
 {
+    public function getUnreadNotificationCount($userId)
+    {
+        return Notification::query()->where('user_id', $userId)->where('status', 0)->count();
+    }
+
     public function getListByUserId($userId, $columns = ['*'])
     {
         return Notification::query()->where('user_id', $userId)->get($columns);
