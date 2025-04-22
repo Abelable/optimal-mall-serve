@@ -7,7 +7,7 @@ use App\Models\EnterpriseInfo;
 use App\Services\AdminTodoService;
 use App\Services\EnterpriseInfoService;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\AdminTodoEnums;
+use App\Utils\Enums\NotificationEnums;
 use App\Utils\Inputs\EnterpriseInfoInput;
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +26,7 @@ class EnterpriseInfoController extends Controller
 
         DB::transaction(function () use ($input) {
             $enterpriseInfo = EnterpriseInfoService::getInstance()->createEnterpriseInfo($this->userId(), $input);
-            AdminTodoService::getInstance()->createTodo(AdminTodoEnums::ENTERPRISE_CONFIRM, [$enterpriseInfo->id]);
+            AdminTodoService::getInstance()->createTodo(NotificationEnums::ENTERPRISE_NOTICE, [$enterpriseInfo->id]);
         });
 
         return $this->success();

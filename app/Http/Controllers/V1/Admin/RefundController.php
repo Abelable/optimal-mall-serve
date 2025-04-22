@@ -5,11 +5,12 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\AdminTodoService;
 use App\Services\MerchantService;
+use App\Services\NotificationService;
 use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\RefundService;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\AdminTodoEnums;
+use App\Utils\Enums\NotificationEnums;
 use App\Utils\ExpressServe;
 use App\Utils\Inputs\StatusPageInput;
 use Illuminate\Support\Facades\DB;
@@ -67,7 +68,9 @@ class RefundController extends Controller
             }
 
             // 完成后台售后确认代办任务
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::REFUND_CONFIRM, $refund->id);
+            AdminTodoService::getInstance()->deleteTodo(NotificationEnums::REFUND_NOTICE, $refund->id);
+            NotificationService::getInstance()
+                ->addNotification(NotificationEnums::REFUND_NOTICE, '订单售后提醒', '您申请的售后订单已完成退款，请确认', $refund->user_id, $refund->id);
         });
 
         return $this->success();
@@ -106,7 +109,9 @@ class RefundController extends Controller
             $refund->save();
 
             // 完成后台售后确认代办任务
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::REFUND_CONFIRM, $refund->id);
+            AdminTodoService::getInstance()->deleteTodo(NotificationEnums::REFUND_NOTICE, $refund->id);
+            NotificationService::getInstance()
+                ->addNotification(NotificationEnums::REFUND_NOTICE, '订单售后驳回', $reason, $refund->user_id, $refund->id);
         });
 
         return $this->success();

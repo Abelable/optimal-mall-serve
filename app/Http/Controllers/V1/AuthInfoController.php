@@ -7,7 +7,7 @@ use App\Models\AuthInfo;
 use App\Services\AdminTodoService;
 use App\Services\AuthInfoService;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\AdminTodoEnums;
+use App\Utils\Enums\NotificationEnums;
 use App\Utils\Inputs\AuthInfoInput;
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +26,7 @@ class AuthInfoController extends Controller
 
         DB::transaction(function () use ($input) {
             $authInfo = AuthInfoService::getInstance()->createAuthInfo($this->userId(), $input);
-            AdminTodoService::getInstance()->createTodo(AdminTodoEnums::AUTH_CONFIRM, [$authInfo->id]);
+            AdminTodoService::getInstance()->createTodo(NotificationEnums::AUTH_NOTICE, [$authInfo->id]);
         });
 
         return $this->success();

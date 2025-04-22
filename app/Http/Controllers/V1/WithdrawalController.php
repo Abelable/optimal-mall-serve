@@ -10,7 +10,7 @@ use App\Services\GiftCommissionService;
 use App\Services\TeamCommissionService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\AdminTodoEnums;
+use App\Utils\Enums\NotificationEnums;
 use App\Utils\Inputs\PageInput;
 use App\Utils\Inputs\WithdrawalInput;
 use Illuminate\Support\Carbon;
@@ -86,7 +86,7 @@ class WithdrawalController extends Controller
                     CommissionService::getInstance()->withdrawUserCommission($this->userId(), $input->scene, $withdrawal->id);
                 }
 
-                AdminTodoService::getInstance()->createTodo(AdminTodoEnums::WITHDRAWAL_CONFIRM, [$withdrawal->id]);
+                AdminTodoService::getInstance()->createTodo(NotificationEnums::WITHDRAWAL_NOTICE, [$withdrawal->id]);
             }
         });
 

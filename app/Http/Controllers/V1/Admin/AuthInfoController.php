@@ -5,8 +5,9 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\AdminTodoService;
 use App\Services\AuthInfoService;
+use App\Services\NotificationService;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\AdminTodoEnums;
+use App\Utils\Enums\NotificationEnums;
 use App\Utils\Inputs\AuthInfoPageInput;
 use Illuminate\Support\Facades\DB;
 
@@ -46,7 +47,9 @@ class AuthInfoController extends Controller
             $authInfo->status = 1;
             $authInfo->save();
 
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::AUTH_CONFIRM, $authInfo->id);
+            AdminTodoService::getInstance()->deleteTodo(NotificationEnums::AUTH_NOTICE, $authInfo->id);
+            NotificationService::getInstance()
+                ->addNotification(NotificationEnums::AUTH_NOTICE, '实名认证审核通过', '您的实名认证信息已审核通过，已开放佣金提现权限', $authInfo->user_id);
         });
 
 
@@ -68,7 +71,9 @@ class AuthInfoController extends Controller
             $authInfo->failure_reason = $reason;
             $authInfo->save();
 
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::AUTH_CONFIRM, $authInfo->id);
+            AdminTodoService::getInstance()->deleteTodo(NotificationEnums::AUTH_NOTICE, $authInfo->id);
+            NotificationService::getInstance()
+                ->addNotification(NotificationEnums::AUTH_NOTICE, '实名认证未通过', $reason, $authInfo->user_id);
         });
 
         return $this->success();

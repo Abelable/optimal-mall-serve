@@ -5,8 +5,9 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\AdminTodoService;
 use App\Services\EnterpriseInfoService;
+use App\Services\NotificationService;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\AdminTodoEnums;
+use App\Utils\Enums\NotificationEnums;
 use App\Utils\Inputs\EnterpriseInfoPageInput;
 use Illuminate\Support\Facades\DB;
 
@@ -46,9 +47,10 @@ class EnterpriseInfoController extends Controller
             $authInfo->status = 1;
             $authInfo->save();
 
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ENTERPRISE_CONFIRM, $authInfo->id);
+            AdminTodoService::getInstance()->deleteTodo(NotificationEnums::ENTERPRISE_NOTICE, $authInfo->id);
+            NotificationService::getInstance()
+                ->addNotification(NotificationEnums::ENTERPRISE_NOTICE, '企业认证审核通过', '您的企业认证信息已审核通过', $authInfo->user_id);
         });
-
 
         return $this->success();
     }
@@ -68,7 +70,9 @@ class EnterpriseInfoController extends Controller
             $authInfo->failure_reason = $reason;
             $authInfo->save();
 
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ENTERPRISE_CONFIRM, $authInfo->id);
+            AdminTodoService::getInstance()->deleteTodo(NotificationEnums::ENTERPRISE_NOTICE, $authInfo->id);
+            NotificationService::getInstance()
+                ->addNotification(NotificationEnums::ENTERPRISE_NOTICE, '企业认证未通过', $reason, $authInfo->user_id);
         });
 
         return $this->success();

@@ -12,7 +12,7 @@ use App\Models\Order;
 use App\Models\OrderGoods;
 use App\Models\Promoter;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\AdminTodoEnums;
+use App\Utils\Enums\NotificationEnums;
 use App\Utils\Enums\OrderEnums;
 use App\Utils\Inputs\Admin\OrderPageInput;
 use App\Utils\Inputs\CreateOrderInput;
@@ -289,7 +289,7 @@ class OrderService extends BaseService
                 if ($order->delivery_mode == 1) {
                     $order->status = OrderEnums::STATUS_PAY;
                     // 生成后台待发货代办事项
-                    AdminTodoService::getInstance()->createTodo(AdminTodoEnums::ORDER_SHIP_WAITING, [$order->id]);
+                    AdminTodoService::getInstance()->createTodo(NotificationEnums::ORDER_SHIP_NOTICE, [$order->id]);
                 } else {
                     $order->status = OrderEnums::STATUS_PENDING_VERIFICATION;
                     OrderVerifyService::getInstance()->createOrderVerify($order->id);
@@ -583,7 +583,11 @@ class OrderService extends BaseService
             }
 
             // 完成后台待发货代办事项
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $order->id);
+            AdminTodoService::getInstance()->deleteTodo(NotificationEnums::ORDER_SHIP_NOTICE, $order->id);
+
+            // 用户发送发货通知
+            NotificationService::getInstance()
+                ->addNotification(NotificationEnums::ORDER_SHIP_NOTICE, '订单发货提醒', '您的商品订单'.$order->order_sn.'已发货，请注意查收', $order->user_id, $order->id);
         });
 
         return $order;
@@ -606,6 +610,13 @@ class OrderService extends BaseService
                 if ($order->cas() == 0) {
                     $this->throwUpdateFail();
                 }
+
+                // 完成后台待发货代办事项
+                AdminTodoService::getInstance()->deleteTodo(NotificationEnums::ORDER_SHIP_NOTICE, $order->id);
+
+                // 用户发送发货通知
+                NotificationService::getInstance()
+                    ->addNotification(NotificationEnums::ORDER_SHIP_NOTICE, '订单发货提醒', '您的商品订单'.$order->order_sn.'已发货，请注意查收', $order->user_id, $order->id);
             }
 
             $orderPackageList = [];
@@ -631,9 +642,6 @@ class OrderService extends BaseService
                 $openid = UserService::getInstance()->getUserById($order->user_id)->openid;
                 WxMpServe::new()->uploadShippingInfo($openid, $order, $orderPackageList, $isAllDelivered);
             }
-
-            // 完成后台待发货代办事项
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $order->id);
         });
 
         return $order;
@@ -758,7 +766,7 @@ class OrderService extends BaseService
                 }
 
                 // 删除后台待发货代办事项
-                AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::ORDER_SHIP_WAITING, $order->id);
+                AdminTodoService::getInstance()->deleteTodo(NotificationEnums::ORDER_SHIP_NOTICE, $order->id);
 
                 // 更新订单商品状态
                 OrderGoodsService::getInstance()->updateStatusByOrderIds([$order->id], 2);

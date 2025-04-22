@@ -8,11 +8,12 @@ use App\Services\AdminTodoService;
 use App\Services\BankCardService;
 use App\Services\CommissionService;
 use App\Services\GiftCommissionService;
+use App\Services\NotificationService;
 use App\Services\TeamCommissionService;
 use App\Services\UserService;
 use App\Services\WithdrawalService;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\AdminTodoEnums;
+use App\Utils\Enums\NotificationEnums;
 use App\Utils\Inputs\WithdrawalPageInput;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -98,7 +99,11 @@ class WithdrawalController extends Controller
             $record->status = 1;
             $record->save();
 
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::WITHDRAWAL_CONFIRM, $record->id);
+            AdminTodoService::getInstance()->deleteTodo(NotificationEnums::WITHDRAWAL_NOTICE, $record->id);
+
+            $target = $record->path == 1 ? '微信账号' : '银行账号';
+            $noticeContent = '您申请提现的¥' . $record->actual_amount . '佣金，已成功转入您的' . $target . '，请注意查收';
+            NotificationService::getInstance()->addNotification(NotificationEnums::WITHDRAWAL_NOTICE, '佣金提现成功通知', $noticeContent, $record->user_id);
 
             if ($record->path == 1) {
                 // todo 微信转账
@@ -141,7 +146,8 @@ class WithdrawalController extends Controller
             $record->failure_reason = $reason;
             $record->save();
 
-            AdminTodoService::getInstance()->deleteTodo(AdminTodoEnums::WITHDRAWAL_CONFIRM, $record->id);
+            AdminTodoService::getInstance()->deleteTodo(NotificationEnums::WITHDRAWAL_NOTICE, $record->id);
+            NotificationService::getInstance()->addNotification(NotificationEnums::WITHDRAWAL_NOTICE, '佣金提现失败通知', $reason, $record->user_id);
         });
 
         return $this->success();

@@ -11,7 +11,7 @@ use App\Services\OrderGoodsService;
 use App\Services\OrderService;
 use App\Services\RefundService;
 use App\Utils\CodeResponse;
-use App\Utils\Enums\AdminTodoEnums;
+use App\Utils\Enums\NotificationEnums;
 use App\Utils\Inputs\RefundInput;
 use Illuminate\Support\Facades\DB;
 
@@ -54,7 +54,7 @@ class RefundController extends Controller
             OrderService::getInstance()->afterSale($this->userId(), $orderId);
 
             // 生成后台售后处理代办事项
-            AdminTodoService::getInstance()->createTodo(AdminTodoEnums::REFUND_CONFIRM, [$refund->id]);
+            AdminTodoService::getInstance()->createTodo(NotificationEnums::REFUND_NOTICE, [$refund->id]);
         });
 
         return $this->success();
