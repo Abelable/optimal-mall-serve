@@ -64,7 +64,7 @@ Route::prefix('notification')->group(function () {
     Route::get('list', 'NotificationController@list');
     Route::post('clear', 'NotificationController@clear');
     Route::post('clear_all', 'NotificationController@clearAll');
-    Route::get('delete', 'NotificationController@delete');
+    Route::post('delete', 'NotificationController@delete');
 });
 
 Route::prefix('keyword')->group(function () {
