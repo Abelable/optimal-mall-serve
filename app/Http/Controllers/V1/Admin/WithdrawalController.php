@@ -139,7 +139,7 @@ class WithdrawalController extends Controller
                     TeamCommissionService::getInstance()->restoreCommissionByWithdrawalId($record->id);
                 }
             } else {
-                CommissionService::getInstance()->restoreCommissionByWithdrawalId($record->user_id, $record->scene);
+                CommissionService::getInstance()->restoreCommissionByWithdrawalId($record->id);
             }
 
             $record->status = 2;
