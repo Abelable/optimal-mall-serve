@@ -11,10 +11,12 @@ namespace App\Models;
  * @property int $goods_id 商品id
  * @property string $goods_cover 商品图片
  * @property string $goods_name 商品名称
+ * @property string $selected_sku_name 商品规格
  * @property int $goods_number 商品数量
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\OrderPackage|null $package
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods newQuery()
  * @method static \Illuminate\Database\Query\Builder|OrderPackageGoods onlyTrashed()
@@ -28,6 +30,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereOrderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods wherePackageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereSelectedSkuName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OrderPackageGoods whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|OrderPackageGoods withTrashed()
  * @method static \Illuminate\Database\Query\Builder|OrderPackageGoods withoutTrashed()
@@ -35,4 +38,8 @@ namespace App\Models;
  */
 class OrderPackageGoods extends BaseModel
 {
+    public function package()
+    {
+        return $this->belongsTo(OrderPackage::class, 'package_id');
+    }
 }

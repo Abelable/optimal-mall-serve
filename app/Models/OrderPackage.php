@@ -30,11 +30,17 @@ namespace App\Models;
  * @method static \Illuminate\Database\Query\Builder|OrderPackage withTrashed()
  * @method static \Illuminate\Database\Query\Builder|OrderPackage withoutTrashed()
  * @mixin \Eloquent
+ * @property-read \App\Models\Order|null $order
  */
 class OrderPackage extends BaseModel
 {
     public function goodsList()
     {
         return $this->hasMany(OrderPackageGoods::class, 'package_id');
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
     }
 }

@@ -46,6 +46,8 @@ use App\Utils\Traits\OrderStatusTrait;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OrderGoods[] $goodsList
  * @property-read int|null $goods_list_count
  * @property-read \App\Models\Merchant|null $merchantInfo
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OrderPackage[] $packages
+ * @property-read int|null $packages_count
  * @method static \Illuminate\Database\Eloquent\Builder|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Order newQuery()
  * @method static \Illuminate\Database\Query\Builder|Order onlyTrashed()
@@ -102,5 +104,10 @@ class Order extends BaseModel
     public function merchantInfo()
     {
         return $this->belongsTo(Merchant::class, 'merchant_id');
+    }
+
+    public function packages()
+    {
+        return $this->hasMany(OrderPackage::class, 'order_id');
     }
 }
