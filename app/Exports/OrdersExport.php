@@ -20,10 +20,27 @@ class OrdersExport implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        return Order::with(['packages.goodsList', 'merchantInfo'])
+        return Order::with(['goodsList', 'packages.goodsList', 'merchantInfo'])
             ->whereIn('id', $this->orderIds)
             ->get()
             ->flatMap(function (Order $order) {
+                if (!$order->packages || $order->packages->isEmpty()) {
+                    return collect([[
+                        'order_id' => $order->id,
+                        'order_sn' => $order->order_sn,
+                        'merchant' => $order->merchantInfo ? $order->merchantInfo->name : '自营',
+                        'goods_name' => $order->goodsList->pluck('name')->implode(', '),
+                        'goods_sku_name' => $order->goodsList->pluck('selected_sku_name')->implode(', '),
+                        'goods_number' => $order->goodsList->pluck('number')->implode(', '),
+                        'consignee' => $order->consignee,
+                        'mobile' => $order->mobile,
+                        'address' => $order->address,
+                        'ship_channel' => $order->ship_channel,
+                        'ship_code' => $order->ship_code,
+                        'ship_sn' => $order->ship_sn,
+                    ]]);
+                }
+
                 return $order->packages->map(function ($package) use ($order) {
                     return [
                         'order_id' => $order->id,
