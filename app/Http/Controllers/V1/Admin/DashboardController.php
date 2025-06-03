@@ -44,21 +44,12 @@ class DashboardController extends Controller
         $dailyGrowthRate = OrderService::getInstance()->dailyOrderCountGrowthRate();
         $weeklyGrowthRate = OrderService::getInstance()->weeklyOrderCountGrowthRate();
 
-        $repeatCustomersCount = OrderService::getInstance()->repeatCustomersCount();
-        $usersWithOrdersCount = OrderService::getInstance()->usersWithOrdersCount();
-
-        $repurchaseRate = 0;
-        if ($usersWithOrdersCount > 0) {
-            $repurchaseRate = ($repeatCustomersCount / $usersWithOrdersCount) * 100;
-        }
-
         return $this->success([
             'totalCount' => $totalCount,
             'dailyCountList' => $dailyCountList,
             'monthlyCountList' => $monthlyCountList,
             'dailyGrowthRate' => $dailyGrowthRate,
-            'weeklyGrowthRate' => $weeklyGrowthRate,
-            'repurchaseRate' => round($repurchaseRate, 2)
+            'weeklyGrowthRate' => $weeklyGrowthRate
         ]);
     }
 
@@ -69,10 +60,17 @@ class DashboardController extends Controller
         $dailyGrowthRate = UserService::getInstance()->dailyUserCountGrowthRate();
         $weeklyGrowthRate = UserService::getInstance()->weeklyUserCountGrowthRate();
 
-        $usersWithOrdersCount = OrderService::getInstance()->usersWithOrdersCount();
+        $repeatCustomersCount = UserService::getInstance()->repeatCustomersCount();
+        $usersWithOrdersCount = UserService::getInstance()->usersWithOrdersCount();
+
         $orderRate = 0;
         if ($totalCount > 0) {
             $orderRate = ($usersWithOrdersCount / $totalCount) * 100;
+        }
+
+        $repurchaseRate = 0;
+        if ($usersWithOrdersCount > 0) {
+            $repurchaseRate = ($repeatCustomersCount / $usersWithOrdersCount) * 100;
         }
 
         return $this->success([
@@ -80,7 +78,8 @@ class DashboardController extends Controller
             'dailyCountList' => $dailyCountList,
             'dailyGrowthRate' => $dailyGrowthRate,
             'weeklyGrowthRate' => $weeklyGrowthRate,
-            'orderRate' => round($orderRate, 2)
+            'orderRate' => round($orderRate, 2),
+            'repurchaseRate' => round($repurchaseRate, 2)
         ]);
     }
 

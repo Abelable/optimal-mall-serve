@@ -109,6 +109,31 @@ class UserService extends BaseService
         return User::query()->count();
     }
 
+    public function usersWithOrdersCount()
+    {
+        return User::query()
+            ->whereIn('id', function ($query) {
+                $query->select('user_id')
+                    ->from('orders')
+                    ->whereIn('status', [201, 204, 301, 401, 402, 403, 501, 502])
+                    ->distinct();
+            })
+            ->count();
+    }
+
+    public function repeatCustomersCount()
+    {
+        return User::query()
+            ->whereIn('id', function ($query) {
+                $query->select('user_id')
+                    ->from('orders')
+                    ->whereIn('status', [201, 204, 301, 401, 402, 403, 501, 502])
+                    ->groupBy('user_id')
+                    ->havingRaw('COUNT(*) > 1');
+            })
+            ->count();
+    }
+
     public function dailyUserCountList()
     {
         $endDate = Carbon::now();

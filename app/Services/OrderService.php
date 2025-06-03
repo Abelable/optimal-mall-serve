@@ -1090,25 +1090,6 @@ class OrderService extends BaseService
         }
     }
 
-    public function repeatCustomersCount()
-    {
-        return Order::query()
-            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501, 502])
-            ->select('user_id')
-            ->groupBy('user_id')
-            ->havingRaw('COUNT(*) > 1')
-            ->count();
-    }
-
-    public function usersWithOrdersCount()
-    {
-        return Order::query()
-            ->whereIn('status', [201, 204, 301, 401, 402, 403, 501, 502])
-            ->select('user_id')
-            ->distinct()
-            ->count();
-    }
-
     public function confirmMissCommission()
     {
         $orderIds = $this->getRemoteUserConfirmList()->pluck('id')->toArray();
