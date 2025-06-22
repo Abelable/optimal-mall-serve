@@ -26,4 +26,8 @@ class OrderPackageService extends BaseService
     {
         return OrderPackage::query()->find($id, $columns);
     }
+    public function deleteListByOrderId($orderId)
+    {
+        return OrderPackage::query()->where('order_id', $orderId)->delete();
+    }
 }

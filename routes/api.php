@@ -123,6 +123,7 @@ Route::prefix('order')->group(function () {
     Route::get('detail', 'OrderController@detail');
     Route::get('search', 'OrderController@search');
     Route::post('modify_address_info', 'OrderController@modifyOrderAddressInfo');
+    Route::post('modify_delivery_info', 'OrderController@modifyDeliveryInfo');
     Route::get('qr_code', 'OrderController@qrCode');
     Route::get('verify_code', 'OrderController@verifyCode');
     Route::post('verify', 'OrderController@verify');

@@ -25,4 +25,9 @@ class OrderPackageGoodsService extends BaseService
     {
         return OrderPackageGoods::query()->where('order_id', $orderId)->get($columns);
     }
+
+    public function deleteListByOrderId($orderId)
+    {
+        return OrderPackageGoods::query()->where('order_id', $orderId)->delete();
+    }
 }

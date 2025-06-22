@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\OrdersImport;
 use App\Models\Order;
 use App\Models\OrderGoods;
+use App\Services\ExpressService;
 use App\Services\GoodsService;
 use App\Services\MerchantPickupAddressService;
 use App\Services\OrderGoodsService;
@@ -238,6 +239,36 @@ class OrderController extends Controller
         $order->mobile = $mobile;
         $order->address = $address;
         $order->save();
+
+        return $this->success();
+    }
+
+    public function modifyDeliveryInfo()
+    {
+        $id = $this->verifyRequiredInteger('id');
+        $packageList = $this->verifyArrayNotEmpty('packageList');
+
+        DB::transaction(function () use ($id, $packageList) {
+            OrderPackageService::getInstance()->deleteListByOrderId($id);
+            OrderPackageGoodsService::getInstance()->deleteListByOrderId($id);
+
+            foreach ($packageList as $package) {
+                $shipChannel = $package['shipChannel'];
+                $shipCode = $package['shipCode'];
+                $shipSn = $package['shipSn'];
+                if (empty($shipCode)) {
+                    $express = ExpressService::getInstance()->getExpressByName($shipChannel);
+                    $shipCode = $express->code;
+                }
+                $orderPackage = OrderPackageService::getInstance()->create($id, $shipChannel, $shipCode, $shipSn);
+
+                $goodsList = json_decode($package['goodsList']);
+                foreach ($goodsList as $goods) {
+                    OrderPackageGoodsService::getInstance()
+                        ->create($id, $orderPackage->id, $goods->goodsId, $goods->cover, $goods->name, $goods->selectedSkuName, $goods->number);
+                }
+            }
+        });
 
         return $this->success();
     }
