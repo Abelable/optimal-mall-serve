@@ -123,7 +123,6 @@ Route::prefix('order')->group(function () {
     Route::get('detail', 'OrderController@detail');
     Route::get('search', 'OrderController@search');
     Route::post('modify_address_info', 'OrderController@modifyOrderAddressInfo');
-    Route::post('modify_delivery_info', 'OrderController@modifyDeliveryInfo');
     Route::get('qr_code', 'OrderController@qrCode');
     Route::get('verify_code', 'OrderController@verifyCode');
     Route::post('verify', 'OrderController@verify');
@@ -572,6 +571,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::post('list', 'OrderController@list');
         Route::get('detail', 'OrderController@detail');
         Route::post('modify_address_info', 'OrderController@modifyAddressInfo');
+        Route::post('modify_delivery_info', 'OrderController@modifyDeliveryInfo');
         Route::post('delivery', 'OrderController@delivery');
         Route::get('shipping_info', 'OrderController@shippingInfo');
         Route::post('confirm', 'OrderController@confirm');
