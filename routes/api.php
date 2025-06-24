@@ -232,6 +232,10 @@ Route::prefix('account')->group(function () {
     Route::get('transaction_record_list', 'AccountController@transactionRecordList');
 });
 
+Route::prefix('promoter')->group(function () {
+    Route::get('list', 'PromoterController@list');
+});
+
 /*
 |--------------------------------------------------------------------------
 | 管理后台接口
