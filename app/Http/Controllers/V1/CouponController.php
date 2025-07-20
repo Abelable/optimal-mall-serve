@@ -16,7 +16,7 @@ class CouponController extends Controller
     public function receiveCoupon()
     {
         $id = $this->verifyRequiredId('id');
-        $coupon = CouponService::getInstance()->getCouponById($id);
+        $coupon = CouponService::getInstance()->getAvailableCouponById($id);
         if (is_null($coupon)) {
             return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
         }
