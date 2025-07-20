@@ -21,6 +21,11 @@ class CouponController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '优惠券不存在');
         }
 
+        $receivedCouponCount = UserCouponService::getInstance()->getCount($this->userId(), $id);
+        if ($coupon->receive_num_limit != 0 && $receivedCouponCount >= $coupon->receive_num_limit) {
+            return $this->fail(CodeResponse::INVALID_OPERATION, '已超优惠券领取数量，请勿重复领取');
+        }
+
         DB::transaction(function () use ($coupon) {
             $userCoupon = UserCoupon::new();
             $userCoupon->user_id = $this->userId();

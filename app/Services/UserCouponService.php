@@ -93,4 +93,9 @@ class UserCouponService extends BaseService
     {
         return UserCoupon::query()->where('coupon_id', $couponId)->get($columns);
     }
+
+    public function getCount($userId, $couponId)
+    {
+        return UserCoupon::query()->where('user_id', $userId)->where('coupon_id', $couponId)->count();
+    }
 }
