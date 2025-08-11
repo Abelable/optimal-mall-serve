@@ -184,6 +184,29 @@ Route::prefix('gift')->group(function () {
     Route::get('goods_list', 'GiftController@goodsList');
 });
 
+Route::prefix('live')->group(function () {
+    Route::post('create', 'LivePushController@createRoom');
+    Route::get('room_status', 'LivePushController@roomStatus');
+    Route::get('notice_room', 'LivePushController@noticeRoomInfo');
+    Route::post('delete_notice_room', 'LivePushController@deleteNoticeRoom');
+    Route::get('push_room', 'LivePushController@pushRoomInfo');
+    Route::post('start', 'LivePushController@startLive');
+    Route::post('stop', 'LivePushController@stopLive');
+    Route::get('list', 'LivePlayController@roomList');
+    Route::get('search', 'LivePlayController@search');
+    Route::get('push_room_goods_list', 'LivePushController@pushRoomGoodsList');
+    Route::post('listing_goods', 'LivePushController@listingGoods');
+    Route::post('de_listing_goods', 'LivePushController@delistingGoods');
+    Route::post('set_hot_goods', 'LivePushController@setHotGoods');
+    Route::post('cancel_hot_goods', 'LivePushController@cancelHotGoods');
+    Route::get('goods_list', 'LivePlayController@roomGoodsList');
+    Route::get('hot_goods', 'LivePlayController@roomHotGoods');
+    Route::post('join_room', 'LivePlayController@joinRoom');
+    Route::post('praise', 'LivePlayController@praise');
+    Route::post('comment', 'LivePlayController@comment');
+    Route::post('subscribe', 'LivePlayController@subscribe');
+});
+
 Route::prefix('new_year')->group(function () {
     Route::get('goods_list', 'NewYearController@goodsList');
     Route::get('culture_goods_list', 'NewYearController@cultureGoodsList');
