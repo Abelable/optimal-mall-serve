@@ -32,7 +32,7 @@ class TimRestAPI extends TimRestInterface
     public function generate_user_sig($identifier, $expiry_after)
     {
         try {
-            return $this->sigApi->genSig($identifier, $expiry_after);
+            return $this->sigApi->genUserSig($identifier, $expiry_after);
         } catch (\Exception $e) {
             return null;
         }
