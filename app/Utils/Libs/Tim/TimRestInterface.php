@@ -8,9 +8,10 @@ abstract class TimRestInterface
      * 初始化函数
      * @param string $sdkappid 应用的appid
      * @param string $identifier 访问接口的用户
+     * @param string $key 应用密钥
      * @return bool 返回true/false
      */
-    abstract function init($sdkappid, $identifier, $sigPrivateKey, $sigPublicKey);
+    abstract function init($sdkappid, $identifier, $key);
 
     /**
      * 独立模式根据Identifier生成UserSig的方法

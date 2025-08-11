@@ -14,15 +14,11 @@ class TimRestAPI extends TimRestInterface
     /**
      * @inheritDoc
      */
-    function init($sdkappid, $identifier, $sigPrivateKey, $sigPublicKey)
+     function init($sdkappid, $identifier, $key)
     {
         $this->sdkappid = $sdkappid;
         $this->identifier = $identifier;
-
-        $this->sigApi = new TLSSigAPI();
-        $this->sigApi->setAppid($sdkappid);
-        $this->sigApi->setPrivateKey($sigPrivateKey);
-        $this->sigApi->setPublicKey($sigPublicKey);
+        $this->sigApi = new TLSSigAPIv2($sdkappid, $key);
     }
 
     public function setUserSig($identifier, $expiry_after)

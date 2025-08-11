@@ -40,12 +40,11 @@ class TimServe
     public function __construct()
     {
         $sdkappid = env('TIM_APPID');
+        $key = env('TIM_KEY');
         $identifier = env('TIM_ADMIN');
-        $sigPrivateKey = file_get_contents(storage_path('app/tim/private_key.pem'));
-        $sigPublicKey = file_get_contents(storage_path('app/tim/public_key.pem'));
 
         $api = new TimRestAPI();
-        $api->init($sdkappid, $identifier, $sigPrivateKey, $sigPublicKey);
+        $api->init($sdkappid, $identifier, $key);
         $api->setUserSig($identifier, 604800);
 
         $this->api = $api;
@@ -54,21 +53,27 @@ class TimServe
     public function updateUserInfo($userId, $nickname, $avatar)
     {
         $profileList = [
-            'profile_nick' => [
+            [
                 "Tag" => "Tag_Profile_IM_Nick",
                 "Value" => $nickname,
             ],
-            'profile_img' => [
+            [
                 "Tag" => "Tag_Profile_IM_Image",
                 "Value" => $avatar,
             ]
         ];
-        $ret = $this->api->profile_portrait_set2($userId, $profileList);
+
+        $ret = $this->api->profile_portrait_set($userId, $profileList);
+
         if ($ret['ErrorCode'] != 0) {
-            $ret = $this->api->account_import($userId, $nickname, $avatar);
-            if ($ret['ErrorCode'] != 0) {
-                throw new \Exception('云通讯用户信息更新失败', $ret, 312);
+            $importRet = $this->api->account_import($userId, $nickname, $avatar);
+            if ($importRet['ErrorCode'] != 0) {
+                throw new \Exception(
+                    '云通讯用户信息更新失败：' . json_encode($importRet, JSON_UNESCAPED_UNICODE),
+                    312
+                );
             }
+            $this->api->profile_portrait_set($userId, $profileList);
         }
     }
 
