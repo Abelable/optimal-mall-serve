@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services\Media\Live;
+namespace App\Services;
 
 use App\Models\LiveRoom;
-use App\Services\BaseService;
 use App\Utils\Enums\LiveStatus;
 use App\Utils\Inputs\LiveRoomInput;
 use App\Utils\Inputs\PageInput;

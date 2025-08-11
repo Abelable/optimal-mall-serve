@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services\Media\Live;
+namespace App\Services;
 
 use App\Models\LiveGoods;
-use App\Services\BaseService;
 use App\Utils\Inputs\PageInput;
 
 class LiveGoodsService extends BaseService
