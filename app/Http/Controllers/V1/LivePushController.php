@@ -69,7 +69,18 @@ class LivePushController extends Controller
 
     public function pushRoomInfo()
     {
-        $columns = ['id', 'status', 'title', 'cover', 'share_cover', 'direction', 'group_id', 'push_url', 'views', 'praise_number'];
+        $columns = [
+            'id',
+            'status',
+            'title',
+            'cover',
+            'share_cover',
+            'direction',
+            'group_id',
+            'push_url',
+            'views',
+            'praise_number'
+        ];
 
         $room = LiveRoomService::getInstance()->getUserRoom($this->userId(), [0, 1, 3], $columns);
         if (is_null($room)) {

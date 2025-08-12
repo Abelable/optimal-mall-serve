@@ -65,7 +65,7 @@ class LiveRoom extends BaseModel
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'anchorName' => $this->anchorInfo->nickname,
+            'anchorName' => $this->anchorInfo ? $this->anchorInfo->nickname : '',
         ];
     }
 
