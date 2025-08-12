@@ -59,6 +59,14 @@ Route::prefix('wx')->group(function () {
     Route::get('qrcode', 'CommonController@wxQRCode');
 });
 
+Route::prefix('fan')->group(function () {
+    Route::post('follow', 'FanController@follow');
+    Route::post('cancel_follow', 'FanController@cancelFollow');
+    Route::get('follow_status', 'FanController@followStatus');
+    Route::get('follow_list', 'FanController@followList');
+    Route::get('fan_list', 'FanController@fanList');
+});
+
 Route::prefix('notification')->group(function () {
     Route::get('unread_count', 'NotificationController@unreadCount');
     Route::get('list', 'NotificationController@list');
