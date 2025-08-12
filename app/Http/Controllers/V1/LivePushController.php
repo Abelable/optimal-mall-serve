@@ -48,7 +48,7 @@ class LivePushController extends Controller
 
     public function noticeRoomInfo()
     {
-        $columns = ['id', 'title', 'cover', 'share_cover', 'notice_time'];
+        $columns = ['id', 'direction', 'title', 'cover', 'share_cover', 'notice_time'];
         $room = LiveRoomService::getInstance()->getUserRoom($this->userId(), [3], $columns);
         if (is_null($room)) {
             return $this->fail(CodeResponse::NOT_FOUND, '直播间不存在');
