@@ -16,7 +16,7 @@ use App\Utils\TimServe;
 
 class LivePlayController extends Controller
 {
-    protected $except = ['roomList'];
+    protected $except = ['roomList', 'search'];
 
     public function roomList()
     {
