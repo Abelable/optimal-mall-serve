@@ -139,6 +139,11 @@ class GoodsService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
+    public function getFilterGoodsList(array $goodsIds, $columns = ['*'])
+    {
+        return Goods::query()->whereNotIn('id', $goodsIds)->get($columns);
+    }
+
     public function reduceStock($id, $number, $selectedSkuIndex = -1)
     {
         $goods = $this->getOnSaleGoods($id);
