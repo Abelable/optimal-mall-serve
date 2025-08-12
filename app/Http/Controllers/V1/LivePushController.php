@@ -12,6 +12,7 @@ use App\Utils\CodeResponse;
 use App\Utils\Enums\LiveGroupMsgType;
 use App\Utils\Enums\LiveStatus;
 use App\Utils\Inputs\LiveRoomInput;
+use App\Utils\Inputs\PageInput;
 use App\Utils\TencentLiveServe;
 use App\Utils\TimServe;
 use Illuminate\Support\Facades\DB;
@@ -162,6 +163,8 @@ class LivePushController extends Controller
 
     public function pushRoomGoodsList()
     {
+        /** @var PageInput $input */
+        $input = PageInput::new();
         $status = $this->verifyRequiredInteger('status');
 
         $room = LiveRoomService::getInstance()->getUserRoom($this->userId(), [1]);
@@ -178,13 +181,14 @@ class LivePushController extends Controller
         } else {
             $goodsIds = LiveGoodsService::getInstance()->goodsIds($room->id);
             $columns = ['id', 'cover', 'name', 'price', 'market_price', 'stock'];
-
-            // todo 改为参数传入shopId
-            $goodsList = GoodsService::getInstance()
-                ->getFilterGoodsList($goodsIds, $columns);
+            $goodsList = GoodsService::getInstance()->getFilterGoodsPage($goodsIds, $input, $columns);
         }
 
-        return $this->success($goodsList);
+        if ($status == 1) {
+            return $this->success($goodsList);
+        } else {
+            return $this->successPaginate($goodsList);
+        }
     }
 
     public function listingGoods()

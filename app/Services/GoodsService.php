@@ -7,6 +7,7 @@ use App\Utils\CodeResponse;
 use App\Utils\Inputs\Admin\GoodsListInput;
 use App\Utils\Inputs\GoodsInput;
 use App\Utils\Inputs\GoodsPageInput;
+use App\Utils\Inputs\PageInput;
 use App\Utils\Inputs\RecommendGoodsPageInput;
 use Illuminate\Support\Facades\DB;
 
@@ -139,9 +140,13 @@ class GoodsService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getFilterGoodsList(array $goodsIds, $columns = ['*'])
+    public function getFilterGoodsPage(array $goodsIds, PageInput $input, $columns = ['*'])
     {
-        return Goods::query()->whereNotIn('id', $goodsIds)->get($columns);
+        return Goods::query()
+            ->where('status', 1)
+            ->whereNotIn('id', $goodsIds)
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
     public function reduceStock($id, $number, $selectedSkuIndex = -1)
