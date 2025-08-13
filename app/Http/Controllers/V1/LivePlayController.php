@@ -8,6 +8,7 @@ use App\Models\LiveRoom;
 use App\Services\FanService;
 use App\Services\GoodsService;
 use App\Services\LiveRoomService;
+use App\Services\LiveUserService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\LiveGroupMsgType;
 use App\Utils\Inputs\PageInput;
@@ -191,5 +192,11 @@ class LivePlayController extends Controller
         $anchorId = $this->verifyRequiredId('anchorId');
         // todo 订阅逻辑
         return $this->success();
+    }
+
+    public function liveUserIds()
+    {
+        $liveUserIds = LiveUserService::getInstance()->getUserList()->pluck('user_id')->toArray();
+        return $this->success($liveUserIds);
     }
 }

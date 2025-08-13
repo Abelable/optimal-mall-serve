@@ -26,6 +26,13 @@ class LiveRoomService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
+    public function adminPageList(PageInput $input, $columns = ['*'])
+    {
+        return LiveRoom::query()
+            ->orderBy($input->sort, $input->order)
+            ->paginate($input->limit, $columns, 'page', $input->page);
+    }
+
     public function search(SearchPageInput $input, $statusList = [1, 3])
     {
         // todo whereIn无效

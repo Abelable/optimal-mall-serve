@@ -213,6 +213,7 @@ Route::prefix('live')->group(function () {
     Route::post('praise', 'LivePlayController@praise');
     Route::post('comment', 'LivePlayController@comment');
     Route::post('subscribe', 'LivePlayController@subscribe');
+    Route::get('user_ids', 'LivePushController@liveUserIds');
 });
 
 Route::prefix('new_year')->group(function () {
@@ -626,5 +627,15 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::get('shipping_info', 'RefundController@shippingInfo');
         Route::post('reject', 'RefundController@reject');
         Route::post('delete', 'RefundController@delete');
+    });
+
+    Route::prefix('live')->group(function () {
+        Route::post('list', 'LiveRoomController@list');
+
+        Route::prefix('user')->group(function () {
+            Route::post('list', 'LiveUserController@list');
+            Route::post('add', 'LiveUserController@add');
+            Route::post('delete', 'LiveUserController@delete');
+        });
     });
 });
