@@ -213,7 +213,7 @@ Route::prefix('live')->group(function () {
     Route::post('praise', 'LivePlayController@praise');
     Route::post('comment', 'LivePlayController@comment');
     Route::post('subscribe', 'LivePlayController@subscribe');
-    Route::get('user_ids', 'LivePushController@liveUserIds');
+    Route::get('user_ids', 'LivePlayController@liveUserIds');
 });
 
 Route::prefix('new_year')->group(function () {
