@@ -160,8 +160,8 @@ class LivePushController extends Controller
         $timServe->destroyChatGroup($room->group_id);
 
         // 生成回放地址
-//        $playbackUrl = TencentLiveServe::new()->liveRealTimeClip($room->id, $room->start_time, $room->end_time);
-//        $room->playback_url = $playbackUrl;
+        // $playbackUrl = TencentLiveServe::new()->liveRealTimeClip($room->id, $room->start_time, $room->end_time);
+        // $room->playback_url = $playbackUrl;
 
         $room->save();
 
