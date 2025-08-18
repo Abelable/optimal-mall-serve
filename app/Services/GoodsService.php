@@ -140,11 +140,13 @@ class GoodsService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function getFilterGoodsPage(array $goodsIds, PageInput $input, $columns = ['*'])
+    public function getFilterGoodsPage(array $goodsIds, PageInput $input, $keywords = '', $columns = ['*'])
     {
-        return Goods::query()
-            ->where('status', 1)
-            ->whereNotIn('id', $goodsIds)
+        $query = Goods::query()->where('status', 1)->whereNotIn('id', $goodsIds);
+        if ($keywords != '') {
+            $query = $query->where('name', 'like', "%$keywords%");
+        }
+        return $query
             ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
