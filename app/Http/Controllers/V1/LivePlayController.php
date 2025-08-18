@@ -54,7 +54,8 @@ class LivePlayController extends Controller
                 'groupId' => $room->group_id,
                 'playUrl' => $room->play_url,
                 'noticeTime' => $room->notice_time,
-                'anchorInfo' => $room->anchorInfo
+                'anchorInfo' => $room->anchorInfo,
+                'praiseNumber' => $room->praise_number,
             ];
         });
     }
