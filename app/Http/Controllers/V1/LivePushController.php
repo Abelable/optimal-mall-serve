@@ -11,8 +11,8 @@ use App\Services\LiveRoomService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\LiveGroupMsgType;
 use App\Utils\Enums\LiveStatus;
+use App\Utils\Inputs\GoodsPageInput;
 use App\Utils\Inputs\LiveRoomInput;
-use App\Utils\Inputs\PageInput;
 use App\Utils\TencentLiveServe;
 use App\Utils\TimServe;
 use Illuminate\Support\Facades\DB;
@@ -174,9 +174,10 @@ class LivePushController extends Controller
 
     public function pushRoomGoodsList()
     {
-        /** @var PageInput $input */
-        $input = PageInput::new();
+        /** @var GoodsPageInput $input */
+        $input = GoodsPageInput::new();
         $status = $this->verifyRequiredInteger('status');
+        $keywords = $this->verifyString('keywords');
 
         $room = LiveRoomService::getInstance()->getUserRoom($this->userId(), [1]);
         if (is_null($room)) {
@@ -190,9 +191,13 @@ class LivePushController extends Controller
                 return $goods;
             });
         } else {
-            $goodsIds = LiveGoodsService::getInstance()->goodsIds($room->id);
             $columns = ['id', 'cover', 'name', 'price', 'market_price', 'stock'];
-            $goodsList = GoodsService::getInstance()->getFilterGoodsPage($goodsIds, $input, $columns);
+            if ($keywords != '') {
+                $goodsList = GoodsService::getInstance()->search($keywords, $input, $columns);
+            } else {
+                $goodsIds = LiveGoodsService::getInstance()->goodsIds($room->id);
+                $goodsList = GoodsService::getInstance()->getFilterGoodsPage($goodsIds, $input, $columns);
+            }
         }
 
         if ($status == 1) {
