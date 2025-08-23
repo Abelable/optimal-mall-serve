@@ -7,6 +7,7 @@ use App\Models\LiveGoods;
 use App\Models\LiveRoom;
 use App\Services\FanService;
 use App\Services\GoodsService;
+use App\Services\LiveGoodsService;
 use App\Services\LiveRoomService;
 use App\Services\LiveUserService;
 use App\Utils\CodeResponse;
