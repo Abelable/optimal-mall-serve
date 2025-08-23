@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Goods;
 use App\Models\LiveRoom;
+use App\Services\AnchorSubscriptionService;
 use App\Services\GoodsService;
 use App\Services\LiveGoodsService;
 use App\Services\LiveRoomService;
@@ -15,6 +16,7 @@ use App\Utils\Inputs\LiveRoomInput;
 use App\Utils\Inputs\PageInput;
 use App\Utils\TencentLiveServe;
 use App\Utils\TimServe;
+use App\Utils\WxMpServe;
 use Illuminate\Support\Facades\DB;
 
 class LivePushController extends Controller
@@ -123,11 +125,19 @@ class LivePushController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '直播间不存在');
         }
 
-        $room->status = LiveStatus::LIVE;
-        $room->start_time = time();
-        $room->save();
+        DB::transaction(function () use ($room) {
+            $room->status = LiveStatus::LIVE;
+            $room->start_time = time();
+            $room->save();
 
-        // todo 开播通知（微信模板消息）
+            $subscriptionList = AnchorSubscriptionService::getInstance()->getListByAnchorId($room->anchorInfo->id);
+            foreach ($subscriptionList as $subscription) {
+                $subscription->times = $subscription->times - 1;
+                $subscription->save();
+
+                WxMpServe::new()->sendLiveStartMsg($subscription->openid, $room);
+            }
+        });
 
         return $this->success();
     }

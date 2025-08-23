@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\LiveGoods;
 use App\Models\LiveRoom;
+use App\Services\AnchorSubscriptionService;
 use App\Services\FanService;
 use App\Services\GoodsService;
 use App\Services\LiveGoodsService;
@@ -193,7 +194,7 @@ class LivePlayController extends Controller
     public function subscribe()
     {
         $anchorId = $this->verifyRequiredId('anchorId');
-        // todo 订阅逻辑
+        AnchorSubscriptionService::getInstance()->create($this->userId(), $this->user()->openid, $anchorId);
         return $this->success();
     }
 

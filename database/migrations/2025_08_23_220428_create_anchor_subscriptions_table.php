@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateActivitySubscriptionsTable extends Migration
+class CreateAnchorSubscriptionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateActivitySubscriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('activity_subscriptions', function (Blueprint $table) {
+        Schema::create('anchor_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->comment('用户id');
             $table->string('openid')->comment('用户openid');
-            $table->integer('activity_id')->comment('活动id');
+            $table->integer('anchor_id')->comment('主播id');
+            $table->integer('times')->default(1)->comment('订阅次数');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +31,6 @@ class CreateActivitySubscriptionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('activity_subscriptions');
+        Schema::dropIfExists('anchor_subscriptions');
     }
 }

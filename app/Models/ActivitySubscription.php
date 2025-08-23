@@ -7,8 +7,8 @@ namespace App\Models;
  *
  * @property int $id
  * @property int $user_id 用户id
- * @property string $openid 小程序openid
- * @property int $activity_id 用户id
+ * @property string $openid 用户openid
+ * @property int $activity_id 活动id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at

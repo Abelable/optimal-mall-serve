@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Utils\CodeResponse;
 use App\Utils\Inputs\ActivityPageInput;
 use App\Utils\WxMpServe;
+use Illuminate\Support\Facades\DB;
 
 class ActivityService extends BaseService
 {
@@ -66,19 +67,24 @@ class ActivityService extends BaseService
         if (is_null($activity)) {
             $this->throwBusinessException(CodeResponse::NOT_FOUND, '活动不存在');
         }
-        $activity->status = 1;
-        $activity->start_time = '';
-        if ($activity->tag == 2) {
-            $activity->tag = 1;
-        }
 
-        $activity->save();
+        DB::transaction(function () use ($activity) {
+            $activity->status = 1;
+            $activity->start_time = '';
+            if ($activity->tag == 2) {
+                $activity->tag = 1;
+            }
+            $activity->save();
 
-        $openidList = ActivitySubscriptionService::getInstance()->getListByActivityId($activity->id)->pluck('openid')->toArray();
-        foreach ($openidList as $openid) {
-            WxMpServe::new()->sendActivityStartMsg($openid, $activity);
-        }
-        ActivitySubscriptionService::getInstance()->deleteList($activity->id);
+            $openidList = ActivitySubscriptionService::getInstance()
+                ->getListByActivityId($activity->id)
+                ->pluck('openid')
+                ->toArray();
+            foreach ($openidList as $openid) {
+                WxMpServe::new()->sendActivityStartMsg($openid, $activity);
+            }
+            ActivitySubscriptionService::getInstance()->deleteList($activity->id);
+        });
 
         return $activity;
     }

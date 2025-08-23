@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\Activity;
+use App\Models\LiveRoom;
 use App\Models\Order;
 use App\Models\OrderPackage;
 use App\Utils\Traits\HttpClient;
@@ -95,8 +96,27 @@ class WxMpServe
         return $this->httpPost(
             sprintf(self::SEND_MSG_URL, $this->stableAccessToken),
             [
-                'template_id' => env('ACTIVITY_TEMPLATE_ID'),
-                'page' => env('ACTIVITY_PAGE') . $activity->goods_id,
+                'template_id' => env('WX_ACTIVITY_TEMPLATE_ID'),
+                'page' => env('WX_ACTIVITY_PAGE') . $activity->goods_id,
+                'touser' => $openid,
+                'data' => $data
+            ]
+        );
+    }
+
+    public function sendLiveStartMsg($openid, LiveRoom $liveRoom)
+    {
+        $startTime = Carbon::parse($liveRoom->start_time)->format('Y-m-d H:i:s');
+        $data = [
+            'thing1' => ['value' => $liveRoom->title],
+            'time2' => ['value' => $startTime],
+            'thing3' => ['value' => $liveRoom->anchorInfo->nickname],
+        ];
+        return $this->httpPost(
+            sprintf(self::SEND_MSG_URL, $this->stableAccessToken),
+            [
+                'template_id' => env('WX_LIVE_TEMPLATE_ID'),
+                'page' => env('WX_LIVE_PAGE') . $liveRoom->id,
                 'touser' => $openid,
                 'data' => $data
             ]
