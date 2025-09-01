@@ -25,7 +25,6 @@ class LiveGoodsService extends BaseService
     {
         return LiveGoods::query()
             ->where('room_id', $roomId)
-            ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
