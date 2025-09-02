@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\LiveRoom;
 use App\Utils\Enums\LiveStatus;
+use App\Utils\Inputs\LivePageInput;
 use App\Utils\Inputs\LiveRoomInput;
 use App\Utils\Inputs\PageInput;
 use App\Utils\Inputs\SearchPageInput;
@@ -11,14 +12,18 @@ use Illuminate\Support\Facades\Cache;
 
 class LiveRoomService extends BaseService
 {
-    public function pageList(PageInput $input, $curRoomId, $columns = ['*'], $statusList = [1, 3])
+    public function pageList(LivePageInput $input, $columns = ['*'], $statusList = [1, 3])
     {
         $query = LiveRoom::query();
-        if ($curRoomId != 0) {
-            $query = $query->orderByRaw("CASE WHEN id = " . $curRoomId . " THEN 0 ELSE 1 END");
+        if ($input->roomId != 0) {
+            $query = $query->orderByRaw("CASE WHEN id = " . $input->roomId . " THEN 0 ELSE 1 END");
+        }
+        if ($input->status != 0) {
+            $query = $query->where('status', $input->status);
+        } else {
+            $query = $query->whereIn('status', $statusList);
         }
         return $query
-            ->whereIn('status', $statusList)
             ->orderByRaw("CASE WHEN status = 1 THEN 0 WHEN status = 3 THEN 1 WHEN status = 2 THEN 2 ELSE 3 END")
             ->orderBy('views', 'desc')
             ->orderBy('praise_number', 'desc')

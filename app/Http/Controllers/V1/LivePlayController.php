@@ -13,6 +13,7 @@ use App\Services\LiveRoomService;
 use App\Services\LiveUserService;
 use App\Utils\CodeResponse;
 use App\Utils\Enums\LiveGroupMsgType;
+use App\Utils\Inputs\LivePageInput;
 use App\Utils\Inputs\PageInput;
 use App\Utils\Inputs\SearchPageInput;
 use App\Utils\TimServe;
@@ -23,10 +24,9 @@ class LivePlayController extends Controller
 
     public function roomList()
     {
-        /** @var PageInput $input */
-        $input = PageInput::new();
-        $id = $this->verifyRequiredId('id');
-        $page = LiveRoomService::getInstance()->pageList($input, $id);
+        /** @var LivePageInput $input */
+        $input = LivePageInput::new();
+        $page = LiveRoomService::getInstance()->pageList($input);
         $list = $this->handleList(collect($page->items()));
         return $this->success($this->paginate($page, $list));
     }
