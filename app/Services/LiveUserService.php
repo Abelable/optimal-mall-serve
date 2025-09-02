@@ -24,13 +24,8 @@ class LiveUserService extends BaseService
         return LiveUser::query()->whereIn('user_id', $userIds)->get($columns);
     }
 
-    public function getUserById($userId, $columns = ['*'])
+    public function getUserById($id, $columns = ['*'])
     {
-        return LiveUser::query()->where('user_id', $userId)->first($columns);
-    }
-
-    public function deleteByUserId($goodsId)
-    {
-        return LiveUser::query()->where('goods_id', $goodsId)->delete();
+        return LiveUser::query()->find($id, $columns);
     }
 }
