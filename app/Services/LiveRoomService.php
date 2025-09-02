@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\LiveRoom;
 use App\Utils\Enums\LiveStatus;
 use App\Utils\Inputs\LivePageInput;
+use App\Utils\Inputs\Admin\LivePageInput as AdminLiveRoomInput;
 use App\Utils\Inputs\LiveRoomInput;
-use App\Utils\Inputs\PageInput;
 use App\Utils\Inputs\SearchPageInput;
 use Illuminate\Support\Facades\Cache;
 
@@ -31,9 +31,20 @@ class LiveRoomService extends BaseService
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
 
-    public function adminPageList(PageInput $input, $columns = ['*'])
+    public function adminPageList(AdminLiveRoomInput $input, $columns = ['*'])
     {
-        return LiveRoom::query()
+        $query = LiveRoom::query();
+        if (!empty($input->status)) {
+            $query = $query->where('status', $input->status);
+        }
+        if (!empty($input->title)) {
+            $query = $query->where('title', 'like', "%$input->title%");
+        }
+        if (!empty($input->userId)) {
+            $query = $query->where('user_id', $input->userId);
+        }
+
+        return $query
             ->orderByRaw("FIELD(status, 1) DESC")
             ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);

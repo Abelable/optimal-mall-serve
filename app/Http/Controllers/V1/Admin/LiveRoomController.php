@@ -7,7 +7,7 @@ use App\Models\LiveRoom;
 use App\Services\LiveRoomService;
 use App\Services\UserService;
 use App\Utils\CodeResponse;
-use App\Utils\Inputs\PageInput;
+use App\Utils\Inputs\Admin\LivePageInput;
 
 class LiveRoomController extends Controller
 {
@@ -15,8 +15,8 @@ class LiveRoomController extends Controller
 
     public function list()
     {
-        /** @var PageInput $input */
-        $input = PageInput::new();
+        /** @var LivePageInput $input */
+        $input = LivePageInput::new();
         $page = LiveRoomService::getInstance()->adminPageList($input);
         $liveRoomList = collect($page->items());
 

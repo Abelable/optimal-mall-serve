@@ -28,4 +28,9 @@ class LiveUserService extends BaseService
     {
         return LiveUser::query()->find($id, $columns);
     }
+
+    public function getOptions($columns = ['*'])
+    {
+        return LiveUser::query()->get($columns);
+    }
 }

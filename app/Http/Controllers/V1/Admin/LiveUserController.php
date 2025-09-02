@@ -53,4 +53,10 @@ class LiveUserController extends Controller
         $liveUser->delete();
         return $this->success();
     }
+
+    public function options()
+    {
+        $options = LiveUserService::getInstance()->getOptions(['id', 'user_id', 'avatar', 'nickname']);
+        return $this->success($options);
+    }
 }

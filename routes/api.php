@@ -639,6 +639,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('list', 'LiveUserController@list');
             Route::post('add', 'LiveUserController@add');
             Route::post('delete', 'LiveUserController@delete');
+            Route::get('options', 'LiveUserController@options');
         });
     });
 });
