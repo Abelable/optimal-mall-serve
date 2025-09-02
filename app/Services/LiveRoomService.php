@@ -34,6 +34,7 @@ class LiveRoomService extends BaseService
     public function adminPageList(PageInput $input, $columns = ['*'])
     {
         return LiveRoom::query()
+            ->orderByRaw("FIELD(status, 1) DESC")
             ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);
     }

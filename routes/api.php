@@ -631,6 +631,8 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
 
     Route::prefix('live')->group(function () {
         Route::post('list', 'LiveRoomController@list');
+        Route::post('edit_views', 'LiveRoomController@editViews');
+        Route::post('edit_praise', 'LiveRoomController@editPraise');
         Route::post('delete', 'LiveRoomController@delete');
 
         Route::prefix('user')->group(function () {
