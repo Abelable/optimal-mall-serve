@@ -631,6 +631,7 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
 
     Route::prefix('live')->group(function () {
         Route::post('list', 'LiveRoomController@list');
+        Route::post('delete', 'LiveRoomController@delete');
 
         Route::prefix('user')->group(function () {
             Route::post('list', 'LiveUserController@list');

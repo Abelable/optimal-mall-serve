@@ -34,4 +34,15 @@ class LiveRoomController extends Controller
 
         return $this->success($this->paginate($page, $list));
     }
+
+    public function delete()
+    {
+        $id = $this->verifyRequiredId('id');
+        $live = LiveRoomService::getInstance()->getRoomById($id);
+        if (is_null($live)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前直播不存在');
+        }
+        $live->delete();
+        return $this->success();
+    }
 }

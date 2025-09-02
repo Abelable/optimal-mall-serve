@@ -127,7 +127,7 @@ class LivePushController extends Controller
 
         DB::transaction(function () use ($room) {
             $room->status = LiveStatus::LIVE;
-            $room->start_time = time();
+            $room->start_time = now()->toDateTimeString();
             $room->save();
 
             $subscriptionList = AnchorSubscriptionService::getInstance()->getListByAnchorId($room->anchorInfo->id);
@@ -149,8 +149,7 @@ class LivePushController extends Controller
             return $this->fail(CodeResponse::NOT_FOUND, '直播间不存在');
         }
 
-        $endTime = time();
-        $room->end_time = $endTime;
+        $room->end_time = now()->toDateTimeString();
         $room->status = LiveStatus::STOP;
 
         // 保存点赞数
@@ -162,7 +161,7 @@ class LivePushController extends Controller
         $data = [
             'type' => LiveGroupMsgType::LIVE_END,
             'data' => [
-                'liveDuration' => $endTime - $room->start_time
+                'liveDuration' => time() - $room->start_time
             ]
         ];
         $timServe->sendGroupSystemNotification($room->group_id, $data);

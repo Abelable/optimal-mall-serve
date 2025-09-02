@@ -85,6 +85,11 @@ class LiveRoomService extends BaseService
             ->find($id, $columns);
     }
 
+    public function getRoomById($id, $columns = ['*'])
+    {
+        return LiveRoom::query()->find($id, $columns);
+    }
+
     public function getListByIds($ids, $columns = ['*'])
     {
         return LiveRoom::query()->whereIn('id', $ids)->get($columns);
