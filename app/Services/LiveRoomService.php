@@ -15,8 +15,8 @@ class LiveRoomService extends BaseService
     public function pageList(LivePageInput $input, $columns = ['*'], $statusList = [1, 3])
     {
         $query = LiveRoom::query();
-        if ($input->roomId != 0) {
-            $query = $query->orderByRaw("CASE WHEN id = " . $input->roomId . " THEN 0 ELSE 1 END");
+        if ($input->id != 0) {
+            $query = $query->orderByRaw("CASE WHEN id = " . $input->id . " THEN 0 ELSE 1 END");
         }
         if ($input->status != 0) {
             $query = $query->where('status', $input->status);
