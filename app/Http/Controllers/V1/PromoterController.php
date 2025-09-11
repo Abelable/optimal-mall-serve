@@ -10,6 +10,8 @@ use App\Utils\Inputs\Admin\UserPageInput;
 
 class PromoterController extends Controller
 {
+    protected $only = [];
+
     public function list()
     {
         /** @var UserPageInput $input */
