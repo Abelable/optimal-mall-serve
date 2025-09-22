@@ -293,10 +293,10 @@ class CommissionService extends BaseService
         }
     }
 
-    public function settleCommissionToBalance($userId, $scene, $withdrawalId)
+    public function settleCommissionToBalance($userId, $withdrawalId, array $sceneList = [1, 2])
     {
         $commissionList = $this->getUserCommissionQuery([$userId], [2])
-            ->where('scene', $scene)
+            ->whereIn('scene', $sceneList)
             ->whereMonth('created_at', '!=', Carbon::now()->month)
             ->get();
         /** @var Commission $commission */

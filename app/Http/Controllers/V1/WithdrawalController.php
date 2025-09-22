@@ -72,7 +72,7 @@ class WithdrawalController extends Controller
                         TeamCommissionService::getInstance()->settleCommissionToBalance($this->userId(), $withdrawal->id);
                     }
                 } else {
-                    CommissionService::getInstance()->settleCommissionToBalance($this->userId(), $input->scene, $withdrawal->id);
+                    CommissionService::getInstance()->settleCommissionToBalance($this->userId(), $withdrawal->id, [$input->scene]);
                 }
 
                 AccountService::getInstance()->updateBalance($this->userId(), 1, $withdrawAmount);
@@ -88,6 +88,58 @@ class WithdrawalController extends Controller
 
                 AdminTodoService::getInstance()->createTodo(NotificationEnums::WITHDRAWAL_NOTICE, [$withdrawal->id]);
             }
+        });
+
+        return $this->success();
+    }
+
+    // todo 临时用余额代替积分
+    public function exchangePonit()
+    {
+        /** @var WithdrawalInput $input */
+        $input = WithdrawalInput::new();
+
+        if (is_null($this->user()->authInfo)) {
+            return $this->fail(CodeResponse::INVALID_OPERATION, '需完成实名认证才可兑换');
+        }
+
+        $date = Carbon::now()->day;
+        if ($date < 25) {
+            return $this->fail(CodeResponse::INVALID_OPERATION, '每月25-31号才可兑换');
+        }
+
+        if ($input->withdrawAmount == 0) {
+            return $this->fail(CodeResponse::INVALID_OPERATION, '兑换金额不能为0');
+        }
+
+        if ($input->scene == 3) {
+            [$cashGiftCommission, $cashTeamCommission] = GiftCommissionService::getInstance()->cash($this->userId());
+            $withdrawAmount = bcadd($cashGiftCommission, $cashTeamCommission, 2);
+        } else {
+            $withdrawAmount = CommissionService::getInstance()
+                ->getUserCommissionQuery([$this->userId()], [2])
+                ->whereMonth('created_at', '!=', Carbon::now()->month)->sum('commission_amount');
+        }
+
+        if (bccomp($withdrawAmount, $input->withdrawAmount, 2) != 0) {
+            $errMsg = "用户（ID：{$this->userId()}）兑换金额（{$input->withdrawAmount}）与实际可兑换金额（{$withdrawAmount}）不一致，请检查";
+            Log::error($errMsg);
+            return $this->fail(CodeResponse::INVALID_OPERATION, $errMsg);
+        }
+
+        DB::transaction(function () use ($withdrawAmount, $input) {
+            $withdrawal = WithdrawalService::getInstance()->addWithdrawal($this->userId(), $withdrawAmount, $input);
+
+            if ($input->scene == 3) {
+                GiftCommissionService::getInstance()->settleCommissionToBalance($this->userId(), $withdrawal->id);
+                if ($this->user()->promoterInfo->level > 1) {
+                    TeamCommissionService::getInstance()->settleCommissionToBalance($this->userId(), $withdrawal->id);
+                }
+            } else {
+                CommissionService::getInstance()->settleCommissionToBalance($this->userId(), $withdrawal->id);
+            }
+
+            AccountService::getInstance()->updateBalance($this->userId(), 1, $withdrawAmount);
         });
 
         return $this->success();

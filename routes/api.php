@@ -256,6 +256,7 @@ Route::prefix('bank_card')->group(function () {
 
 Route::prefix('withdraw')->group(function () {
     Route::post('submit', 'WithdrawalController@submit');
+    Route::post('exchange_point', 'WithdrawalController@exchangePonit');
     Route::get('record_list', 'WithdrawalController@recordList');
 });
 
