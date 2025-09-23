@@ -99,10 +99,6 @@ class WithdrawalController extends Controller
         /** @var WithdrawalInput $input */
         $input = WithdrawalInput::new();
 
-        if (is_null($this->user()->authInfo)) {
-            return $this->fail(CodeResponse::INVALID_OPERATION, '需完成实名认证才可兑换');
-        }
-
         $date = Carbon::now()->day;
         if ($date < 25) {
             return $this->fail(CodeResponse::INVALID_OPERATION, '每月25-31号才可兑换');
