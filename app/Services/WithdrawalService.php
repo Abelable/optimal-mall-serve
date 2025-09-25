@@ -39,6 +39,28 @@ class WithdrawalService extends BaseService
         return $withdrawal;
     }
 
+    public function addPointWithdrawal($userId, $withdrawAmount, WithdrawalInput $input)
+    {
+        $withdrawal = Withdrawal::new();
+
+        $taxFee = 0;
+        $actualAmount = $withdrawAmount;
+        $withdrawal->status = 1;
+        $withdrawal->handling_fee = 0;
+        $withdrawal->user_id = $userId;
+        $withdrawal->scene = $input->scene == 3 ? 0 : 3;
+        $withdrawal->withdraw_amount = $withdrawAmount;
+        $withdrawal->tax_fee = $taxFee;
+        $withdrawal->actual_amount = $actualAmount;
+        $withdrawal->path = 3;
+        if (!empty($input->remark)) {
+            $withdrawal->remark = $input->remark;
+        }
+        $withdrawal->save();
+
+        return $withdrawal;
+    }
+
     public function getUserRecordList($userId, PageInput $input, $columns = ['*'])
     {
         return Withdrawal::query()

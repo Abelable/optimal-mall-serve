@@ -124,7 +124,7 @@ class WithdrawalController extends Controller
         }
 
         DB::transaction(function () use ($withdrawAmount, $input) {
-            $withdrawal = WithdrawalService::getInstance()->addWithdrawal($this->userId(), $withdrawAmount, $input);
+            $withdrawal = WithdrawalService::getInstance()->addPointWithdrawal($this->userId(), $withdrawAmount, $input);
 
             if ($input->scene == 3) {
                 GiftCommissionService::getInstance()->settleCommissionToBalance($this->userId(), $withdrawal->id);
