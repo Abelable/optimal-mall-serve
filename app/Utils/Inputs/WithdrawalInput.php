@@ -12,9 +12,9 @@ class WithdrawalInput extends BaseInput
     public function rules()
     {
         return [
-            'scene' => 'required|integer|in:1,2,3',
+            'scene' => 'integer|in:1,2,3',
             'withdrawAmount' => 'required|numeric',
-            'path' => 'required|integer|in:1,2,3',
+            'path' => 'integer|in:1,2,3',
             'remark' => 'string',
         ];
     }
