@@ -48,7 +48,7 @@ class WithdrawalService extends BaseService
         $withdrawal->status = 1;
         $withdrawal->handling_fee = 0;
         $withdrawal->user_id = $userId;
-        $withdrawal->scene = $input->scene == 3 ? 0 : 3;
+        $withdrawal->scene = $input->scene == 3 ? 3 : 0;
         $withdrawal->withdraw_amount = $withdrawAmount;
         $withdrawal->tax_fee = $taxFee;
         $withdrawal->actual_amount = $actualAmount;
