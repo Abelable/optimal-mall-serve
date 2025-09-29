@@ -57,6 +57,10 @@ Route::get('shipping_info', 'CommonController@shippingInfo');
 Route::prefix('wx')->group(function () {
     Route::post('pay_notify', 'CommonController@wxPayNotify');
     Route::get('qrcode', 'CommonController@wxQRCode');
+
+    Route::prefix('promoter')->group(function () {
+        Route::get('product_list', 'WxPromoterController@productList');
+    });
 });
 
 Route::prefix('fan')->group(function () {
