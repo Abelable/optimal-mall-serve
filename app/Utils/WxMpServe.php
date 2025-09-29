@@ -26,6 +26,95 @@ class WxMpServe
     const UPLOAD_SHIPPING_INFO_URL = 'https://api.weixin.qq.com/wxa/sec/order/upload_shipping_info?access_token=%s';
     const TRACE_WAYBILL_URL = 'https://api.weixin.qq.com/cgi-bin/express/delivery/open_msg/trace_waybill?access_token=%s';
 
+    // ———————————————————————————————————————————————————— 带货机构 ————————————————————————————————————————————————————
+    // 机构 - 订阅商品列表
+    const SUBSCRIBE_PRODUCT_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/subscription/getsubscribe?access_token=%s';
+    // 机构 - 商品基础详情
+    const PRODUCT_BASE_INFO_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/productdetail/get?access_token=%s';
+    // 机构 - 商品推广参数详情
+    const PRODUCT_PROMOTION_INFO_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/item/promotiondetail/get?access_token=%s';
+    // 机构 - 合作小店列表
+    const SHOP_LIST_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/shop/list/get?access_token=%s';
+    // 机构 - 合作小店详情
+    const SHOP_DETAIL_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/shop/get?access_token=%s';
+    // 机构 - 佣金订单列表
+    const COMMISSION_ORDER_LIST_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/order/list/get?access_token=%s';
+    // 机构 - 佣金订单详情
+    const COMMISSION_ORDER_DETAIL_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/order/get?access_token=%s';
+    // 机构 - 内容推广 - 订单列表
+    const ORDER_LIST_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/clue/list/get?access_token=%s';
+    // 机构 - 内容推广 - 订单详情
+    const ORDER_DETAIL_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/clue/get?access_token=%s';
+
+    // 机构 - 达人橱窗商品列表
+    const STAR_WINDOW_PRODUCT_LIST_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/window/getall?access_token=%s';
+    // 机构 - 达人橱窗商品详情
+    const STAR_WINDOW_PRODUCT_DETAIL_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/window/getdetail?access_token=%s';
+
+    // 推客 - 状态
+    const PROMOTER_STATUS_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_promoter_register_and_bind_status?access_token=%s';
+    // 推客 - 合作小店列表
+    const PROMOTER_SHOP_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_bind_shop_list?access_token=%s';
+    // 推客 - 商品列表
+    const PROMOTER_PRODUCT_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_promote_product_list?access_token=%s';
+    // 推客 - 商品详情
+    const PROMOTER_PRODUCT_DETAIL_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_promote_product_detail?access_token=%s';
+    // 推客 - 商品内嵌卡片
+    const PRODUCT_PRODUCT_LINK_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_promoter_single_product_promotion_info?access_token=%s';
+    // 推客 - 商品推广分佣比例
+    const PRODUCT_COMMISSION_INFO_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_sharer_product_commission_info?access_token=%s';
+    // 推客 - 商品推广链接
+    const PRODUCT_SHARE_LINK_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_product_promotion_link_info?access_token=%s';
+    // 推客 - 商品推广二维码
+    const PRODUCT_SHARE_QRCODE_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_product_promotion_qrcode_info?access_token=%s';
+
+    // ———————————————————————————————————————————————————— 直播推广 ————————————————————————————————————————————————————
+    // 机构 - 直播提报二维码
+    const LIVE_PROTECTION_QRCODE_URL = 'https://api.weixin.qq.com/channels/ec/league/headsupplier/liveprotection/getqrcode?access_token=%s';
+
+    // 机构 - 带货者 - 直播预告列表
+    const LIVE_NOTICE_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_live_notice_record_list?access_token=%s';
+    // 机构 - 带货者 - 直播列表
+    const LIVE_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_live_record_list?access_token=%s';
+    // 机构 - 带货者 - 直播间商品列表
+    const LIVE_PRODUCT_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_live_commission_product_list?access_token=%s';
+
+    // 机构 - 小店 - 直播预告列表
+    const SHOP_LIVE_NOTICE_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_shop_live_notice_record_list?access_token=%s';
+    // 机构 - 小店 - 直播列表
+    const SHOP_LIVE_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_shop_live_record_list?access_token=%s';
+    // 机构 - 小店 - 直播间自营商品列表
+    const SHOP_LIVE_PRODUCT_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_shop_live_commission_product_list?access_token=%s';
+
+    // 推客 - 带货者 - 直播预告推广二维码
+    const LIVE_NOTICE_SHARE_QRCODE_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_live_notice_record_qr_code?access_token=%s';
+    // 推客 - 带货者 - 直播预告推广链接
+    const LIVE_NOTICE_SHARE_LINK_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_live_notice_promoter_share_link?access_token=%s';
+    // 推客 - 带货者 - 直播推广二维码
+    const LIVE_SHARE_QRCODE_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_live_record_qr_code?access_token=%s';
+
+    // 推客 - 小店 - 直播预告推广二维码
+    const SHOP_LIVE_NOTICE_SHARE_QRCODE_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_shop_live_notice_record_qr_code?access_token=%s';
+    // 推客 - 小店 - 直播预告推广链接
+    const SHOP_LIVE_NOTICE_SHARE_LINK_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_shop_live_notice_promoter_share_link?access_token=%s';
+    // 推客 - 小店 - 直播推广二维码
+    const SHOP_LIVE_SHARE_QRCODE_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_shop_live_record_qr_code?access_token=%s';
+
+    // 推客 - 直播预告分享 - 订阅人数
+    const LIVE_NOTICE_RESERVATION_INFO_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_live_notice_reservation_info?access_token=%s';
+
+    // ——————————————————————————————————————————————————— 短视频推广 ———————————————————————————————————————————————————
+    // 机构 - 带货者 - 短视频列表
+    const FEED_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_feed_list?access_token=%s';
+    // 机构 - 小店 - 短视频列表
+    const SHOP_FEED_LIST_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_shop_feed_list?access_token=%s';
+
+    // 推客 - 带货者 - 短视频推广信息
+    const FEED_PROMOTION_INFO_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_feed_promotion_info?access_token=%s';
+    // 推客 - 小店 - 短视频推广信息
+    const SHOP_FEED_PROMOTION_INFO_URL = 'https://api.weixin.qq.com/channels/ec/promoter/get_shop_feed_promotion_info?access_token=%s';
+
+
     protected $accessToken;
     protected $stableAccessToken;
 
@@ -209,5 +298,41 @@ class WxMpServe
         }
 
         return $result['waybill_token'];
+    }
+
+    public function getPromoterProductList($nextKey = '', $pageSize = 10, $planType = 2)
+    {
+        $result = $this->httpPost(
+            sprintf(self::PROMOTER_PRODUCT_LIST_URL, $this->accessToken),
+            [
+                'shop_appid' => env('WX_SHOP_APPID'),
+                'plan_type' => $planType,
+                'page_size' => $pageSize,
+                'next_key' => $nextKey,
+            ],
+        );
+
+        if ($result['errcode'] != 0) {
+            throw new \Exception('获取推客商品列表异常：' . $result['errcode'] . $result['errmsg']);
+        }
+
+        return $result;
+    }
+
+    public function getProductBaseInfo($productId)
+    {
+        $result = $this->httpPost(
+            sprintf(self::PRODUCT_BASE_INFO_URL, $this->accessToken),
+            [
+                'shop_appid' => env('WX_SHOP_APPID'),
+                'product_id' => $productId
+            ],
+        );
+
+        if ($result['errcode'] != 0) {
+            throw new \Exception('获取推客商品基础信息异常：' . $result['errcode'] . $result['errmsg']);
+        }
+
+        return $result['product'];
     }
 }
