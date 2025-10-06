@@ -17,9 +17,9 @@ class BannerInput extends BaseInput
         return [
             'cover' => 'required|string',
             'desc' => 'string',
-            'scene' => 'integer|in:1,2',
+            'scene' => 'integer',
             'param' => 'string',
-            'position' => 'integer|in:1,2,3,4',
+            'position' => 'integer',
         ];
     }
 }
