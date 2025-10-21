@@ -107,7 +107,7 @@ class CartController extends Controller
 
             $skuList = json_decode($goods->sku_list);
             if (count($skuList) != 0) {
-                $sku = $skuList[$cartGoods->selected_sku_index];
+                $sku = $skuList[$cartGoods->selected_sku_index] ?? null;
                 if (is_null($sku) || $cartGoods->selected_sku_name != $sku->name) {
                     $cartGoods->status = 2;
                     $cartGoods->status_desc = '商品规格不存在';
