@@ -26,7 +26,7 @@ class ThemeZoneGoodsController extends Controller
         $themeId = $this->verifyRequiredId('themeId');
         $goodsIds = $this->verifyArray('ids');
 
-        $zoneGoodsList = ThemeZoneGoodsService::getInstance()->getFilterGoodsList($goodsIds);
+        $zoneGoodsList = ThemeZoneGoodsService::getInstance()->getFilterGoodsList($themeId, $goodsIds);
         if (count($zoneGoodsList) != 0) {
             return $this->fail(CodeResponse::DATA_EXISTED, '已添加相同商品');
         }

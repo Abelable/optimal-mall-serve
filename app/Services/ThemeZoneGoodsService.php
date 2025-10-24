@@ -22,9 +22,12 @@ class ThemeZoneGoodsService extends BaseService
             ->get($columns);
     }
 
-    public function getFilterGoodsList($goodsIds, $columns = ['*'])
+    public function getFilterGoodsList($themeId, $goodsIds, $columns = ['*'])
     {
-        return ThemeZoneGoods::query()->whereIn('goods_id', $goodsIds)->get($columns);
+        return ThemeZoneGoods::query()
+            ->where('theme_id', $themeId)
+            ->whereIn('goods_id', $goodsIds)
+            ->get($columns);
     }
 
     public function getGoodsById($id, $columns = ['*'])

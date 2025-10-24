@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ThemeZone;
 use App\Services\ThemeZoneService;
 use App\Utils\CodeResponse;
+use App\Utils\Inputs\Admin\ThemeZoneInput;
 use App\Utils\Inputs\PageInput;
 
 class ThemeZoneController extends Controller
@@ -16,14 +17,14 @@ class ThemeZoneController extends Controller
     {
         /** @var PageInput $input */
         $input = PageInput::new();
-        $list = ThemeZoneService::getInstance()->getThemePage($input);
+        $list = ThemeZoneService::getInstance()->getThemeZonePage($input);
         return $this->successPaginate($list);
     }
 
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
-        $category = ThemeZoneService::getInstance()->getThemeById($id);
+        $category = ThemeZoneService::getInstance()->getThemeZoneById($id);
         if (is_null($category)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
         }
@@ -32,32 +33,25 @@ class ThemeZoneController extends Controller
 
     public function add()
     {
-        $name = $this->verifyRequiredString('name');
-
-        $category = ThemeZoneService::getInstance()->getThemeByName($name);
-        if (!is_null($category)) {
-            return $this->fail(CodeResponse::DATA_EXISTED, '当前主题专区已存在');
-        }
-
-        $category = ThemeZone::new();
-        $category->name = $name;
-        $category->save();
-
+        /** @var ThemeZoneInput $input */
+        $input = ThemeZoneInput::new();
+        $themeZone = ThemeZone::new();
+        ThemeZoneService::getInstance()->updateThemeZone($themeZone, $input);
         return $this->success();
     }
 
     public function edit()
     {
         $id = $this->verifyRequiredId('id');
-        $name = $this->verifyRequiredString('name');
+        /** @var ThemeZoneInput $input */
+        $input = ThemeZoneInput::new();
 
-        $category = ThemeZoneService::getInstance()->getThemeById($id);
-        if (is_null($category)) {
-            return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
+        $themeZone = ThemeZoneService::getInstance()->getThemeZoneById($id);
+        if (is_null($themeZone)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前活动zone不存在');
         }
 
-        $category->name = $name;
-        $category->save();
+        ThemeZoneService::getInstance()->updateThemeZone($themeZone, $input);
 
         return $this->success();
     }
@@ -66,7 +60,7 @@ class ThemeZoneController extends Controller
         $id = $this->verifyRequiredId('id');
         $sort = $this->verifyRequiredInteger('sort');
 
-        $category = ThemeZoneService::getInstance()->getThemeById($id);
+        $category = ThemeZoneService::getInstance()->getThemeZoneById($id);
         if (is_null($category)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
         }
@@ -81,7 +75,7 @@ class ThemeZoneController extends Controller
         $id = $this->verifyRequiredId('id');
         $status = $this->verifyRequiredInteger('status');
 
-        $category = ThemeZoneService::getInstance()->getThemeById($id);
+        $category = ThemeZoneService::getInstance()->getThemeZoneById($id);
         if (is_null($category)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
         }
@@ -95,7 +89,7 @@ class ThemeZoneController extends Controller
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
-        $category = ThemeZoneService::getInstance()->getThemeById($id);
+        $category = ThemeZoneService::getInstance()->getThemeZoneById($id);
         if (is_null($category)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
         }
@@ -105,7 +99,7 @@ class ThemeZoneController extends Controller
 
     public function options()
     {
-        $options = ThemeZoneService::getInstance()->getThemeOptions();
+        $options = ThemeZoneService::getInstance()->getThemeZoneOptions();
         return $this->success($options);
     }
 }

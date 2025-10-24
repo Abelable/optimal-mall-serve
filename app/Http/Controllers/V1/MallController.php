@@ -32,7 +32,7 @@ class MallController extends Controller
 
     public function themeZoneList()
     {
-        $options = ThemeZoneService::getInstance()->getThemeOptions(['id', 'cover', 'name', 'scene', 'param']);
+        $options = ThemeZoneService::getInstance()->getThemeZoneOptions(['id', 'cover', 'name', 'scene', 'param']);
         return $this->success($options);
     }
 
