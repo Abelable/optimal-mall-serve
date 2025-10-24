@@ -12,7 +12,7 @@ class ThemeZoneService extends BaseService
     {
         $banner->name = $input->name;
         $banner->cover = $input->cover;
-        $banner->bg = $input->bg;
+        $banner->bg = $input->bg ?? '';
         $banner->scene = $input->scene;
         $banner->param = $input->param ?? '';
         $banner->save();

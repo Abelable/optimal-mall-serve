@@ -17,14 +17,15 @@ class ThemeZoneGoodsController extends Controller
     {
         /** @var PageInput $input */
         $input = PageInput::new();
-        $list = ThemeZoneGoodsService::getInstance()->getGoodsPage($input);
+        $themeId = $this->verifyId('themeId');
+        $list = ThemeZoneGoodsService::getInstance()->getGoodsPage($input, $themeId ?? null);
         return $this->successPaginate($list);
     }
 
     public function add()
     {
         $themeId = $this->verifyRequiredId('themeId');
-        $goodsIds = $this->verifyArray('ids');
+        $goodsIds = $this->verifyArray('goodsIds');
 
         $zoneGoodsList = ThemeZoneGoodsService::getInstance()->getFilterGoodsList($themeId, $goodsIds);
         if (count($zoneGoodsList) != 0) {

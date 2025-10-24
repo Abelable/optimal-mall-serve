@@ -17,7 +17,7 @@ class ThemeZoneInput extends BaseInput
         return [
             'name' => 'required|string',
             'cover' => 'required|string',
-            'bg' => 'required|string',
+            'bg' => 'string',
             'scene' => 'required|integer',
             'param' => 'string',
         ];

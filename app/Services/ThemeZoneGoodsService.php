@@ -7,9 +7,13 @@ use App\Utils\Inputs\PageInput;
 
 class ThemeZoneGoodsService extends BaseService
 {
-    public function getGoodsPage(PageInput $input, $columns = ['*'])
+    public function getGoodsPage(PageInput $input, $themeId = null, $columns = ['*'])
     {
-        return ThemeZoneGoods::query()
+        $query = ThemeZoneGoods::query();
+        if (!is_null($themeId)) {
+            $query = $query->where('theme_id', $themeId);
+        }
+        return $query
             ->orderBy($input->sort, $input->order)
             ->paginate($input->limit, $columns, 'page', $input->page);
     }
