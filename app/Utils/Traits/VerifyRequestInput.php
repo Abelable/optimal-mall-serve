@@ -68,7 +68,7 @@ trait VerifyRequestInput
 
     public function verifyMobile()
     {
-        return $this->verifyData('mobile', null, 'required|regex:/^1[345789][0-9]{9}$/');
+        return $this->verifyData('mobile', null, 'required|regex:/^1[3-9]\d{9}$/');
     }
 
     public function verifyExcel()

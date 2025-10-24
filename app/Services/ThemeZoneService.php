@@ -26,6 +26,9 @@ class ThemeZoneService extends BaseService
 
     public function getTagOptions($columns = ['*'])
     {
-        return ThemeZone::query()->where('status', 1)->orderBy('sort', 'desc')->get($columns);
+        return ThemeZone::query()
+            ->where('status', 1)
+            ->orderBy('sort', 'desc')
+            ->get($columns);
     }
 }
