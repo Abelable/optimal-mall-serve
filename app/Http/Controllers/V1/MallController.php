@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Goods;
+use App\Models\ThemeZoneGoods;
 use App\Models\VillageFreshGoods;
 use App\Models\VillageGiftGoods;
 use App\Models\VillageGrainGoods;
@@ -16,6 +17,8 @@ use App\Services\CouponService;
 use App\Services\GiftGoodsService;
 use App\Services\GoodsService;
 use App\Services\OrderGoodsService;
+use App\Services\ThemeZoneGoodsService;
+use App\Services\ThemeZoneService;
 use App\Services\VillageFreshGoodsService;
 use App\Services\VillageGiftGoodsService;
 use App\Services\VillageGrainGoodsService;
@@ -26,6 +29,57 @@ use Illuminate\Support\Facades\DB;
 class MallController extends Controller
 {
     protected $only = ['subscribeActivity'];
+
+    public function themeZoneList()
+    {
+        $options = ThemeZoneService::getInstance()->getThemeOptions(['id', 'cover', 'name', 'scene', 'param']);
+        return $this->success($options);
+    }
+
+    public function themeZoneGoodsList()
+    {
+        $themeId = $this->verifyRequiredId('$themeId');
+
+        $zoneGoodsList = ThemeZoneGoodsService::getInstance()->getGoodsList($themeId);
+        $goodsIds = $zoneGoodsList->pluck('goods_id')->toArray();
+
+        $activityList = ActivityService::getInstance()
+            ->getActivityListByGoodsIds($goodsIds, [0, 1], ['status', 'name', 'start_time', 'end_time', 'goods_id', 'followers', 'sales'])
+            ->keyBy('goods_id');
+
+        $groupedCouponList = CouponService::getInstance()
+            ->getCouponListByGoodsIds($goodsIds, ['goods_id', 'name', 'denomination', 'type', 'num_limit', 'price_limit'])
+            ->groupBy('goods_id');
+
+        $giftGoodsIds = GiftGoodsService::getInstance()->getGoodsList([1, 2])->pluck('goods_id')->toArray();
+
+        $goodsList = GoodsService::getInstance()->getGoodsListByIds($goodsIds)->keyBy('id');
+
+        $list = $zoneGoodsList->map(function (ThemeZoneGoods $zoneGoods) use ($giftGoodsIds, $activityList, $groupedCouponList, $goodsList) {
+            /** @var Goods $goods */
+            $goods = $goodsList->get($zoneGoods->goods_id);
+
+            if (!is_null($goods)) {
+                $activity = $activityList->get($goods->id);
+                $goods['activityInfo'] = $activity;
+
+                $couponList = $groupedCouponList->get($goods->id);
+                $goods['couponList'] = $couponList ?: [];
+
+                $goods['isGift'] = in_array($goods->id, $giftGoodsIds) ? 1 : 0;
+            } else {
+                ThemeZoneGoodsService::getInstance()->deleteById($zoneGoods->id);
+            }
+
+            return $goods;
+        })->filter(function ($goods) {
+            return !is_null($goods);
+        })->values();
+
+        // todo 商品列表存缓存
+
+        return $this->success($list);
+    }
 
     public function activityTagOptions()
     {

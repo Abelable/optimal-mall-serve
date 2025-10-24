@@ -169,6 +169,8 @@ Route::prefix('banner')->group(function () {
 });
 
 Route::prefix('mall')->group(function () {
+    Route::get('theme_zone_list', 'MallController@themeZoneList');
+    Route::get('theme_zone_goods_list', 'MallController@themeZoneGoodsList');
     Route::get('activity_tag_options', 'MallController@activityTagOptions');
     Route::get('activity_list', 'MallController@activityList');
     Route::post('activity_subscribe', 'MallController@subscribeActivity');
@@ -381,6 +383,24 @@ Route::namespace('Admin')->prefix('admin')->group(function () {
             Route::post('up', 'BannerController@up');
             Route::post('down', 'BannerController@down');
             Route::post('delete', 'BannerController@delete');
+        });
+
+        Route::prefix('theme_zone')->group(function () {
+            Route::post('list', 'ThemeZoneController@list');
+            Route::get('detail', 'ThemeZoneController@detail');
+            Route::post('add', 'ThemeZoneController@add');
+            Route::post('edit', 'ThemeZoneController@edit');
+            Route::post('edit_sort', 'ThemeZoneController@editSort');
+            Route::post('edit_status', 'ThemeZoneController@editStatus');
+            Route::post('delete', 'ThemeZoneController@delete');
+            Route::get('options', 'ThemeZoneController@options');
+
+            Route::prefix('goods')->group(function () {
+                Route::post('list', 'ThemeZoneGoodsController@list');
+                Route::post('add', 'ThemeZoneGoodsController@add');
+                Route::post('edit_sort', 'ThemeZoneGoodsController@editSort');
+                Route::post('delete', 'ThemeZoneGoodsController@delete');
+            });
         });
 
         Route::prefix('activity')->group(function () {
