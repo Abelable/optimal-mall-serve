@@ -40,7 +40,7 @@ class ThemeZoneService extends BaseService
     {
         return ThemeZone::query()
             ->where('status', 1)
-            ->orderBy('sort', 'desc')
+            ->orderBy('sort', 'asc')
             ->get($columns);
     }
 }

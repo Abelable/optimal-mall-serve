@@ -169,8 +169,12 @@ Route::prefix('banner')->group(function () {
 });
 
 Route::prefix('mall')->group(function () {
-    Route::get('theme_zone_list', 'MallController@themeZoneList');
-    Route::get('theme_zone_goods_list', 'MallController@themeZoneGoodsList');
+    Route::prefix('theme_zone')->group(function () {
+        Route::get('list', 'MallController@themeZoneList');
+        Route::get('detail', 'MallController@themeZoneDetail');
+        Route::get('goods_list', 'MallController@themeZoneGoodsList');
+    });
+
     Route::get('activity_tag_options', 'MallController@activityTagOptions');
     Route::get('activity_list', 'MallController@activityList');
     Route::post('activity_subscribe', 'MallController@subscribeActivity');

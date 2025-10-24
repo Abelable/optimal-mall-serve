@@ -24,11 +24,11 @@ class ThemeZoneController extends Controller
     public function detail()
     {
         $id = $this->verifyRequiredId('id');
-        $category = ThemeZoneService::getInstance()->getThemeZoneById($id);
-        if (is_null($category)) {
+        $themeZone = ThemeZoneService::getInstance()->getThemeZoneById($id);
+        if (is_null($themeZone)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
         }
-        return $this->success($category);
+        return $this->success($themeZone);
     }
 
     public function add()
@@ -60,13 +60,13 @@ class ThemeZoneController extends Controller
         $id = $this->verifyRequiredId('id');
         $sort = $this->verifyRequiredInteger('sort');
 
-        $category = ThemeZoneService::getInstance()->getThemeZoneById($id);
-        if (is_null($category)) {
+        $themeZone = ThemeZoneService::getInstance()->getThemeZoneById($id);
+        if (is_null($themeZone)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
         }
 
-        $category->sort = $sort;
-        $category->save();
+        $themeZone->sort = $sort;
+        $themeZone->save();
 
         return $this->success();
     }
@@ -75,13 +75,13 @@ class ThemeZoneController extends Controller
         $id = $this->verifyRequiredId('id');
         $status = $this->verifyRequiredInteger('status');
 
-        $category = ThemeZoneService::getInstance()->getThemeZoneById($id);
-        if (is_null($category)) {
+        $themeZone = ThemeZoneService::getInstance()->getThemeZoneById($id);
+        if (is_null($themeZone)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
         }
 
-        $category->status = $status;
-        $category->save();
+        $themeZone->status = $status;
+        $themeZone->save();
 
         return $this->success();
     }
@@ -89,11 +89,11 @@ class ThemeZoneController extends Controller
     public function delete()
     {
         $id = $this->verifyRequiredId('id');
-        $category = ThemeZoneService::getInstance()->getThemeZoneById($id);
-        if (is_null($category)) {
+        $themeZone = ThemeZoneService::getInstance()->getThemeZoneById($id);
+        if (is_null($themeZone)) {
             return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
         }
-        $category->delete();
+        $themeZone->delete();
         return $this->success();
     }
 

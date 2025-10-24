@@ -36,6 +36,16 @@ class MallController extends Controller
         return $this->success($options);
     }
 
+    public function themeZoneDetail()
+    {
+        $id = $this->verifyRequiredId('id');
+        $themeZone = ThemeZoneService::getInstance()->getThemeZoneById($id);
+        if (is_null($themeZone)) {
+            return $this->fail(CodeResponse::NOT_FOUND, '当前主题专区不存在');
+        }
+        return $this->success($themeZone);
+    }
+
     public function themeZoneGoodsList()
     {
         $themeId = $this->verifyRequiredId('$themeId');
