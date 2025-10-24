@@ -21,7 +21,7 @@ class CreateOrderInput extends BaseInput
             'addressId' => 'integer|digits_between:1,20',
             'pickupAddressId' => 'integer|digits_between:1,20',
             'pickupTime' => 'string',
-            'pickupMobile' => 'regex:/^1[345789][0-9]{9}$/',
+            'pickupMobile' => 'regex:/^1[3-9]\d{9}$/',
             'cartGoodsIds' => 'required|array|min:1',
             'couponId' => 'integer|digits_between:1,20',
             'useBalance' => 'integer|in:0,1',
