@@ -48,7 +48,7 @@ class MallController extends Controller
 
     public function themeZoneGoodsList()
     {
-        $themeId = $this->verifyRequiredId('$themeId');
+        $themeId = $this->verifyRequiredId('themeId');
 
         $zoneGoodsList = ThemeZoneGoodsService::getInstance()->getGoodsList($themeId);
         $goodsIds = $zoneGoodsList->pluck('goods_id')->toArray();
