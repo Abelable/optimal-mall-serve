@@ -15,7 +15,7 @@ class AuthInfoInput extends BaseInput
     {
         return [
             'name' => 'required|string',
-            'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
+            'mobile' => 'required|regex:/^1[3-9]\d{9}$/',
             'idCardNumber' => 'required|string',
             'idCardFrontPhoto' => 'required|string',
             'idCardBackPhoto' => 'required|string',

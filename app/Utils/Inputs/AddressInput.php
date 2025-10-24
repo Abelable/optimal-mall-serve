@@ -18,7 +18,7 @@ class AddressInput extends BaseInput
             'id' => 'integer|digits_between:1,20',
             'isDefault' => 'integer|in:0,1',
             'name' => 'required|string',
-            'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
+            'mobile' => 'required|regex:/^1[3-9]\d{9}$/',
             'regionDesc' => 'required|string',
             'regionCodeList' => 'required|string',
             'addressDetail' => 'required|string',

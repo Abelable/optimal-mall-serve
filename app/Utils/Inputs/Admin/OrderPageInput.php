@@ -23,7 +23,7 @@ class OrderPageInput extends PageInput
             'merchantId' => 'integer',
             'userId' => 'integer',
             'consignee' => 'string',
-            'mobile' => 'regex:/^1[345789][0-9]{9}$/',
+            'mobile' => 'regex:/^1[3-9]\d{9}$/',
         ], parent::rules());
     }
 }

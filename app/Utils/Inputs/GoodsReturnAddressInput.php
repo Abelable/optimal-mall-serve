@@ -13,7 +13,7 @@ class GoodsReturnAddressInput extends BaseInput
     {
         return [
             'consigneeName' => 'required|string',
-            'mobile' => 'required|string',
+            'mobile' => 'required|regex:/^1[3-9]\d{9}$/',
             'addressDetail' => 'required|string',
             'supplement' => 'string',
         ];

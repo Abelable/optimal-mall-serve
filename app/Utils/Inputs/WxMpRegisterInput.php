@@ -19,7 +19,7 @@ class WxMpRegisterInput extends BaseInput
             'avatar' => 'required|string',
             'nickname' => 'required|string',
             'gender' => 'integer|in:0,1,2',
-            'mobile' => 'required|regex:/^1[345789][0-9]{9}$/',
+            'mobile' => 'required|regex:/^1[3-9]\d{9}$/',
         ];
     }
 }
